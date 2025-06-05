@@ -22,7 +22,7 @@ export default function CTA() {
             Ready to Transform Your Digital Presence?
           </h2>
           <p className="text-xl text-muted-foreground mb-8">
-            Let's collaborate to create something extraordinary. Your vision, our expertise.
+            Let&apos;s collaborate to create something extraordinary. Your vision, our expertise.
           </p>
           <motion.div
             whileHover={{ scale: 1.05 }}

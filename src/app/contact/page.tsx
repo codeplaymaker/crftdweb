@@ -19,7 +19,7 @@ export default function ContactPage() {
           >
             <h1 className="text-4xl md:text-6xl font-bold mb-6 text-center">Get in Touch</h1>
             <p className="text-xl text-muted-foreground mb-12 text-center">
-              Let's discuss how we can help transform your digital presence
+              Let&apos;s discuss how we can help transform your digital presence
             </p>
 
             <form 

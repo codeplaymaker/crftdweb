@@ -22,10 +22,10 @@ export default function AboutPage() {
               <div>
                 <h2 className="text-2xl font-semibold mb-4">Our Story</h2>
                 <p className="text-muted-foreground mb-6">
-                  CrftdWeb was founded with a simple yet powerful vision: to create digital experiences that combine the elegance of Apple\'s design philosophy with cutting-edge web technologies. Our journey began with a passion for craftsmanship in the digital realm.
+                  CrftdWeb was founded with a simple yet powerful vision: to create digital experiences that combine the elegance of Apple&apos;s design philosophy with cutting-edge web technologies. Our journey began with a passion for craftsmanship in the digital realm.
                 </p>
                 <p className="text-muted-foreground">
-                  Today, we continue to push the boundaries of what\'s possible on the web, delivering solutions that not only look beautiful but perform exceptionally well.
+                  Today, we continue to push the boundaries of what&apos;s possible on the web, delivering solutions that not only look beautiful but perform exceptionally well.
                 </p>
               </div>
               <div>
