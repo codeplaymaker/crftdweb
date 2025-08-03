@@ -1,13 +1,5 @@
 'use client';
 
-import { Canvas } from '@react-three/fiber';
-import { Float, OrbitControls } from '@react-three/drei';
-import { useRef } from 'react';
-import { useFrame } from '@react-three/fiber';
-import * as THREE from 'three';
-
-'use client';
-
 import { Canvas, useThree } from '@react-three/fiber';
 import { Float, OrbitControls } from '@react-three/drei';
 import { useRef, useState, useEffect } from 'react';
@@ -20,7 +12,7 @@ function FloatingGeometry() {
   const mesh3Ref = useRef<THREE.Mesh>(null);
   const geometryRef = useRef<THREE.BufferGeometry>(null);
   
-  const { viewport, camera } = useThree();
+  const { viewport } = useThree();
   const [mouse, setMouse] = useState(new THREE.Vector2());
   
   // Original positions for the meshes
