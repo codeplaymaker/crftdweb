@@ -2,14 +2,26 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
+import dynamic from "next/dynamic";
+
+// Dynamically import 3D component with better error handling
+const Hero3D = dynamic(() => import('./Hero3D'), { 
+  ssr: false,
+  loading: () => null
+});
 
 export default function Hero() {
   return (
     <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-background">
+      {/* 3D Background */}
+      <div className="absolute inset-0 w-full h-full opacity-20 pointer-events-none">
+        <Hero3D />
+      </div>
+      
       {/* Background Elements */}
       <div className="absolute inset-0 w-full h-full">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-secondary rounded-full blur-3xl" />
-        <div className="absolute bottom-20 right-10 w-72 h-72 bg-accent rounded-full blur-3xl" />
+        <div className="absolute top-20 left-10 w-72 h-72 bg-secondary rounded-full blur-3xl opacity-40" />
+        <div className="absolute bottom-20 right-10 w-72 h-72 bg-accent rounded-full blur-3xl opacity-40" />
       </div>
 
       {/* Content */}

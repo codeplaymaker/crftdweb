@@ -19,6 +19,15 @@ const classicismo = localFont({
 export const metadata: Metadata = {
   title: "CrftdWeb",
   description: "Premium Web Development Agency",
+  icons: {
+    icon: [
+      { url: '/favicon_io-6/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/favicon_io-6/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/favicon_io-6/favicon.ico', sizes: 'any' }
+    ],
+    shortcut: '/favicon_io-6/favicon.ico',
+    apple: '/favicon_io-6/apple-touch-icon.png',
+  },
 };
 
 export default function RootLayout({

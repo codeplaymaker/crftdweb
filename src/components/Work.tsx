@@ -6,6 +6,19 @@ import Link from "next/link";
 
 const projects = [
   {
+    title: "Microbiome Design",
+    description: "Designing a future with microbes. We combine scientific expertise and creative thinking to unlock the potential of the microbiome for people, products, and the planet.",
+    image: "/microbiome-design-pic.png",
+    category: "Biotech & Design",
+    href: "https://microbiome-design.vercel.app",
+    features: [
+      "Scientific Expertise",
+      "Creative Design",
+      "Microbiome Solutions",
+      "Sustainable Innovation"
+    ]
+  },
+  {
     title: "The Life Lab HQ",
     description: "Your personal laboratory for balanced living and growth. An AI-powered platform for life transformation.",
     image: "/life-lab.jpg",
@@ -66,7 +79,7 @@ export default function Work() {
         >
           <h2 className="text-3xl md:text-4xl font-bold mb-4">Featured Projects</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Explore our portfolio of innovative financial technology solutions that help investors make smarter decisions.
+            Explore our portfolio of innovative digital solutions across biotech, wellness, and fintech industries that transform ideas into exceptional user experiences.
           </p>
         </motion.div>
 
@@ -81,16 +94,18 @@ export default function Work() {
             <motion.div
               key={index}
               variants={itemVariants}
-              className="group relative overflow-hidden rounded-xl bg-accent h-[500px]"
+              className="group relative overflow-hidden rounded-xl bg-accent h-[600px]"
             >
               <Link href={project.href} className="block h-full relative">
                 <Image
                   src={project.image}
                   alt={project.title}
                   fill
-                  sizes="(max-width: 600px) 100vw, (max-width: 800px) 50vw, 33vw"
-                  className="object-contain w-full h-full transition-transform duration-300 group-hover:scale-105"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
+                  className="object-cover object-center w-full h-full transition-transform duration-300 group-hover:scale-105"
                   priority={index === 0}
+                  quality={95}
+                  style={{ objectPosition: 'center center' }}
                 />
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity z-10" />
                 <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-20">
