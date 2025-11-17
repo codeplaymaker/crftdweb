@@ -6,11 +6,11 @@ import Link from "next/link";
 
 export default function CTA() {
   return (
-    <section className="py-24 relative overflow-hidden bg-background">
+    <section className="py-16 sm:py-20 md:py-24 relative overflow-hidden bg-background">
       {/* Background Gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-secondary via-accent to-background" />
       
-      <div className="container relative">
+      <div className="container relative px-4 sm:px-6 md:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -18,10 +18,10 @@ export default function CTA() {
           transition={{ duration: 0.8 }}
           className="max-w-3xl mx-auto text-center"
         >
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-black">
+          <h2 className="text-xl sm:text-2xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 md:mb-6 text-black leading-snug">
             Ready to Transform Your Digital Presence?
           </h2>
-          <p className="text-xl text-muted-foreground mb-8">
+          <p className="text-sm sm:text-base md:text-lg lg:text-xl text-muted-foreground mb-6 sm:mb-8 px-3 sm:px-0">
             Let&apos;s collaborate to create something extraordinary. Your vision, our expertise.
           </p>
           <motion.div
@@ -40,8 +40,8 @@ export default function CTA() {
       </div>
 
       {/* Decorative Elements */}
-      <div className="absolute top-1/2 left-0 w-72 h-72 bg-secondary rounded-full blur-3xl -translate-y-1/2" />
-      <div className="absolute top-1/2 right-0 w-72 h-72 bg-accent rounded-full blur-3xl -translate-y-1/2" />
+      <div className="hidden md:block absolute top-1/2 left-0 w-72 h-72 bg-secondary rounded-full blur-3xl -translate-y-1/2" />
+      <div className="hidden md:block absolute top-1/2 right-0 w-72 h-72 bg-accent rounded-full blur-3xl -translate-y-1/2" />
     </section>
   );
 } 
