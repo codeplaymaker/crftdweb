@@ -1,7 +1,6 @@
 'use client';
 
 import { Download, Instagram, Video } from 'lucide-react';
-import Image from 'next/image';
 
 export default function SocialMediaDownloads() {
   const instagramPosts = [

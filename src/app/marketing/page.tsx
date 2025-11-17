@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react';
 import Link from 'next/link';
-import { Download, Search, Filter, Image as ImageIcon } from 'lucide-react';
+import { Download, Search, ImageIcon } from 'lucide-react';
 import html2canvas from 'html2canvas';
 
 type AssetCategory = 'All Assets' | 'Posters' | 'Socials' | 'TikToks' | 'Banners';
@@ -459,9 +459,9 @@ export default function MarketingPage() {
                         <>
                           <div className="text-4xl font-logo mb-3 tracking-tight">CW</div>
                           <div className="text-lg font-black mb-3 text-center leading-tight max-w-[200px] px-2">
-                            "Design is how it works."
+                            &ldquo;Design is how it works.&rdquo;
                           </div>
-                          <p className="text-sm mb-3 opacity-70">— Steve Jobs</p>
+                          <p className="text-sm mb-3 opacity-70">&mdash; Steve Jobs</p>
                           <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-3 max-w-[180px]">
                             <p className="text-[10px] text-center leading-relaxed">
                               We craft experiences that combine beauty with functionality
@@ -491,7 +491,7 @@ export default function MarketingPage() {
                           <div className="text-3xl mb-3">⭐⭐⭐⭐⭐</div>
                           <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-4 max-w-[200px] mb-3">
                             <p className="text-xs font-bold text-center mb-2 leading-tight">
-                              "CrftdWeb delivered a website that perfectly captures our brand."
+                              &ldquo;CrftdWeb delivered a website that perfectly captures our brand.&rdquo;
                             </p>
                             <div className="text-center">
                               <p className="text-[10px] font-semibold">Jessica Martinez</p>
@@ -624,7 +624,7 @@ export default function MarketingPage() {
                           <h1 className="text-2xl font-black mb-4">CLIENT SUCCESS</h1>
                           <div className="bg-white/10 border border-white/20 backdrop-blur-sm rounded-xl p-4 mb-4 max-w-[200px]">
                             <p className="text-xs font-bold text-center mb-3 leading-tight">
-                              "Beautiful and performs flawlessly"
+                              &ldquo;Beautiful and performs flawlessly&rdquo;
                             </p>
                             <div className="text-center mb-3">
                               <p className="text-[11px] font-semibold mb-0.5">Michael Chen</p>
@@ -647,7 +647,7 @@ export default function MarketingPage() {
                       {asset.id === 'tiktok-cta' && (
                         <>
                           <div className="text-5xl font-logo mb-3 tracking-tight">CW</div>
-                          <h1 className="text-xl font-black mb-2 text-center leading-tight px-4">LET'S BUILD SOMETHING AMAZING</h1>
+                          <h1 className="text-xl font-black mb-2 text-center leading-tight px-4">LET&apos;S BUILD SOMETHING AMAZING</h1>
                           <p className="text-sm text-center mb-4 font-semibold">Your Vision. Our Expertise.</p>
                           <div className="bg-white/10 border border-white/20 backdrop-blur-sm rounded-xl p-4 mb-4 w-full max-w-[180px]">
                             <div className="space-y-2 text-xs font-semibold">
@@ -707,7 +707,7 @@ export default function MarketingPage() {
                               </div>
                               <div className="flex items-start gap-2">
                                 <span className="text-white">✓</span>
-                                <span className="font-semibold">Responsive design isn't optional</span>
+                                <span className="font-semibold">Responsive design isn&apos;t optional</span>
                               </div>
                             </div>
                           </div>
