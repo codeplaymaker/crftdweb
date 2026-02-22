@@ -1,6 +1,8 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import Link from 'next/link';
+import { ArrowRight } from 'lucide-react';
 
 export default function AboutPage() {
   return (
@@ -60,6 +62,43 @@ export default function AboutPage() {
                   </motion.div>
                 ))}
               </div>
+            </div>
+
+            {/* Ecosystem */}
+            <div className="mt-16 p-8 rounded-xl bg-accent text-center">
+              <span className="text-xs font-semibold tracking-[0.2em] uppercase text-muted-foreground mb-4 block">
+                THE CRFTDWEB ECOSYSTEM
+              </span>
+              <h3 className="text-xl font-bold tracking-tight mb-3">We practice what we preach</h3>
+              <p className="text-muted-foreground text-sm mb-6 max-w-xl mx-auto leading-relaxed">
+                We built CrftdWeb the agency. Then we codified our process into the Playbook. Then we productized it into Engine. Three products, one methodology.
+              </p>
+              <div className="flex flex-wrap gap-3 justify-center">
+                <Link href="/services" className="px-5 py-2.5 border border-black/15 rounded-full text-sm font-medium hover:bg-black/5 transition-colors">
+                  Our Services
+                </Link>
+                <Link href="/playbook" className="px-5 py-2.5 border border-black/15 rounded-full text-sm font-medium hover:bg-black/5 transition-colors">
+                  The Playbook
+                </Link>
+                <Link href="/engine" className="px-5 py-2.5 border border-black/15 rounded-full text-sm font-medium hover:bg-black/5 transition-colors">
+                  Engine
+                </Link>
+              </div>
+            </div>
+
+            {/* CTA */}
+            <div className="mt-16 text-center">
+              <h3 className="text-2xl md:text-3xl font-bold tracking-tight mb-4">Want to work together?</h3>
+              <p className="text-muted-foreground mb-8 max-w-lg mx-auto leading-relaxed">
+                We&apos;d love to hear about your project.
+              </p>
+              <Link
+                href="/contact"
+                className="px-8 py-3.5 bg-black text-white rounded-full text-sm font-medium inline-flex items-center gap-2 group hover:bg-gray-900 transition-colors"
+              >
+                Get in Touch
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </Link>
             </div>
           </motion.div>
         </div>

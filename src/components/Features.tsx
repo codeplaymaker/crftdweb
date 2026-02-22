@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from "framer-motion";
+import Link from "next/link";
 import { Code2, Palette, Rocket, Smartphone } from "lucide-react";
 
 const features = [
@@ -79,13 +80,17 @@ export default function Features() {
             <motion.div
               key={index}
               variants={itemVariants}
-              className="p-6 rounded-xl bg-background border border-black/10 hover:border-black/20 transition-colors group shadow-sm"
             >
-              <div className="w-12 h-12 rounded-xl bg-black/5 flex items-center justify-center mb-5 text-black group-hover:bg-black group-hover:text-white transition-colors">
-                {feature.icon}
-              </div>
-              <h3 className="text-lg font-semibold mb-2 text-black tracking-tight">{feature.title}</h3>
-              <p className="text-muted-foreground text-sm leading-relaxed">{feature.description}</p>
+              <Link
+                href="/services"
+                className="block p-6 rounded-xl bg-background border border-black/10 hover:border-black/20 transition-colors group shadow-sm h-full"
+              >
+                <div className="w-12 h-12 rounded-xl bg-black/5 flex items-center justify-center mb-5 text-black group-hover:bg-black group-hover:text-white transition-colors">
+                  {feature.icon}
+                </div>
+                <h3 className="text-lg font-semibold mb-2 text-black tracking-tight">{feature.title}</h3>
+                <p className="text-muted-foreground text-sm leading-relaxed">{feature.description}</p>
+              </Link>
             </motion.div>
           ))}
         </motion.div>

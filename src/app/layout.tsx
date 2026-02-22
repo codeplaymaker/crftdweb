@@ -4,6 +4,7 @@ import localFont from 'next/font/local';
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -49,6 +50,7 @@ export default function RootLayout({
         <main className="pt-16">
           {children}
         </main>
+        <Footer />
       </body>
     </html>
   );

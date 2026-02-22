@@ -106,7 +106,14 @@ export default function ContactPage() {
 
               {message && (
                 <div className={`p-4 rounded-lg ${message.type === 'success' ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'}`}>
-                  {message.text}
+                  <p>{message.text}</p>
+                  {message.type === 'success' && (
+                    <div className="flex gap-3 mt-3">
+                      <a href="/work" className="text-sm underline underline-offset-2 hover:opacity-70 transition-opacity">Browse our work</a>
+                      <a href="/playbook" className="text-sm underline underline-offset-2 hover:opacity-70 transition-opacity">Explore the Playbook</a>
+                      <a href="/engine" className="text-sm underline underline-offset-2 hover:opacity-70 transition-opacity">Try Engine</a>
+                    </div>
+                  )}
                 </div>
               )}
 

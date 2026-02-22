@@ -4,6 +4,7 @@ import Hero from "@/components/Hero";
 import Features from "@/components/Features";
 import Work from "@/components/Work";
 import CTA from "@/components/CTA";
+import Paths from "@/components/Paths";
 import LoadingScreen from "@/components/LoadingScreen";
 
 export default function Home() {
@@ -13,6 +14,7 @@ export default function Home() {
       <Hero />
       <Features />
       <Work />
+      <Paths />
       <CTA />
     </main>
   );

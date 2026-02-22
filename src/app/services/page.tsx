@@ -1,6 +1,8 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import Link from 'next/link';
+import { ArrowRight } from 'lucide-react';
 import { ServiceMetaphor } from '@/components/playbook/visuals';
 
 export default function ServicesPage() {
@@ -38,6 +40,36 @@ export default function ServicesPage() {
               </motion.div>
             ))}
           </div>
+
+          {/* CTA */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mt-20 pt-16 border-t"
+          >
+            <h3 className="text-2xl md:text-3xl font-bold tracking-tight mb-4">
+              Ready to get started?
+            </h3>
+            <p className="text-muted-foreground mb-8 max-w-lg mx-auto leading-relaxed">
+              Tell us about your project and we&apos;ll craft the perfect solution.
+            </p>
+            <div className="flex gap-4 justify-center">
+              <Link
+                href="/contact"
+                className="px-8 py-3.5 bg-black text-white rounded-full text-sm font-medium inline-flex items-center gap-2 group hover:bg-gray-900 transition-colors"
+              >
+                Start a Project
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </Link>
+              <Link
+                href="/work"
+                className="px-8 py-3.5 border border-black/15 rounded-full text-sm font-medium hover:bg-black/5 transition-colors"
+              >
+                See Our Work
+              </Link>
+            </div>
+          </motion.div>
         </div>
       </section>
     </main>
@@ -74,6 +106,5 @@ const services = [
     title: "Digital Strategy",
     description: "Strategic planning and consulting for digital transformation initiatives.",
     metaphor: 'strategy' as const,
-  }
-  }
+  },
 ];

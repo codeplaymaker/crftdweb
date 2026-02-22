@@ -100,7 +100,7 @@ export default function Work() {
               variants={itemVariants}
               className="group relative overflow-hidden rounded-xl bg-accent h-[600px]"
             >
-              <Link href={project.href} className="block h-full relative">
+              <Link href={project.href} target="_blank" rel="noopener noreferrer" className="block h-full relative">
                 <Image
                   src={project.image}
                   alt={project.title}
