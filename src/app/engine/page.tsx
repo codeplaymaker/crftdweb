@@ -1,179 +1,249 @@
 'use client';
 
-import { motion, useInView } from 'framer-motion';
-import { useRef, useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { useState } from 'react';
 import Link from 'next/link';
 
-// Animated counter component
-function AnimatedCounter({ end, suffix = '', duration = 2 }: { end: number; suffix?: string; duration?: number }) {
-  const [count, setCount] = useState(0);
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true });
+/* ───────────────────────────────────────────────── DATA ─── */
 
-  useEffect(() => {
-    if (isInView) {
-      let start = 0;
-      const increment = end / (duration * 60);
-      const timer = setInterval(() => {
-        start += increment;
-        if (start >= end) {
-          setCount(end);
-          clearInterval(timer);
-        } else {
-          setCount(Math.floor(start));
-        }
-      }, 1000 / 60);
-      return () => clearInterval(timer);
-    }
-  }, [isInView, end, duration]);
+const features = [
+  {
+    title: 'Offer Builder',
+    description: 'Design, price, and package high-ticket offers in a single session. Positioning, delivery model, and pricing — done.',
+    category: 'BUILD',
+  },
+  {
+    title: 'AI Sales Agents',
+    description: 'Automated reps that qualify leads, handle objections, and book calls around the clock.',
+    category: 'SELL',
+  },
+  {
+    title: 'Funnel Automation',
+    description: 'From first click to closed deal — nurturing, follow-ups, and onboarding run themselves.',
+    category: 'AUTOMATE',
+  },
+  {
+    title: 'Content Generation',
+    description: 'VSLs, ad creatives, landing pages, email sequences — generated and deployed in minutes.',
+    category: 'CREATE',
+  },
+  {
+    title: 'Analytics Engine',
+    description: 'Real-time dashboards that show exactly what\'s working and where to double down.',
+    category: 'MEASURE',
+  },
+  {
+    title: 'CRM Integration',
+    description: 'Deep GoHighLevel sync. Contacts, pipelines, and automations stay in perfect harmony.',
+    category: 'CONNECT',
+  },
+];
 
-  return <span ref={ref}>{count.toLocaleString()}{suffix}</span>;
-}
+const agents = [
+  { name: 'Offer Architect', description: 'Design compelling offers that convert', category: 'SALES' },
+  { name: 'Niche Architect', description: 'Identify and validate profitable niches', category: 'RESEARCH' },
+  { name: 'VSL Builder', description: 'Create high-converting Video Sales Letters', category: 'CONTENT' },
+  { name: 'Ads Architect', description: 'High-converting ad copy and campaigns', category: 'MARKETING' },
+  { name: 'Category Architect', description: 'Build market categories and positioning', category: 'STRATEGY' },
+  { name: 'Sales Asset Builder', description: 'Transform transcripts into marketing assets', category: 'SALES' },
+  { name: 'Landing Page Writer', description: 'Direct response copy for high-converting pages', category: 'CONTENT' },
+  { name: 'Research Agent', description: 'Comprehensive business research and retrieval', category: 'RESEARCH' },
+];
 
-// Hero Section
+const faqs = [
+  {
+    question: 'What if I don\'t have a high-ticket offer yet?',
+    answer: 'That\'s exactly what Engine is designed for. The Offer Architect will help you design, price, and package a high-ticket offer from scratch. You\'ll have everything you need to start selling.',
+  },
+  {
+    question: 'How fast can I see results?',
+    answer: 'Most users launch their first offer within 24-48 hours and see their first sale within 30-60 days. The AI handles the heavy lifting so you can focus on closing.',
+  },
+  {
+    question: 'Do I need a big audience?',
+    answer: 'No. High-ticket is quality over quantity. You only need 2-5 clients per month at $3K-$10K to hit significant revenue. Engine helps you attract the right buyers.',
+  },
+  {
+    question: 'Can I white-label this for my clients?',
+    answer: 'Yes. The whitelabel program lets you resell Engine under your own brand — custom domains, logos, and the complete platform included.',
+  },
+];
+
+const categoryColors: Record<string, string> = {
+  SALES: 'text-green-400/70',
+  RESEARCH: 'text-blue-400/70',
+  CONTENT: 'text-orange-400/70',
+  MARKETING: 'text-pink-400/70',
+  STRATEGY: 'text-purple-400/70',
+};
+
+/* ───────────────────────────────────────────────── HERO ─── */
+
 function HeroSection() {
   return (
     <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
-      {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-b from-purple-900/20 via-black to-black" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-600/20 via-transparent to-transparent" />
-      
-      {/* Grid pattern */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:64px_64px]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-600/15 via-transparent to-transparent" />
 
       <div className="container mx-auto px-4 relative z-10">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="text-center max-w-5xl mx-auto"
+          transition={{ duration: 1 }}
+          className="text-center max-w-4xl mx-auto"
         >
-          {/* Badge */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2 }}
-            className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-4 py-2 mb-8"
+          <motion.span
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            className="text-xs font-semibold tracking-[0.25em] uppercase text-purple-400/80 mb-8 block"
           >
-            <span className="text-purple-400 text-sm">NEW:</span>
-            <span className="text-white/70 text-sm">Meet The Truth Engine — AI-powered market research</span>
-          </motion.div>
+            THE CRFTD ENGINE
+          </motion.span>
 
-          {/* Headline */}
-          <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
-            The AI System That Builds Your High-Ticket Offer
-            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-violet-400">
-              In 60 Minutes
+          <h1 className="text-4xl sm:text-6xl md:text-7xl font-bold text-white mb-8 tracking-tight leading-[1.05]">
+            Build, Launch & Scale
+            <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-violet-400">
+              High-Ticket Offers
             </span>
           </h1>
 
-          {/* Subheadline */}
-          <p className="text-xl text-white/60 mb-10 max-w-2xl mx-auto">
-            Book a demo call and we'll show you how to launch your high-ticket offer in 1 hour. Yes, 1 hour. AI-powered systems for coaches, consultants, and agency owners.
+          <p className="text-lg md:text-xl text-white/50 mb-12 max-w-2xl mx-auto leading-relaxed">
+            One AI system for coaches, consultants, and agency owners. 
+            From offer creation to automated sales — everything in one place.
           </p>
 
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link
-              href="/engine/truth"
-              className="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-violet-600 text-white px-8 py-4 rounded-full font-semibold hover:opacity-90 transition-opacity text-center"
-            >
-              Access Truth
-            </Link>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
             <Link
               href="/engine/demo"
-              className="w-full sm:w-auto bg-white/10 border border-white/20 text-white px-8 py-4 rounded-full font-semibold hover:bg-white/20 transition-colors text-center"
+              className="w-full sm:w-auto bg-white text-black px-8 py-4 rounded-full font-semibold hover:bg-white/90 transition-colors text-center text-sm"
             >
-              Book A Demo
+              Book a Demo
+            </Link>
+            <Link
+              href="/engine/truth"
+              className="w-full sm:w-auto border border-white/15 text-white/70 px-8 py-4 rounded-full font-medium hover:bg-white/5 transition-colors text-center text-sm"
+            >
+              Try Truth Engine
             </Link>
           </div>
+
+          {/* Minimal proof bar */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.8 }}
+            className="flex items-center justify-center gap-8 text-white/30 text-xs tracking-wider uppercase"
+          >
+            <span>AI-Powered</span>
+            <span className="w-1 h-1 bg-white/20 rounded-full" />
+            <span>8 Specialized Agents</span>
+            <span className="w-1 h-1 bg-white/20 rounded-full" />
+            <span>Whitelabel Ready</span>
+          </motion.div>
         </motion.div>
       </div>
+
+      {/* Scroll indicator */}
+      <motion.div
+        className="absolute bottom-10 left-1/2 -translate-x-1/2"
+        animate={{ y: [0, 6, 0] }}
+        transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
+      >
+        <div className="w-5 h-8 border border-white/15 rounded-full flex justify-center">
+          <motion.div
+            className="w-0.5 h-1.5 bg-white/30 rounded-full mt-1.5"
+            animate={{ opacity: [0.2, 0.8, 0.2] }}
+            transition={{ duration: 2.5, repeat: Infinity }}
+          />
+        </div>
+      </motion.div>
     </section>
   );
 }
 
-// Problem/Solution Section
-function ProblemSolutionSection() {
+/* ────────────────────────────────── PROBLEM / SOLUTION ─── */
+
+function ProblemSection() {
   return (
-    <section className="py-24 relative" id="why">
+    <section className="py-32 relative" id="why">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="text-center mb-20"
         >
-          <span className="text-purple-400 text-sm font-medium tracking-wider uppercase mb-4 block">
-            WHY HIGH-TICKET
+          <span className="text-[10px] font-semibold tracking-[0.25em] uppercase text-purple-400/80 block mb-6">
+            THE PROBLEM
           </span>
-          <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
+          <h2 className="text-3xl md:text-5xl font-bold text-white mb-5 tracking-tight">
             Stop playing the low-ticket game
           </h2>
-          <p className="text-white/60 text-lg max-w-2xl mx-auto">
-            You don't need more leads. You need better offers and a system that sells them.
+          <p className="text-white/40 text-lg max-w-2xl mx-auto leading-relaxed">
+            You don&apos;t need more leads. You need better offers and a system that sells them.
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-          {/* The Old Game */}
+        <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+          {/* Before */}
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="bg-white/5 border border-white/10 rounded-2xl p-8"
+            className="border border-white/10 rounded-2xl p-8"
           >
-            <span className="text-red-400 text-sm font-medium tracking-wider uppercase mb-4 block">
-              THE OLD GAME
+            <span className="text-[10px] font-semibold tracking-[0.25em] uppercase text-red-400/80 block mb-6">
+              THE OLD WAY
             </span>
-            <h3 className="text-2xl font-bold text-white mb-6">The Low-Ticket Trap</h3>
-            <p className="text-white/50 mb-6">
-              Coaches and consultants stuck selling $500 offers, needing 20+ clients just to hit $10K. Chasing leads who ghost, competing on price, and burning out trying to scale something that was never designed to scale.
+            <h3 className="text-xl font-bold text-white mb-3 tracking-tight">The Low-Ticket Trap</h3>
+            <p className="text-white/40 text-sm leading-relaxed mb-6">
+              Selling $500 offers, needing 20+ clients to hit $10K. Chasing leads who ghost, competing on price.
             </p>
-            <ul className="space-y-3">
+            <div className="space-y-3">
               {[
-                'Selling $500 offers, need 20+ clients/month',
-                'Chasing leads who ghost after seeing price',
+                'Need 20+ clients per month',
+                'Leads ghost after seeing price',
                 'Competing on price with everyone',
-                'Trading hours for dollars, no leverage',
-                'Burning out trying to scale manually',
+                'No leverage, no automation',
               ].map((item, i) => (
-                <li key={i} className="flex items-start gap-3 text-white/60">
-                  <span className="text-red-400 mt-1">✕</span>
+                <div key={i} className="flex items-center gap-3 text-white/50 text-sm">
+                  <div className="w-1 h-1 bg-red-400/60 rounded-full flex-shrink-0" />
                   {item}
-                </li>
+                </div>
               ))}
-            </ul>
+            </div>
           </motion.div>
 
-          {/* The High-Ticket System */}
+          {/* After */}
           <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="bg-gradient-to-br from-purple-900/30 to-violet-900/30 border border-purple-500/30 rounded-2xl p-8"
+            transition={{ delay: 0.1 }}
+            className="border border-purple-500/20 bg-purple-500/[0.03] rounded-2xl p-8"
           >
-            <span className="text-purple-400 text-sm font-medium tracking-wider uppercase mb-4 block">
-              THE HIGH-TICKET SYSTEM
+            <span className="text-[10px] font-semibold tracking-[0.25em] uppercase text-purple-400/80 block mb-6">
+              THE ENGINE WAY
             </span>
-            <h3 className="text-2xl font-bold text-white mb-6">The Only Way to Automate High-Ticket</h3>
-            <p className="text-white/50 mb-6">
-              One AI system that handles everything — content, sales agents, data analysis, ads, and CRM. Launch and scale $3K-$10K offers in 60 minutes. Then whitelabel it and sell to your clients.
+            <h3 className="text-xl font-bold text-white mb-3 tracking-tight">High-Ticket, Automated</h3>
+            <p className="text-white/40 text-sm leading-relaxed mb-6">
+              One AI system that handles content, sales, and delivery. Launch $3K-$10K offers and let the system sell.
             </p>
-            <ul className="space-y-3">
+            <div className="space-y-3">
               {[
-                'Sell $3K-$10K offers, need only 2-5 clients',
-                'Attract buyers ready to invest in premium',
-                'Positioned as THE premium choice',
-                'Built-in leverage and full automation',
-                '60-minute offer launch system',
+                'Need only 2-5 clients per month',
+                'Attract buyers ready to invest',
+                'Positioned as the premium choice',
+                'Full automation from day one',
               ].map((item, i) => (
-                <li key={i} className="flex items-start gap-3 text-white/80">
-                  <span className="text-purple-400 mt-1">✓</span>
+                <div key={i} className="flex items-center gap-3 text-white/50 text-sm">
+                  <div className="w-1.5 h-1.5 bg-purple-400/60 rounded-full flex-shrink-0" />
                   {item}
-                </li>
+                </div>
               ))}
-            </ul>
+            </div>
           </motion.div>
         </div>
       </div>
@@ -181,93 +251,61 @@ function ProblemSolutionSection() {
   );
 }
 
-// Features Section
-function FeaturesSection() {
-  const features = [
-    {
-      title: 'High-Ticket Offer Builder',
-      description: 'Build and package $3K-$10K offers in 60 minutes. Pricing, positioning, and delivery — all done.',
-      icon: '💰',
-    },
-    {
-      title: 'AI Sales Agents',
-      description: 'Automated sales reps that qualify leads, handle objections, and book calls 24/7.',
-      icon: '🤖',
-    },
-    {
-      title: 'Full Funnel Automation',
-      description: 'From first click to closed deal — AI handles nurturing, follow-ups, and client onboarding.',
-      icon: '⚡',
-    },
-    {
-      title: 'Data & Analytics Engine',
-      description: 'Real-time dashboards that tell you exactly what\'s working and where to double down.',
-      icon: '📊',
-    },
-    {
-      title: 'Content & Ad Generation',
-      description: 'VSLs, ad creatives, landing pages, email sequences — all generated and deployed automatically.',
-      icon: '✨',
-    },
-    {
-      title: 'Native CRM Integration',
-      description: 'Deep GoHighLevel sync. Contacts, pipelines, and automations stay in perfect harmony.',
-      icon: '🔗',
-    },
-  ];
+/* ───────────────────────────────────────── FEATURES ─── */
 
+function FeaturesSection() {
   return (
-    <section className="py-24 relative" id="features">
+    <section className="py-32 relative" id="features">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="text-center mb-20"
         >
-          <span className="text-purple-400 text-sm font-medium tracking-wider uppercase mb-4 block">
+          <span className="text-[10px] font-semibold tracking-[0.25em] uppercase text-purple-400/80 block mb-6">
             THE COMPLETE SYSTEM
           </span>
-          <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
-            Everything to Launch & Scale High-Ticket
+          <h2 className="text-3xl md:text-5xl font-bold text-white mb-5 tracking-tight">
+            Everything to Launch & Scale
           </h2>
-          <p className="text-white/60 text-lg max-w-2xl mx-auto">
-            Content, sales agents, ads, analytics — one AI system that handles it all.
+          <p className="text-white/40 text-lg max-w-2xl mx-auto leading-relaxed">
+            Content, sales, ads, analytics — one AI system that handles it all.
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto">
           {features.map((feature, index) => (
             <motion.div
               key={feature.title}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 15 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
-              className="group bg-white/5 border border-white/10 rounded-2xl p-6 hover:border-purple-500/50 hover:bg-white/[0.07] transition-all duration-300"
+              transition={{ delay: index * 0.06 }}
+              className="group border border-white/[0.06] hover:border-purple-500/30 rounded-2xl p-6 transition-all"
             >
-              <div className="text-4xl mb-4">{feature.icon}</div>
-              <h3 className="text-xl font-semibold text-white mb-3">{feature.title}</h3>
-              <p className="text-white/50">{feature.description}</p>
+              <span className="text-[10px] font-semibold tracking-[0.2em] text-purple-400/50 block mb-4">
+                {feature.category}
+              </span>
+              <h3 className="text-lg font-semibold text-white mb-2 tracking-tight">{feature.title}</h3>
+              <p className="text-white/40 text-sm leading-relaxed">{feature.description}</p>
             </motion.div>
           ))}
         </div>
 
-        {/* AI Platform Logos */}
+        {/* Platform bar */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="mt-20 text-center"
+          className="mt-16 text-center"
         >
-          <p className="text-white/40 text-sm uppercase tracking-wider mb-8">
-            POWERED BY THE BEST AI PLATFORMS
+          <p className="text-white/20 text-xs uppercase tracking-[0.2em] mb-6">
+            Powered by
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-8 opacity-60">
-            {['Claude', 'OpenAI', 'Gemini', 'ElevenLabs'].map((platform) => (
-              <div key={platform} className="text-white/50 font-semibold text-lg">
-                {platform}
-              </div>
+          <div className="flex flex-wrap items-center justify-center gap-10 text-white/25 text-sm font-medium">
+            {['Claude', 'OpenAI', 'Gemini', 'ElevenLabs'].map((name) => (
+              <span key={name}>{name}</span>
             ))}
           </div>
         </motion.div>
@@ -276,266 +314,227 @@ function FeaturesSection() {
   );
 }
 
-// AI Agents Section
+/* ────────────────────────────────────── AI AGENTS ─── */
+
 function AgentsSection() {
-  const agents = [
-    { name: 'Offer Architect', description: 'Design and package compelling offers that convert', category: 'SALES' },
-    { name: 'Niche Architect', description: 'Identify and validate profitable niches with deep research', category: 'RESEARCH' },
-    { name: 'VSL Builder OS', description: 'Create high-converting Video Sales Letters', category: 'CONTENT' },
-    { name: 'Ads Architect', description: 'Create high-converting ad copy and campaigns', category: 'MARKETING' },
-    { name: 'Category Architect', description: 'Build market categories and positioning', category: 'STRATEGY' },
-    { name: 'Sales Asset Architect', description: 'Transform transcripts into marketing assets', category: 'SALES' },
-    { name: 'Landing Page Copywriter', description: 'Expert direct response copy for high-converting pages', category: 'CONTENT' },
-    { name: 'Research Agent', description: 'Comprehensive business research using advanced retrieval', category: 'RESEARCH' },
-  ];
-
-  const categoryColors: Record<string, string> = {
-    SALES: 'bg-green-500/20 text-green-400',
-    RESEARCH: 'bg-blue-500/20 text-blue-400',
-    CONTENT: 'bg-orange-500/20 text-orange-400',
-    MARKETING: 'bg-pink-500/20 text-pink-400',
-    STRATEGY: 'bg-purple-500/20 text-purple-400',
-  };
-
   return (
-    <section className="py-24 relative" id="agents">
+    <section className="py-32 relative" id="agents">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="text-center mb-20"
         >
-          <span className="text-purple-400 text-sm font-medium tracking-wider uppercase mb-4 block">
-            SPECIALIZED AI AGENTS
+          <span className="text-[10px] font-semibold tracking-[0.25em] uppercase text-purple-400/80 block mb-6">
+            SPECIALIZED AI
           </span>
-          <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
-            Expert AI for every business function
+          <h2 className="text-3xl md:text-5xl font-bold text-white mb-5 tracking-tight">
+            8 Expert Agents
           </h2>
-          <p className="text-white/60 text-lg max-w-2xl mx-auto">
-            Purpose-built agents that understand your industry and deliver results.
-          </p>
-        </motion.div>
-
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-6xl mx-auto">
-          {agents.map((agent, index) => (
-            <motion.div
-              key={agent.name}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.05 }}
-              className="bg-white/5 border border-white/10 rounded-xl p-5 hover:border-white/20 transition-colors"
-            >
-              <span className={`inline-block px-2 py-1 rounded text-xs font-medium mb-3 ${categoryColors[agent.category]}`}>
-                {agent.category}
-              </span>
-              <h3 className="text-white font-semibold mb-2">{agent.name}</h3>
-              <p className="text-white/50 text-sm">{agent.description}</p>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-// Market Intelligence Section
-function MarketIntelligenceSection() {
-  return (
-    <section className="py-24 relative overflow-hidden">
-      <div className="container mx-auto px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
-        >
-          <span className="text-purple-400 text-sm font-medium tracking-wider uppercase mb-4 block">
-            MARKET INTELLIGENCE
-          </span>
-          <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
-            Stay ahead of every trend
-          </h2>
-          <p className="text-white/60 text-lg max-w-2xl mx-auto">
-            Engine continuously monitors market trends, competitor activity, and emerging opportunities so you never miss a beat.
-          </p>
-        </motion.div>
-
-        <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto mb-16">
-          {[
-            { title: 'Trend Detection', description: 'Spot emerging niches before they peak' },
-            { title: 'Competitor Analysis', description: 'Deep research on what\'s working for others' },
-            { title: 'Opportunity Scoring', description: 'AI-ranked opportunities by potential ROI' },
-          ].map((item, index) => (
-            <motion.div
-              key={item.title}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
-              className="text-center"
-            >
-              <div className="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center mx-auto mb-4">
-                <div className="w-2 h-2 bg-purple-400 rounded-full" />
-              </div>
-              <h3 className="text-white font-semibold mb-2">{item.title}</h3>
-              <p className="text-white/50 text-sm">{item.description}</p>
-            </motion.div>
-          ))}
-        </div>
-
-        {/* Stats */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto bg-white/5 border border-white/10 rounded-2xl p-8"
-        >
-          {[
-            { value: 129, suffix: '+', label: 'FOUNDERS USING ENGINE' },
-            { value: 8400, prefix: '$', label: 'AVG OFFER PRICE' },
-            { value: 47, suffix: ' Days', label: 'AVG TIME TO FIRST SALE' },
-            { value: 12.1, suffix: 'M+', prefix: '$', label: 'CLIENT REVENUE GENERATED' },
-          ].map((stat, index) => (
-            <div key={stat.label} className="text-center">
-              <div className="text-2xl md:text-3xl font-bold text-white mb-1">
-                {stat.prefix}
-                <AnimatedCounter end={stat.value} suffix={stat.suffix} />
-              </div>
-              <p className="text-white/40 text-xs uppercase tracking-wider">{stat.label}</p>
-            </div>
-          ))}
-        </motion.div>
-      </div>
-    </section>
-  );
-}
-
-// Whitelabel Section
-function WhitelabelSection() {
-  const features = [
-    {
-      title: 'Your Brand, Your Platform',
-      description: 'Custom domains, logos, colors, and complete brand control. Your clients never see Engine.',
-    },
-    {
-      title: 'Invite Clients Or Your Team',
-      description: 'Spin up new client accounts in seconds. Each gets their own isolated workspace.',
-    },
-    {
-      title: 'Agency Revenue Model',
-      description: 'Charge clients $997-$2,997/month for access. You keep 100% of the margin.',
-    },
-    {
-      title: 'Full System Access',
-      description: 'Content AI, sales agents, ad management, analytics — everything included under your brand.',
-    },
-  ];
-
-  return (
-    <section className="py-24 relative" id="whitelabel">
-      <div className="container mx-auto px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
-        >
-          <span className="text-purple-400 text-sm font-medium tracking-wider uppercase mb-4 block">
-            WHITELABEL PARTNER PROGRAM
-          </span>
-          <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
-            Sell Engine to your clients —<br />under your brand
-          </h2>
-          <p className="text-white/60 text-lg max-w-2xl mx-auto">
-            Don't just use the system. Own it. Resell the entire high-ticket automation platform to your coaching clients and agency customers.
-          </p>
-        </motion.div>
-
-        <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-          {features.map((feature, index) => (
-            <motion.div
-              key={feature.title}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
-              className="bg-white/5 border border-white/10 rounded-2xl p-6"
-            >
-              <h3 className="text-xl font-semibold text-white mb-3">{feature.title}</h3>
-              <p className="text-white/50">{feature.description}</p>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-// FAQ Section
-function FAQSection() {
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
-
-  const faqs = [
-    {
-      question: 'What if I don\'t have a high-ticket offer yet?',
-      answer: 'That\'s exactly what Engine is designed for. Our Offer Architect AI will help you design, price, and package a high-ticket offer from scratch in under 60 minutes. You\'ll have everything you need to start selling.',
-    },
-    {
-      question: 'How fast can I see results?',
-      answer: 'Most users launch their first offer within 24-48 hours and see their first sale within 30-60 days. The AI handles the heavy lifting, so you can focus on closing deals.',
-    },
-    {
-      question: 'Do I need a big audience to sell high-ticket?',
-      answer: 'No. High-ticket is about quality over quantity. You only need 2-5 clients per month at $3K-$10K to hit $10K-$50K/month. Our AI helps you attract the right buyers.',
-    },
-    {
-      question: 'What if I\'ve never sold high-ticket before?',
-      answer: 'Engine includes everything you need: offer creation, sales scripts, objection handling, and automated follow-up. The AI guides you through the entire process.',
-    },
-    {
-      question: 'Can I white-label this for my own clients?',
-      answer: 'Yes! Our whitelabel program lets you resell Engine under your own brand. Custom domains, logos, and complete white-label solution included.',
-    },
-  ];
-
-  return (
-    <section className="py-24 relative" id="faq">
-      <div className="container mx-auto px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
-        >
-          <span className="text-purple-400 text-sm font-medium tracking-wider uppercase mb-4 block">
-            FAQ
-          </span>
-          <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
-            Answers for coaches, consultants & agencies
-          </h2>
-          <p className="text-white/60 text-lg max-w-2xl mx-auto">
-            Still have questions? Book a call and we'll walk you through everything.
+          <p className="text-white/40 text-lg max-w-2xl mx-auto leading-relaxed">
+            Purpose-built AI for every business function. Each agent understands your industry.
           </p>
         </motion.div>
 
         <div className="max-w-3xl mx-auto">
+          {agents.map((agent, index) => (
+            <motion.div
+              key={agent.name}
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.04 }}
+              className="flex items-start gap-4 py-4 border-b border-white/[0.05] last:border-0"
+            >
+              <span className="text-white/15 font-bold text-sm tabular-nums w-6 flex-shrink-0 pt-0.5">
+                {String(index + 1).padStart(2, '0')}
+              </span>
+              <div className="flex-1">
+                <div className="flex items-center gap-3 mb-0.5">
+                  <h4 className="text-white font-semibold text-sm">{agent.name}</h4>
+                  <span className={`text-[10px] tracking-wider ${categoryColors[agent.category]}`}>
+                    {agent.category}
+                  </span>
+                </div>
+                <p className="text-white/40 text-sm">{agent.description}</p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ────────────────────────────── HOW IT WORKS ─── */
+
+function ProcessSection() {
+  const steps = [
+    {
+      step: '01',
+      title: 'Define Your Offer',
+      description: 'The Offer Architect helps you design a $3K-$10K offer based on your expertise, market, and delivery model.',
+    },
+    {
+      step: '02',
+      title: 'Generate Your Assets',
+      description: 'AI creates your VSL, landing page, email sequences, ad creatives, and sales scripts — in minutes.',
+    },
+    {
+      step: '03',
+      title: 'Deploy & Automate',
+      description: 'Connect your CRM, launch your funnel, and let AI agents handle qualification, follow-ups, and booking.',
+    },
+    {
+      step: '04',
+      title: 'Scale & Optimize',
+      description: 'Analytics show what\'s working. Double down on winners. Add new offers. Whitelabel to clients.',
+    },
+  ];
+
+  return (
+    <section className="py-32 relative">
+      <div className="container mx-auto px-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-20"
+        >
+          <span className="text-[10px] font-semibold tracking-[0.25em] uppercase text-purple-400/80 block mb-6">
+            THE PROCESS
+          </span>
+          <h2 className="text-3xl md:text-5xl font-bold text-white mb-5 tracking-tight">
+            Four Steps to Launch
+          </h2>
+          <p className="text-white/40 text-lg max-w-2xl mx-auto leading-relaxed">
+            Go from zero to a fully automated high-ticket system.
+          </p>
+        </motion.div>
+
+        <div className="max-w-3xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-4">
+            {steps.map((step, index) => (
+              <motion.div
+                key={step.step}
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.08 }}
+                className="border border-white/[0.06] rounded-2xl p-6"
+              >
+                <span className="text-purple-400/40 font-bold text-xs tracking-wider block mb-3">
+                  STEP {step.step}
+                </span>
+                <h3 className="text-white font-semibold text-base mb-2 tracking-tight">{step.title}</h3>
+                <p className="text-white/40 text-sm leading-relaxed">{step.description}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ────────────────────────────── WHITELABEL ─── */
+
+function WhitelabelSection() {
+  return (
+    <section className="py-32 relative" id="whitelabel">
+      <div className="container mx-auto px-4">
+        <div className="max-w-4xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="border border-purple-500/15 bg-purple-500/[0.02] rounded-3xl p-10 md:p-14"
+          >
+            <span className="text-[10px] font-semibold tracking-[0.25em] uppercase text-purple-400/60 block mb-6">
+              WHITELABEL PROGRAM
+            </span>
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 tracking-tight">
+              Sell Engine to your clients — under your brand
+            </h2>
+            <p className="text-white/40 text-base leading-relaxed mb-10 max-w-2xl">
+              Don&apos;t just use the system. Own it. Resell the entire platform to your coaching clients and agency customers.
+            </p>
+
+            <div className="grid sm:grid-cols-2 gap-6">
+              {[
+                { title: 'Your Brand, Your Platform', description: 'Custom domains, logos, colors. Your clients never see Engine.' },
+                { title: 'Instant Client Workspaces', description: 'Spin up isolated accounts in seconds. Full data separation.' },
+                { title: 'Agency Revenue Model', description: 'Charge $997-$2,997/month. You keep 100% of the margin.' },
+                { title: 'Full System Access', description: 'Content AI, sales agents, analytics — everything under your brand.' },
+              ].map((item, index) => (
+                <motion.div
+                  key={item.title}
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.06 }}
+                >
+                  <h4 className="text-white font-semibold text-sm mb-1">{item.title}</h4>
+                  <p className="text-white/40 text-sm leading-relaxed">{item.description}</p>
+                </motion.div>
+              ))}
+            </div>
+
+            <div className="mt-10">
+              <Link
+                href="/engine/whitelabel"
+                className="text-purple-400/80 text-sm font-medium hover:text-purple-400 transition-colors inline-flex items-center gap-2"
+              >
+                Learn about the whitelabel program
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 2l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              </Link>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ────────────────────────────── FAQ ─── */
+
+function FAQSection() {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  return (
+    <section className="py-32 relative" id="faq">
+      <div className="container mx-auto px-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <span className="text-[10px] font-semibold tracking-[0.25em] uppercase text-purple-400/80 block mb-6">
+            FAQ
+          </span>
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 tracking-tight">
+            Common questions
+          </h2>
+        </motion.div>
+
+        <div className="max-w-2xl mx-auto">
           {faqs.map((faq, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: index * 0.05 }}
-              className="border-b border-white/10"
+              transition={{ delay: index * 0.04 }}
+              className="border-b border-white/[0.05]"
             >
               <button
                 onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                className="w-full py-6 flex items-center justify-between text-left"
+                className="w-full py-5 flex items-center justify-between text-left gap-4"
               >
-                <span className="text-white font-medium pr-8">{faq.question}</span>
-                <span className="text-white/50 text-2xl flex-shrink-0">
+                <span className="text-white/80 text-sm font-medium">{faq.question}</span>
+                <span className="text-white/30 text-lg flex-shrink-0">
                   {openIndex === index ? '−' : '+'}
                 </span>
               </button>
@@ -543,10 +542,9 @@ function FAQSection() {
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  className="pb-6"
+                  className="pb-5"
                 >
-                  <p className="text-white/60">{faq.answer}</p>
+                  <p className="text-white/40 text-sm leading-relaxed">{faq.answer}</p>
                 </motion.div>
               )}
             </motion.div>
@@ -557,37 +555,42 @@ function FAQSection() {
   );
 }
 
-// Final CTA Section
+/* ────────────────────────────── FINAL CTA ─── */
+
 function FinalCTASection() {
   return (
-    <section className="py-24 relative">
-      <div className="absolute inset-0 bg-gradient-to-t from-purple-900/20 to-transparent" />
-      <div className="container mx-auto px-4 relative z-10">
+    <section className="py-32 relative">
+      <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center max-w-3xl mx-auto"
+          className="max-w-2xl mx-auto text-center"
         >
-          <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
-            Ready to Automate Your High-Ticket Offer?
-          </h2>
-          <p className="text-white/60 text-lg mb-10">
-            Book a demo call and we'll show you how to launch your high-ticket offer in 1 hour. Yes, 1 hour.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link
-              href="/engine/truth"
-              className="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-violet-600 text-white px-8 py-4 rounded-full font-semibold hover:opacity-90 transition-opacity text-center"
-            >
-              Start with Truth
-            </Link>
-            <Link
-              href="/engine/demo"
-              className="w-full sm:w-auto bg-white/10 border border-white/20 text-white px-8 py-4 rounded-full font-semibold hover:bg-white/20 transition-colors text-center"
-            >
-              Book Demo
-            </Link>
+          <div className="border border-purple-500/15 bg-purple-500/[0.02] rounded-3xl p-12 md:p-16">
+            <span className="text-[10px] font-semibold tracking-[0.25em] uppercase text-purple-400/60 mb-6 block">
+              GET STARTED
+            </span>
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 tracking-tight">
+              Ready to automate your offer?
+            </h2>
+            <p className="text-white/40 text-base mb-10 leading-relaxed max-w-lg mx-auto">
+              Book a demo and we&apos;ll walk you through how Engine can launch your high-ticket system.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Link
+                href="/engine/demo"
+                className="w-full sm:w-auto bg-white text-black px-8 py-4 rounded-full font-semibold hover:bg-white/90 transition-colors text-center text-sm"
+              >
+                Book a Demo
+              </Link>
+              <Link
+                href="/engine/truth"
+                className="w-full sm:w-auto border border-white/15 text-white/70 px-8 py-4 rounded-full font-medium hover:bg-white/5 transition-colors text-center text-sm"
+              >
+                Try Truth Engine Free
+              </Link>
+            </div>
           </div>
         </motion.div>
       </div>
@@ -595,15 +598,16 @@ function FinalCTASection() {
   );
 }
 
-// Main Page Component
+/* ──────────────────────────────────────── COMPOSE ─── */
+
 export default function EnginePage() {
   return (
     <>
       <HeroSection />
-      <ProblemSolutionSection />
+      <ProblemSection />
       <FeaturesSection />
       <AgentsSection />
-      <MarketIntelligenceSection />
+      <ProcessSection />
       <WhitelabelSection />
       <FAQSection />
       <FinalCTASection />
