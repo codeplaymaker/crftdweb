@@ -3,6 +3,13 @@
 import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
 import Link from 'next/link';
+import {
+  TimeVsValueComparison,
+  ProductizationFlow,
+  StagesStack,
+  SystemsFlowDiagram,
+  SectionHeading,
+} from '@/components/playbook/visuals';
 
 const stages = [
   {
@@ -179,25 +186,16 @@ function HeroSection() {
 
 function FrameworkSection() {
   return (
-    <section className="py-24 relative" id="framework">
+    <section className="py-32 relative" id="framework">
       <div className="container mx-auto px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
-        >
-          <span className="text-emerald-400 text-sm font-medium tracking-wider uppercase mb-4 block">
-            THE EXECUTION FRAMEWORK
-          </span>
-          <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
-            Divorce Time from Money
-          </h2>
-          <p className="text-white/60 text-lg max-w-2xl mx-auto">
-            Most service providers are trapped selling time. The Playbook is a systematic 
-            approach to building assets that generate value while you sleep.
-          </p>
-        </motion.div>
+        <SectionHeading
+          tag="THE EXECUTION FRAMEWORK"
+          title="Divorce Time from Money"
+          subtitle="Most service providers are trapped selling time. The Playbook is a systematic approach to building assets that generate value while you sleep."
+        />
+
+        {/* Visual Device: COMPARISON — Side-by-side contrast */}
+        <TimeVsValueComparison className="mb-16" />
 
         <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
           {/* Time for Money */}
@@ -267,24 +265,16 @@ function FrameworkSection() {
 
 function StagesSection() {
   return (
-    <section className="py-24 relative" id="stages">
+    <section className="py-32 relative" id="stages">
       <div className="container mx-auto px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
-        >
-          <span className="text-emerald-400 text-sm font-medium tracking-wider uppercase mb-4 block">
-            THE JOURNEY
-          </span>
-          <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
-            The 6 Build Stages
-          </h2>
-          <p className="text-white/60 text-lg max-w-2xl mx-auto">
-            The progression from zero to freedom. Each stage compounds on the last.
-          </p>
-        </motion.div>
+        <SectionHeading
+          tag="THE JOURNEY"
+          title="The 6 Build Stages"
+          subtitle="The progression from zero to freedom. Each stage compounds on the last."
+        />
+
+        {/* Visual Device: STACKING — Layered accumulation */}
+        <StagesStack className="mb-16" />
 
         <div className="max-w-4xl mx-auto space-y-6">
           {stages.map((stage, index) => (
@@ -322,25 +312,16 @@ function StagesSection() {
           ))}
         </div>
 
-        {/* Productization Path */}
+        {/* Visual Device: FLOW — Sequential A → B progression */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="mt-16 max-w-3xl mx-auto"
+          className="mt-20 max-w-4xl mx-auto"
         >
-          <div className="bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border border-emerald-500/20 rounded-2xl p-8 text-center">
-            <h3 className="text-xl font-bold text-white mb-6">The Productization Path</h3>
-            <div className="flex items-center justify-center gap-4 flex-wrap">
-              {['Skill', 'Result', 'Specialize', 'Productize'].map((step, i) => (
-                <div key={step} className="flex items-center gap-4">
-                  <div className="bg-emerald-500/20 border border-emerald-500/30 rounded-xl px-6 py-3">
-                    <span className="text-emerald-400 font-semibold">{step}</span>
-                  </div>
-                  {i < 3 && <span className="text-emerald-400/50 text-2xl">→</span>}
-                </div>
-              ))}
-            </div>
+          <div className="bg-gradient-to-r from-emerald-500/5 to-teal-500/5 border border-emerald-500/15 rounded-2xl p-10">
+            <h3 className="text-lg font-bold text-white mb-8 text-center tracking-tight">The Productization Path</h3>
+            <ProductizationFlow />
           </div>
         </motion.div>
       </div>
@@ -350,13 +331,13 @@ function StagesSection() {
 
 function SystemsSection() {
   return (
-    <section className="py-24 relative" id="systems">
+    <section className="py-32 relative" id="systems">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="text-center mb-20"
         >
           <span className="text-emerald-400 text-sm font-medium tracking-wider uppercase mb-4 block">
             OPERATIONS
@@ -370,7 +351,9 @@ function SystemsSection() {
         </motion.div>
 
         <div className="max-w-5xl mx-auto">
-          {/* Systems Flow */}
+          {/* Visual Device: FLOW — 7 Systems Flywheel */}
+          <SystemsFlowDiagram className="mb-12" />
+
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             {systems.slice(0, 4).map((system, index) => (
               <motion.div
@@ -411,7 +394,7 @@ function SystemsSection() {
 
 function ModulesSection() {
   return (
-    <section className="py-24 relative" id="modules">
+    <section className="py-32 relative" id="modules">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -456,7 +439,7 @@ function ModulesSection() {
 
 function CTASection() {
   return (
-    <section className="py-24 relative">
+    <section className="py-32 relative">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

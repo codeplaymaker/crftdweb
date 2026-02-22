@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import Link from 'next/link';
+import { ModuleHeader, MilestoneProgressFlow } from '@/components/playbook/visuals';
 
 interface Milestone {
   id: string;
@@ -85,7 +86,7 @@ export default function TrackPage() {
   const leverageRatio = Math.round((highLeverageHours / totalHours) * 100);
 
   return (
-    <section className="min-h-screen py-12 relative">
+    <section className="min-h-screen py-20 relative">
       <div className="absolute inset-0 bg-gradient-to-b from-emerald-900/10 via-black to-black" />
       <div className="container mx-auto px-4 relative z-10">
         <motion.div
@@ -94,17 +95,21 @@ export default function TrackPage() {
           className="max-w-5xl mx-auto"
         >
           {/* Header */}
-          <div className="text-center mb-12">
-            <span className="text-emerald-400 text-sm font-medium tracking-wider uppercase mb-4 block">
-              TRACK
-            </span>
-            <h1 className="text-3xl md:text-5xl font-bold text-white mb-4">
-              Progress Tracker
-            </h1>
-            <p className="text-white/60 text-lg">
-              Monitor milestones, proof-of-work, revenue metrics, and content output.
-            </p>
-          </div>
+          <ModuleHeader
+            tag="TRACK"
+            title="Progress Tracker"
+            subtitle="Monitor milestones, proof-of-work, revenue metrics, and content output."
+          />
+
+          {/* Stage Milestone Overview Visual */}
+          <MilestoneProgressFlow
+            stageCompletions={stages.map(s => ({
+              stage: s,
+              completed: milestones.filter(m => m.stage === s && m.completed).length,
+              total: milestones.filter(m => m.stage === s).length,
+            }))}
+            className="mb-12"
+          />
 
           {/* Stats Overview */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">

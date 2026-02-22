@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { useSearchParams } from 'next/navigation';
 import { useState, Suspense } from 'react';
 import Link from 'next/link';
+import { ModuleHeader, StagePositionIndicator } from '@/components/playbook/visuals';
 
 const stageActionPlans: Record<string, {
   title: string;
@@ -167,7 +168,7 @@ function PrescribeContent() {
   const [expandedAction, setExpandedAction] = useState<number | null>(null);
 
   return (
-    <section className="min-h-screen py-12 relative">
+    <section className="min-h-screen py-20 relative">
       <div className="absolute inset-0 bg-gradient-to-b from-emerald-900/10 via-black to-black" />
       <div className="container mx-auto px-4 relative z-10">
         <motion.div
@@ -176,23 +177,23 @@ function PrescribeContent() {
           className="max-w-3xl mx-auto"
         >
           {/* Header */}
-          <div className="text-center mb-12">
-            <span className="text-emerald-400 text-sm font-medium tracking-wider uppercase mb-4 block">
-              YOUR PERSONALIZED ACTION PLAN
-            </span>
-            <h1 className="text-3xl md:text-5xl font-bold text-white mb-4">
-              {plan.title}
-            </h1>
-            <p className="text-white/60 text-lg">{plan.focus}</p>
-            <div className="flex items-center justify-center gap-6 mt-6">
-              <div className="bg-white/5 border border-white/10 rounded-xl px-4 py-2">
-                <span className="text-white/50 text-sm">Stage Score: </span>
-                <span className="text-emerald-400 font-semibold">{score}/48</span>
-              </div>
-              <div className="bg-white/5 border border-white/10 rounded-xl px-4 py-2">
-                <span className="text-white/50 text-sm">Timeframe: </span>
-                <span className="text-emerald-400 font-semibold">{plan.timeframe}</span>
-              </div>
+          <ModuleHeader
+            tag="YOUR PERSONALIZED ACTION PLAN"
+            title={plan.title}
+            subtitle={plan.focus}
+          />
+
+          {/* Visual: Where you are */}
+          <StagePositionIndicator currentStage={stage} className="mb-8" />
+
+          <div className="flex items-center justify-center gap-6 mb-12">
+            <div className="bg-white/5 border border-white/10 rounded-xl px-4 py-2">
+              <span className="text-white/50 text-sm">Stage Score: </span>
+              <span className="text-emerald-400 font-semibold">{score}/48</span>
+            </div>
+            <div className="bg-white/5 border border-white/10 rounded-xl px-4 py-2">
+              <span className="text-white/50 text-sm">Timeframe: </span>
+              <span className="text-emerald-400 font-semibold">{plan.timeframe}</span>
             </div>
           </div>
 

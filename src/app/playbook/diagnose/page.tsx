@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import Link from 'next/link';
+import { StagesStack, StagePositionIndicator } from '@/components/playbook/visuals';
 
 interface Question {
   id: string;
@@ -225,16 +226,19 @@ export default function DiagnosePage() {
             animate={{ opacity: 1, y: 0 }}
             className="max-w-2xl mx-auto text-center"
           >
-            <div className="w-20 h-20 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-3xl flex items-center justify-center mx-auto mb-8">
-              <span className="text-3xl">🔍</span>
-            </div>
-            <h1 className="text-3xl md:text-5xl font-bold text-white mb-4">
-              Diagnose Your Stage
+            <span className="text-emerald-400 text-xs font-semibold tracking-[0.2em] uppercase mb-6 block">
+              DIAGNOSE
+            </span>
+            <h1 className="text-3xl md:text-5xl font-bold text-white mb-5 leading-tight tracking-tight">
+              Where Are You
+              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400">
+                on the Journey?
+              </span>
             </h1>
-            <p className="text-white/60 text-lg mb-8">
-              Answer 12 questions to discover where you are on the journey from 
-              service provider to product builder. Based on the 6-stage framework.
+            <p className="text-white/50 text-lg mb-10 leading-relaxed max-w-xl mx-auto">
+              Answer 12 questions to discover your stage — from service provider to product builder.
             </p>
+            <StagesStack className="mb-10" />
             <div className="grid grid-cols-3 gap-4 mb-8">
               <div className="bg-white/5 border border-white/10 rounded-xl p-4">
                 <p className="text-emerald-400 font-bold text-2xl">12</p>
@@ -370,7 +374,7 @@ export default function DiagnosePage() {
   // Results Screen
   if (showResults) {
     return (
-      <section className="min-h-screen py-12 relative">
+      <section className="min-h-screen py-20 relative">
         <div className="absolute inset-0 bg-gradient-to-b from-emerald-900/10 via-black to-black" />
         <div className="container mx-auto px-4 relative z-10">
           <motion.div
@@ -379,23 +383,21 @@ export default function DiagnosePage() {
             className="max-w-3xl mx-auto"
           >
             {/* Header */}
-            <div className="text-center mb-12">
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ type: 'spring', delay: 0.2 }}
-                className={`w-24 h-24 bg-gradient-to-br ${stageInfo.color} rounded-3xl flex items-center justify-center mx-auto mb-6`}
-              >
-                <span className="text-white font-bold text-3xl">{categories.indexOf(stage) + 1}</span>
-              </motion.div>
-              <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
+            <div className="text-center mb-16">
+              <span className="text-emerald-400 text-xs font-semibold tracking-[0.2em] uppercase mb-6 block">
+                YOUR DIAGNOSIS
+              </span>
+              <h1 className="text-3xl md:text-4xl font-bold text-white mb-2 tracking-tight">
                 {businessInfo.name ? `${businessInfo.name}, you're` : 'You\'re'} at Stage {categories.indexOf(stage) + 1}
               </h1>
               <h2 className={`text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r ${stageInfo.color}`}>
                 {stageInfo.title}
               </h2>
-              <p className="text-white/60 mt-4 max-w-xl mx-auto">{stageInfo.description}</p>
+              <p className="text-white/50 mt-4 max-w-xl mx-auto leading-relaxed">{stageInfo.description}</p>
             </div>
+
+            {/* Visual Stage Position */}
+            <StagePositionIndicator currentStage={stage} className="mb-12" />
 
             {/* Score Breakdown */}
             <div className="bg-white/5 border border-white/10 rounded-2xl p-8 mb-8">

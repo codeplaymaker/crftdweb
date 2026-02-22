@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import Link from 'next/link';
+import { TimeVsValueComparison, ModuleHeader } from '@/components/playbook/visuals';
 
 interface RevenueStream {
   name: string;
@@ -56,7 +57,7 @@ export default function ScalePage() {
   const freedomScore = Math.min(100, Math.round(((leveragedPercent * 0.7 + passivePercent * 1.0) / 100) * 100));
 
   return (
-    <section className="min-h-screen py-12 relative">
+    <section className="min-h-screen py-20 relative">
       <div className="absolute inset-0 bg-gradient-to-b from-emerald-900/10 via-black to-black" />
       <div className="container mx-auto px-4 relative z-10">
         <motion.div
@@ -65,18 +66,14 @@ export default function ScalePage() {
           className="max-w-5xl mx-auto"
         >
           {/* Header */}
-          <div className="text-center mb-12">
-            <span className="text-emerald-400 text-sm font-medium tracking-wider uppercase mb-4 block">
-              SCALE
-            </span>
-            <h1 className="text-3xl md:text-5xl font-bold text-white mb-4">
-              Divorcing Time & Money
-            </h1>
-            <p className="text-white/60 text-lg max-w-2xl mx-auto">
-              Track your transition from money-for-time to money-for-value. 
-              When you sell time, the count resets. When you sell value, the count rolls over.
-            </p>
-          </div>
+          <ModuleHeader
+            tag="SCALE"
+            title="Divorcing Time & Money"
+            subtitle="Track your transition from money-for-time to money-for-value. When you sell time, the count resets. When you sell value, the count rolls over."
+          />
+
+          {/* Visual Device: COMPARISON */}
+          <TimeVsValueComparison className="mb-16" />
 
           {/* Key Metrics */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">

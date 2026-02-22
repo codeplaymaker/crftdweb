@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import Link from 'next/link';
+import { ProductizationFlow, ModuleHeader } from '@/components/playbook/visuals';
 
 const pathSteps = [
   {
@@ -75,7 +76,7 @@ export default function ProductizePage() {
   const currentIndex = pathSteps.findIndex(s => s.id === activeStep);
 
   return (
-    <section className="min-h-screen py-12 relative">
+    <section className="min-h-screen py-20 relative">
       <div className="absolute inset-0 bg-gradient-to-b from-emerald-900/10 via-black to-black" />
       <div className="container mx-auto px-4 relative z-10">
         <motion.div
@@ -84,20 +85,16 @@ export default function ProductizePage() {
           className="max-w-4xl mx-auto"
         >
           {/* Header */}
-          <div className="text-center mb-12">
-            <span className="text-emerald-400 text-sm font-medium tracking-wider uppercase mb-4 block">
-              PRODUCTIZE
-            </span>
-            <h1 className="text-3xl md:text-5xl font-bold text-white mb-4">
-              Speak in Problems,
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400">
-                Solve in Products
-              </span>
-            </h1>
-            <p className="text-white/60 text-lg max-w-2xl mx-auto">
-              Follow the Productization Path to transform your skills into scalable products. 
-              Each stage builds on the last.
-            </p>
+          <ModuleHeader
+            tag="PRODUCTIZE"
+            title="Speak in Problems,"
+            titleAccent="Solve in Products"
+            subtitle="Follow the Productization Path to transform your skills into scalable products. Each stage builds on the last."
+          />
+
+          {/* Visual Device: FLOW — Sequential progression */}
+          <div className="mb-16">
+            <ProductizationFlow />
           </div>
 
           {/* Path Steps Navigation */}

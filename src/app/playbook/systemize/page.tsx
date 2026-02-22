@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import Link from 'next/link';
+import { SystemsFlowDiagram, ModuleHeader } from '@/components/playbook/visuals';
 
 interface SystemStep {
   title: string;
@@ -138,7 +139,7 @@ export default function SystemizePage() {
   const selectedSystem = systems.find(s => s.id === activeSystem);
 
   return (
-    <section className="min-h-screen py-12 relative">
+    <section className="min-h-screen py-20 relative">
       <div className="absolute inset-0 bg-gradient-to-b from-emerald-900/10 via-black to-black" />
       <div className="container mx-auto px-4 relative z-10">
         <motion.div
@@ -147,17 +148,15 @@ export default function SystemizePage() {
           className="max-w-5xl mx-auto"
         >
           {/* Header */}
-          <div className="text-center mb-12">
-            <span className="text-emerald-400 text-sm font-medium tracking-wider uppercase mb-4 block">
-              SYSTEMIZE
-            </span>
-            <h1 className="text-3xl md:text-5xl font-bold text-white mb-4">
-              7 Business Systems
-            </h1>
-            <p className="text-white/60 text-lg max-w-2xl mx-auto">
-              Build more systems, do less work, generate better results. 
-              Each system handles a stage of your business flywheel.
-            </p>
+          <ModuleHeader
+            tag="SYSTEMIZE"
+            title="7 Business Systems"
+            subtitle="Build more systems, do less work, generate better results. Each system handles a stage of your business flywheel."
+          />
+
+          {/* Visual Device: FLOW — 7 Systems Flywheel */}
+          <div className="mb-12">
+            <SystemsFlowDiagram />
           </div>
 
           {/* Status Bar */}

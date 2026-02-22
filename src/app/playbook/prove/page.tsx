@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import Link from 'next/link';
+import { ProofPriceLoop, PricingScale, ModuleHeader } from '@/components/playbook/visuals';
 
 interface ProofItem {
   id: string;
@@ -52,7 +53,7 @@ export default function ProvePage() {
   const caseStudyCount = proofItems.filter(p => p.type === 'case-study').length;
 
   return (
-    <section className="min-h-screen py-12 relative">
+    <section className="min-h-screen py-20 relative">
       <div className="absolute inset-0 bg-gradient-to-b from-emerald-900/10 via-black to-black" />
       <div className="container mx-auto px-4 relative z-10">
         <motion.div
@@ -61,18 +62,11 @@ export default function ProvePage() {
           className="max-w-5xl mx-auto"
         >
           {/* Header */}
-          <div className="text-center mb-12">
-            <span className="text-emerald-400 text-sm font-medium tracking-wider uppercase mb-4 block">
-              PROVE
-            </span>
-            <h1 className="text-3xl md:text-5xl font-bold text-white mb-4">
-              The Proof & Price Loop
-            </h1>
-            <p className="text-white/60 text-lg max-w-2xl mx-auto">
-              Give it away until you have enough proof to sell it. 
-              Then: Get proof → Get paid → Get more proof → Get paid more.
-            </p>
-          </div>
+          <ModuleHeader
+            tag="PROVE"
+            title="The Proof & Price Loop"
+            subtitle="Give it away until you have enough proof to sell it. Then: Get proof → Get paid → Get more proof → Get paid more."
+          />
 
           {/* Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
@@ -123,37 +117,33 @@ export default function ProvePage() {
               animate={{ opacity: 1, y: 0 }}
               className="space-y-6"
             >
-              {/* The Proof & Price Loop Visual */}
+              {/* Visual Device: LOOP — Cyclical feedback */}
               <div className="bg-white/5 border border-white/10 rounded-2xl p-8">
-                <h3 className="text-white font-semibold text-center mb-8">The Proof & Price Loop</h3>
-                <div className="grid sm:grid-cols-4 gap-4">
+                <h3 className="text-white font-semibold text-center mb-4 tracking-tight">The Proof & Price Loop</h3>
+                <ProofPriceLoop className="mb-6" />
+                <div className="grid sm:grid-cols-4 gap-4 mt-4">
                   {[
-                    { step: '1', title: 'Get Proof', description: 'Deliver results. Document everything. Collect testimonials.', icon: '📸' },
-                    { step: '2', title: 'Get Paid', description: 'Use proof to justify premium pricing. Close higher-value deals.', icon: '💰' },
-                    { step: '3', title: 'Get More Proof', description: 'Higher-ticket clients = bigger results = better proof.', icon: '📈' },
-                    { step: '4', title: 'Get Paid More', description: 'Better proof = higher prices = better clients. The flywheel compounds.', icon: '🚀' },
-                  ].map((item, i) => (
+                    { step: '1', title: 'Get Proof', description: 'Deliver results. Document everything. Collect testimonials.' },
+                    { step: '2', title: 'Get Paid', description: 'Use proof to justify premium pricing. Close higher-value deals.' },
+                    { step: '3', title: 'Get More Proof', description: 'Higher-ticket clients = bigger results = better proof.' },
+                    { step: '4', title: 'Get Paid More', description: 'Better proof = higher prices = better clients. The flywheel compounds.' },
+                  ].map((item) => (
                     <div key={item.step} className="text-center">
-                      <div className="w-16 h-16 bg-emerald-500/20 rounded-2xl flex items-center justify-center mx-auto mb-3">
-                        <span className="text-2xl">{item.icon}</span>
+                      <div className="w-8 h-8 bg-emerald-500/15 border border-emerald-500/20 rounded-lg flex items-center justify-center mx-auto mb-2">
+                        <span className="text-emerald-400 text-xs font-bold">{item.step}</span>
                       </div>
-                      <h4 className="text-white font-semibold text-sm mb-1">{item.title}</h4>
-                      <p className="text-white/50 text-xs">{item.description}</p>
-                      {i < 3 && <div className="hidden sm:block text-emerald-400/40 text-2xl mt-3">→</div>}
+                      <h4 className="text-white font-medium text-sm mb-1">{item.title}</h4>
+                      <p className="text-white/40 text-xs leading-relaxed">{item.description}</p>
                     </div>
                   ))}
                 </div>
-                <div className="text-center mt-6">
-                  <div className="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full px-4 py-2">
-                    <span className="text-emerald-400 text-sm font-medium">🔄 The loop compounds forever</span>
-                  </div>
-                </div>
               </div>
 
-              {/* 10X Pricing Reference */}
+              {/* Visual Device: SCALE — 10X Pricing */}
               <div className="bg-white/5 border border-white/10 rounded-2xl p-8">
-                <h3 className="text-white font-semibold mb-6">The 10X Pricing Rule</h3>
-                <p className="text-white/50 text-sm mb-6">At this price point, can your customer get a 10X return on investment?</p>
+                <h3 className="text-white font-semibold mb-2 tracking-tight">The 10X Pricing Rule</h3>
+                <p className="text-white/40 text-sm mb-8">At this price point, can your customer get a 10X return on investment?</p>
+                <PricingScale className="mb-8" />
                 <div className="grid sm:grid-cols-2 gap-3">
                   {[
                     { price: '$19', product: 'PDF / Template', value: '$190 value' },
