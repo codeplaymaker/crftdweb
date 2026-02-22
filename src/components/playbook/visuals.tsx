@@ -183,12 +183,15 @@ export function TimeVsValueComparison({ className = '' }: { className?: string }
           <text x="145" y="142" textAnchor="middle" className="fill-white/40 text-[10px]">Do it once, get paid once.</text>
           <text x="145" y="158" textAnchor="middle" className="fill-white/40 text-[10px]">Do it again tomorrow.</text>
           {/* Reset bars */}
-          {[0, 1, 2, 3, 4].map(i => (
-            <g key={i}>
-              <rect x={55 + i * 36} y={185} width="28" height={30 + Math.random() * 20} rx="4" fill="rgba(239,68,68,0.15)" stroke="rgba(239,68,68,0.2)" strokeWidth="1" />
-              <line x1={55 + i * 36} y1={230} x2={55 + i * 36 + 28} y2={230} stroke="rgba(239,68,68,0.3)" strokeWidth="1" strokeDasharray="3 2" />
-            </g>
-          ))}
+          {[0, 1, 2, 3, 4].map(i => {
+            const heights = [38, 32, 44, 35, 41];
+            return (
+              <g key={i}>
+                <rect x={55 + i * 36} y={185} width="28" height={heights[i]} rx="4" fill="rgba(239,68,68,0.15)" stroke="rgba(239,68,68,0.2)" strokeWidth="1" />
+                <line x1={55 + i * 36} y1={230} x2={55 + i * 36 + 28} y2={230} stroke="rgba(239,68,68,0.3)" strokeWidth="1" strokeDasharray="3 2" />
+              </g>
+            );
+          })}
           <text x="145" y="258" textAnchor="middle" className="fill-red-400/50 text-[9px]">↻ Resets every morning</text>
         </motion.g>
 

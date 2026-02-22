@@ -9,7 +9,7 @@ export default function ContactPage() {
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
   return (
     <main className="pt-20">
-      <section className="py-24">
+      <section className="py-32">
         <div className="container">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -17,10 +17,15 @@ export default function ContactPage() {
             transition={{ duration: 0.8 }}
             className="max-w-3xl mx-auto"
           >
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 text-center">Get in Touch</h1>
-            <p className="text-xl text-muted-foreground mb-12 text-center">
-              Let&apos;s discuss how we can help transform your digital presence
-            </p>
+            <div className="text-center mb-16">
+              <span className="text-xs font-semibold tracking-[0.2em] uppercase text-muted-foreground mb-6 block">
+                CONTACT
+              </span>
+              <h1 className="text-4xl md:text-6xl font-bold mb-5 tracking-tight leading-tight">Get in Touch</h1>
+              <p className="text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed">
+                Let&apos;s discuss how we can help transform your digital presence
+              </p>
+            </div>
 
             <form 
               className="space-y-8" 
@@ -108,7 +113,7 @@ export default function ContactPage() {
               <button
                 type="submit"
                 disabled={sending}
-                className="w-full px-8 py-3 bg-black text-white rounded-lg text-lg font-medium hover:bg-gray-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full px-8 py-3.5 bg-black text-white rounded-full text-sm font-medium hover:bg-gray-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {sending ? 'Sending...' : 'Send Message'}
               </button>

@@ -5,16 +5,19 @@ import { motion } from 'framer-motion';
 export default function ServicesPage() {
   return (
     <main className="pt-20">
-      <section className="py-24">
+      <section className="py-32">
         <div className="container">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="max-w-4xl mx-auto text-center"
+            className="max-w-4xl mx-auto text-center mb-20"
           >
-            <h1 className="text-4xl md:text-6xl font-bold mb-6">Our Services</h1>
-            <p className="text-xl text-muted-foreground mb-12">
+            <span className="text-xs font-semibold tracking-[0.2em] uppercase text-muted-foreground mb-6 block">
+              OUR SERVICES
+            </span>
+            <h1 className="text-4xl md:text-6xl font-bold mb-5 tracking-tight leading-tight">What We Build</h1>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
               Premium digital solutions crafted with precision and purpose
             </p>
           </motion.div>
@@ -28,8 +31,8 @@ export default function ServicesPage() {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 className="p-6 rounded-xl border bg-background hover:border-black/20 transition-colors"
               >
-                <h3 className="text-2xl font-semibold mb-4">{service.title}</h3>
-                <p className="text-muted-foreground mb-6">{service.description}</p>
+                <h3 className="text-xl font-semibold mb-3 tracking-tight">{service.title}</h3>
+                <p className="text-muted-foreground text-sm leading-relaxed">{service.description}</p>
               </motion.div>
             ))}
           </div>

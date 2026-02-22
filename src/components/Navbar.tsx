@@ -9,6 +9,7 @@ const navItems = [
   { name: 'Services', href: '/services' },
   { name: 'Work', href: '/work' },
   { name: 'About', href: '/about' },
+  { name: 'Playbook', href: '/playbook' },
   { name: 'Contact', href: '/contact' }
 ];
 
@@ -38,7 +39,7 @@ export default function Navbar() {
           ))}
           <Link 
             href="/contact"
-            className="px-4 py-2 bg-foreground text-background rounded-lg hover:bg-foreground/90 transition-colors"
+            className="px-4 py-2 bg-foreground text-background rounded-full hover:bg-foreground/90 transition-colors text-sm font-medium"
           >
             Get Started
           </Link>
@@ -76,7 +77,7 @@ export default function Navbar() {
               ))}
               <Link 
                 href="/contact"
-                className="mt-2 w-full px-4 py-2 bg-foreground text-background rounded-lg hover:bg-foreground/90 transition-colors text-center"
+                className="mt-2 w-full px-4 py-2 bg-foreground text-background rounded-full hover:bg-foreground/90 transition-colors text-center text-sm font-medium"
                 onClick={() => setIsOpen(false)}
               >
                 Get Started

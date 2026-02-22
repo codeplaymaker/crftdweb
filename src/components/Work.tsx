@@ -69,17 +69,21 @@ const itemVariants = {
 
 export default function Work() {
   return (
-    <section className="py-24 bg-background">
+    <section className="py-32 bg-background">
       <div className="container">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-12"
+          className="text-center mb-20"
         >
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Featured Projects</h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            Explore our portfolio of innovative digital solutions across biotech, wellness, and fintech industries that transform ideas into exceptional user experiences.
+          <span className="text-xs font-semibold tracking-[0.2em] uppercase text-muted-foreground mb-6 block">
+            SELECTED WORK
+          </span>
+          <h2 className="text-3xl md:text-5xl font-bold mb-5 tracking-tight leading-tight">Featured Projects</h2>
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed">
+            Innovative digital solutions across biotech, wellness, and fintech
+            that transform ideas into exceptional experiences.
           </p>
         </motion.div>
 

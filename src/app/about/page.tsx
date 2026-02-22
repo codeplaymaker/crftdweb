@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 export default function AboutPage() {
   return (
     <main className="pt-20">
-      <section className="py-24">
+      <section className="py-32">
         <div className="container">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -13,10 +13,15 @@ export default function AboutPage() {
             transition={{ duration: 0.8 }}
             className="max-w-4xl mx-auto"
           >
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 text-center">About Us</h1>
-            <p className="text-xl text-muted-foreground mb-12 text-center">
-              Crafting digital experiences that stand the test of time
-            </p>
+            <div className="text-center mb-20">
+              <span className="text-xs font-semibold tracking-[0.2em] uppercase text-muted-foreground mb-6 block">
+                WHO WE ARE
+              </span>
+              <h1 className="text-4xl md:text-6xl font-bold mb-5 tracking-tight leading-tight">About Us</h1>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+                Crafting digital experiences that stand the test of time
+              </p>
+            </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
               <div>
@@ -39,8 +44,8 @@ export default function AboutPage() {
               </div>
             </div>
 
-            <div className="mt-12 p-8 rounded-xl border bg-background">
-              <h2 className="text-2xl font-semibold mb-6 text-center">Our Values</h2>
+            <div className="mt-16 p-8 rounded-xl border bg-background">
+              <h2 className="text-2xl font-semibold mb-8 text-center tracking-tight">Our Values</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {values.map((value, index) => (
                   <motion.div
