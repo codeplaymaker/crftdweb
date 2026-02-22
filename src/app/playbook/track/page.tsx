@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import Link from 'next/link';
-import { ModuleHeader, MilestoneProgressFlow } from '@/components/playbook/visuals';
+import { ModuleHeader, MilestoneProgressFlow, ConsistencyPattern } from '@/components/playbook/visuals';
 
 interface Milestone {
   id: string;
@@ -160,6 +160,13 @@ export default function TrackPage() {
           </div>
 
           {/* Revenue Chart (Simple bar visualization) */}
+          <div className="bg-white/5 border border-white/10 rounded-2xl p-6 mb-8">
+            <h3 className="text-white font-semibold mb-4">Consistency Pattern</h3>
+            <p className="text-white/40 text-sm mb-4">Building streaks compounds your results. Track your daily output.</p>
+            <ConsistencyPattern />
+          </div>
+
+          {/* Revenue Chart */}
           <div className="bg-white/5 border border-white/10 rounded-2xl p-6 mb-8">
             <h3 className="text-white font-semibold mb-6">Weekly Revenue Trend</h3>
             <div className="flex items-end gap-2 h-40">

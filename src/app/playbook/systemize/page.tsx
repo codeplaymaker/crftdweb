@@ -3,7 +3,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import Link from 'next/link';
-import { SystemsFlowDiagram, ModuleHeader } from '@/components/playbook/visuals';
+import { SystemsFlowDiagram, ModuleHeader, SystemsHierarchy } from '@/components/playbook/visuals';
 
 interface SystemStep {
   title: string;
@@ -157,6 +157,13 @@ export default function SystemizePage() {
           {/* Visual Device: FLOW — 7 Systems Flywheel */}
           <div className="mb-12">
             <SystemsFlowDiagram />
+          </div>
+
+          {/* Visual Device: HIERARCHY — Systems Tree */}
+          <div className="bg-white/5 border border-white/10 rounded-2xl p-8 mb-12">
+            <h3 className="text-white font-semibold text-center mb-2">Systems Hierarchy</h3>
+            <p className="text-white/40 text-sm text-center mb-4">Each system feeds the next — top-down structure with a loop-back.</p>
+            <SystemsHierarchy />
           </div>
 
           {/* Status Bar */}

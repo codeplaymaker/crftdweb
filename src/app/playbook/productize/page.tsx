@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import Link from 'next/link';
-import { ProductizationFlow, ModuleHeader } from '@/components/playbook/visuals';
+import { ProductizationFlow, ModuleHeader, SweetSpotVenn } from '@/components/playbook/visuals';
 
 const pathSteps = [
   {
@@ -95,6 +95,13 @@ export default function ProductizePage() {
           {/* Visual Device: FLOW — Sequential progression */}
           <div className="mb-16">
             <ProductizationFlow />
+          </div>
+
+          {/* Visual Device: VENN — Your Sweet Spot */}
+          <div className="bg-white/5 border border-white/10 rounded-2xl p-8 mb-16">
+            <h3 className="text-white font-semibold text-center mb-2">Find Your Sweet Spot</h3>
+            <p className="text-white/40 text-sm text-center mb-4">Your product lives at the intersection of skill, market need, and passion.</p>
+            <SweetSpotVenn />
           </div>
 
           {/* Path Steps Navigation */}

@@ -599,6 +599,348 @@ export function MilestoneProgressFlow({
 }
 
 /* ----------------------------------------
+   VISUAL DEVICE: METAPHOR (Abstract made tangible)
+   Used by: Services page — abstract service icons
+   Each metaphor replaces a concept with a concrete visual
+   ---------------------------------------- */
+export function ServiceMetaphor({
+  type,
+  className = '',
+}: {
+  type: 'design' | 'branding' | 'ux' | 'development' | 'ecommerce' | 'strategy';
+  className?: string;
+}) {
+  const metaphors: Record<string, React.ReactNode> = {
+    design: (
+      <svg viewBox="0 0 64 64" className="w-full h-full" fill="none">
+        {/* Pen tool / bezier curve — design = shaping curves */}
+        <motion.path d="M10 50 Q 32 10, 54 50" stroke="currentColor" strokeWidth="2" strokeLinecap="round"
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1 }} />
+        <circle cx="10" cy="50" r="3" fill="currentColor" opacity={0.4} />
+        <circle cx="32" cy="12" r="3" stroke="currentColor" strokeWidth="1.5" fill="none" opacity={0.4} />
+        <circle cx="54" cy="50" r="3" fill="currentColor" opacity={0.4} />
+        <line x1="10" y1="50" x2="32" y2="12" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2 2" opacity={0.2} />
+        <line x1="32" y1="12" x2="54" y2="50" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2 2" opacity={0.2} />
+      </svg>
+    ),
+    branding: (
+      <svg viewBox="0 0 64 64" className="w-full h-full" fill="none">
+        {/* Diamond / gem — branding = crystallized identity */}
+        <motion.path d="M32 8 L52 24 L32 56 L12 24 Z" stroke="currentColor" strokeWidth="1.5"
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1 }} />
+        <motion.line x1="12" y1="24" x2="52" y2="24" stroke="currentColor" strokeWidth="1" opacity={0.3}
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.5, delay: 0.5 }} />
+        <motion.line x1="32" y1="8" x2="32" y2="56" stroke="currentColor" strokeWidth="0.5" opacity={0.2}
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.5, delay: 0.7 }} />
+      </svg>
+    ),
+    ux: (
+      <svg viewBox="0 0 64 64" className="w-full h-full" fill="none">
+        {/* Finger touching circle — UX = human touch */}
+        <circle cx="32" cy="28" r="16" stroke="currentColor" strokeWidth="1.5" opacity={0.3} />
+        <motion.circle cx="32" cy="28" r="6" fill="currentColor" opacity={0.2}
+          initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.3 }} />
+        <motion.path d="M32 44 L32 58" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 0.5 }} />
+        <motion.circle cx="32" cy="28" r="16" stroke="currentColor" strokeWidth="1.5"
+          initial={{ scale: 1, opacity: 0.3 }} animate={{ scale: [1, 1.15, 1], opacity: [0.3, 0.1, 0.3] }}
+          transition={{ duration: 2, repeat: Infinity }} />
+      </svg>
+    ),
+    development: (
+      <svg viewBox="0 0 64 64" className="w-full h-full" fill="none">
+        {/* Brackets — development = building with code */}
+        <motion.path d="M22 16 L10 32 L22 48" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.6 }} />
+        <motion.path d="M42 16 L54 32 L42 48" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.6, delay: 0.2 }} />
+        <motion.line x1="28" y1="12" x2="36" y2="52" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" opacity={0.4}
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.4, delay: 0.4 }} />
+      </svg>
+    ),
+    ecommerce: (
+      <svg viewBox="0 0 64 64" className="w-full h-full" fill="none">
+        {/* Shopping bag with upward arrow — ecommerce = growth through selling */}
+        <motion.rect x="14" y="20" width="36" height="36" rx="4" stroke="currentColor" strokeWidth="1.5"
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.8 }} />
+        <motion.path d="M24 20 V14 A8 8 0 0 1 40 14 V20" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.5, delay: 0.3 }} />
+        <motion.path d="M32 44 V30 M27 35 L32 30 L37 35" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" opacity={0.5}
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.4, delay: 0.6 }} />
+      </svg>
+    ),
+    strategy: (
+      <svg viewBox="0 0 64 64" className="w-full h-full" fill="none">
+        {/* Compass / direction — strategy = navigating */}
+        <motion.circle cx="32" cy="32" r="20" stroke="currentColor" strokeWidth="1.5"
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1 }} />
+        <motion.path d="M32 16 L36 30 L32 48 L28 30 Z" stroke="currentColor" strokeWidth="1" fill="currentColor" fillOpacity={0.1}
+          initial={{ opacity: 0, rotate: -30 }} animate={{ opacity: 1, rotate: 0 }}
+          transition={{ delay: 0.5, duration: 0.6 }} style={{ transformOrigin: '32px 32px' }} />
+        <circle cx="32" cy="32" r="2" fill="currentColor" opacity={0.5} />
+      </svg>
+    ),
+  };
+
+  return (
+    <div className={`w-12 h-12 text-black/70 ${className}`}>
+      {metaphors[type]}
+    </div>
+  );
+}
+
+/* ----------------------------------------
+   VISUAL DEVICE: PATTERN RECOGNITION
+   Used by: Track page — weekly consistency streaks
+   Visual patterns decoded fast — shows rhythm
+   ---------------------------------------- */
+export function ConsistencyPattern({ className = '' }: { className?: string }) {
+  // 4 weeks x 7 days grid showing consistency
+  const weeks = [
+    [1, 1, 0, 1, 1, 0, 0], // week 1 — 4/7
+    [1, 1, 1, 1, 0, 1, 0], // week 2 — 5/7
+    [1, 1, 1, 1, 1, 1, 0], // week 3 — 6/7
+    [1, 1, 1, 1, 1, 1, 1], // week 4 — 7/7
+  ];
+  const days = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+
+  return (
+    <div className={className}>
+      <svg viewBox="0 0 380 160" className="w-full max-w-[380px] mx-auto" fill="none">
+        {/* Day labels */}
+        {days.map((d, i) => (
+          <text key={`day-${i}`} x={55 + i * 44} y="18" textAnchor="middle" className="fill-white/30 text-[9px]">{d}</text>
+        ))}
+        {/* Week labels */}
+        {weeks.map((_, wi) => (
+          <text key={`wk-${wi}`} x="18" y={46 + wi * 34} textAnchor="middle" className="fill-white/20 text-[8px]">W{wi + 1}</text>
+        ))}
+        {/* Grid */}
+        {weeks.map((week, wi) =>
+          week.map((active, di) => (
+            <motion.rect
+              key={`${wi}-${di}`}
+              x={35 + di * 44} y={30 + wi * 34}
+              width="28" height="24" rx="6"
+              fill={active ? 'rgba(16,185,129,0.2)' : 'rgba(255,255,255,0.03)'}
+              stroke={active ? 'rgba(16,185,129,0.3)' : 'rgba(255,255,255,0.06)'}
+              strokeWidth="1"
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: wi * 0.08 + di * 0.03 }}
+            />
+          ))
+        )}
+        {/* Streak arrow on right */}
+        <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}>
+          <text x="355" y="46" textAnchor="middle" className="fill-white/20 text-[8px]">4/7</text>
+          <text x="355" y="80" textAnchor="middle" className="fill-white/25 text-[8px]">5/7</text>
+          <text x="355" y="114" textAnchor="middle" className="fill-emerald-400/40 text-[8px]">6/7</text>
+          <text x="355" y="148" textAnchor="middle" className="fill-emerald-400/60 text-[8px] font-semibold">7/7</text>
+        </motion.g>
+        {/* Trend arrow */}
+        <motion.path
+          d="M 355 52 L 355 138"
+          stroke="rgba(16,185,129,0.2)" strokeWidth="1" strokeDasharray="3 2"
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 1, duration: 0.6 }}
+        />
+        <motion.polygon points="351,138 355,146 359,138" fill="rgba(16,185,129,0.3)"
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.6 }} />
+      </svg>
+    </div>
+  );
+}
+
+/* ----------------------------------------
+   VISUAL DEVICE: VENN DIAGRAM
+   Used by: Productize — sweet spot of skill+market+passion
+   Overlapping factors showing intersection
+   ---------------------------------------- */
+export function SweetSpotVenn({ className = '' }: { className?: string }) {
+  return (
+    <div className={className}>
+      <svg viewBox="0 0 400 320" className="w-full max-w-[400px] mx-auto" fill="none">
+        {/* Three overlapping circles */}
+        <motion.circle cx="170" cy="140" r="100" fill="rgba(16,185,129,0.06)" stroke="rgba(16,185,129,0.2)" strokeWidth="1.5"
+          initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.5 }} />
+        <motion.circle cx="230" cy="140" r="100" fill="rgba(20,184,166,0.06)" stroke="rgba(20,184,166,0.2)" strokeWidth="1.5"
+          initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.5, delay: 0.15 }} />
+        <motion.circle cx="200" cy="200" r="100" fill="rgba(6,182,212,0.06)" stroke="rgba(6,182,212,0.2)" strokeWidth="1.5"
+          initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.5, delay: 0.3 }} />
+
+        {/* Labels */}
+        <motion.text x="130" y="100" textAnchor="middle" className="fill-emerald-400 text-[11px] font-semibold"
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}>
+          Your Skill
+        </motion.text>
+        <motion.text x="270" y="100" textAnchor="middle" className="fill-teal-400 text-[11px] font-semibold"
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }}>
+          Market Need
+        </motion.text>
+        <motion.text x="200" y="280" textAnchor="middle" className="fill-cyan-400 text-[11px] font-semibold"
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}>
+          Your Passion
+        </motion.text>
+
+        {/* Center sweet spot */}
+        <motion.circle cx="200" cy="165" r="22" fill="rgba(16,185,129,0.15)" stroke="rgba(16,185,129,0.5)" strokeWidth="2"
+          initial={{ scale: 0 }} animate={{ scale: [0, 1.1, 1] }} transition={{ delay: 1, duration: 0.5 }} />
+        <motion.text x="200" y="162" textAnchor="middle" className="fill-white text-[9px] font-bold"
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.3 }}>
+          Sweet
+        </motion.text>
+        <motion.text x="200" y="174" textAnchor="middle" className="fill-white text-[9px] font-bold"
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.3 }}>
+          Spot
+        </motion.text>
+
+        {/* Pairwise intersection labels */}
+        <motion.text x="200" y="110" textAnchor="middle" className="fill-white/25 text-[8px]"
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.9 }}>
+          Viable
+        </motion.text>
+        <motion.text x="148" y="200" textAnchor="middle" className="fill-white/25 text-[8px]"
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.95 }}>
+          Fulfilling
+        </motion.text>
+        <motion.text x="252" y="200" textAnchor="middle" className="fill-white/25 text-[8px]"
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.0 }}>
+          In-demand
+        </motion.text>
+      </svg>
+    </div>
+  );
+}
+
+/* ----------------------------------------
+   VISUAL DEVICE: HIERARCHY (Top-to-bottom)
+   Used by: Systemize — systems feed into each other
+   ---------------------------------------- */
+export function SystemsHierarchy({ className = '' }: { className?: string }) {
+  const nodes = [
+    { label: 'Marketing', color: '#10b981', x: 200, y: 30 },
+    { label: 'Qualifying', color: '#14b8a6', x: 120, y: 100 },
+    { label: 'Application', color: '#06b6d4', x: 280, y: 100 },
+    { label: 'Onboarding', color: '#0ea5e9', x: 80, y: 170 },
+    { label: 'Work', color: '#6366f1', x: 200, y: 170 },
+    { label: 'Testimonials', color: '#8b5cf6', x: 320, y: 170 },
+    { label: 'Loop ↻', color: '#10b981', x: 200, y: 240 },
+  ];
+  const edges = [
+    [0, 1], [0, 2],      // Marketing → Qualifying, Application
+    [1, 3], [1, 4],      // Qualifying → Onboarding, Work
+    [2, 4], [2, 5],      // Application → Work, Testimonials
+    [3, 6], [4, 6], [5, 6], // All → Loop
+  ];
+
+  return (
+    <div className={className}>
+      <svg viewBox="0 0 400 280" className="w-full max-w-[400px] mx-auto" fill="none">
+        {/* Edges */}
+        {edges.map(([from, to], i) => (
+          <motion.line
+            key={`edge-${i}`}
+            x1={nodes[from].x} y1={nodes[from].y + 14}
+            x2={nodes[to].x} y2={nodes[to].y - 14}
+            stroke="rgba(255,255,255,0.08)" strokeWidth="1"
+            initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
+            transition={{ delay: 0.2 + i * 0.06, duration: 0.3 }}
+          />
+        ))}
+        {/* Nodes */}
+        {nodes.map((node, i) => (
+          <motion.g key={node.label}
+            initial={{ opacity: 0, scale: 0.5 }} animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: i * 0.08 }}>
+            <rect x={node.x - 42} y={node.y - 14} width="84" height="28" rx="8"
+              fill={`${node.color}12`} stroke={`${node.color}30`} strokeWidth="1.5" />
+            <text x={node.x} y={node.y + 4} textAnchor="middle"
+              className="fill-white/70 text-[9px] font-medium">{node.label}</text>
+          </motion.g>
+        ))}
+        {/* Loop-back arrow */}
+        <motion.path d="M 200 258 C 200 275, 50 275, 50 50 C 50 25, 170 22, 200 28"
+          stroke="rgba(16,185,129,0.2)" strokeWidth="1" strokeDasharray="3 3" fill="none"
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
+          transition={{ delay: 0.8, duration: 1.2 }} />
+        <motion.polygon points="196,24 204,24 200,18" fill="rgba(16,185,129,0.35)"
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2 }} />
+      </svg>
+    </div>
+  );
+}
+
+/* ----------------------------------------
+   VISUAL DEVICE: CARTESIAN PLOT (Two-axis)
+   Used by: Scale — effort (hrs) vs revenue per stream
+   ---------------------------------------- */
+export function EffortRevenueChart({
+  streams,
+  className = '',
+}: {
+  streams: { name: string; hours: number; revenue: number; type: 'active' | 'leveraged' | 'passive' }[];
+  className?: string;
+}) {
+  const maxH = Math.max(...streams.map(s => s.hours), 1);
+  const maxR = Math.max(...streams.map(s => s.revenue), 1);
+  const chartW = 440;
+  const chartH = 220;
+  const pad = { l: 55, r: 20, t: 20, b: 35 };
+  const typeColors: Record<string, string> = { active: '#ef4444', leveraged: '#eab308', passive: '#10b981' };
+
+  return (
+    <div className={className}>
+      <svg viewBox={`0 0 ${chartW} ${chartH}`} className="w-full max-w-[440px] mx-auto" fill="none">
+        {/* Axes */}
+        <motion.line x1={pad.l} y1={pad.t} x2={pad.l} y2={chartH - pad.b}
+          stroke="rgba(255,255,255,0.1)" strokeWidth="1"
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.4 }} />
+        <motion.line x1={pad.l} y1={chartH - pad.b} x2={chartW - pad.r} y2={chartH - pad.b}
+          stroke="rgba(255,255,255,0.1)" strokeWidth="1"
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.4, delay: 0.1 }} />
+        {/* Axis labels */}
+        <text x={pad.l - 8} y={(pad.t + chartH - pad.b) / 2} textAnchor="middle"
+          className="fill-white/25 text-[8px]" transform={`rotate(-90, ${pad.l - 8}, ${(pad.t + chartH - pad.b) / 2})`}>
+          Revenue ($)
+        </text>
+        <text x={(pad.l + chartW - pad.r) / 2} y={chartH - 5} textAnchor="middle" className="fill-white/25 text-[8px]">
+          Hours / Month
+        </text>
+        {/* Ideal quadrant indicator */}
+        <motion.rect x={pad.l + 1} y={pad.t} width={(chartW - pad.l - pad.r) * 0.35} height={(chartH - pad.t - pad.b) * 0.5}
+          fill="rgba(16,185,129,0.03)" rx="4"
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} />
+        <motion.text x={pad.l + 10} y={pad.t + 14} className="fill-emerald-400/20 text-[7px]"
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}>
+          ↑ high return, low effort
+        </motion.text>
+        {/* Data points */}
+        {streams.map((s, i) => {
+          const cx = pad.l + (s.hours / maxH) * (chartW - pad.l - pad.r);
+          const cy = chartH - pad.b - (s.revenue / maxR) * (chartH - pad.t - pad.b);
+          const color = typeColors[s.type];
+          return (
+            <motion.g key={s.name}
+              initial={{ opacity: 0, scale: 0 }} animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.4 + i * 0.12 }}>
+              <circle cx={cx} cy={cy} r="8" fill={`${color}25`} stroke={`${color}60`} strokeWidth="1.5" />
+              <text x={cx} y={cy - 12} textAnchor="middle" className="fill-white/50 text-[7px]">{s.name}</text>
+            </motion.g>
+          );
+        })}
+        {/* Legend */}
+        {(['active', 'leveraged', 'passive'] as const).map((type, i) => (
+          <motion.g key={type} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 + i * 0.1 }}>
+            <circle cx={pad.l + i * 80} cy={chartH - 8} r="3" fill={typeColors[type]} />
+            <text x={pad.l + i * 80 + 8} y={chartH - 5} className="fill-white/30 text-[7px] capitalize">{type}</text>
+          </motion.g>
+        ))}
+      </svg>
+    </div>
+  );
+}
+
+/* ----------------------------------------
    SECTION HEADING — Consistent TRAIN typography
    ---------------------------------------- */
 export function SectionHeading({

@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import Link from 'next/link';
-import { TimeVsValueComparison, ModuleHeader } from '@/components/playbook/visuals';
+import { TimeVsValueComparison, ModuleHeader, EffortRevenueChart } from '@/components/playbook/visuals';
 
 interface RevenueStream {
   name: string;
@@ -74,6 +74,13 @@ export default function ScalePage() {
 
           {/* Visual Device: COMPARISON */}
           <TimeVsValueComparison className="mb-16" />
+
+          {/* Visual Device: CARTESIAN PLOT — Effort vs Revenue */}
+          <div className="bg-white/5 border border-white/10 rounded-2xl p-8 mb-12">
+            <h3 className="text-white font-semibold text-center mb-2">Effort vs. Revenue</h3>
+            <p className="text-white/40 text-sm text-center mb-4">Top-left is the goal: high revenue, low hours. Move every dot up and left.</p>
+            <EffortRevenueChart streams={streams.map(s => ({ name: s.name.split(' ').slice(0, 2).join(' '), hours: s.hoursPerMonth, revenue: s.monthlyRevenue, type: s.type }))} />
+          </div>
 
           {/* Key Metrics */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">

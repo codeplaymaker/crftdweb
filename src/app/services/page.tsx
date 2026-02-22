@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { ServiceMetaphor } from '@/components/playbook/visuals';
 
 export default function ServicesPage() {
   return (
@@ -29,8 +30,9 @@ export default function ServicesPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="p-6 rounded-xl border bg-background hover:border-black/20 transition-colors"
+                className="p-6 rounded-xl border bg-background hover:border-black/20 transition-colors group"
               >
+                <ServiceMetaphor type={service.metaphor} className="mb-5 text-black/60 group-hover:text-black transition-colors" />
                 <h3 className="text-xl font-semibold mb-3 tracking-tight">{service.title}</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">{service.description}</p>
               </motion.div>
@@ -45,26 +47,33 @@ export default function ServicesPage() {
 const services = [
   {
     title: "Web Design",
-    description: "Premium web design services with Apple-inspired aesthetics that blend form and function."
+    description: "Premium web design services with Apple-inspired aesthetics that blend form and function.",
+    metaphor: 'design' as const,
   },
   {
     title: "Digital Branding",
-    description: "Comprehensive branding solutions that establish a strong digital presence."
+    description: "Comprehensive branding solutions that establish a strong digital presence.",
+    metaphor: 'branding' as const,
   },
   {
     title: "UI/UX Design",
-    description: "User-centered design focusing on intuitive experiences and seamless interactions."
+    description: "User-centered design focusing on intuitive experiences and seamless interactions.",
+    metaphor: 'ux' as const,
   },
   {
     title: "Web Development",
-    description: "Custom web applications built with modern technologies and best practices."
+    description: "Custom web applications built with modern technologies and best practices.",
+    metaphor: 'development' as const,
   },
   {
     title: "E-commerce Solutions",
-    description: "Scalable online stores that drive conversions and enhance customer experience."
+    description: "Scalable online stores that drive conversions and enhance customer experience.",
+    metaphor: 'ecommerce' as const,
   },
   {
     title: "Digital Strategy",
-    description: "Strategic planning and consulting for digital transformation initiatives."
+    description: "Strategic planning and consulting for digital transformation initiatives.",
+    metaphor: 'strategy' as const,
+  }
   }
 ];
