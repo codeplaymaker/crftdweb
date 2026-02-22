@@ -18,8 +18,8 @@ export async function sendEmail(formData: FormData) {
   try {
     // Send email using Resend
     await resend.emails.send({
-      from: 'CRFTD Web Contact Form <onboarding@resend.dev>',
-      to: ['crftdweb@gmail.com'],
+      from: 'admin@crftdweb.com',
+      to: ['admin@crftdweb.com'],
       replyTo: email,
       subject: `New Contact Form Submission: ${subject}`,
       html: `
