@@ -428,7 +428,7 @@ function ReportExamplesSection() {
             { value: '500+', label: 'Niches Analyzed' },
             { value: '3min', label: 'Time to Report' },
             { value: '47+', label: 'Data Points' },
-          ].map((stat, index) => (
+          ].map((stat) => (
             <div key={stat.label} className="text-center">
               <div className="text-2xl font-bold text-white mb-1">{stat.value}</div>
               <p className="text-white/40 text-sm">{stat.label}</p>

@@ -157,8 +157,8 @@ function PrescribeContent() {
   const searchParams = useSearchParams();
   const stage = searchParams.get('stage') || 'mindset';
   const score = searchParams.get('score') || '0';
-  const businessType = searchParams.get('type') || '';
-  const revenue = searchParams.get('revenue') || '';
+  const _businessType = searchParams.get('type') || '';
+  const _revenue = searchParams.get('revenue') || '';
   const burnRate = searchParams.get('burn') || '';
   const goal = searchParams.get('goal') || '';
 

@@ -101,7 +101,7 @@ export const truthEnginePrompt = `You are the Truth Engine, an AI-powered market
 Be specific, data-driven, and actionable. Format your response as structured data.`;
 
 // Mock AI response generator (for demo without API keys)
-export function generateMockAIResponse(agentId: string, userMessage: string): string {
+export function generateMockAIResponse(agentId: string, _userMessage: string): string {
   const responses: Record<string, string> = {
     'offer-architect': `Based on your input, here's a high-ticket offer framework:
 

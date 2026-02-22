@@ -227,7 +227,7 @@ export default function OfferDetailPage({ params }: { params: Promise<{ id: stri
         doc.setFontSize(11);
         doc.setTextColor(60, 60, 70);
         doc.setFont('helvetica', 'normal');
-        offer.deliverables.forEach((item, index) => {
+        offer.deliverables.forEach((item) => {
           if (item.trim()) {
             // Checkbox style
             doc.setFillColor(139, 92, 246);

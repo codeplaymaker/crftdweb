@@ -43,7 +43,7 @@ const caseStudyTemplate = {
 };
 
 export default function ProvePage() {
-  const [proofItems, setProofItems] = useState(sampleProof);
+  const [proofItems] = useState(sampleProof);
   const [activeTab, setActiveTab] = useState<'loop' | 'sequence' | 'builder' | 'library'>('loop');
   const [caseStudyAnswers, setCaseStudyAnswers] = useState<Record<string, string>>({});
   const [showAddProof, setShowAddProof] = useState(false);

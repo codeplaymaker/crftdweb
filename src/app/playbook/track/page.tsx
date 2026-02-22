@@ -62,7 +62,7 @@ export default function TrackPage() {
   const [milestones, setMilestones] = useState(defaultMilestones);
   const [activeStageFilter, setActiveStageFilter] = useState<string | null>(null);
   const [showAddProof, setShowAddProof] = useState(false);
-  const [proofEntries, setProofEntries] = useState<{ title: string; type: string; date: string }[]>([
+  const [proofEntries] = useState<{ title: string; type: string; date: string }[]>([
     { title: 'Client website launched — 3x traffic increase', type: 'Case Study', date: '2026-02-20' },
     { title: 'Testimonial from ABC Corp', type: 'Testimonial', date: '2026-02-18' },
   ]);

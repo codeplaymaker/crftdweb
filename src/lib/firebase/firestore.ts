@@ -438,7 +438,7 @@ export async function updateIntegration(integrationId: string, data: Partial<Int
   const docRef = doc(db, 'integrations', integrationId);
   // Filter out undefined values as Firestore doesn't accept them
   const cleanData = Object.fromEntries(
-    Object.entries(data).filter(([_, v]) => v !== undefined)
+    Object.entries(data).filter(([, v]) => v !== undefined)
   );
   await updateDoc(docRef, {
     ...cleanData,

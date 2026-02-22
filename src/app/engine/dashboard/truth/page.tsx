@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/lib/firebase/AuthContext';
-import { saveTruthReport, deductCredits } from '@/lib/firebase/firestore';
+import { saveTruthReport } from '@/lib/firebase/firestore';
 
 interface RedditQuote {
   quote: string;
@@ -38,7 +38,7 @@ interface Report {
 }
 
 export default function TruthEngineDashboard() {
-  const { user, profile, refreshProfile } = useAuth();
+  const { user, refreshProfile } = useAuth();
   const [niche, setNiche] = useState('');
   const [niche2, setNiche2] = useState('');
   const [compareMode, setCompareMode] = useState(false);
@@ -625,7 +625,6 @@ export default function TruthEngineDashboard() {
     if (compareMode && !niche2.trim()) return;
     
     // Credits unlimited - no check needed
-    const creditsNeeded = compareMode ? 20 : 10;
     
     setLoading(true);
     setReport(null);
