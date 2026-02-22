@@ -113,6 +113,56 @@ const modules = [
   { name: 'Scale', href: '/playbook/scale', description: 'Transition from time-for-money to value-for-money' },
 ];
 
+const tocSections = [
+  { number: '01', label: '10 Foundational Ideas', anchor: '#ideas' },
+  { number: '02', label: 'The Execution Framework', anchor: '#framework' },
+  { number: '03', label: 'Value Creation & Arbitrage', anchor: '#value' },
+  { number: '04', label: 'The 6 Build Stages', anchor: '#stages' },
+  { number: '05', label: '7 Business Systems', anchor: '#systems' },
+  { number: '06', label: 'The Research Behind It', anchor: '#evidence' },
+  { number: '07', label: 'Core Principles', anchor: '#wisdom' },
+  { number: '08', label: 'Interactive Modules', anchor: '#modules' },
+];
+
+const foundationalIdeas = [
+  { title: 'You don\'t learn anything until you do something', body: 'Information without application is entertainment. Start a project that forces output. The barrier to entry exists only in your head.' },
+  { title: 'Consistency creates competence', body: 'Executing badly is a precursor to getting good. Show up every day — the quality follows. Form improves with repetition.' },
+  { title: 'Zoom out', body: 'See the bigger picture before getting lost in details. Your daily grind serves a larger purpose. Perspective transforms problems into opportunities.' },
+  { title: 'Audit your beliefs ruthlessly and often', body: 'Most beliefs accrue unconsciously. Reality is unbiased — your perspective is not. Question inherited assumptions.' },
+  { title: 'No one is coming to save you — figure it out', body: 'Take full responsibility for your outcomes. Build your own safety net. The potential downside is low; the upside is huge.' },
+  { title: 'Failure is feedback — learn from it and move on', body: 'The more you execute, the more you fail. The more you fail, the less you care. The less you care, the more you execute.' },
+  { title: 'Courage isn\'t the absence of fear — it\'s doing it anyway', body: 'Vulnerability is the price of change. It\'s a privilege to fail in public. Your worst case scenario is still skill development.' },
+  { title: 'Aiming low is a tragic way to think', body: 'The hard part isn\'t visualizing the win. It\'s winning when you don\'t love the game. Process beats mission every single time.' },
+  { title: 'Invest in your reputation — it pays dividends', body: 'Your reputation is a proxy for your future earnings. Ability + Reliability = Reputation. Your network multiplies your portfolio.' },
+  { title: 'Yesterday doesn\'t exist — do it now', body: 'When you sell time, the count resets every morning. When you sell value, the count rolls over. Compound interest is the eighth wonder.' },
+];
+
+const valueTypes = [
+  { label: 'Psychological', description: 'Make someone feel better' },
+  { label: 'Monetary', description: 'Make someone money' },
+  { label: 'Functional', description: 'Make someone more competent' },
+  { label: 'Social', description: 'Make someone fit in better' },
+];
+
+const researchStats = [
+  { stat: '42%', label: 'more likely to achieve goals when written down', source: 'Dr. Gail Matthews, Dominican University' },
+  { stat: '66', unit: 'days', label: 'for a new behaviour to become automatic — not 21', source: 'Phillippa Lally, University College London' },
+  { stat: '37.78×', label: 'better in a year by improving 1% daily', source: 'James Clear — Atomic Habits' },
+  { stat: '76%', label: 'of workers report experiencing burnout', source: 'Gallup Workplace Report' },
+  { stat: '78%', label: 'live paycheck to paycheck — no financial margin', source: 'CNBC / LendingClub Report' },
+  { stat: '60,000×', label: 'faster — how the brain processes visuals vs text', source: '3M Corporation / Visual Teaching Alliance' },
+  { stat: '95%', label: 'success rate with an accountability partner vs 10% alone', source: 'ASTD Accountability Study' },
+];
+
+const wisdomQuotes = [
+  { text: 'No one cares what you can do, everyone cares what you can do for them.', author: null },
+  { text: 'Learn to sell, learn to build. If you can do both, you will be unstoppable.', author: 'Naval Ravikant' },
+  { text: 'Escape competition through authenticity.', author: 'Naval Ravikant' },
+  { text: 'The world doesn\'t reward people who are best at solving problems, it rewards people who communicate problems best.', author: 'David Perell' },
+  { text: 'If you can\'t describe what you are doing as a process, you don\'t know what you\'re doing.', author: 'W. Edwards Deming' },
+  { text: 'Compound interest is the eighth wonder of the world. He who understands it, earns it.', author: 'Albert Einstein' },
+];
+
 /* ───────────────────────────────────────────────── HERO ─── */
 
 function HeroSection() {
@@ -199,6 +249,84 @@ function HeroSection() {
   );
 }
 
+/* ─────────────────────────── TABLE OF CONTENTS ─── */
+
+function TOCSection() {
+  return (
+    <section className="py-24 relative">
+      <div className="container mx-auto px-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="max-w-2xl mx-auto"
+        >
+          <span className="text-[10px] font-semibold tracking-[0.25em] uppercase text-emerald-400/80 block mb-8 text-center">
+            TABLE OF CONTENTS
+          </span>
+          <div className="space-y-0">
+            {tocSections.map((section, index) => (
+              <motion.a
+                key={section.number}
+                href={section.anchor}
+                initial={{ opacity: 0, y: 8 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.04 }}
+                className="flex items-center gap-4 py-3 border-b border-white/[0.05] last:border-0 group hover:bg-white/[0.02] -mx-4 px-4 rounded-lg transition-colors"
+              >
+                <span className="text-emerald-400/40 font-bold text-xs tabular-nums w-6 flex-shrink-0">
+                  {section.number}
+                </span>
+                <span className="text-white/60 text-sm font-medium group-hover:text-white/90 transition-colors">
+                  {section.label}
+                </span>
+              </motion.a>
+            ))}
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+/* ────────────────────── 10 FOUNDATIONAL IDEAS ─── */
+
+function IdeasSection() {
+  return (
+    <section className="py-32 relative" id="ideas">
+      <div className="container mx-auto px-4">
+        <SectionHeading
+          tag="FOUNDATION"
+          title="10 Life-Changing Ideas"
+          subtitle="The mental models that underpin everything. Internalize these and the rest becomes inevitable."
+        />
+
+        <div className="max-w-3xl mx-auto space-y-0">
+          {foundationalIdeas.map((idea, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.04 }}
+              className="flex items-start gap-5 py-6 border-b border-white/[0.05] last:border-0"
+            >
+              <span className="text-emerald-400/30 font-bold text-2xl tabular-nums w-10 flex-shrink-0 leading-tight">
+                {String(index + 1).padStart(2, '0')}
+              </span>
+              <div>
+                <h3 className="text-white font-semibold text-base mb-1 tracking-tight">{idea.title}</h3>
+                <p className="text-white/40 text-sm leading-relaxed">{idea.body}</p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /* ──────────────────────────────────── THE CORE PROBLEM ─── */
 
 function ProblemSection() {
@@ -273,6 +401,89 @@ function ProblemSection() {
             </div>
           </motion.div>
         </div>
+      </div>
+    </section>
+  );
+}
+
+/* ──────────────────────── VALUE CREATION & ARBITRAGE ─── */
+
+function ValueSection() {
+  const tiers = [
+    { tier: '$', label: 'Don\'t do', description: 'Easy, non-specific tasks anyone can do', example: 'Mow lawns' },
+    { tier: '$$', label: 'Won\'t do', description: 'Specific tasks that require commitment', example: 'Run a lawn mowing service' },
+    { tier: '$$$', label: 'Can\'t do', description: 'Ultra-specific, high-expertise tasks', example: 'Build a landscaping marketplace' },
+  ];
+
+  return (
+    <section className="py-32 relative" id="value">
+      <div className="container mx-auto px-4">
+        <SectionHeading
+          tag="VALUE"
+          title="Value Creation & Arbitrage"
+          subtitle="Arbitrage is the difference between what you can do and what someone else can't, won't, or doesn't do. You capture value by demonstrating this ability."
+        />
+
+        {/* Value Tiers */}
+        <div className="grid md:grid-cols-3 gap-4 max-w-3xl mx-auto mb-20">
+          {tiers.map((t, index) => (
+            <motion.div
+              key={t.label}
+              initial={{ opacity: 0, y: 15 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.08 }}
+              className="border border-white/[0.06] rounded-2xl p-6 text-center"
+            >
+              <span className="text-emerald-400/50 font-bold text-xs tracking-wider block mb-3">{t.tier}</span>
+              <h4 className="text-white font-semibold text-sm mb-1 tracking-tight">{t.label}</h4>
+              <p className="text-white/40 text-xs leading-relaxed mb-3">{t.description}</p>
+              <span className="text-white/25 text-xs italic">{t.example}</span>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Four Types of Value */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="max-w-3xl mx-auto"
+        >
+          <h3 className="text-sm font-bold text-white/60 mb-8 text-center tracking-wider uppercase">
+            Four Types of Value
+          </h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {valueTypes.map((vt, index) => (
+              <motion.div
+                key={vt.label}
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.06 }}
+                className="border border-emerald-500/10 bg-emerald-500/[0.02] rounded-xl p-5 text-center"
+              >
+                <h4 className="text-white font-semibold text-sm mb-1">{vt.label}</h4>
+                <p className="text-white/40 text-xs">{vt.description}</p>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Pull quote */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            className="mt-12 text-center"
+          >
+            <blockquote className="text-white/60 text-base md:text-lg italic leading-relaxed">
+              &ldquo;You get paid in direct proportion to the difficulty of problems you solve.&rdquo;
+            </blockquote>
+            <cite className="text-white/25 text-xs tracking-widest uppercase not-italic mt-3 block">
+              — Elon Musk
+            </cite>
+          </motion.div>
+        </motion.div>
       </div>
     </section>
   );
@@ -387,43 +598,75 @@ function SystemsSection() {
   );
 }
 
-/* ───────────────────────────────────── SOCIAL PROOF ─── */
+/* ──────────────────────── EVIDENCE / RESEARCH ─── */
 
-function ProofSection() {
-  const quotes = [
-    {
-      text: 'Do it once, get paid once. Do it again tomorrow — that\'s a reset. Do it once, get paid indefinitely — that\'s leverage.',
-      attribution: 'The Playbook Principle',
-    },
-    {
-      text: 'Your skills are valuable, but so are everyone else\'s. Package your unique skills, perspective, and interests to generate exclusive demand.',
-      attribution: 'Stage 03 — Process',
-    },
-    {
-      text: 'Give away your secrets. People don\'t pay for information. They pay for implementation.',
-      attribution: 'Stage 04 — Reputation',
-    },
-  ];
-
+function EvidenceSection() {
   return (
-    <section className="py-32 relative overflow-hidden">
+    <section className="py-32 relative" id="evidence">
       <div className="container mx-auto px-4">
-        <div className="max-w-3xl mx-auto space-y-12">
-          {quotes.map((quote, index) => (
+        <SectionHeading
+          tag="EVIDENCE"
+          title="The Research Behind It"
+          subtitle="Every principle in this playbook is backed by real data. Here's what the research says."
+        />
+
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-4xl mx-auto">
+          {researchStats.map((item, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 15 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
+              transition={{ delay: index * 0.05 }}
+              className="border border-white/[0.06] rounded-2xl p-6"
+            >
+              <div className="mb-3">
+                <span className="text-2xl md:text-3xl font-bold text-white tracking-tight">
+                  {item.stat}
+                </span>
+                {item.unit && (
+                  <span className="text-white/40 text-sm ml-1">{item.unit}</span>
+                )}
+              </div>
+              <p className="text-white/50 text-sm leading-relaxed mb-3">{item.label}</p>
+              <p className="text-white/20 text-[10px] tracking-wider uppercase">{item.source}</p>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ──────────────────────── WISDOM / PRINCIPLES ─── */
+
+function WisdomSection() {
+  return (
+    <section className="py-32 relative overflow-hidden" id="wisdom">
+      <div className="container mx-auto px-4">
+        <SectionHeading
+          tag="WISDOM"
+          title="Core Principles"
+        />
+
+        <div className="max-w-2xl mx-auto space-y-10">
+          {wisdomQuotes.map((quote, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 15 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.08 }}
               className="text-center"
             >
-              <blockquote className="text-xl md:text-2xl font-medium text-white/80 leading-relaxed tracking-tight mb-4">
+              <blockquote className="text-lg md:text-xl font-medium text-white/70 leading-relaxed tracking-tight">
                 &ldquo;{quote.text}&rdquo;
               </blockquote>
-              <cite className="text-white/30 text-xs tracking-widest uppercase not-italic">
-                {quote.attribution}
-              </cite>
+              {quote.author && (
+                <cite className="text-white/25 text-xs tracking-widest uppercase not-italic mt-3 block">
+                  — {quote.author}
+                </cite>
+              )}
             </motion.div>
           ))}
         </div>
@@ -518,10 +761,14 @@ export default function PlaybookPage() {
   return (
     <>
       <HeroSection />
+      <TOCSection />
+      <IdeasSection />
       <ProblemSection />
+      <ValueSection />
       <StagesSection />
       <SystemsSection />
-      <ProofSection />
+      <EvidenceSection />
+      <WisdomSection />
       <ModulesSection />
       <CTASection />
     </>
