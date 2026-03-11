@@ -2,11 +2,11 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { signUp, signInWithGoogle } from '@/lib/firebase';
 
-export default function SignUpPage() {
+function SignUpForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const selectedPlan = searchParams.get('plan') || 'free';
@@ -195,5 +195,13 @@ export default function SignUpPage() {
         </p>
       </motion.div>
     </div>
+  );
+}
+
+export default function SignUpPage() {
+  return (
+    <Suspense fallback={<div className="min-h-[80vh] flex items-center justify-center"><div className="text-white/50">Loading...</div></div>}>
+      <SignUpForm />
+    </Suspense>
   );
 }
