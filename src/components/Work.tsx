@@ -3,46 +3,38 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
 
 const projects = [
   {
     title: "Microbiome Design",
-    description: "Designing a future with microbes. We combine scientific expertise and creative thinking to unlock the potential of the microbiome for people, products, and the planet.",
+    problem: "A cutting-edge biotech company with real science — but a website that looked like a student project. Investors weren't taking them seriously.",
+    process: "Full discovery into their audience (researchers, investors, partners). Rebuilt around credibility signals, clear value proposition, and a conversion-focused layout.",
+    result: "A site that matches the quality of their science. Professional presence that gives investors confidence from the first click.",
     image: "/microbiome-design-pic.png",
     category: "Biotech & Design",
     href: "https://microbiome-design.vercel.app",
-    features: [
-      "Scientific Expertise",
-      "Creative Design",
-      "Microbiome Solutions",
-      "Sustainable Innovation"
-    ]
+    tags: ["Custom Design", "Next.js", "Conversion-Focused"],
   },
   {
     title: "The Life Lab HQ",
-    description: "Your personal laboratory for balanced living and growth. An AI-powered platform for life transformation.",
+    problem: "A wellness brand with great content and real expertise — but visitors browsed and left without signing up. The site didn't guide anyone to take action.",
+    process: "Mapped the customer journey from first visit to sign-up. Rebuilt every page around a single conversion goal. Added trust signals at each decision point.",
+    result: "A platform that turns casual visitors into engaged members. Clear path from landing to sign-up with friction removed at every step.",
     image: "/life-lab.jpg",
     category: "Lifestyle & Wellness",
     href: "https://thelifelabhq.com",
-    features: [
-      "AI Mentorship",
-      "Five Formulas System",
-      "Data-Driven Insights",
-      "Personal Growth"
-    ]
+    tags: ["AI-Powered", "Membership Platform", "UX Redesign"],
   },
   {
     title: "MPM Trading Platform",
-    description: "A trading platform for insights, journal tracking and custom trading plans.",
+    problem: "Traders needed a tool for journaling, insights, and custom plans — but existing platforms were clunky and overwhelming. The founder needed a clean, usable product.",
+    process: "Designed a minimal, data-focused interface. Built trading journal, insights dashboard, and personalized plan features. Prioritized speed and clarity over feature bloat.",
+    result: "A fintech platform that traders actually use daily. Clean interface that makes complex data approachable and actionable.",
     image: "/mpm-hero.jpg",
     category: "FinTech Platform",
     href: "https://www.marketplaymaker.com",
-    features: [
-      "Trading Insights",
-      "Trading Journal",
-      "Personalized Plans",
-      "User Authentication"
-    ]
+    tags: ["FinTech", "Dashboard Design", "User Auth"],
   }
 ];
 
@@ -78,12 +70,15 @@ export default function Work() {
           className="text-center mb-20"
         >
           <span className="text-xs font-semibold tracking-[0.2em] uppercase text-muted-foreground mb-6 block">
-            SELECTED WORK
+            CASE STUDIES
           </span>
-          <h2 className="text-3xl md:text-5xl font-bold mb-5 tracking-tight leading-tight">Featured Projects</h2>
+          <h2 className="text-3xl md:text-5xl font-bold mb-5 tracking-tight leading-tight">
+            Real projects.<br className="hidden md:block" />
+            <span className="text-muted-foreground">Real problems solved.</span>
+          </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed">
-            Innovative digital solutions across biotech, wellness, and fintech
-            that transform ideas into exceptional experiences.
+            We&apos;ve built across biotech, wellness, and fintech.
+            Every project starts with a problem — here&apos;s how we solved them.
           </p>
         </motion.div>
 
@@ -92,15 +87,16 @@ export default function Work() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 gap-12"
+          className="grid grid-cols-1 gap-16"
         >
           {projects.map((project, index) => (
             <motion.div
               key={index}
               variants={itemVariants}
-              className="group relative overflow-hidden rounded-xl bg-accent h-[600px]"
+              className="group"
             >
-              <Link href={project.href} target="_blank" rel="noopener noreferrer" className="block h-full relative">
+              {/* Project image */}
+              <Link href={project.href} target="_blank" rel="noopener noreferrer" className="block relative overflow-hidden rounded-xl bg-accent h-[500px] mb-8">
                 <Image
                   src={project.image}
                   alt={project.title}
@@ -109,31 +105,49 @@ export default function Work() {
                   className="object-cover object-center w-full h-full transition-transform duration-300 group-hover:scale-105"
                   priority={index === 0}
                   quality={95}
-                  style={{ objectPosition: 'center center' }}
                 />
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity z-10" />
+                <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity z-10" />
                 <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-20">
-                  <span className="px-4 py-2 bg-background text-foreground rounded-lg text-sm font-medium">
-                    View Project
+                  <span className="px-5 py-2.5 bg-white text-black rounded-full text-sm font-medium inline-flex items-center gap-2">
+                    Visit Site <ArrowUpRight className="w-4 h-4" />
                   </span>
                 </div>
-                <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 to-transparent z-10">
-                  <h3 className="text-white text-2xl font-semibold mb-2">{project.title}</h3>
-                  <p className="text-white/80 text-sm mb-3">{project.description}</p>
-                  <span className="inline-block mb-2 text-xs font-medium text-white/60 bg-white/10 px-2 py-1 rounded">
+                {/* Category badge */}
+                <div className="absolute top-4 left-4 z-10">
+                  <span className="px-3 py-1.5 bg-white/90 backdrop-blur-sm rounded-full text-xs font-medium text-black">
                     {project.category}
                   </span>
-                  {project.features && (
-                    <div className="flex flex-wrap gap-2 mt-3">
-                      {project.features.map((feature, i) => (
-                        <span key={i} className="text-xs bg-white/20 text-white px-2 py-1 rounded">
-                          {feature}
-                        </span>
-                      ))}
-                    </div>
-                  )}
                 </div>
               </Link>
+
+              {/* Case study content */}
+              <div className="max-w-4xl">
+                <h3 className="text-2xl md:text-3xl font-bold tracking-tight mb-6">{project.title}</h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                  <div className="p-5 rounded-xl border border-black/6 bg-accent/50">
+                    <span className="text-[10px] font-semibold tracking-[0.15em] uppercase text-muted-foreground block mb-2">THE PROBLEM</span>
+                    <p className="text-sm text-foreground/80 leading-relaxed">{project.problem}</p>
+                  </div>
+                  <div className="p-5 rounded-xl border border-black/6 bg-accent/50">
+                    <span className="text-[10px] font-semibold tracking-[0.15em] uppercase text-muted-foreground block mb-2">THE PROCESS</span>
+                    <p className="text-sm text-foreground/80 leading-relaxed">{project.process}</p>
+                  </div>
+                  <div className="p-5 rounded-xl bg-black text-white">
+                    <span className="text-[10px] font-semibold tracking-[0.15em] uppercase text-white/50 block mb-2">THE RESULT</span>
+                    <p className="text-sm text-white/80 leading-relaxed">{project.result}</p>
+                  </div>
+                </div>
+
+                {/* Tags */}
+                <div className="flex flex-wrap gap-2">
+                  {project.tags.map((tag, i) => (
+                    <span key={i} className="px-3 py-1 text-xs font-medium bg-black/5 text-muted-foreground rounded-full">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
             </motion.div>
           ))}
         </motion.div>

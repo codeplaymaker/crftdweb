@@ -1,29 +1,28 @@
 'use client';
 
 import { motion } from "framer-motion";
-import Link from "next/link";
-import { Code2, Palette, Rocket, Smartphone } from "lucide-react";
+import { Code2, Target, TrendingUp, Shield } from "lucide-react";
 
 const features = [
   {
+    icon: <Target className="w-8 h-8" />,
+    title: "Conversion-First Design",
+    description: "Every section answers one question in the buyer's mind. We don't just make it pretty — we make it sell."
+  },
+  {
     icon: <Code2 className="w-8 h-8" />,
-    title: "Custom Development",
-    description: "Tailored solutions built with cutting-edge technologies and best practices."
+    title: "Hand-Coded. No Templates.",
+    description: "Custom-built with Next.js and modern tech. No WordPress themes, no page builders, no compromises."
   },
   {
-    icon: <Palette className="w-8 h-8" />,
-    title: "UI/UX Design",
-    description: "Intuitive and engaging user experiences that captivate your audience."
+    icon: <TrendingUp className="w-8 h-8" />,
+    title: "Built to Perform",
+    description: "90+ PageSpeed scores, sub-2s load times. Because every second of delay costs you customers."
   },
   {
-    icon: <Smartphone className="w-8 h-8" />,
-    title: "Responsive Design",
-    description: "Seamless experiences across all devices and screen sizes."
-  },
-  {
-    icon: <Rocket className="w-8 h-8" />,
-    title: "Performance",
-    description: "Lightning-fast load times and optimized user experiences."
+    icon: <Shield className="w-8 h-8" />,
+    title: "Trust at Every Touchpoint",
+    description: "We engineer credibility into your site — social proof, clear process, risk reversal — so visitors feel safe buying."
   }
 ];
 
@@ -59,13 +58,15 @@ export default function Features() {
           className="text-center mb-20"
         >
           <span className="text-xs font-semibold tracking-[0.2em] uppercase text-muted-foreground mb-6 block">
-            WHAT WE DO
+            HOW WE&apos;RE DIFFERENT
           </span>
           <h2 className="text-3xl md:text-5xl font-bold tracking-tight leading-tight mb-5">
-            Built for Impact
+            A pretty site is worthless<br className="hidden md:block" />
+            <span className="text-muted-foreground">if it doesn&apos;t convert.</span>
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed">
-            Every project is an opportunity to craft something exceptional.
+            We build websites that look exceptional <em>and</em> drive real business results.
+            Here&apos;s how.
           </p>
         </motion.div>
 
@@ -81,8 +82,7 @@ export default function Features() {
               key={index}
               variants={itemVariants}
             >
-              <Link
-                href="/services"
+              <div
                 className="block p-6 rounded-xl bg-background border border-black/10 hover:border-black/20 transition-colors group shadow-sm h-full"
               >
                 <div className="w-12 h-12 rounded-xl bg-black/5 flex items-center justify-center mb-5 text-black group-hover:bg-black group-hover:text-white transition-colors">
@@ -90,7 +90,7 @@ export default function Features() {
                 </div>
                 <h3 className="text-lg font-semibold mb-2 text-black tracking-tight">{feature.title}</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">{feature.description}</p>
-              </Link>
+              </div>
             </motion.div>
           ))}
         </motion.div>

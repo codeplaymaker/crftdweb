@@ -19,11 +19,15 @@ export default function ContactPage() {
           >
             <div className="text-center mb-16">
               <span className="text-xs font-semibold tracking-[0.2em] uppercase text-muted-foreground mb-6 block">
-                CONTACT
+                START A PROJECT
               </span>
-              <h1 className="text-4xl md:text-6xl font-bold mb-5 tracking-tight leading-tight">Get in Touch</h1>
+              <h1 className="text-4xl md:text-6xl font-bold mb-5 tracking-tight leading-tight">Let&apos;s fix your website.</h1>
               <p className="text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed">
-                Let&apos;s discuss how we can help transform your digital presence
+                Tell us what&apos;s not working and we&apos;ll tell you honestly if we can help.
+                No pitch deck, no pressure.
+              </p>
+              <p className="text-xs text-muted-foreground/50 mt-4">
+                We&apos;ve built for biotech, wellness, and fintech · Response within 24 hours
               </p>
             </div>
 
@@ -77,20 +81,6 @@ export default function ContactPage() {
                   />
                 </div>
               </div>
-              
-              <div>
-                <label className="block text-sm font-medium mb-2" htmlFor="subject">
-                  Subject
-                </label>
-                <input
-                  type="text"
-                  id="subject"
-                  name="subject"
-                  className="w-full px-4 py-2 rounded-lg border bg-background hover:border-black/20 transition-colors"
-                  required
-                />
-              </div>
-
               <div>
                 <label className="block text-sm font-medium mb-2" htmlFor="message">
                   Message
@@ -124,6 +114,10 @@ export default function ContactPage() {
               >
                 {sending ? 'Sending...' : 'Send Message'}
               </button>
+
+              <p className="text-xs text-center text-muted-foreground/50">
+                Free consultation · No commitment · We&apos;ll follow up within 24 hours
+              </p>
             </form>
           </motion.div>
         </div>

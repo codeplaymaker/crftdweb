@@ -19,16 +19,16 @@ export default function CTA() {
           className="max-w-3xl mx-auto text-center"
         >
           <span className="text-xs font-semibold tracking-[0.2em] uppercase text-muted-foreground mb-8 block">
-            LET&apos;S BUILD TOGETHER
+            LET&apos;S TALK
           </span>
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-5 text-black leading-tight tracking-tight">
-            Ready to Transform Your
+            Still wondering why your
             <br className="hidden sm:block" />
-            Digital Presence?
+            site isn&apos;t making you money?
           </h2>
           <p className="text-sm sm:text-base md:text-lg text-muted-foreground mb-10 px-3 sm:px-0 leading-relaxed max-w-xl mx-auto">
-            Your vision, our expertise. Let&apos;s collaborate to create
-            something extraordinary.
+            Your competitors are investing in sites that convert.
+            The longer you wait, the more you lose. Let&apos;s fix that.
           </p>
           <motion.div
             whileHover={{ scale: 1.05 }}
@@ -42,6 +42,9 @@ export default function CTA() {
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Link>
           </motion.div>
+          <p className="mt-6 text-xs text-muted-foreground/50">
+            Free consultation · No commitment · Response within 24 hours
+          </p>
         </motion.div>
       </div>
 

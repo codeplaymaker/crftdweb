@@ -38,17 +38,17 @@ export default function Hero() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.1 }}
           >
-            WEB DESIGN & DEVELOPMENT STUDIO
+            WEBSITES THAT SELL — NOT JUST LOOK GOOD
           </motion.span>
           <motion.h1 
-            className="text-5xl md:text-7xl font-bold mb-8 tracking-tight leading-[1.05] bg-clip-text text-transparent bg-gradient-to-r from-black via-gray-600 to-black"
+            className="text-5xl md:text-7xl font-bold mb-8 tracking-tight leading-[1.05]"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            Crafting Digital
+            Your website should be
             <br />
-            Excellence
+            <span className="text-muted-foreground">your best salesperson.</span>
           </motion.h1>
           <motion.p 
             className="text-lg md:text-xl text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed"
@@ -56,8 +56,9 @@ export default function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
           >
-            We transform ideas into exceptional web experiences, combining
-            innovative design with cutting-edge technology.
+            Most websites look fine but don&apos;t convert. We build sites that
+            turn visitors into customers — for biotech, wellness, and fintech brands
+            that need more than a template.
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -65,20 +66,30 @@ export default function Hero() {
             transition={{ duration: 0.8, delay: 0.6 }}
             className="flex gap-4 justify-center"
           >
-            <Link href="/contact" className="px-8 py-3.5 border border-black/15 rounded-full hover:bg-black/5 transition-colors text-black text-sm font-medium">
-              Get Started
-            </Link>
             <Link href="/work" className="px-8 py-3.5 bg-black text-white rounded-full hover:bg-gray-900 transition-colors text-sm font-medium">
-              Our Work
+              See the Results
+            </Link>
+            <Link href="/contact" className="px-8 py-3.5 border border-black/15 rounded-full hover:bg-black/5 transition-colors text-black text-sm font-medium">
+              Start a Project
             </Link>
           </motion.div>
+
+          {/* Social proof line */}
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.8 }}
+            className="mt-8 text-xs text-muted-foreground/60"
+          >
+            Built for Microbiome Design · The Life Lab HQ · MPM Trading
+          </motion.p>
 
           {/* Process mini-flow */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.9 }}
-            className="mt-20 flex items-center justify-center gap-3 text-muted-foreground"
+            className="mt-16 flex items-center justify-center gap-3 text-muted-foreground"
           >
             {['Discover', 'Design', 'Develop', 'Deliver'].map((step, i) => (
               <span key={step} className="flex items-center gap-3">

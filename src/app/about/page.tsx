@@ -17,68 +17,69 @@ export default function AboutPage() {
           >
             <div className="text-center mb-20">
               <span className="text-xs font-semibold tracking-[0.2em] uppercase text-muted-foreground mb-6 block">
-                WHO WE ARE
+                ABOUT CRFTDWEB
               </span>
-              <h1 className="text-4xl md:text-6xl font-bold mb-5 tracking-tight leading-tight">About Us</h1>
+              <h1 className="text-4xl md:text-6xl font-bold mb-5 tracking-tight leading-tight">We build websites that sell.</h1>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-                Crafting digital experiences that stand the test of time
+                Not agencies that talk about &ldquo;digital transformation.&rdquo;
+                We hand-code conversion-first websites for startups and service businesses.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+            {/* The real story */}
+            <div className="space-y-12 mb-16">
               <div>
-                <h2 className="text-2xl font-semibold mb-4">Our Story</h2>
-                <p className="text-muted-foreground mb-6">
-                  CrftdWeb was founded with a simple yet powerful vision: to create digital experiences that combine the elegance of Apple&apos;s design philosophy with cutting-edge web technologies. Our journey began with a passion for craftsmanship in the digital realm.
+                <h2 className="text-2xl font-semibold mb-4 tracking-tight">The short version</h2>
+                <p className="text-muted-foreground mb-4 leading-relaxed">
+                  Most agencies hand you a WordPress template, slap your logo on it, and call it custom.
+                  We write every line of code from scratch. React, Next.js, TypeScript — built for speed,
+                  built for search engines, built to convert visitors into customers.
                 </p>
-                <p className="text-muted-foreground">
-                  Today, we continue to push the boundaries of what&apos;s possible on the web, delivering solutions that not only look beautiful but perform exceptionally well.
+                <p className="text-muted-foreground leading-relaxed">
+                  We&apos;ve worked across biotech, wellness, and fintech. Different industries, same problem:
+                  businesses spending money on websites that look fine but don&apos;t generate leads.
+                  That&apos;s the problem we solve.
                 </p>
               </div>
               <div>
-                <h2 className="text-2xl font-semibold mb-4">Our Approach</h2>
-                <p className="text-muted-foreground mb-6">
-                  We believe in the power of minimalism and purpose-driven design. Every pixel, every interaction, and every line of code is crafted with intention. Our approach combines aesthetic excellence with technical precision.
+                <h2 className="text-2xl font-semibold mb-4 tracking-tight">How we work</h2>
+                <p className="text-muted-foreground mb-4 leading-relaxed">
+                  Every project follows the same four-step process: Discover the real business problem.
+                  Design around what converts, not what looks trendy. Develop with production-grade code.
+                  Deliver something that actually performs.
                 </p>
-                <p className="text-muted-foreground">
-                  By staying at the forefront of digital innovation, we ensure our clients receive solutions that are both timeless and forward-thinking.
+                <p className="text-muted-foreground leading-relaxed">
+                  No surprises. No scope creep. You know what you&apos;re getting before we write a single line of code.
                 </p>
               </div>
             </div>
 
-            <div className="mt-16 p-8 rounded-xl border bg-background">
-              <h2 className="text-2xl font-semibold mb-8 text-center tracking-tight">Our Values</h2>
+            {/* Ecosystem */}
+            <div className="p-8 rounded-xl border bg-background mb-16">
+              <span className="text-xs font-semibold tracking-[0.2em] uppercase text-muted-foreground mb-4 block text-center">
+                THE ECOSYSTEM
+              </span>
+              <h3 className="text-xl font-bold tracking-tight mb-6 text-center">Three products, one methodology</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {values.map((value, index) => (
+                {ecosystem.map((item, index) => (
                   <motion.div
-                    key={value.title}
+                    key={item.title}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: index * 0.1 }}
                     className="text-center"
                   >
-                    <h3 className="font-medium mb-2">{value.title}</h3>
-                    <p className="text-sm text-muted-foreground">{value.description}</p>
+                    <h4 className="font-medium mb-2">{item.title}</h4>
+                    <p className="text-sm text-muted-foreground">{item.description}</p>
                   </motion.div>
                 ))}
               </div>
-            </div>
-
-            {/* Ecosystem */}
-            <div className="mt-16 p-8 rounded-xl bg-accent text-center">
-              <span className="text-xs font-semibold tracking-[0.2em] uppercase text-muted-foreground mb-4 block">
-                THE CRFTDWEB ECOSYSTEM
-              </span>
-              <h3 className="text-xl font-bold tracking-tight mb-3">We practice what we preach</h3>
-              <p className="text-muted-foreground text-sm mb-6 max-w-xl mx-auto leading-relaxed">
-                We built CrftdWeb the agency. Then we codified our process into the Playbook. Then we productized it into Engine. Three products, one methodology.
-              </p>
-              <div className="flex flex-wrap gap-3 justify-center">
+              <div className="flex flex-wrap gap-3 justify-center mt-8">
                 <Link href="/services" className="px-5 py-2.5 border border-black/15 rounded-full text-sm font-medium hover:bg-black/5 transition-colors">
-                  Our Services
+                  Services
                 </Link>
                 <Link href="/playbook" className="px-5 py-2.5 border border-black/15 rounded-full text-sm font-medium hover:bg-black/5 transition-colors">
-                  The Playbook
+                  Playbook
                 </Link>
                 <Link href="/engine" className="px-5 py-2.5 border border-black/15 rounded-full text-sm font-medium hover:bg-black/5 transition-colors">
                   Engine
@@ -87,18 +88,21 @@ export default function AboutPage() {
             </div>
 
             {/* CTA */}
-            <div className="mt-16 text-center">
-              <h3 className="text-2xl md:text-3xl font-bold tracking-tight mb-4">Want to work together?</h3>
+            <div className="text-center">
+              <h3 className="text-2xl md:text-3xl font-bold tracking-tight mb-4">Let&apos;s talk about your website.</h3>
               <p className="text-muted-foreground mb-8 max-w-lg mx-auto leading-relaxed">
-                We&apos;d love to hear about your project.
+                Tell us what&apos;s not working and we&apos;ll tell you honestly if we can help.
               </p>
               <Link
                 href="/contact"
                 className="px-8 py-3.5 bg-black text-white rounded-full text-sm font-medium inline-flex items-center gap-2 group hover:bg-gray-900 transition-colors"
               >
-                Get in Touch
+                Start a Conversation
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
+              <p className="text-xs text-muted-foreground/50 mt-4">
+                Free consultation · No commitment · Response within 24 hours
+              </p>
             </div>
           </motion.div>
         </div>
@@ -107,17 +111,17 @@ export default function AboutPage() {
   );
 }
 
-const values = [
+const ecosystem = [
   {
-    title: "Excellence",
-    description: "We strive for excellence in every aspect of our work, from design to development."
+    title: "The Studio",
+    description: "Hand-coded websites that convert. We build from scratch — no templates, no page builders."
   },
   {
-    title: "Innovation",
-    description: "Constantly pushing boundaries and embracing new technologies and methodologies."
+    title: "The Playbook",
+    description: "Our proven framework for turning agency expertise into a scalable, productized business."
   },
   {
-    title: "Purpose",
-    description: "Every decision we make is guided by purpose and intention."
+    title: "Engine",
+    description: "AI-powered tools that help agencies create content, manage clients, and grow faster."
   }
 ];
