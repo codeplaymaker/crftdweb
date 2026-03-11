@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CrftdWeb Agency Toolkit</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+  :root {
+    --black: #0a0a0a;
+    --gray-800: #1f1f1f;
+    --gray-600: #525252;
+    --gray-400: #a3a3a3;
+    --gray-200: #e5e5e5;
+    --gray-100: #f5f5f5;
+    --white: #ffffff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    color: var(--black);
+    line-height: 1.6;
+    font-size: 11pt;
+    background: var(--white);
+  }
+
+  @page {
+    size: A4;
+    margin: 2cm 2.5cm;
+  }
+
+  @media print {
+    body { font-size: 10pt; }
+    .cover-page { page-break-after: always; }
+    .doc-section { page-break-before: always; }
+    .no-break { page-break-inside: avoid; }
+    .toc a { color: var(--black); }
+  }
+
+  /* Cover Page */
+  .cover-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 4rem 2rem;
+  }
+  .cover-logo {
+    width: 80px;
+    height: 80px;
+    background: var(--black);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    margin-bottom: 3rem;
+  }
+  .cover-title {
+    font-size: 42pt;
+    font-weight: 800;
+    letter-spacing: -2px;
+    line-height: 1.05;
+    margin-bottom: 1rem;
+  }
+  .cover-subtitle {
+    font-size: 16pt;
+    color: var(--gray-600);
+    font-weight: 400;
+    margin-bottom: 3rem;
+    max-width: 500px;
+  }
+  .cover-meta {
+    font-size: 9pt;
+    color: var(--gray-400);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+  }
+
+  /* Table of Contents */
+  .toc { padding: 2rem 0; }
+  .toc h2 {
+    font-size: 9pt;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--gray-400);
+    margin-bottom: 2rem;
+  }
+  .toc-item {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--gray-200);
+    text-decoration: none;
+    color: var(--black);
+  }
+  .toc-number {
+    font-size: 10pt;
+    font-weight: 700;
+    color: var(--gray-400);
+    flex-shrink: 0;
+    width: 28px;
+  }
+  .toc-title { font-weight: 600; font-size: 12pt; }
+  .toc-desc { font-size: 9pt; color: var(--gray-600); margin-left: auto; }
+
+  /* Section Styles */
+  .doc-section { padding: 1rem 0; }
+  .section-number {
+    font-size: 9pt;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--gray-400);
+    margin-bottom: 0.5rem;
+  }
+  h1 {
+    font-size: 28pt;
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    line-height: 1.1;
+    margin-bottom: 0.5rem;
+  }
+  .section-intro {
+    font-size: 11pt;
+    color: var(--gray-600);
+    margin-bottom: 2rem;
+    font-style: italic;
+  }
+  h2 {
+    font-size: 14pt;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--black);
+  }
+  h3 {
+    font-size: 11pt;
+    font-weight: 700;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+  p { margin-bottom: 0.75rem; }
+  ul, ol { margin-bottom: 0.75rem; padding-left: 1.5rem; }
+  li { margin-bottom: 0.35rem; }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0 1.5rem;
+    font-size: 10pt;
+  }
+  th {
+    text-align: left;
+    font-weight: 700;
+    font-size: 9pt;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 0.6rem 0.75rem;
+    border-bottom: 2px solid var(--black);
+    color: var(--gray-600);
+  }
+  td {
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--gray-200);
+    vertical-align: top;
+  }
+  tr:last-child td { border-bottom: none; }
+
+  /* Code */
+  code {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 9pt;
+    background: var(--gray-100);
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+  }
+  pre {
+    background: var(--gray-100);
+    padding: 1rem;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 1rem 0;
+    font-size: 8.5pt;
+    line-height: 1.5;
+    border: 1px solid var(--gray-200);
+  }
+  pre code { background: none; padding: 0; }
+
+  /* Checkboxes */
+  .checklist { list-style: none; padding-left: 0; }
+  .checklist li {
+    padding: 0.4rem 0;
+    padding-left: 1.75rem;
+    position: relative;
+  }
+  .checklist li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.55rem;
+    width: 14px;
+    height: 14px;
+    border: 1.5px solid var(--gray-400);
+    border-radius: 3px;
+  }
+
+  /* Cards */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+    margin: 1rem 0;
+  }
+  .card {
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    padding: 1rem;
+  }
+  .card-letter {
+    display: inline-flex;
+    width: 28px;
+    height: 28px;
+    background: var(--black);
+    color: var(--white);
+    border-radius: 6px;
+    align-items: center;
+    justify-content: center;
+    font-size: 11pt;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+  }
+  .card h4 { font-size: 10pt; font-weight: 700; margin-bottom: 0.25rem; }
+  .card p { font-size: 9pt; color: var(--gray-600); margin: 0; }
+
+  /* Tier cards */
+  .tier {
+    border: 1px solid var(--gray-200);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .tier-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.5rem;
+  }
+  .tier-name { font-size: 16pt; font-weight: 800; }
+  .tier-price { font-size: 12pt; font-weight: 600; color: var(--gray-600); }
+  .tier-desc { color: var(--gray-600); font-size: 10pt; margin-bottom: 1rem; }
+  .tier-timeline { font-size: 9pt; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.1em; }
+
+  /* Divider */
+  hr {
+    border: none;
+    border-top: 1px solid var(--gray-200);
+    margin: 2rem 0;
+  }
+
+  /* Warning/tip boxes */
+  .callout {
+    background: var(--gray-100);
+    border-left: 3px solid var(--black);
+    padding: 0.75rem 1rem;
+    margin: 1rem 0;
+    font-size: 10pt;
+  }
+
+  .red-flag { color: #dc2626; }
+  .green-flag { color: #16a34a; }
+
+  /* Five-col grid for TRAIN */
+  .train-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.5rem;
+    margin: 1rem 0;
+  }
+  .device-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.5rem;
+    margin: 1rem 0;
+  }
+  .device-card {
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    padding: 0.6rem;
+    text-align: center;
+  }
+  .device-icon { font-size: 18pt; margin-bottom: 0.25rem; }
+  .device-card h4 { font-size: 9pt; font-weight: 700; margin-bottom: 0.15rem; }
+  .device-card p { font-size: 8pt; color: var(--gray-600); margin: 0; }
+
+  .input-line {
+    border-bottom: 1px solid var(--gray-300);
+    min-height: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .footer {
+    text-align: center;
+    padding: 2rem 0;
+    font-size: 9pt;
+    color: var(--gray-400);
+    border-top: 1px solid var(--gray-200);
+    margin-top: 3rem;
+  }
+</style>
+</head>
+<body>
+
+<!-- ==================== COVER PAGE ==================== -->
+<div class="cover-page">
+  <div class="cover-logo">CW</div>
+  <div class="cover-title">The CrftdWeb<br>Agency Toolkit</div>
+  <div class="cover-subtitle">
+    Everything you need to scope, build, and deliver conversion-first websites. 
+    6 documents. One methodology.
+  </div>
+  <div class="cover-meta">CrftdWeb &middot; 2026 &middot; Internal Use</div>
+</div>
+
+<!-- ==================== TABLE OF CONTENTS ==================== -->
+<div class="doc-section toc">
+  <h2>Contents</h2>
+  <a class="toc-item" href="#doc1">
+    <span class="toc-number">01</span>
+    <span class="toc-title">Project Context File</span>
+    <span class="toc-desc">System prompt for Claude</span>
+  </a>
+  <a class="toc-item" href="#doc2">
+    <span class="toc-number">02</span>
+    <span class="toc-title">Client Intake Template</span>
+    <span class="toc-desc">Per-project brief</span>
+  </a>
+  <a class="toc-item" href="#doc3">
+    <span class="toc-number">03</span>
+    <span class="toc-title">Component Snippet Library</span>
+    <span class="toc-desc">9 proven code patterns</span>
+  </a>
+  <a class="toc-item" href="#doc4">
+    <span class="toc-number">04</span>
+    <span class="toc-title">Post-Launch Checklist</span>
+    <span class="toc-desc">10-section QA</span>
+  </a>
+  <a class="toc-item" href="#doc5">
+    <span class="toc-number">05</span>
+    <span class="toc-title">Starter Template Guide</span>
+    <span class="toc-desc">Boilerplate setup</span>
+  </a>
+  <a class="toc-item" href="#doc6">
+    <span class="toc-number">06</span>
+    <span class="toc-title">Pricing &amp; Scoping Framework</span>
+    <span class="toc-desc">Tiers, add-ons, rules</span>
+  </a>
+</div>
+
+<!-- ==================== DOC 1: PROJECT CONTEXT ==================== -->
+<div class="doc-section" id="doc1">
+  <div class="section-number">Document 01</div>
+  <h1>Project Context File</h1>
+  <p class="section-intro">Paste this at the start of every Claude conversation when building a website.</p>
+
+  <h2>Who We Are</h2>
+  <p>CrftdWeb is a web design studio. We hand-code conversion-first websites for startups and service businesses. No templates. No page builders. Every line written from scratch.</p>
+
+  <h2>Tech Stack</h2>
+  <table>
+    <tr><td><strong>Framework</strong></td><td>Next.js 15 (App Router), React 19, TypeScript 5</td></tr>
+    <tr><td><strong>Styling</strong></td><td>Tailwind CSS 3.4+, CSS variables for theming</td></tr>
+    <tr><td><strong>Animation</strong></td><td>Framer Motion</td></tr>
+    <tr><td><strong>Icons</strong></td><td>Lucide React</td></tr>
+    <tr><td><strong>Fonts</strong></td><td>Inter (body), custom local fonts for branding</td></tr>
+    <tr><td><strong>Deployment</strong></td><td>Vercel</td></tr>
+    <tr><td><strong>Performance</strong></td><td>90+ PageSpeed, sub-2s load time</td></tr>
+  </table>
+
+  <h2>The TRAIN Design System</h2>
+  <p>Every design decision follows five principles:</p>
+  <div class="train-grid">
+    <div class="card">
+      <div class="card-letter">T</div>
+      <h4>Typography</h4>
+      <p>Max 2 font families. Weight, size, and spacing communicate before words do.</p>
+    </div>
+    <div class="card">
+      <div class="card-letter">R</div>
+      <h4>Restraint</h4>
+      <p>Max 2-3 colors. Limited palette forces better ideas. Less noise, more signal.</p>
+    </div>
+    <div class="card">
+      <div class="card-letter">A</div>
+      <h4>Alignment</h4>
+      <p>Invisible relationships create trust. Grids and geometry. Precision = trust.</p>
+    </div>
+    <div class="card">
+      <div class="card-letter">I</div>
+      <h4>Image Treatment</h4>
+      <p>Consistent processing creates instant recognition. Same filter, same crop, same feel.</p>
+    </div>
+    <div class="card">
+      <div class="card-letter">N</div>
+      <h4>Negative Space</h4>
+      <p>Space isn't there to fill. It's there to frame. Let the idea breathe.</p>
+    </div>
+  </div>
+
+  <h2>12 Visual Devices</h2>
+  <div class="device-grid">
+    <div class="device-card"><div class="device-icon">◻</div><h4>Scale</h4><p>Size = significance</p></div>
+    <div class="device-card"><div class="device-icon">◫</div><h4>Comparison</h4><p>Side-by-side contrast</p></div>
+    <div class="device-card"><div class="device-icon">△</div><h4>Metaphor</h4><p>Abstract made tangible</p></div>
+    <div class="device-card"><div class="device-icon">◉</div><h4>Pattern</h4><p>Visual patterns decoded fast</p></div>
+    <div class="device-card"><div class="device-icon">→</div><h4>Flow</h4><p>Sequential A → B</p></div>
+    <div class="device-card"><div class="device-icon">⬡</div><h4>Stacking</h4><p>Layered accumulation</p></div>
+    <div class="device-card"><div class="device-icon">━</div><h4>Continuum</h4><p>Position along a range</p></div>
+    <div class="device-card"><div class="device-icon">◎</div><h4>Venn</h4><p>Overlapping factors</p></div>
+    <div class="device-card"><div class="device-icon">▽</div><h4>Hierarchy</h4><p>Top-to-bottom structure</p></div>
+    <div class="device-card"><div class="device-icon">⊞</div><h4>Plot</h4><p>Two-axis relationships</p></div>
+    <div class="device-card"><div class="device-icon">↻</div><h4>Loops</h4><p>Cyclical feedback</p></div>
+    <div class="device-card"><div class="device-icon">≡</div><h4>Spectrum</h4><p>Range between extremes</p></div>
+  </div>
+
+  <h2>Copy Principles</h2>
+  <ol>
+    <li><strong>Problem-first.</strong> Every headline answers "what's in it for the visitor."</li>
+    <li><strong>No fluff.</strong> Cut "leverage," "synergy," "digital transformation."</li>
+    <li><strong>No em dashes.</strong> Use periods or commas.</li>
+    <li><strong>No industry-boxing.</strong> State the problem, not the niche.</li>
+    <li><strong>Trust at every scroll point.</strong> Social proof, process visibility, risk reversal.</li>
+    <li><strong>Show, don't claim.</strong> "Here's what we built" beats "we're the best."</li>
+    <li><strong>One CTA per section.</strong> Don't give visitors 5 choices.</li>
+    <li><strong>Conversational, not corporate.</strong> Write for a smart friend.</li>
+  </ol>
+
+  <h2>Component Patterns</h2>
+  <ul>
+    <li><strong>Hero:</strong> Problem headline + subtext + 2 CTAs + process mini-flow</li>
+    <li><strong>Features:</strong> Outcomes, not capabilities</li>
+    <li><strong>Case Studies:</strong> Problem → Process → Result cards with tech tags</li>
+    <li><strong>Process Flow:</strong> Numbered steps (Discover → Design → Develop → Deliver)</li>
+    <li><strong>TRAIN Grid:</strong> 5 cards showing the design system</li>
+    <li><strong>Trust CTA:</strong> Urgency headline + "Free consultation · No commitment"</li>
+    <li><strong>Contact Form:</strong> Name, email, message. No subject field.</li>
+  </ul>
+
+  <h2>Design Defaults</h2>
+  <table>
+    <tr><td><strong>Buttons</strong></td><td>rounded-full, text-sm font-medium, black bg / white text</td></tr>
+    <tr><td><strong>Cards</strong></td><td>rounded-xl border bg-background, hover:border-black/20</td></tr>
+    <tr><td><strong>Sections</strong></td><td>py-32 for major sections, mb-20 between sub-sections</td></tr>
+    <tr><td><strong>Container</strong></td><td>Centered, max-w-4xl, 2rem padding</td></tr>
+    <tr><td><strong>Labels</strong></td><td>text-xs font-semibold tracking-[0.2em] uppercase</td></tr>
+    <tr><td><strong>Headings</strong></td><td>tracking-tight leading-tight, text-4xl md:text-6xl font-bold</td></tr>
+    <tr><td><strong>Body</strong></td><td>text-muted-foreground leading-relaxed</td></tr>
+    <tr><td><strong>Animations</strong></td><td>Framer Motion fade-up: opacity 0→1, y 20→0</td></tr>
+  </table>
+
+  <h2>Anti-Patterns</h2>
+  <ul>
+    <li>No template language ("elevate your brand," "world-class solutions")</li>
+    <li>No fake metrics or testimonials</li>
+    <li>No empty sub-pages</li>
+    <li>No features without outcomes</li>
+    <li>No "about us" before "about your problem"</li>
+    <li>No more than 2 font weights per page</li>
+    <li>No decorative elements that don't serve comprehension</li>
+    <li>No walls of text without visual breaks</li>
+  </ul>
+</div>
+
+<!-- ==================== DOC 2: CLIENT INTAKE ==================== -->
+<div class="doc-section" id="doc2">
+  <div class="section-number">Document 02</div>
+  <h1>Client Intake Template</h1>
+  <p class="section-intro">Fill this out before starting any project. Paste alongside the Project Context File when prompting Claude.</p>
+
+  <h2>Client Info</h2>
+  <p><strong>Client name:</strong> <span class="input-line" style="display:inline-block;width:60%;"></span></p>
+  <p><strong>Business name:</strong> <span class="input-line" style="display:inline-block;width:60%;"></span></p>
+  <p><strong>Website (current):</strong> <span class="input-line" style="display:inline-block;width:60%;"></span></p>
+  <p><strong>Industry:</strong> <span class="input-line" style="display:inline-block;width:60%;"></span></p>
+  <p><strong>Business model:</strong> <span class="input-line" style="display:inline-block;width:60%;"></span></p>
+
+  <h2>The Problem</h2>
+  <p><strong>Why are they coming to you?</strong> (in their words)</p>
+  <div class="input-line" style="height:2.5rem;"></div>
+  <p><strong>What's actually broken?</strong> (your diagnosis)</p>
+  <div class="input-line" style="height:2.5rem;"></div>
+  <p><strong>What have they tried before?</strong></p>
+  <div class="input-line" style="height:2rem;"></div>
+  <p><strong>What's the cost of doing nothing?</strong></p>
+  <div class="input-line" style="height:2rem;"></div>
+
+  <h2>Their Customer</h2>
+  <p><strong>Who buys from them?</strong></p>
+  <div class="input-line" style="height:2rem;"></div>
+  <p><strong>What does their customer fear?</strong></p>
+  <div class="input-line" style="height:2rem;"></div>
+  <p><strong>What does their customer want?</strong></p>
+  <div class="input-line" style="height:2rem;"></div>
+  <p><strong>Where do they hang out online?</strong></p>
+  <div class="input-line" style="height:2rem;"></div>
+
+  <h2>The Goal</h2>
+  <p><strong>One action:</strong> What should a visitor do? <span class="input-line" style="display:inline-block;width:50%;"></span></p>
+  <p><strong>Success metric:</strong> <span class="input-line" style="display:inline-block;width:60%;"></span></p>
+  <p><strong>Timeline:</strong> <span class="input-line" style="display:inline-block;width:60%;"></span></p>
+
+  <h2>Proof They Have</h2>
+  <ul class="checklist">
+    <li>Testimonials/reviews</li>
+    <li>Case studies or results</li>
+    <li>Logos or brand assets</li>
+    <li>Photos/videos</li>
+    <li>Awards, press, certifications</li>
+  </ul>
+
+  <h2>Competitive Landscape</h2>
+  <p><strong>Top 3 competitors:</strong></p>
+  <div class="input-line" style="height:2.5rem;"></div>
+  <p><strong>What they do well:</strong> <span class="input-line" style="display:inline-block;width:60%;"></span></p>
+  <p><strong>What they do badly:</strong> <span class="input-line" style="display:inline-block;width:60%;"></span></p>
+  <p><strong>Client's real differentiator:</strong> <span class="input-line" style="display:inline-block;width:50%;"></span></p>
+
+  <h2>Scope</h2>
+  <p><strong>Pages needed:</strong></p>
+  <div class="input-line" style="height:2.5rem;"></div>
+  <p><strong>Special functionality:</strong></p>
+  <div class="input-line" style="height:2rem;"></div>
+  <p><strong>Content:</strong> Client provides / We write / We guide</p>
+  <p><strong>Ongoing needs:</strong> <span class="input-line" style="display:inline-block;width:60%;"></span></p>
+
+  <h2>Budget & Pricing</h2>
+  <p><strong>Client's budget:</strong> <span class="input-line" style="display:inline-block;width:60%;"></span></p>
+  <p><strong>Our quote:</strong> <span class="input-line" style="display:inline-block;width:60%;"></span></p>
+  <p><strong>Payment structure:</strong> <span class="input-line" style="display:inline-block;width:60%;"></span></p>
+
+  <h2>Pre-Build Checklist</h2>
+  <ul class="checklist">
+    <li>I can articulate their customer's problem in one sentence</li>
+    <li>I know the one action the site needs to drive</li>
+    <li>I have (or have a plan to get) real proof/testimonials</li>
+    <li>Scope is agreed and written down</li>
+    <li>Payment terms are agreed</li>
+    <li>Timeline is realistic</li>
+  </ul>
+</div>
+
+<!-- ==================== DOC 3: COMPONENT SNIPPETS ==================== -->
+<div class="doc-section" id="doc3">
+  <div class="section-number">Document 03</div>
+  <h1>Component Snippet Library</h1>
+  <p class="section-intro">9 proven component patterns. Copy and adapt per project.</p>
+
+  <h2>Available Patterns</h2>
+  <table>
+    <tr><th>#</th><th>Component</th><th>Use Case</th></tr>
+    <tr><td>1</td><td><strong>Hero Section</strong></td><td>Problem-first headline, 2 CTAs, process mini-flow</td></tr>
+    <tr><td>2</td><td><strong>Process Flow</strong></td><td>Numbered steps (Discover → Design → Develop → Deliver)</td></tr>
+    <tr><td>3</td><td><strong>Case Study Card</strong></td><td>Problem → Process → Result with tech tags</td></tr>
+    <tr><td>4</td><td><strong>TRAIN Grid</strong></td><td>5-card design system display</td></tr>
+    <tr><td>5</td><td><strong>Trust CTA</strong></td><td>Urgency headline + trust line + ArrowRight</td></tr>
+    <tr><td>6</td><td><strong>Checklist Section</strong></td><td>"What's included" with Check icons</td></tr>
+    <tr><td>7</td><td><strong>Contact Form</strong></td><td>Name, email, message. Minimal.</td></tr>
+    <tr><td>8</td><td><strong>Section Header</strong></td><td>Label + headline + subtext (reuse everywhere)</td></tr>
+    <tr><td>9</td><td><strong>Audience Cards</strong></td><td>"Who this is for" — 3 target segments</td></tr>
+  </table>
+
+  <div class="callout">
+    <strong>Full code for all 9 patterns</strong> is in <code>docs/03-component-snippets.md</code> in your repo. 
+    This PDF shows the summary. Reference the markdown file for copy-paste code.
+  </div>
+
+  <h3>Pattern Structure (All Components Follow This)</h3>
+  <pre><code>// 1. 'use client' directive (for interactive components)
+// 2. Imports (framer-motion, lucide-react, next/link)
+// 3. Data array (content separated from layout)
+// 4. JSX with motion.div wrappers
+// 5. Tailwind classes following Design Defaults</code></pre>
+
+  <h3>Key Classes Used Across All Patterns</h3>
+  <table>
+    <tr><td>Section wrapper</td><td><code>py-32</code></td></tr>
+    <tr><td>Content container</td><td><code>max-w-4xl mx-auto</code></td></tr>
+    <tr><td>Section label</td><td><code>text-xs font-semibold tracking-[0.2em] uppercase text-muted-foreground</code></td></tr>
+    <tr><td>Heading</td><td><code>text-3xl md:text-5xl font-bold tracking-tight</code></td></tr>
+    <tr><td>Body text</td><td><code>text-muted-foreground leading-relaxed</code></td></tr>
+    <tr><td>Card</td><td><code>p-6 rounded-xl border bg-background</code></td></tr>
+    <tr><td>Primary button</td><td><code>px-8 py-3.5 bg-black text-white rounded-full text-sm font-medium</code></td></tr>
+    <tr><td>Secondary button</td><td><code>px-8 py-3.5 border border-black/15 rounded-full text-sm font-medium</code></td></tr>
+    <tr><td>Animation</td><td><code>initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}</code></td></tr>
+  </table>
+</div>
+
+<!-- ==================== DOC 4: POST-LAUNCH CHECKLIST ==================== -->
+<div class="doc-section" id="doc4">
+  <div class="section-number">Document 04</div>
+  <h1>Post-Launch Checklist</h1>
+  <p class="section-intro">Run through before every deployment. Also use as an audit tool on existing sites.</p>
+
+  <h2>1. Playbook Alignment</h2>
+  <ul class="checklist">
+    <li>Every page headline is problem-first (about the visitor, not about you)</li>
+    <li>No template language ("digital transformation," "crafting excellence")</li>
+    <li>No fake metrics or testimonials</li>
+    <li>Trust signals present (proof, process visibility, risk reversal)</li>
+    <li>One clear CTA per section</li>
+    <li>No empty pages</li>
+    <li>Copy is conversational, not corporate</li>
+  </ul>
+
+  <h2>2. TRAIN Design Check</h2>
+  <ul class="checklist">
+    <li><strong>T:</strong> Max 2 font families, clear hierarchy, readable at all sizes</li>
+    <li><strong>R:</strong> Max 2-3 colors used consistently</li>
+    <li><strong>A:</strong> Grid consistency, nothing misaligned</li>
+    <li><strong>I:</strong> All images processed consistently</li>
+    <li><strong>N:</strong> Generous padding, content can breathe</li>
+  </ul>
+
+  <h2>3. Mobile QA</h2>
+  <ul class="checklist">
+    <li>Tested at 375px (small phones)</li>
+    <li>Tested at 768px (tablets)</li>
+    <li>Tested at 1440px (desktop)</li>
+    <li>No horizontal scrolling</li>
+    <li>Text readable without zooming</li>
+    <li>Buttons tappable (44px min hit area)</li>
+    <li>Images don't overflow</li>
+    <li>Nav works on mobile</li>
+  </ul>
+
+  <h2>4. Performance</h2>
+  <ul class="checklist">
+    <li>PageSpeed 90+ mobile</li>
+    <li>PageSpeed 90+ desktop</li>
+    <li>Sub-2s load time</li>
+    <li>Images optimized (WebP/AVIF, lazy loading)</li>
+    <li>No unused CSS/JS bundles</li>
+    <li>Fonts preloaded</li>
+  </ul>
+
+  <h2>5. SEO</h2>
+  <ul class="checklist">
+    <li>Unique title on every page</li>
+    <li>Unique meta description on every page</li>
+    <li>Open Graph tags present</li>
+    <li>Twitter card meta present</li>
+    <li>Semantic HTML (h1 → h2 → h3)</li>
+    <li>Alt text on all images</li>
+    <li>Sitemap generated</li>
+    <li>robots.txt present</li>
+  </ul>
+
+  <h2>6. Functionality</h2>
+  <ul class="checklist">
+    <li>All forms tested with real submissions</li>
+    <li>Validation works</li>
+    <li>Success states show</li>
+    <li>All internal links work</li>
+    <li>External links open in new tabs</li>
+    <li>Error pages styled (404, 500)</li>
+    <li>Loading states present</li>
+  </ul>
+
+  <h2>7. Accessibility</h2>
+  <ul class="checklist">
+    <li>Keyboard navigation works</li>
+    <li>Focus indicators visible</li>
+    <li>Color contrast meets WCAG AA (4.5:1)</li>
+    <li>Screen reader friendly</li>
+  </ul>
+
+  <h2>8. Analytics & Tracking</h2>
+  <ul class="checklist">
+    <li>Google Analytics installed</li>
+    <li>Form submissions tracked as conversions</li>
+    <li>Key pages have event tracking</li>
+    <li>No tracking scripts blocking render</li>
+  </ul>
+
+  <h2>9. Security & Hosting</h2>
+  <ul class="checklist">
+    <li>HTTPS enabled</li>
+    <li>Env variables secured</li>
+    <li>No API keys in source</li>
+    <li>Domain configured</li>
+    <li>Favicon present</li>
+  </ul>
+
+  <h2>10. Final Visual Pass</h2>
+  <ul class="checklist">
+    <li>Screenshot every page on mobile and desktop</li>
+    <li>Compare against TRAIN principles</li>
+    <li>Read all copy out loud</li>
+    <li>Have someone browse for 30 seconds and tell you what the site does</li>
+  </ul>
+</div>
+
+<!-- ==================== DOC 5: STARTER TEMPLATE ==================== -->
+<div class="doc-section" id="doc5">
+  <div class="section-number">Document 05</div>
+  <h1>Starter Template Guide</h1>
+  <p class="section-intro">Your boilerplate for every new client project.</p>
+
+  <h2>Quick Start</h2>
+  <pre><code># 1. Clone the starter template
+git clone https://github.com/codeplaymaker/crftdweb-starter.git client-name-site
+cd client-name-site
+
+# 2. Remove git history and start fresh
+rm -rf .git && git init
+
+# 3. Install dependencies
+npm install
+
+# 4. Start dev server
+npm run dev
+
+# 5. Open in Claude with Project Context + Client Intake</code></pre>
+
+  <h2>What's Included</h2>
+  <pre><code>src/
+  app/
+    layout.tsx          → Root layout, fonts, metadata
+    page.tsx            → Homepage (Hero, Features, Work, CTA)
+    globals.css         → CSS variables, Tailwind base
+    contact/page.tsx    → Contact form
+    work/page.tsx       → Case studies
+    services/page.tsx   → Services, TRAIN, process
+    about/page.tsx      → About with methodology
+  components/
+    Hero.tsx, Features.tsx, Work.tsx, CTA.tsx
+    ProcessFlow.tsx, TrainGrid.tsx
+    Navbar.tsx, Footer.tsx
+  lib/utils.ts          → cn() utility
+public/                 → Favicons, images
+docs/                   → Context + Intake docs</code></pre>
+
+  <h2>Pre-Configured</h2>
+  <table>
+    <tr><td>Next.js 15</td><td>App Router, TypeScript strict</td></tr>
+    <tr><td>Tailwind CSS</td><td>CSS variables for per-client theming</td></tr>
+    <tr><td>Framer Motion</td><td>Animation library</td></tr>
+    <tr><td>Lucide React</td><td>Icon set</td></tr>
+    <tr><td>Inter font</td><td>Via next/font</td></tr>
+    <tr><td>ESLint</td><td>Configured</td></tr>
+    <tr><td>Vercel</td><td>Deploy-ready</td></tr>
+  </table>
+
+  <h2>Per-Project Customization</h2>
+  <ol>
+    <li>Fill out Client Intake</li>
+    <li>Update metadata in layout.tsx</li>
+    <li>Swap hero copy with client's problem headline</li>
+    <li>Update case studies in Work.tsx</li>
+    <li>Customize services/process steps</li>
+    <li>Add real proof (testimonials, logos, metrics)</li>
+    <li>Replace favicon and images</li>
+    <li>Adjust CSS variables for brand colors</li>
+    <li>Run Post-Launch Checklist</li>
+    <li>Deploy to Vercel</li>
+  </ol>
+
+  <div class="callout">
+    <strong>Rule:</strong> After every project, ask yourself: "Did I build a component worth adding to the template?" Keep it evolving.
+  </div>
+</div>
+
+<!-- ==================== DOC 6: PRICING & SCOPING ==================== -->
+<div class="doc-section" id="doc6">
+  <div class="section-number">Document 06</div>
+  <h1>Pricing &amp; Scoping Framework</h1>
+  <p class="section-intro">For your eyes only. Not shared with clients.</p>
+
+  <h2>Service Tiers</h2>
+
+  <div class="tier no-break">
+    <div class="tier-header">
+      <span class="tier-name">Tier 1: Landing Page</span>
+      <span class="tier-price">$1,500 – $3,000</span>
+    </div>
+    <p class="tier-desc">Single page. One goal. One CTA. For product launches, lead magnets, waitlists.</p>
+    <p><strong>Includes:</strong> 1 page, mobile-responsive, contact form, basic SEO, Vercel deploy, 1 revision round.</p>
+    <p><strong>Excludes:</strong> Copywriting, brand identity, photography, ongoing maintenance.</p>
+    <p class="tier-timeline">Timeline: 1–2 weeks</p>
+  </div>
+
+  <div class="tier no-break">
+    <div class="tier-header">
+      <span class="tier-name">Tier 2: Business Website</span>
+      <span class="tier-price">$4,000 – $8,000</span>
+    </div>
+    <p class="tier-desc">Full website. 5-7 pages. Conversion-focused. For service businesses, startups, agencies.</p>
+    <p><strong>Includes:</strong> 5-7 pages, TRAIN applied, case studies, process flow, contact form, full SEO, GA4, mobile-first, 90+ PageSpeed, 2 revision rounds, 2 weeks post-launch support.</p>
+    <p><strong>Excludes:</strong> Copywriting, brand identity, photography, auth/database, monthly maintenance.</p>
+    <p class="tier-timeline">Timeline: 3–5 weeks</p>
+  </div>
+
+  <div class="tier no-break">
+    <div class="tier-header">
+      <span class="tier-name">Tier 3: Web Application</span>
+      <span class="tier-price">$10,000 – $25,000+</span>
+    </div>
+    <p class="tier-desc">Custom web app with auth, database, dashboard. For SaaS, client portals, platforms.</p>
+    <p><strong>Includes:</strong> Everything in Tier 2, plus auth, dashboard, database, API integrations, role-based access, 3 revision rounds, 4 weeks post-launch support.</p>
+    <p><strong>Excludes:</strong> Ongoing feature dev, mobile app, payment processing, complex backend.</p>
+    <p class="tier-timeline">Timeline: 6–12 weeks</p>
+  </div>
+
+  <h2>Add-Ons</h2>
+  <table>
+    <tr><th>Add-On</th><th>Price</th></tr>
+    <tr><td>Copywriting (per page)</td><td>$500 – $1,500</td></tr>
+    <tr><td>Brand Identity</td><td>$2,000 – $5,000</td></tr>
+    <tr><td>Monthly Maintenance</td><td>$300 – $800/mo</td></tr>
+    <tr><td>SEO Optimization</td><td>$500 – $1,500</td></tr>
+    <tr><td>Analytics Setup</td><td>$300 – $500</td></tr>
+    <tr><td>Additional Pages</td><td>$500 – $1,000/page</td></tr>
+    <tr><td>Site Audit (TRAIN + Playbook)</td><td>$500 – $1,000</td></tr>
+  </table>
+
+  <h2>Scoping Questions</h2>
+  <ol>
+    <li>How many pages? (determines tier)</li>
+    <li>Need auth/database? (Tier 2 vs 3)</li>
+    <li>Do they have copy? (add copywriting or not)</li>
+    <li>Do they have a brand? (add brand identity or not)</li>
+    <li>Do they have images? (need to source or not)</li>
+    <li>Timeline? (rush = premium)</li>
+    <li>Need ongoing support? (add retainer)</li>
+    <li>Budget? (qualify before investing time)</li>
+  </ol>
+
+  <h2>Quoting Rules</h2>
+  <ol>
+    <li><strong>Never quote before intake is filled out.</strong></li>
+    <li><strong>50% upfront, 50% on launch.</strong> No exceptions for new clients.</li>
+    <li><strong>Scope in writing.</strong> Not in scope = not included.</li>
+    <li><strong>Revisions are counted.</strong> 1-3 rounds.</li>
+    <li><strong>Rush fee = 25-50% premium.</strong></li>
+    <li><strong>Say no to bad fits.</strong></li>
+    <li><strong>Site audit as gateway.</strong> Paid audit first, rebuild second.</li>
+  </ol>
+
+  <h2>Red Flags <span class="red-flag">✕</span></h2>
+  <ul>
+    <li>"Can you do it for exposure?"</li>
+    <li>"My nephew could do this but he's busy"</li>
+    <li>"We need it tomorrow"</li>
+    <li>"We'll pay when we make money"</li>
+    <li>"Can you match this Fiverr quote?"</li>
+    <li>No clear business model</li>
+    <li>Can't say who their customer is</li>
+    <li>Want to approve every pixel</li>
+  </ul>
+
+  <h2>Green Flags <span class="green-flag">✓</span></h2>
+  <ul>
+    <li>Knows their customer well</li>
+    <li>Has existing revenue or funding</li>
+    <li>Respects your process</li>
+    <li>Has real testimonials to share</li>
+    <li>Websites are investments, not expenses</li>
+    <li>Responds promptly</li>
+    <li>Budget aligned with scope</li>
+  </ul>
+</div>
+
+<!-- ==================== FOOTER ==================== -->
+<div class="footer">
+  CrftdWeb Agency Toolkit &middot; Internal Document &middot; 2026<br>
+  crftdweb.com
+</div>
+
+</body>
+</html>
