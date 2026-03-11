@@ -49,6 +49,7 @@ const stages = [
     principles: [
       'Prove the problem — articulate it as well as you solve it',
       'Prove the process — design a repeatable solution',
+      'Show the transformation — make your process visible so prospects get it instantly',
       'Content that points out the problem, product that solves it',
     ],
   },

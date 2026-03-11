@@ -70,6 +70,62 @@ export default function ServicesPage() {
             </div>
           </div>
 
+          {/* How We Design — TRAIN */}
+          <div className="max-w-4xl mx-auto mb-20">
+            <div className="text-center mb-12">
+              <h2 className="text-sm font-semibold tracking-[0.15em] uppercase text-muted-foreground mb-4">HOW WE DESIGN</h2>
+              <p className="text-2xl md:text-3xl font-bold tracking-tight mb-3">The TRAIN System</p>
+              <p className="text-muted-foreground max-w-xl mx-auto leading-relaxed">
+                Every design decision follows a 5-principle framework. Not taste. Not trends. A system.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
+              {trainSystem.map((item, index) => (
+                <motion.div
+                  key={item.letter}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: index * 0.08 }}
+                  className="p-5 rounded-xl border bg-background text-center hover:border-black/20 transition-colors"
+                >
+                  <div className="w-10 h-10 rounded-lg bg-black text-white flex items-center justify-center text-sm font-bold mx-auto mb-3">
+                    {item.letter}
+                  </div>
+                  <h3 className="font-semibold text-sm mb-1 tracking-tight">{item.name}</h3>
+                  <p className="text-xs text-muted-foreground leading-relaxed">{item.description}</p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+
+          {/* 12 Visual Devices */}
+          <div className="max-w-4xl mx-auto mb-20">
+            <div className="text-center mb-12">
+              <h2 className="text-sm font-semibold tracking-[0.15em] uppercase text-muted-foreground mb-4">VISUAL LANGUAGE</h2>
+              <p className="text-2xl md:text-3xl font-bold tracking-tight mb-3">12 Visual Devices</p>
+              <p className="text-muted-foreground max-w-xl mx-auto leading-relaxed">
+                Every concept gets communicated through one of these universal visual patterns. Your brain processes visuals 60,000x faster than text.
+              </p>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+              {visualDevices.map((device, index) => (
+                <motion.div
+                  key={device.name}
+                  initial={{ opacity: 0, y: 15 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.3, delay: index * 0.05 }}
+                  className="p-4 rounded-xl border bg-background text-center hover:border-black/20 transition-colors"
+                >
+                  <div className="text-2xl mb-2">{device.icon}</div>
+                  <h3 className="font-semibold text-sm mb-1 tracking-tight">{device.name}</h3>
+                  <p className="text-xs text-muted-foreground">{device.description}</p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+
           {/* Who it's for */}
           <div className="max-w-4xl mx-auto mb-20">
             <h2 className="text-sm font-semibold tracking-[0.15em] uppercase text-muted-foreground mb-8 text-center">WHO THIS IS FOR</h2>
@@ -155,6 +211,49 @@ const inclusions = [
   "Post-launch support and iteration",
   "Hosting and deployment setup",
   "Performance monitoring",
+];
+
+const trainSystem = [
+  {
+    letter: "T",
+    name: "Typography",
+    description: "Typefaces that say what you mean. Weight, size, and spacing communicate before words do.",
+  },
+  {
+    letter: "R",
+    name: "Restraint",
+    description: "One decision saves 1,000. Limited palette forces better ideas. Less noise, more signal.",
+  },
+  {
+    letter: "A",
+    name: "Alignment",
+    description: "Invisible relationships create trust. Grids and geometry make design feel intentional.",
+  },
+  {
+    letter: "I",
+    name: "Image Treatment",
+    description: "Consistent processing creates instant recognition. Same filter, same crop, same feel.",
+  },
+  {
+    letter: "N",
+    name: "Negative Space",
+    description: "Space isn't there to fill. It's there to frame. Let the idea breathe.",
+  },
+];
+
+const visualDevices = [
+  { name: "Scale", description: "Size = significance", icon: "◻" },
+  { name: "Comparison", description: "Side-by-side contrast", icon: "◫" },
+  { name: "Metaphor", description: "Abstract made tangible", icon: "△" },
+  { name: "Pattern", description: "Visual patterns decoded fast", icon: "◉" },
+  { name: "Flow", description: "Sequential A → B progression", icon: "→" },
+  { name: "Stacking", description: "Layered accumulation", icon: "⬡" },
+  { name: "Continuum", description: "Position along a range", icon: "━" },
+  { name: "Venn", description: "Overlapping factors", icon: "◎" },
+  { name: "Hierarchy", description: "Top-to-bottom structure", icon: "▽" },
+  { name: "Plot", description: "Two-axis relationships", icon: "⊞" },
+  { name: "Loops", description: "Cyclical feedback processes", icon: "↻" },
+  { name: "Spectrum", description: "Range between extremes", icon: "≡" },
 ];
 
 const audiences = [
