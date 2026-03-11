@@ -7,7 +7,7 @@ const features = [
   {
     icon: <Target className="w-8 h-8" />,
     title: "Conversion-First Design",
-    description: "Every section answers one question in the buyer's mind. We don't just make it pretty — we make it sell."
+    description: "Every section answers one question in the buyer's mind. We don't just make it pretty. We make it sell."
   },
   {
     icon: <Code2 className="w-8 h-8" />,
@@ -22,7 +22,7 @@ const features = [
   {
     icon: <Shield className="w-8 h-8" />,
     title: "Trust at Every Touchpoint",
-    description: "We engineer credibility into your site — social proof, clear process, risk reversal — so visitors feel safe buying."
+    description: "We engineer credibility into your site. Social proof, clear process, risk reversal. So visitors feel safe buying."
   }
 ];
 

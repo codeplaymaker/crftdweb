@@ -38,7 +38,7 @@ export default function Hero() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.1 }}
           >
-            WEBSITES THAT SELL — NOT JUST LOOK GOOD
+            WEBSITES THAT SELL, NOT JUST LOOK GOOD
           </motion.span>
           <motion.h1 
             className="text-5xl md:text-7xl font-bold mb-8 tracking-tight leading-[1.05]"
@@ -57,7 +57,7 @@ export default function Hero() {
             transition={{ duration: 0.8, delay: 0.4 }}
           >
             Most websites look fine but don&apos;t convert. We build sites that
-            turn visitors into customers — for biotech, wellness, and fintech brands
+            turn visitors into customers, no matter the industry
             that need more than a template.
           </motion.p>
           <motion.div

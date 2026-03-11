@@ -8,33 +8,33 @@ import { ArrowUpRight } from "lucide-react";
 const projects = [
   {
     title: "Microbiome Design",
-    problem: "A cutting-edge biotech company with real science — but a website that looked like a student project. Investors weren't taking them seriously.",
+    problem: "A cutting-edge company with real science but a website that looked like a student project. Investors weren't taking them seriously.",
     process: "Full discovery into their audience (researchers, investors, partners). Rebuilt around credibility signals, clear value proposition, and a conversion-focused layout.",
     result: "A site that matches the quality of their science. Professional presence that gives investors confidence from the first click.",
     image: "/microbiome-design-pic.png",
-    category: "Biotech & Design",
+    category: "Science & Research",
     href: "https://microbiome-design.vercel.app",
     tags: ["Custom Design", "Next.js", "Conversion-Focused"],
   },
   {
     title: "The Life Lab HQ",
-    problem: "A wellness brand with great content and real expertise — but visitors browsed and left without signing up. The site didn't guide anyone to take action.",
+    problem: "A brand with great content and real expertise but visitors browsed and left without signing up. The site didn't guide anyone to take action.",
     process: "Mapped the customer journey from first visit to sign-up. Rebuilt every page around a single conversion goal. Added trust signals at each decision point.",
     result: "A platform that turns casual visitors into engaged members. Clear path from landing to sign-up with friction removed at every step.",
     image: "/life-lab.jpg",
-    category: "Lifestyle & Wellness",
+    category: "Lifestyle & Brand",
     href: "https://thelifelabhq.com",
     tags: ["AI-Powered", "Membership Platform", "UX Redesign"],
   },
   {
     title: "MPM Trading Platform",
-    problem: "Traders needed a tool for journaling, insights, and custom plans — but existing platforms were clunky and overwhelming. The founder needed a clean, usable product.",
+    problem: "Traders needed a tool for journaling, insights, and custom plans but existing platforms were clunky and overwhelming. The founder needed a clean, usable product.",
     process: "Designed a minimal, data-focused interface. Built trading journal, insights dashboard, and personalized plan features. Prioritized speed and clarity over feature bloat.",
-    result: "A fintech platform that traders actually use daily. Clean interface that makes complex data approachable and actionable.",
+    result: "A trading platform that users actually use daily. Clean interface that makes complex data approachable and actionable.",
     image: "/mpm-hero.jpg",
-    category: "FinTech Platform",
+    category: "Web App",
     href: "https://www.marketplaymaker.com",
-    tags: ["FinTech", "Dashboard Design", "User Auth"],
+    tags: ["Web App", "Dashboard Design", "User Auth"],
   }
 ];
 
@@ -77,8 +77,8 @@ export default function Work() {
             <span className="text-muted-foreground">Real problems solved.</span>
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed">
-            We&apos;ve built across biotech, wellness, and fintech.
-            Every project starts with a problem — here&apos;s how we solved them.
+            We solve the same problem across every industry.
+            Every project starts with a problem. Here&apos;s how we solved them.
           </p>
         </motion.div>
 

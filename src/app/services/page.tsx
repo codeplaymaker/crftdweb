@@ -128,7 +128,7 @@ export default function ServicesPage() {
 const process = [
   {
     title: "Discover",
-    description: "We dig into who your customers are, what they fear, and what makes them buy. Not demographics — psychographics.",
+    description: "We dig into who your customers are, what they fear, and what makes them buy. Not demographics. Psychographics.",
   },
   {
     title: "Design",
@@ -140,12 +140,12 @@ const process = [
   },
   {
     title: "Deliver",
-    description: "Launch, test, and optimize. We don't just hand it off — we make sure it's actually working for your business.",
+    description: "Launch, test, and optimize. We don't just hand it off. We make sure it's actually working for your business.",
   },
 ];
 
 const inclusions = [
-  "Custom design — no templates, no themes",
+  "Custom design, no templates, no themes",
   "Mobile-first responsive development",
   "SEO foundations and meta optimization",
   "90+ Google PageSpeed score",

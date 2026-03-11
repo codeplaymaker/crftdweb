@@ -27,7 +27,7 @@ export default function ContactPage() {
                 No pitch deck, no pressure.
               </p>
               <p className="text-xs text-muted-foreground/50 mt-4">
-                We&apos;ve built for biotech, wellness, and fintech · Response within 24 hours
+                We&apos;ve built across multiple industries · Response within 24 hours
               </p>
             </div>
 

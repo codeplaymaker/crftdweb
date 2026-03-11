@@ -32,13 +32,12 @@ export default function AboutPage() {
                 <h2 className="text-2xl font-semibold mb-4 tracking-tight">The short version</h2>
                 <p className="text-muted-foreground mb-4 leading-relaxed">
                   Most agencies hand you a WordPress template, slap your logo on it, and call it custom.
-                  We write every line of code from scratch. React, Next.js, TypeScript — built for speed,
+                  We write every line of code from scratch. React, Next.js, TypeScript. Built for speed,
                   built for search engines, built to convert visitors into customers.
                 </p>
                 <p className="text-muted-foreground leading-relaxed">
-                  We&apos;ve worked across biotech, wellness, and fintech. Different industries, same problem:
-                  businesses spending money on websites that look fine but don&apos;t generate leads.
-                  That&apos;s the problem we solve.
+                  Different industries, same problem: businesses spending money on websites that look
+                  fine but don&apos;t generate leads. That&apos;s the problem we solve.
                 </p>
               </div>
               <div>
@@ -114,7 +113,7 @@ export default function AboutPage() {
 const ecosystem = [
   {
     title: "The Studio",
-    description: "Hand-coded websites that convert. We build from scratch — no templates, no page builders."
+    description: "Hand-coded websites that convert. No templates, no page builders."
   },
   {
     title: "The Playbook",
