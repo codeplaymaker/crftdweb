@@ -172,7 +172,6 @@ export default function NewOfferPage() {
     setAiLoading(true);
     try {
       const report = JSON.parse(cachedReport);
-      console.log('Truth Engine report data:', report);
       
       // Call AI to generate intelligent offer suggestions based on the research
       const response = await fetch('/api/engine/offer-autofill', {

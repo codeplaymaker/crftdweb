@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
+import { verifyAuthToken, unauthorizedResponse } from '@/lib/engine/auth-guard';
 
 function getOpenAI() {
-  return new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-  });
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) {
+    throw new Error('OPENAI_API_KEY is not configured');
+  }
+  return new OpenAI({ apiKey });
 }
 
 const contentPrompts: Record<string, { system: string; userTemplate: string }> = {
@@ -209,6 +212,9 @@ Include subject lines, email copy, and timing recommendations.`
 };
 
 export async function POST(request: NextRequest) {
+  const auth = await verifyAuthToken(request);
+  if (!auth) return unauthorizedResponse();
+
   try {
     const body = await request.json();
     const { type, input, userId } = body;

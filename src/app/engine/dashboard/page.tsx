@@ -252,6 +252,7 @@ export default function DashboardPage() {
             </div>
             <span className="px-2 py-1 bg-green-500/20 text-green-400 text-xs rounded-full">Live</span>
           </div>
+          <p className="text-white/40 text-xs mt-1">Sample data — run Truth Engine reports to see real trends</p>
           <div className="space-y-3">
             {[
               { trend: 'AI-Powered Coaching', change: '+127%', direction: 'up', score: 94 },
@@ -316,6 +317,7 @@ export default function DashboardPage() {
             </div>
             <span className="px-2 py-1 bg-purple-500/20 text-purple-400 text-xs rounded-full">AI Scored</span>
           </div>
+          <p className="text-white/40 text-xs mt-1">Sample opportunities — generate reports to unlock personalized ones</p>
           <div className="space-y-3">
             {[
               { opportunity: 'AI Accountability Partner SaaS', score: 96, revenue: '$2.4M/yr TAM', hot: true },
@@ -344,9 +346,9 @@ export default function DashboardPage() {
               </div>
             ))}
           </div>
-          <button className="mt-4 w-full py-3 bg-gradient-to-r from-purple-600 to-violet-600 text-white rounded-xl font-medium hover:from-purple-500 hover:to-violet-500 transition-all">
+          <Link href="/engine/dashboard/truth" className="mt-4 w-full py-3 bg-gradient-to-r from-purple-600 to-violet-600 text-white rounded-xl font-medium hover:from-purple-500 hover:to-violet-500 transition-all block text-center">
             Generate New Opportunities
-          </button>
+          </Link>
         </motion.div>
       </div>
 
@@ -366,9 +368,9 @@ export default function DashboardPage() {
           <h3 className="text-white font-semibold mb-4">Getting Started</h3>
           <div className="space-y-3">
             {[
-              { text: 'Run your first Truth Engine report', done: false },
-              { text: 'Create your first offer', done: false },
-              { text: 'Try an AI agent', done: false },
+              { text: 'Run your first Truth Engine report', done: reports.length > 0 },
+              { text: 'Create your first offer', done: offers.length > 0 },
+              { text: 'Try an AI agent', done: (profile?.agentUsage || 0) > 0 },
               { text: 'Explore the dashboard', done: true },
             ].map((item, index) => (
               <div key={index} className="flex items-center gap-3">

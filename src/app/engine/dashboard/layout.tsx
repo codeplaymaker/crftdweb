@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode, useEffect } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth, AuthProvider } from '@/lib/firebase';
@@ -99,11 +99,21 @@ const sidebarItems = [
   },
 ];
 
-function Sidebar({ credits = 100, plan = 'free' }: { credits?: number; plan?: string }) {
+function Sidebar({ credits = 100, plan = 'free', open, onClose }: { credits?: number; plan?: string; open: boolean; onClose: () => void }) {
   const pathname = usePathname();
 
   return (
-    <aside className="fixed left-0 top-0 h-full w-64 bg-black/50 border-r border-white/10 z-40">
+    <>
+      {/* Mobile overlay */}
+      {open && (
+        <div 
+          className="fixed inset-0 bg-black/60 z-30 lg:hidden" 
+          onClick={onClose}
+        />
+      )}
+      <aside className={`fixed left-0 top-0 h-full w-64 bg-black/95 border-r border-white/10 z-40 transform transition-transform duration-300 ${
+        open ? 'translate-x-0' : '-translate-x-full'
+      } lg:translate-x-0`}>
       {/* Logo */}
       <div className="p-6 border-b border-white/10">
         <Link href="/engine" className="flex items-center gap-2">
@@ -122,6 +132,7 @@ function Sidebar({ credits = 100, plan = 'free' }: { credits?: number; plan?: st
             <Link
               key={item.name}
               href={item.href}
+              onClick={onClose}
               className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${
                 isActive 
                   ? 'bg-purple-500/20 text-purple-400' 
@@ -149,10 +160,11 @@ function Sidebar({ credits = 100, plan = 'free' }: { credits?: number; plan?: st
         </div>
       </div>
     </aside>
+    </>
   );
 }
 
-function DashboardHeader() {
+function DashboardHeader({ onMenuToggle }: { onMenuToggle: () => void }) {
   const router = useRouter();
   const { user, profile, signOut } = useAuth();
 
@@ -163,12 +175,21 @@ function DashboardHeader() {
 
   return (
     <header className="h-16 border-b border-white/10 flex items-center justify-between px-6">
-      <div>
-        {/* Breadcrumb or page title can go here */}
+      <div className="flex items-center gap-3">
+        {/* Mobile menu button */}
+        <button
+          onClick={onMenuToggle}
+          className="lg:hidden p-2 text-white/60 hover:text-white transition-colors"
+          aria-label="Toggle sidebar"
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
       </div>
       <div className="flex items-center gap-4">
         {/* Notifications */}
-        <button className="p-2 text-white/60 hover:text-white transition-colors">
+        <button className="p-2 text-white/60 hover:text-white transition-colors" aria-label="Notifications">
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
           </svg>
@@ -200,6 +221,7 @@ function DashboardHeader() {
 function DashboardContent({ children }: { children: ReactNode }) {
   const router = useRouter();
   const { user, profile, loading } = useAuth();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -221,9 +243,9 @@ function DashboardContent({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-screen bg-black">
-      <Sidebar credits={profile?.credits || 100} plan={profile?.plan || 'free'} />
-      <div className="ml-64">
-        <DashboardHeader />
+      <Sidebar credits={profile?.credits || 100} plan={profile?.plan || 'free'} open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <div className="lg:ml-64">
+        <DashboardHeader onMenuToggle={() => setSidebarOpen(prev => !prev)} />
         <main className="p-6">
           {children}
         </main>

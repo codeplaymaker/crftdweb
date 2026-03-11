@@ -1,9 +1,10 @@
 'use client';
 
-import { ReactNode, useEffect } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth, AuthProvider } from '@/lib/firebase';
+import { getPlaybookProgress } from '@/lib/firebase/firestore';
 
 const sidebarItems = [
   { 
@@ -80,11 +81,33 @@ const sidebarItems = [
   },
 ];
 
-function Sidebar() {
+function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const pathname = usePathname();
+  const { user } = useAuth();
+  const [stageName, setStageName] = useState('');
+  const [stageNumber, setStageNumber] = useState(0);
+
+  useEffect(() => {
+    if (user) {
+      getPlaybookProgress(user.uid).then(progress => {
+        if (progress?.diagnosisStage) {
+          setStageName(progress.diagnosisStage);
+          const stageMap: Record<string, number> = { 'Mindset': 1, 'Skill': 2, 'Process': 3, 'Reputation': 4, 'Product': 5, 'Authority': 6 };
+          setStageNumber(stageMap[progress.diagnosisStage] || 0);
+        }
+      }).catch(() => {});
+    }
+  }, [user]);
 
   return (
-    <aside className="fixed left-0 top-0 h-full w-64 bg-black/50 border-r border-white/10 z-40">
+    <>
+      {/* Mobile overlay */}
+      {isOpen && (
+        <div className="fixed inset-0 bg-black/60 z-40 lg:hidden" onClick={onClose} />
+      )}
+      <aside className={`fixed left-0 top-0 h-full w-64 bg-black/95 lg:bg-black/50 border-r border-white/10 z-50 transition-transform duration-300 ${
+        isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+      }`}>
       {/* Logo */}
       <div className="p-6 border-b border-white/10">
         <Link href="/playbook" className="flex items-center gap-2">
@@ -103,6 +126,7 @@ function Sidebar() {
             <Link
               key={item.name}
               href={item.href}
+              onClick={onClose}
               className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${
                 isActive 
                   ? 'bg-emerald-500/20 text-emerald-400' 
@@ -121,19 +145,20 @@ function Sidebar() {
         <div className="bg-gradient-to-r from-emerald-900/30 to-teal-900/30 rounded-xl p-4">
           <div className="flex items-center justify-between mb-2">
             <span className="text-white/60 text-sm">Current Stage</span>
-            <span className="text-emerald-400 font-semibold text-sm">Build</span>
+            <span className="text-emerald-400 font-semibold text-sm">{stageName || 'Not assessed'}</span>
           </div>
           <div className="w-full bg-white/10 rounded-full h-2">
-            <div className="bg-gradient-to-r from-emerald-500 to-teal-500 h-2 rounded-full transition-all" style={{ width: '33%' }} />
+            <div className="bg-gradient-to-r from-emerald-500 to-teal-500 h-2 rounded-full transition-all" style={{ width: `${stageNumber > 0 ? Math.round((stageNumber / 6) * 100) : 0}%` }} />
           </div>
-          <p className="text-white/40 text-xs mt-2">Stage 2 of 6</p>
+          <p className="text-white/40 text-xs mt-2">{stageNumber > 0 ? `Stage ${stageNumber} of 6` : 'Take the diagnosis'}</p>
         </div>
       </div>
     </aside>
+    </>
   );
 }
 
-function DashboardHeader() {
+function DashboardHeader({ onToggleSidebar }: { onToggleSidebar: () => void }) {
   const router = useRouter();
   const { user, profile, signOut } = useAuth();
 
@@ -143,12 +168,21 @@ function DashboardHeader() {
   };
 
   return (
-    <header className="h-16 border-b border-white/10 flex items-center justify-between px-6">
-      <div>
+    <header className="h-16 border-b border-white/10 flex items-center justify-between px-4 sm:px-6">
+      <div className="flex items-center gap-3">
+        <button
+          onClick={onToggleSidebar}
+          className="lg:hidden p-2 text-white/60 hover:text-white transition-colors"
+          aria-label="Toggle sidebar"
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
         <p className="text-white/40 text-sm">The CRFTD Playbook</p>
       </div>
       <div className="flex items-center gap-4">
-        <button className="p-2 text-white/60 hover:text-white transition-colors">
+        <button className="p-2 text-white/60 hover:text-white transition-colors" aria-label="Notifications">
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
           </svg>
@@ -178,6 +212,7 @@ function DashboardHeader() {
 function DashboardContent({ children }: { children: ReactNode }) {
   const router = useRouter();
   const { user, loading } = useAuth();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -199,10 +234,10 @@ function DashboardContent({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-screen bg-black">
-      <Sidebar />
-      <div className="ml-64">
-        <DashboardHeader />
-        <main className="p-6">
+      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <div className="lg:ml-64">
+        <DashboardHeader onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
+        <main className="p-4 sm:p-6">
           {children}
         </main>
       </div>

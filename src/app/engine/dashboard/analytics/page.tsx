@@ -64,9 +64,21 @@ export default function AnalyticsPage() {
           getGeneratedContent(user.uid, 50)
         ]);
         
-        setReports(reportsData);
-        setOffers(offersData);
-        setContentCount(contentData.length);
+        // Filter by date range
+        const now = new Date();
+        const filterDate = (date: Date) => {
+          if (dateRange === 'All') return true;
+          const days = dateRange === '7d' ? 7 : dateRange === '30d' ? 30 : 90;
+          return now.getTime() - date.getTime() < days * 86400000;
+        };
+        
+        const filteredReports = reportsData.filter(r => r.createdAt && filterDate(r.createdAt.toDate()));
+        const filteredOffers = offersData.filter(o => o.createdAt && filterDate(o.createdAt.toDate()));
+        const filteredContent = contentData.filter(c => c.createdAt && filterDate(c.createdAt.toDate()));
+        
+        setReports(filteredReports);
+        setOffers(filteredOffers);
+        setContentCount(filteredContent.length);
         
         // Build activity feed from all sources
         const activities: Activity[] = [];
@@ -128,7 +140,7 @@ export default function AnalyticsPage() {
       }
     }
     loadData();
-  }, [user]);
+  }, [user, dateRange]);
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -258,7 +270,26 @@ export default function AnalyticsPage() {
           >
             <RefreshCw className={`w-4 h-4 text-gray-400 ${refreshing ? 'animate-spin' : ''}`} />
           </button>
-          <button className="flex items-center gap-2 px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg hover:border-zinc-700 transition-colors text-gray-400 text-sm">
+          <button 
+            onClick={() => {
+              // Export analytics data as CSV
+              const csvRows = ['Type,Name,Date'];
+              reports.forEach(r => {
+                const date = r.createdAt ? r.createdAt.toDate().toISOString().split('T')[0] : 'N/A';
+                csvRows.push(`Report,"${r.niche}",${date}`);
+              });
+              offers.forEach(o => {
+                const date = o.createdAt ? o.createdAt.toDate().toISOString().split('T')[0] : 'N/A';
+                csvRows.push(`Offer,"${o.name}",${date}`);
+              });
+              const blob = new Blob([csvRows.join('\n')], { type: 'text/csv' });
+              const a = document.createElement('a');
+              a.href = URL.createObjectURL(blob);
+              a.download = `engine-analytics-${new Date().toISOString().split('T')[0]}.csv`;
+              a.click();
+            }}
+            className="flex items-center gap-2 px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg hover:border-zinc-700 transition-colors text-gray-400 text-sm"
+          >
             <Download className="w-4 h-4" />
             Export
           </button>

@@ -12,13 +12,13 @@ export default function SecurityPage() {
     },
     {
       icon: '🏢',
-      title: 'SOC 2 Type II Compliant',
-      description: 'Our infrastructure meets the highest standards for security, availability, and confidentiality.',
+      title: 'Pursuing SOC 2 Type II',
+      description: 'Our infrastructure is built to meet SOC 2 standards for security, availability, and confidentiality. Certification in progress.',
     },
     {
       icon: '🌐',
-      title: 'GDPR Compliant',
-      description: 'Full compliance with European data protection regulations. Request data deletion anytime.',
+      title: 'GDPR Ready',
+      description: 'Built with European data protection regulations in mind. Request data deletion anytime.',
     },
     {
       icon: '🔒',
@@ -38,10 +38,10 @@ export default function SecurityPage() {
   ];
 
   const certifications = [
-    { name: 'SOC 2 Type II', icon: '🏆' },
-    { name: 'GDPR', icon: '🇪🇺' },
-    { name: 'CCPA', icon: '🇺🇸' },
-    { name: 'ISO 27001', icon: '📜' },
+    { name: 'SOC 2 (In Progress)', icon: '🏆' },
+    { name: 'GDPR Ready', icon: '🇪🇺' },
+    { name: 'CCPA Ready', icon: '🇺🇸' },
+    { name: 'ISO 27001 (Planned)', icon: '📜' },
   ];
 
   return (

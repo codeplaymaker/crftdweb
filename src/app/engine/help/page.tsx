@@ -2,8 +2,11 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import { useState } from 'react';
 
 export default function HelpPage() {
+  const [searchQuery, setSearchQuery] = useState('');
+  
   const categories = [
     {
       title: 'Getting Started',
@@ -13,10 +16,10 @@ export default function HelpPage() {
         </svg>
       ),
       articles: [
-        { title: 'Quick Start Guide', href: '#' },
-        { title: 'Creating Your First Truth Report', href: '#' },
-        { title: 'Understanding Your Dashboard', href: '#' },
-        { title: 'Setting Up Your Profile', href: '#' },
+        { title: 'Quick Start Guide', href: '/engine/help' },
+        { title: 'Creating Your First Truth Report', href: '/engine/dashboard/truth' },
+        { title: 'Understanding Your Dashboard', href: '/engine/dashboard' },
+        { title: 'Setting Up Your Profile', href: '/engine/dashboard/settings' },
       ],
     },
     {
@@ -27,10 +30,10 @@ export default function HelpPage() {
         </svg>
       ),
       articles: [
-        { title: 'How the Truth Engine Works', href: '#' },
-        { title: 'Interpreting Your Viability Score', href: '#' },
-        { title: 'Using Market Intelligence Data', href: '#' },
-        { title: 'Export Options', href: '#' },
+        { title: 'How the Truth Engine Works', href: '/engine/dashboard/truth' },
+        { title: 'Interpreting Your Viability Score', href: '/engine/dashboard/truth' },
+        { title: 'Using Market Intelligence Data', href: '/engine/dashboard/analytics' },
+        { title: 'Export Options', href: '/engine/dashboard/reports' },
       ],
     },
     {
@@ -41,10 +44,10 @@ export default function HelpPage() {
         </svg>
       ),
       articles: [
-        { title: 'Meet Your AI Agents', href: '#' },
-        { title: 'Best Practices for AI Conversations', href: '#' },
-        { title: 'Using the Offer Architect', href: '#' },
-        { title: 'VSL Builder Guide', href: '#' },
+        { title: 'Meet Your AI Agents', href: '/engine/dashboard/agents' },
+        { title: 'Best Practices for AI Conversations', href: '/engine/dashboard/agents' },
+        { title: 'Using the Offer Architect', href: '/engine/dashboard/agents' },
+        { title: 'VSL Builder Guide', href: '/engine/dashboard/content' },
       ],
     },
     {
@@ -55,10 +58,10 @@ export default function HelpPage() {
         </svg>
       ),
       articles: [
-        { title: 'Creating a New Offer', href: '#' },
-        { title: 'Building Your Value Stack', href: '#' },
-        { title: 'Pricing Strategies', href: '#' },
-        { title: 'Publishing Your Offer', href: '#' },
+        { title: 'Creating a New Offer', href: '/engine/dashboard/offers/new' },
+        { title: 'Building Your Value Stack', href: '/engine/dashboard/offers' },
+        { title: 'Pricing Strategies', href: '/engine/dashboard/offers' },
+        { title: 'Publishing Your Offer', href: '/engine/dashboard/offers' },
       ],
     },
     {
@@ -69,10 +72,10 @@ export default function HelpPage() {
         </svg>
       ),
       articles: [
-        { title: 'Managing Your Subscription', href: '#' },
-        { title: 'Updating Payment Methods', href: '#' },
-        { title: 'Understanding Your Usage', href: '#' },
-        { title: 'Cancellation & Refunds', href: '#' },
+        { title: 'Managing Your Subscription', href: '/engine/pricing' },
+        { title: 'Updating Payment Methods', href: '/engine/dashboard/settings' },
+        { title: 'Understanding Your Usage', href: '/engine/dashboard/analytics' },
+        { title: 'Cancellation & Refunds', href: '/engine/terms' },
       ],
     },
     {
@@ -83,10 +86,10 @@ export default function HelpPage() {
         </svg>
       ),
       articles: [
-        { title: 'Connecting to Notion', href: '#' },
-        { title: 'Zapier Integration', href: '#' },
-        { title: 'API Documentation', href: '#' },
-        { title: 'Webhook Setup', href: '#' },
+        { title: 'Connecting Integrations', href: '/engine/dashboard/integrations' },
+        { title: 'Automation Workflows', href: '/engine/dashboard/funnels' },
+        { title: 'API Documentation', href: '/engine/dashboard/integrations' },
+        { title: 'Webhook Setup', href: '/engine/dashboard/integrations' },
       ],
     },
   ];
@@ -115,6 +118,8 @@ export default function HelpPage() {
               <input
                 type="text"
                 placeholder="Search for help..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full bg-white/5 border border-white/20 rounded-xl pl-12 pr-4 py-4 text-white placeholder-white/40 focus:outline-none focus:border-purple-500/50"
               />
             </div>
@@ -129,25 +134,36 @@ export default function HelpPage() {
           className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16"
         >
           {[
-            { label: 'Video Tutorials', icon: '🎬' },
-            { label: 'Community Forum', icon: '💬' },
-            { label: 'Feature Requests', icon: '💡' },
-            { label: 'Contact Support', icon: '📧' },
+            { label: 'Video Tutorials', icon: '🎬', href: '/engine/demo', tag: 'Coming Soon' },
+            { label: 'Community Forum', icon: '💬', href: '/contact', tag: 'Coming Soon' },
+            { label: 'Feature Requests', icon: '💡', href: '/contact' },
+            { label: 'Contact Support', icon: '📧', href: '/contact' },
           ].map((item) => (
             <Link
               key={item.label}
-              href="#"
-              className="bg-white/5 border border-white/10 rounded-xl p-4 text-center hover:bg-white/10 transition-colors"
+              href={item.href}
+              className="bg-white/5 border border-white/10 rounded-xl p-4 text-center hover:bg-white/10 transition-colors relative"
             >
               <span className="text-2xl mb-2 block">{item.icon}</span>
               <span className="text-white/70 text-sm">{item.label}</span>
+              {item.tag && (
+                <span className="absolute top-2 right-2 text-[10px] bg-purple-500/20 text-purple-400 px-1.5 py-0.5 rounded-full">{item.tag}</span>
+              )}
             </Link>
           ))}
         </motion.div>
 
         {/* Categories */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {categories.map((category, index) => (
+          {categories
+            .map(category => ({
+              ...category,
+              articles: searchQuery 
+                ? category.articles.filter(a => a.title.toLowerCase().includes(searchQuery.toLowerCase()))
+                : category.articles,
+            }))
+            .filter(category => category.articles.length > 0)
+            .map((category, index) => (
             <motion.div
               key={category.title}
               initial={{ opacity: 0, y: 20 }}

@@ -136,21 +136,17 @@ export default function ChangelogPage() {
           className="mt-16 bg-white/5 border border-white/10 rounded-2xl p-8 text-center"
         >
           <h2 className="text-xl font-bold text-white mb-2">
-            Get Notified of Updates
+            Stay in the Loop
           </h2>
           <p className="text-white/60 mb-6">
-            Subscribe to our changelog and never miss a new feature
+            Follow our changelog to never miss a new feature or improvement
           </p>
-          <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-            <input
-              type="email"
-              placeholder="Enter your email"
-              className="flex-1 bg-white/5 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 focus:outline-none focus:border-purple-500/50"
-            />
-            <button className="bg-gradient-to-r from-purple-600 to-violet-600 text-white px-6 py-3 rounded-xl font-medium hover:opacity-90 transition-opacity">
-              Subscribe
-            </button>
-          </div>
+          <Link 
+            href="/engine/help" 
+            className="bg-gradient-to-r from-purple-600 to-violet-600 text-white px-6 py-3 rounded-xl font-medium hover:opacity-90 transition-opacity inline-block"
+          >
+            Visit Help Center
+          </Link>
         </motion.div>
 
         <div className="text-center mt-8">

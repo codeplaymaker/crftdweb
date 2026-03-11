@@ -165,10 +165,6 @@ function IntegrationCard({
             <span className="text-white">{records.toLocaleString()}</span>
           </div>
           <div className="flex gap-2 mt-4">
-            <button className="flex-1 py-2 bg-white/10 text-white rounded-xl text-sm hover:bg-white/20 transition-colors flex items-center justify-center gap-2">
-              <Settings className="w-4 h-4" />
-              Settings
-            </button>
             <button 
               onClick={onDisconnect}
               disabled={loading}
@@ -496,8 +492,11 @@ export default function IntegrationsPage() {
               <p className="text-white/60 text-sm mb-4">
                 Access our full REST API to build custom integrations and automate workflows.
               </p>
-              <button className="w-full py-3 bg-white/10 text-white rounded-xl font-medium hover:bg-white/20 transition-all">
-                View API Docs
+              <button 
+                onClick={() => alert('API documentation coming soon!')}
+                className="w-full py-3 bg-white/10 text-white rounded-xl font-medium hover:bg-white/20 transition-all"
+              >
+                View API Docs (Coming Soon)
               </button>
             </motion.div>
 

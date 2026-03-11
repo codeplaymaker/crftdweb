@@ -3,11 +3,13 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { signUp, signInWithGoogle } from '@/lib/firebase';
 
 export default function SignUpPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const selectedPlan = searchParams.get('plan') || 'free';
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -19,8 +21,8 @@ export default function SignUpPage() {
     setLoading(true);
     setError('');
 
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters');
+    if (password.length < 8) {
+      setError('Password must be at least 8 characters');
       setLoading(false);
       return;
     }
@@ -33,7 +35,7 @@ export default function SignUpPage() {
       if (errorMessage.includes('email-already-in-use')) {
         setError('An account with this email already exists');
       } else if (errorMessage.includes('weak-password')) {
-        setError('Password is too weak. Use at least 6 characters.');
+        setError('Password is too weak. Use at least 8 characters.');
       } else if (errorMessage.includes('invalid-email')) {
         setError('Please enter a valid email address');
       } else {

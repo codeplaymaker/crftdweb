@@ -128,9 +128,6 @@ function FunnelCard({
                 <Play className="w-4 h-4" />
               </button>
             )}
-            <button className="p-2 bg-white/10 text-white/50 rounded-lg hover:bg-white/20 hover:text-white transition-colors">
-              <Settings className="w-4 h-4" />
-            </button>
             <button 
               onClick={onDelete}
               className="p-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition-colors"

@@ -1,9 +1,11 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { StagesStack, StagePositionIndicator } from '@/components/playbook/visuals';
+import { useAuth } from '@/lib/firebase/AuthContext';
+import { savePlaybookProgress, getPlaybookProgress, trackPlaybookModuleVisit } from '@/lib/firebase/firestore';
 
 interface Question {
   id: string;
@@ -189,6 +191,31 @@ export default function DiagnosePage() {
   });
   const [showIntro, setShowIntro] = useState(true);
   const [showBusinessForm, setShowBusinessForm] = useState(false);
+  const { user } = useAuth();
+
+  // Track module visit
+  useEffect(() => {
+    if (user) {
+      trackPlaybookModuleVisit(user.uid, 'diagnose').catch(() => {});
+    }
+  }, [user]);
+
+  // Load previous diagnosis if exists — restore full state
+  useEffect(() => {
+    if (user) {
+      getPlaybookProgress(user.uid).then(progress => {
+        if (progress?.diagnosisComplete && progress.diagnosisAnswers) {
+          setAnswers(progress.diagnosisAnswers);
+          if (progress.businessInfo?.name) {
+            setBusinessInfo(progress.businessInfo);
+          }
+          // Show results directly instead of restarting quiz
+          setShowIntro(false);
+          setShowResults(true);
+        }
+      }).catch(() => {});
+    }
+  }, [user]);
 
   const totalQuestions = questions.length;
   const progress = ((currentQuestion + 1) / totalQuestions) * 100;
@@ -208,6 +235,18 @@ export default function DiagnosePage() {
     e.preventDefault();
     setShowBusinessForm(false);
     setShowResults(true);
+
+    // Save diagnosis results to Firestore
+    if (user) {
+      const score = Object.values(answers).reduce((sum, val) => sum + val, 0);
+      savePlaybookProgress(user.uid, {
+        diagnosisComplete: true,
+        diagnosisStage: getStage(score),
+        diagnosisScore: score,
+        diagnosisAnswers: answers,
+        businessInfo,
+      }).catch(() => {});
+    }
   };
 
   const totalScore = Object.values(answers).reduce((sum, val) => sum + val, 0);
@@ -486,6 +525,40 @@ export default function DiagnosePage() {
               >
                 Go to Dashboard
               </Link>
+            </div>
+
+            {/* Sign-up prompt for anonymous users */}
+            {!user && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 }}
+                className="mt-6 bg-orange-500/10 border border-orange-500/20 rounded-2xl p-6 text-center"
+              >
+                <h3 className="text-orange-400 font-semibold mb-2">Save Your Results</h3>
+                <p className="text-white/60 text-sm mb-4">Create a free account to save your diagnosis, track progress, and get your personalized action plan.</p>
+                <Link
+                  href="/playbook/signup"
+                  className="inline-block bg-gradient-to-r from-orange-500 to-amber-500 text-white px-6 py-3 rounded-full font-semibold hover:opacity-90 transition-opacity text-sm"
+                >
+                  Sign Up Free →
+                </Link>
+              </motion.div>
+            )}
+
+            {/* Retake assessment */}
+            <div className="mt-6 text-center">
+              <button
+                onClick={() => {
+                  setAnswers({});
+                  setCurrentQuestion(0);
+                  setShowResults(false);
+                  setShowIntro(true);
+                }}
+                className="text-white/40 hover:text-white/70 text-sm transition-colors"
+              >
+                Retake assessment →
+              </button>
             </div>
           </motion.div>
         </div>

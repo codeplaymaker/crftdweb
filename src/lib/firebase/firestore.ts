@@ -23,6 +23,11 @@ export interface UserProfile {
   plan: 'free' | 'pro' | 'agency';
   credits: number;
   agentUsage: number;
+  notifications?: {
+    email: boolean;
+    reports: boolean;
+    marketing: boolean;
+  };
   createdAt: Timestamp;
   updatedAt: Timestamp;
 }
@@ -154,6 +159,42 @@ export interface AnalyticsEvent {
   userId: string;
   type: 'report_generated' | 'offer_created' | 'content_generated' | 'agent_used' | 'funnel_triggered';
   metadata?: Record<string, unknown>;
+  createdAt: Timestamp;
+}
+
+// Playbook Types
+export interface PlaybookProgress {
+  userId: string;
+  // Diagnosis
+  diagnosisComplete: boolean;
+  diagnosisStage: string;
+  diagnosisScore: number;
+  diagnosisAnswers: Record<string, number>;
+  businessInfo: {
+    name: string;
+    businessType: string;
+    monthlyRevenue: string;
+    burnRate: string;
+    primaryGoal: string;
+  };
+  // Track
+  milestones: Record<string, boolean>;
+  // Systemize
+  systemStatuses: Record<string, string>;
+  // Scale
+  streams: { name: string; type: 'active' | 'leveraged' | 'passive'; monthlyRevenue: number; hoursPerMonth: number }[];
+  // Prove
+  proofItems: { id: string; type: string; title: string; content: string; client: string; date: string; status: string }[];
+  // Productize
+  worksheetAnswers: Record<string, string>;
+  // Prove - Case Study
+  caseStudyAnswers: Record<string, string>;
+  // Track - Proof entries
+  trackProofEntries: { title: string; type: string; date: string }[];
+  // Module visit tracking
+  modulesVisited: string[];
+  // Timestamps
+  updatedAt: Timestamp;
   createdAt: Timestamp;
 }
 
@@ -477,4 +518,63 @@ export async function getAnalyticsEvents(userId: string, limitCount = 100): Prom
   );
   const snapshot = await getDocs(q);
   return snapshot.docs.map(doc => doc.data() as AnalyticsEvent);
+}
+
+// Playbook Progress Functions
+export async function getPlaybookProgress(userId: string): Promise<PlaybookProgress | null> {
+  const docRef = doc(db, 'playbookProgress', userId);
+  const docSnap = await getDoc(docRef);
+  return docSnap.exists() ? (docSnap.data() as PlaybookProgress) : null;
+}
+
+export async function savePlaybookProgress(userId: string, data: Partial<Omit<PlaybookProgress, 'userId' | 'createdAt' | 'updatedAt'>>) {
+  const docRef = doc(db, 'playbookProgress', userId);
+  const existing = await getDoc(docRef);
+  
+  if (existing.exists()) {
+    await updateDoc(docRef, {
+      ...data,
+      updatedAt: serverTimestamp(),
+    });
+  } else {
+    await setDoc(docRef, {
+      userId,
+      diagnosisComplete: false,
+      diagnosisStage: '',
+      diagnosisScore: 0,
+      diagnosisAnswers: {},
+      businessInfo: { name: '', businessType: '', monthlyRevenue: '', burnRate: '', primaryGoal: '' },
+      milestones: {},
+      systemStatuses: {},
+      streams: [],
+      proofItems: [],
+      modulesVisited: [],
+      ...data,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    });
+  }
+}
+
+export async function updatePlaybookMilestone(userId: string, milestoneId: string, completed: boolean) {
+  const progress = await getPlaybookProgress(userId);
+  const milestones = progress?.milestones || {};
+  milestones[milestoneId] = completed;
+  await savePlaybookProgress(userId, { milestones });
+}
+
+export async function updatePlaybookSystemStatus(userId: string, systemId: string, status: string) {
+  const progress = await getPlaybookProgress(userId);
+  const systemStatuses = progress?.systemStatuses || {};
+  systemStatuses[systemId] = status;
+  await savePlaybookProgress(userId, { systemStatuses });
+}
+
+export async function trackPlaybookModuleVisit(userId: string, moduleName: string) {
+  const progress = await getPlaybookProgress(userId);
+  const visited = progress?.modulesVisited || [];
+  if (!visited.includes(moduleName)) {
+    visited.push(moduleName);
+    await savePlaybookProgress(userId, { modulesVisited: visited });
+  }
 }

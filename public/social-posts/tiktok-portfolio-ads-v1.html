@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TikTok Portfolio Ad Creatives — CrftdWeb</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #060606; color: white; }
+        .controls { position: sticky; top: 0; z-index: 50; background: rgba(6,6,6,.95); backdrop-filter: blur(12px); border-bottom: 1px solid #1a1a1a; }
+        .btn { padding: 11px 24px; border-radius: 10px; font-weight: 700; font-size: 13px; border: none; cursor: pointer; transition: all .2s; }
+        .btn:hover { transform: translateY(-1px); }
+        .btn-purple { background: linear-gradient(135deg, #7c3aed, #a855f7); color: white; }
+        .btn-outline { background: transparent; border: 1px solid #282828; color: #888; }
+        .btn-outline:hover { border-color: #7c3aed; color: white; }
+        .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+        .card { background: #0e0e0e; border-radius: 14px; overflow: hidden; border: 1px solid #1a1a1a; transition: all .3s; cursor: pointer; }
+        .card:hover { border-color: #7c3aed; transform: translateY(-3px); box-shadow: 0 12px 40px rgba(124,58,237,.12); }
+        .card.selected { border-color: #7c3aed; box-shadow: 0 0 0 2px rgba(124,58,237,.3); }
+        .card-preview { width: 100%; aspect-ratio: 9/16; overflow: hidden; position: relative; }
+        .card-preview > div { transform: scale(0.241); transform-origin: top left; position: absolute; top: 0; left: 0; }
+        .card-info { padding: 14px 16px; }
+        .post-canvas { position: absolute; left: -9999px; top: 0; }
+        .frame { width: 1080px; height: 1920px; position: relative; overflow: hidden; display: flex; flex-direction: column; font-family: 'Inter', sans-serif; }
+        .noise::after { content:''; position:absolute; inset:0; z-index:1; pointer-events:none; opacity:.035; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+        .tag { display:inline-block; padding:7px 18px; border-radius:100px; font-size:16px; font-weight:700; letter-spacing:.15em; text-transform:uppercase; }
+        .divider { width:100px; height:2px; background:linear-gradient(90deg,transparent,rgba(255,255,255,.15),transparent); }
+        .section-label { font-size: 14px; font-weight: 600; color: #555; letter-spacing: .2em; text-transform: uppercase; margin-bottom: 16px; }
+    </style>
+</head>
+<body>
+
+<!-- CONTROLS -->
+<div class="controls">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between flex-wrap gap-3">
+        <div>
+            <h1 class="text-lg font-bold">Portfolio Ad Creatives</h1>
+            <p class="text-xs text-gray-500">TikTok 9:16 — 1080×1920 — 8 Variations</p>
+        </div>
+        <div class="flex gap-3 flex-wrap">
+            <button onclick="downloadAll()" class="btn btn-purple">⬇ Download All (PNG)</button>
+            <button onclick="downloadSelected()" class="btn btn-outline" id="selBtn" disabled>⬇ Download Selected</button>
+        </div>
+    </div>
+</div>
+
+<div id="status" class="text-center py-2 text-xs text-gray-600"></div>
+
+<!-- GALLERY -->
+<div class="max-w-7xl mx-auto px-6 pb-20">
+    <div class="gallery" id="gallery"></div>
+</div>
+
+<!-- ═══════ CANVASES ═══════ -->
+<div class="post-canvas">
+
+<!-- ━━━━━━ V1: "websites I built this month" ━━━━━━ -->
+<div id="v1-built-this-month" class="frame noise" style="background:#050505;">
+    <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#7c3aed,#a855f7);"></div>
+
+    <div style="padding:72px 72px 40px;position:relative;z-index:2;">
+        <div class="tag" style="background:rgba(124,58,237,.12);color:#a78bfa;margin-bottom:40px;">PORTFOLIO</div>
+        <h1 style="font-size:72px;font-weight:900;line-height:1;letter-spacing:-0.03em;">
+            Websites I built<br><span style="color:rgba(255,255,255,.4);">this month.</span>
+        </h1>
+    </div>
+
+    <!-- Project cards -->
+    <div style="flex:1;padding:20px 72px;display:flex;flex-direction:column;gap:20px;position:relative;z-index:2;">
+        <!-- Project 1 -->
+        <div style="flex:1;border-radius:20px;overflow:hidden;position:relative;border:1px solid rgba(255,255,255,.06);">
+            <img src="/microbiome-design-pic.png" style="width:100%;height:100%;object-fit:cover;" crossorigin="anonymous" />
+            <div style="position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.85) 100%);"></div>
+            <div style="position:absolute;bottom:24px;left:28px;right:28px;z-index:2;">
+                <div style="font-size:14px;font-weight:700;color:#a78bfa;letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px;">BIOTECH & DESIGN</div>
+                <div style="font-size:28px;font-weight:800;">Microbiome Design</div>
+            </div>
+        </div>
+        <!-- Project 2 -->
+        <div style="flex:1;border-radius:20px;overflow:hidden;position:relative;border:1px solid rgba(255,255,255,.06);">
+            <img src="/life-lab.jpg" style="width:100%;height:100%;object-fit:cover;" crossorigin="anonymous" />
+            <div style="position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.85) 100%);"></div>
+            <div style="position:absolute;bottom:24px;left:28px;right:28px;z-index:2;">
+                <div style="font-size:14px;font-weight:700;color:#22d3ee;letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px;">LIFESTYLE & WELLNESS</div>
+                <div style="font-size:28px;font-weight:800;">The Life Lab HQ</div>
+            </div>
+        </div>
+        <!-- Project 3 -->
+        <div style="flex:1;border-radius:20px;overflow:hidden;position:relative;border:1px solid rgba(255,255,255,.06);">
+            <img src="/mpm-hero.jpg" style="width:100%;height:100%;object-fit:cover;" crossorigin="anonymous" />
+            <div style="position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.85) 100%);"></div>
+            <div style="position:absolute;bottom:24px;left:28px;right:28px;z-index:2;">
+                <div style="font-size:14px;font-weight:700;color:#fbbf24;letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px;">FINTECH PLATFORM</div>
+                <div style="font-size:28px;font-weight:800;">MPM Trading Platform</div>
+            </div>
+        </div>
+    </div>
+
+    <div style="padding:32px 72px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(255,255,255,.06);position:relative;z-index:2;">
+        <span style="font-size:20px;font-weight:800;letter-spacing:.05em;">CRFTDWEB</span>
+        <span style="font-size:16px;color:rgba(255,255,255,.3);">crftdweb.com</span>
+    </div>
+</div>
+
+<!-- ━━━━━━ V2: "POV: you hired a real designer" ━━━━━━ -->
+<div id="v2-pov" class="frame noise" style="background:linear-gradient(170deg,#020008,#0c0020 50%,#020008);">
+    <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#ec4899,#a855f7);"></div>
+    <div style="position:absolute;top:20%;left:50%;transform:translateX(-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(168,85,247,.08),transparent 70%);"></div>
+
+    <div style="padding:72px;display:flex;flex-direction:column;align-items:center;position:relative;z-index:2;">
+        <div class="tag" style="background:rgba(236,72,153,.12);color:#f472b6;margin-bottom:48px;">TIKTOK AD</div>
+        <h1 style="font-size:68px;font-weight:900;text-align:center;line-height:1.05;letter-spacing:-0.03em;">
+            POV: You hired<br>a <span style="background:linear-gradient(90deg,#f472b6,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">real designer</span>
+        </h1>
+    </div>
+
+    <!-- Phone mockup style cards -->
+    <div style="flex:1;padding:16px 56px;display:flex;gap:16px;position:relative;z-index:2;">
+        <div style="flex:1;border-radius:24px;overflow:hidden;position:relative;border:2px solid rgba(255,255,255,.08);box-shadow:0 20px 60px rgba(0,0,0,.5);">
+            <img src="/microbiome-design-pic.png" style="width:100%;height:100%;object-fit:cover;" crossorigin="anonymous" />
+            <div style="position:absolute;inset:0;background:linear-gradient(180deg,transparent 60%,rgba(0,0,0,.9) 100%);"></div>
+            <div style="position:absolute;bottom:20px;left:0;right:0;text-align:center;">
+                <div style="font-size:18px;font-weight:800;">Microbiome Design</div>
+                <div style="font-size:13px;color:rgba(255,255,255,.4);">Biotech</div>
+            </div>
+        </div>
+        <div style="flex:1;border-radius:24px;overflow:hidden;position:relative;border:2px solid rgba(255,255,255,.08);box-shadow:0 20px 60px rgba(0,0,0,.5);transform:translateY(40px);">
+            <img src="/life-lab.jpg" style="width:100%;height:100%;object-fit:cover;" crossorigin="anonymous" />
+            <div style="position:absolute;inset:0;background:linear-gradient(180deg,transparent 60%,rgba(0,0,0,.9) 100%);"></div>
+            <div style="position:absolute;bottom:20px;left:0;right:0;text-align:center;">
+                <div style="font-size:18px;font-weight:800;">Life Lab HQ</div>
+                <div style="font-size:13px;color:rgba(255,255,255,.4);">Wellness</div>
+            </div>
+        </div>
+        <div style="flex:1;border-radius:24px;overflow:hidden;position:relative;border:2px solid rgba(255,255,255,.08);box-shadow:0 20px 60px rgba(0,0,0,.5);">
+            <img src="/mpm-hero.jpg" style="width:100%;height:100%;object-fit:cover;" crossorigin="anonymous" />
+            <div style="position:absolute;inset:0;background:linear-gradient(180deg,transparent 60%,rgba(0,0,0,.9) 100%);"></div>
+            <div style="position:absolute;bottom:20px;left:0;right:0;text-align:center;">
+                <div style="font-size:18px;font-weight:800;">MPM Trading</div>
+                <div style="font-size:13px;color:rgba(255,255,255,.4);">FinTech</div>
+            </div>
+        </div>
+    </div>
+
+    <div style="padding:40px 72px;text-align:center;position:relative;z-index:2;">
+        <div style="background:white;color:black;display:inline-block;padding:18px 48px;border-radius:100px;font-size:22px;font-weight:800;margin-bottom:16px;">Need a site? DM me →</div>
+        <div style="font-size:18px;color:rgba(255,255,255,.25);">CrftdWeb.com</div>
+    </div>
+</div>
+
+<!-- ━━━━━━ V3: "This is what $X websites look like" ━━━━━━ -->
+<div id="v3-premium" class="frame noise" style="background:#030303;">
+    <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#fbbf24,#f59e0b);"></div>
+
+    <div style="padding:72px;text-align:center;position:relative;z-index:2;">
+        <div class="tag" style="background:rgba(251,191,36,.1);color:#fbbf24;margin-bottom:40px;">WEB DESIGN</div>
+        <h1 style="font-size:64px;font-weight:900;line-height:1.05;letter-spacing:-0.03em;">
+            This is what<br>
+            <span style="background:linear-gradient(90deg,#fbbf24,#f97316);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">premium</span> websites<br>look like.
+        </h1>
+    </div>
+
+    <!-- Stacked showcase -->
+    <div style="flex:1;padding:0 56px;display:flex;flex-direction:column;gap:16px;position:relative;z-index:2;">
+        <div style="flex:1;border-radius:18px;overflow:hidden;position:relative;border:1px solid rgba(255,255,255,.06);">
+            <img src="/microbiome-design-pic.png" style="width:100%;height:100%;object-fit:cover;" crossorigin="anonymous" />
+            <div style="position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.7) 0%,transparent 50%);"></div>
+            <div style="position:absolute;top:20px;left:24px;"><div class="tag" style="background:rgba(0,0,0,.6);color:white;font-size:13px;padding:6px 14px;">microbiome-design.vercel.app</div></div>
+            <div style="position:absolute;bottom:20px;left:24px;"><span style="font-size:26px;font-weight:800;">Microbiome Design</span></div>
+        </div>
+        <div style="display:flex;gap:16px;height:360px;">
+            <div style="flex:1;border-radius:18px;overflow:hidden;position:relative;border:1px solid rgba(255,255,255,.06);">
+                <img src="/life-lab.jpg" style="width:100%;height:100%;object-fit:cover;" crossorigin="anonymous" />
+                <div style="position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.7) 0%,transparent 50%);"></div>
+                <div style="position:absolute;bottom:16px;left:20px;"><span style="font-size:20px;font-weight:800;">Life Lab HQ</span></div>
+            </div>
+            <div style="flex:1;border-radius:18px;overflow:hidden;position:relative;border:1px solid rgba(255,255,255,.06);">
+                <img src="/mpm-hero.jpg" style="width:100%;height:100%;object-fit:cover;" crossorigin="anonymous" />
+                <div style="position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.7) 0%,transparent 50%);"></div>
+                <div style="position:absolute;bottom:16px;left:20px;"><span style="font-size:20px;font-weight:800;">MPM Trading</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div style="padding:32px 72px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(255,255,255,.06);position:relative;z-index:2;">
+        <span style="font-size:20px;font-weight:800;letter-spacing:.05em;">CRFTDWEB</span>
+        <span style="font-size:16px;color:rgba(255,255,255,.3);">DM for a quote</span>
+    </div>
+</div>
+
+<!-- ━━━━━━ V4: Single Project Spotlight — Microbiome ━━━━━━ -->
+<div id="v4-spotlight-micro" class="frame noise" style="background:#020208;">
+    <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#22c55e,#10b981);"></div>
+    <div style="position:absolute;top:0;left:0;right:0;height:800px;overflow:hidden;">
+        <img src="/microbiome-design-pic.png" style="width:100%;height:100%;object-fit:cover;opacity:.4;" crossorigin="anonymous" />
+        <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(2,2,8,.3) 0%,#020208 100%);"></div>
+    </div>
+
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;padding:72px;position:relative;z-index:2;">
+        <div class="tag" style="background:rgba(34,197,94,.12);color:#4ade80;margin-bottom:32px;">CLIENT PROJECT</div>
+        <h1 style="font-size:72px;font-weight:900;line-height:1;letter-spacing:-0.03em;margin-bottom:20px;">
+            Microbiome<br>Design
+        </h1>
+        <p style="font-size:28px;color:rgba(255,255,255,.4);line-height:1.5;margin-bottom:48px;max-width:700px;">
+            Designing a future with microbes. Science meets creative digital experience.
+        </p>
+
+        <div style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:48px;">
+            <span style="padding:10px 20px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);font-size:18px;font-weight:600;">Scientific Expertise</span>
+            <span style="padding:10px 20px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);font-size:18px;font-weight:600;">Creative Design</span>
+            <span style="padding:10px 20px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);font-size:18px;font-weight:600;">Responsive</span>
+            <span style="padding:10px 20px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);font-size:18px;font-weight:600;">90+ PageSpeed</span>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:24px;">
+            <div style="background:white;color:black;padding:16px 40px;border-radius:100px;font-size:20px;font-weight:800;">View Live Site →</div>
+            <span style="font-size:18px;color:rgba(255,255,255,.25);">microbiome-design.vercel.app</span>
+        </div>
+    </div>
+
+    <div style="padding:32px 72px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(255,255,255,.06);position:relative;z-index:2;">
+        <span style="font-size:20px;font-weight:800;letter-spacing:.05em;">CRFTDWEB</span>
+        <span style="font-size:16px;color:rgba(255,255,255,.3);">Biotech & Design</span>
+    </div>
+</div>
+
+<!-- ━━━━━━ V5: "Stop using templates" — Contrast Hook ━━━━━━ -->
+<div id="v5-stop-templates" class="frame noise" style="background:#050505;">
+    <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#ef4444,#7c3aed);"></div>
+
+    <div style="padding:72px;position:relative;z-index:2;">
+        <div class="tag" style="background:rgba(239,68,68,.12);color:#f87171;margin-bottom:40px;">REAL TALK</div>
+        <h1 style="font-size:72px;font-weight:900;line-height:1;letter-spacing:-0.03em;margin-bottom:24px;">
+            Stop using<br><span style="color:#ef4444;">templates.</span>
+        </h1>
+        <p style="font-size:28px;color:rgba(255,255,255,.35);line-height:1.4;">Your brand deserves better.</p>
+    </div>
+
+    <!-- Comparison -->
+    <div style="flex:1;padding:0 72px;display:flex;flex-direction:column;gap:28px;position:relative;z-index:2;">
+        <!-- Template side -->
+        <div style="background:rgba(239,68,68,.04);border:1px solid rgba(239,68,68,.1);border-radius:18px;padding:28px 32px;">
+            <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;">
+                <span style="font-size:22px;">✕</span>
+                <span style="font-size:20px;font-weight:800;color:#f87171;">TEMPLATE SITE</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+                <span style="font-size:22px;color:rgba(255,255,255,.4);">→ Looks like 10,000 other sites</span>
+                <span style="font-size:22px;color:rgba(255,255,255,.4);">→ Slow, bloated code</span>
+                <span style="font-size:22px;color:rgba(255,255,255,.4);">→ No brand identity</span>
+                <span style="font-size:22px;color:rgba(255,255,255,.4);">→ Cookie-cutter layouts</span>
+            </div>
+        </div>
+
+        <!-- CRFTD side -->
+        <div style="background:rgba(124,58,237,.04);border:1px solid rgba(124,58,237,.15);border-radius:18px;padding:28px 32px;">
+            <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;">
+                <span style="font-size:22px;">✓</span>
+                <span style="font-size:20px;font-weight:800;color:#a78bfa;">CRFTDWEB SITE</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+                <span style="font-size:22px;color:rgba(255,255,255,.7);">→ Custom designed from scratch</span>
+                <span style="font-size:22px;color:rgba(255,255,255,.7);">→ 90+ PageSpeed performance</span>
+                <span style="font-size:22px;color:rgba(255,255,255,.7);">→ Apple-inspired aesthetics</span>
+                <span style="font-size:22px;color:rgba(255,255,255,.7);">→ Built to convert</span>
+            </div>
+        </div>
+
+        <!-- Proof row -->
+        <div style="display:flex;gap:12px;overflow:hidden;">
+            <div style="flex:1;height:220px;border-radius:14px;overflow:hidden;border:1px solid rgba(124,58,237,.2);">
+                <img src="/microbiome-design-pic.png" style="width:100%;height:100%;object-fit:cover;" crossorigin="anonymous" />
+            </div>
+            <div style="flex:1;height:220px;border-radius:14px;overflow:hidden;border:1px solid rgba(124,58,237,.2);">
+                <img src="/life-lab.jpg" style="width:100%;height:100%;object-fit:cover;" crossorigin="anonymous" />
+            </div>
+            <div style="flex:1;height:220px;border-radius:14px;overflow:hidden;border:1px solid rgba(124,58,237,.2);">
+                <img src="/mpm-hero.jpg" style="width:100%;height:100%;object-fit:cover;" crossorigin="anonymous" />
+            </div>
+        </div>
+    </div>
+
+    <div style="padding:32px 72px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(255,255,255,.06);position:relative;z-index:2;">
+        <span style="font-size:20px;font-weight:800;letter-spacing:.05em;">CRFTDWEB</span>
+        <span style="font-size:16px;color:rgba(255,255,255,.3);">Link in bio ↗</span>
+    </div>
+</div>
+
+<!-- ━━━━━━ V6: Stats + Portfolio — "The numbers" ━━━━━━ -->
+<div id="v6-stats" class="frame noise" style="background:linear-gradient(170deg,#020010,#08001e 50%,#020010);">
+    <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#06b6d4,#7c3aed);"></div>
+    <div style="position:absolute;top:25%;left:50%;transform:translateX(-50%);width:500px;height:500px;background:radial-gradient(circle,rgba(6,182,212,.06),transparent 70%);"></div>
+
+    <div style="padding:72px;text-align:center;position:relative;z-index:2;">
+        <div class="tag" style="background:rgba(6,182,212,.1);color:#67e8f9;margin-bottom:40px;">BY THE NUMBERS</div>
+        <h1 style="font-size:68px;font-weight:900;line-height:1;letter-spacing:-0.03em;">
+            Design that<br><span style="background:linear-gradient(90deg,#67e8f9,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">delivers.</span>
+        </h1>
+    </div>
+
+    <!-- Stats -->
+    <div style="padding:0 72px;display:grid;grid-template-columns:1fr 1fr;gap:16px;position:relative;z-index:2;">
+        <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:18px;padding:32px;text-align:center;">
+            <div style="font-size:56px;font-weight:900;background:linear-gradient(180deg,#67e8f9,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">90+</div>
+            <div style="font-size:16px;color:rgba(255,255,255,.35);margin-top:4px;">PageSpeed Score</div>
+        </div>
+        <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:18px;padding:32px;text-align:center;">
+            <div style="font-size:56px;font-weight:900;background:linear-gradient(180deg,#a78bfa,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">100%</div>
+            <div style="font-size:16px;color:rgba(255,255,255,.35);margin-top:4px;">Custom Code</div>
+        </div>
+        <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:18px;padding:32px;text-align:center;">
+            <div style="font-size:56px;font-weight:900;background:linear-gradient(180deg,#4ade80,#22c55e);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">3+</div>
+            <div style="font-size:16px;color:rgba(255,255,255,.35);margin-top:4px;">Industries Served</div>
+        </div>
+        <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:18px;padding:32px;text-align:center;">
+            <div style="font-size:56px;font-weight:900;background:linear-gradient(180deg,#fbbf24,#f59e0b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">A+</div>
+            <div style="font-size:16px;color:rgba(255,255,255,.35);margin-top:4px;">Accessibility</div>
+        </div>
+    </div>
+
+    <!-- Portfolio strip -->
+    <div style="flex:1;padding:32px 72px;display:flex;gap:14px;align-items:flex-end;position:relative;z-index:2;">
+        <div style="flex:1;height:280px;border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.06);">
+            <img src="/microbiome-design-pic.png" style="width:100%;height:100%;object-fit:cover;" crossorigin="anonymous" />
+        </div>
+        <div style="flex:1;height:320px;border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.06);">
+            <img src="/life-lab.jpg" style="width:100%;height:100%;object-fit:cover;" crossorigin="anonymous" />
+        </div>
+        <div style="flex:1;height:260px;border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.06);">
+            <img src="/mpm-hero.jpg" style="width:100%;height:100%;object-fit:cover;" crossorigin="anonymous" />
+        </div>
+    </div>
+
+    <div style="padding:32px 72px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(255,255,255,.06);position:relative;z-index:2;">
+        <span style="font-size:20px;font-weight:800;letter-spacing:.05em;">CRFTDWEB</span>
+        <span style="font-size:16px;color:rgba(255,255,255,.3);">crftdweb.com/work</span>
+    </div>
+</div>
+
+<!-- ━━━━━━ V7: Process — "How I build sites" ━━━━━━ -->
+<div id="v7-process" class="frame noise" style="background:#050505;">
+    <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#f97316,#ec4899,#7c3aed);"></div>
+
+    <div style="padding:72px;position:relative;z-index:2;">
+        <div class="tag" style="background:rgba(249,115,22,.1);color:#fb923c;margin-bottom:40px;">MY PROCESS</div>
+        <h1 style="font-size:68px;font-weight:900;line-height:1;letter-spacing:-0.03em;">
+            How I build<br>websites that<br><span style="color:rgba(255,255,255,.35);">actually convert.</span>
+        </h1>
+    </div>
+
+    <div style="flex:1;padding:0 72px;display:flex;flex-direction:column;gap:20px;position:relative;z-index:2;">
+        <div style="display:flex;align-items:center;gap:24px;background:rgba(249,115,22,.04);border:1px solid rgba(249,115,22,.1);border-radius:18px;padding:28px 32px;">
+            <div style="width:64px;height:64px;border-radius:16px;background:linear-gradient(135deg,#f97316,#fb923c);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;color:white;flex-shrink:0;">01</div>
+            <div>
+                <div style="font-size:26px;font-weight:800;margin-bottom:4px;">Discover</div>
+                <div style="font-size:18px;color:rgba(255,255,255,.35);">Deep-dive into your brand, audience & goals</div>
+            </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:24px;background:rgba(236,72,153,.04);border:1px solid rgba(236,72,153,.1);border-radius:18px;padding:28px 32px;">
+            <div style="width:64px;height:64px;border-radius:16px;background:linear-gradient(135deg,#ec4899,#f472b6);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;color:white;flex-shrink:0;">02</div>
+            <div>
+                <div style="font-size:26px;font-weight:800;margin-bottom:4px;">Design</div>
+                <div style="font-size:18px;color:rgba(255,255,255,.35);">Apple-inspired UI with pixel-perfect precision</div>
+            </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:24px;background:rgba(124,58,237,.04);border:1px solid rgba(124,58,237,.1);border-radius:18px;padding:28px 32px;">
+            <div style="width:64px;height:64px;border-radius:16px;background:linear-gradient(135deg,#7c3aed,#a855f7);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;color:white;flex-shrink:0;">03</div>
+            <div>
+                <div style="font-size:26px;font-weight:800;margin-bottom:4px;">Develop</div>
+                <div style="font-size:18px;color:rgba(255,255,255,.35);">Clean code, fast loads, mobile-first</div>
+            </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:24px;background:rgba(34,197,94,.04);border:1px solid rgba(34,197,94,.1);border-radius:18px;padding:28px 32px;">
+            <div style="width:64px;height:64px;border-radius:16px;background:linear-gradient(135deg,#22c55e,#4ade80);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;color:white;flex-shrink:0;">04</div>
+            <div>
+                <div style="font-size:26px;font-weight:800;margin-bottom:4px;">Deliver</div>
+                <div style="font-size:18px;color:rgba(255,255,255,.35);">Launch, optimize & ongoing support</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mini portfolio strip -->
+    <div style="padding:28px 72px;display:flex;gap:12px;position:relative;z-index:2;">
+        <div style="flex:1;height:140px;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,.06);">
+            <img src="/microbiome-design-pic.png" style="width:100%;height:100%;object-fit:cover;" crossorigin="anonymous" />
+        </div>
+        <div style="flex:1;height:140px;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,.06);">
+            <img src="/life-lab.jpg" style="width:100%;height:100%;object-fit:cover;" crossorigin="anonymous" />
+        </div>
+        <div style="flex:1;height:140px;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,.06);">
+            <img src="/mpm-hero.jpg" style="width:100%;height:100%;object-fit:cover;" crossorigin="anonymous" />
+        </div>
+    </div>
+
+    <div style="padding:32px 72px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(255,255,255,.06);position:relative;z-index:2;">
+        <span style="font-size:20px;font-weight:800;letter-spacing:.05em;">CRFTDWEB</span>
+        <span style="font-size:16px;color:rgba(255,255,255,.3);">Discover → Design → Develop → Deliver</span>
+    </div>
+</div>
+
+<!-- ━━━━━━ V8: CTA — "Your next website" ━━━━━━ -->
+<div id="v8-cta" class="frame noise" style="background:linear-gradient(170deg,#0a0014,#18003a 45%,#0a0014);">
+    <div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#7c3aed,#a855f7,#c084fc);"></div>
+    <div style="position:absolute;top:35%;left:50%;transform:translate(-50%,-50%);width:800px;height:800px;background:radial-gradient(circle,rgba(124,58,237,.12),transparent 60%);"></div>
+
+    <!-- Top portfolio row -->
+    <div style="padding:60px 72px 0;display:flex;gap:14px;position:relative;z-index:2;">
+        <div style="flex:1;height:260px;border-radius:18px;overflow:hidden;border:1px solid rgba(255,255,255,.08);box-shadow:0 8px 32px rgba(0,0,0,.4);">
+            <img src="/microbiome-design-pic.png" style="width:100%;height:100%;object-fit:cover;" crossorigin="anonymous" />
+        </div>
+        <div style="flex:1;height:260px;border-radius:18px;overflow:hidden;border:1px solid rgba(255,255,255,.08);box-shadow:0 8px 32px rgba(0,0,0,.4);">
+            <img src="/life-lab.jpg" style="width:100%;height:100%;object-fit:cover;" crossorigin="anonymous" />
+        </div>
+        <div style="flex:1;height:260px;border-radius:18px;overflow:hidden;border:1px solid rgba(255,255,255,.08);box-shadow:0 8px 32px rgba(0,0,0,.4);">
+            <img src="/mpm-hero.jpg" style="width:100%;height:100%;object-fit:cover;" crossorigin="anonymous" />
+        </div>
+    </div>
+
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 72px;position:relative;z-index:2;">
+        <h1 style="font-size:88px;font-weight:900;text-align:center;line-height:1;letter-spacing:-0.04em;margin-bottom:28px;">
+            Your next<br>website could<br>look like
+            <span style="background:linear-gradient(90deg,#a78bfa,#c084fc,#e879f9);-webkit-background-clip:text;-webkit-text-fill-color:transparent;"> this.</span>
+        </h1>
+
+        <p style="font-size:28px;text-align:center;color:rgba(255,255,255,.35);line-height:1.5;max-width:600px;margin-bottom:56px;">
+            Custom designed. Hand coded.<br>Built to convert.
+        </p>
+
+        <div style="background:white;color:black;padding:24px 64px;border-radius:100px;font-size:28px;font-weight:900;letter-spacing:.01em;margin-bottom:20px;">
+            LET'S TALK →
+        </div>
+        <p style="font-size:18px;color:rgba(255,255,255,.2);">DM or visit crftdweb.com</p>
+    </div>
+
+    <div style="padding:36px 72px;display:flex;align-items:center;justify-content:center;gap:32px;border-top:1px solid rgba(255,255,255,.06);position:relative;z-index:2;color:rgba(255,255,255,.2);font-size:14px;letter-spacing:.15em;text-transform:uppercase;">
+        <span>Custom Design</span>
+        <span style="width:4px;height:4px;background:rgba(255,255,255,.12);border-radius:50%;"></span>
+        <span>Clean Code</span>
+        <span style="width:4px;height:4px;background:rgba(255,255,255,.12);border-radius:50%;"></span>
+        <span>90+ PageSpeed</span>
+        <span style="width:4px;height:4px;background:rgba(255,255,255,.12);border-radius:50%;"></span>
+        <span>Mobile First</span>
+    </div>
+</div>
+
+</div><!-- end .post-canvas -->
+
+<!-- ═══════ SCRIPTS ═══════ -->
+<script>
+const ads = [
+    { id:'v1-built-this-month', title:'Built This Month',     desc:'Portfolio showcase — 3 project cards' },
+    { id:'v2-pov',              title:'POV: Real Designer',    desc:'"POV: You hired a real designer" — triple phone mockup' },
+    { id:'v3-premium',          title:'Premium Websites',      desc:'"This is what premium looks like" — grid layout' },
+    { id:'v4-spotlight-micro',  title:'Spotlight: Microbiome', desc:'Single project deep-dive with hero image' },
+    { id:'v5-stop-templates',   title:'Stop Using Templates',  desc:'Template vs custom comparison + proof strip' },
+    { id:'v6-stats',            title:'By The Numbers',        desc:'Stats grid + staggered portfolio strip' },
+    { id:'v7-process',          title:'How I Build Sites',     desc:'4-step process walkthrough + mini portfolio' },
+    { id:'v8-cta',              title:'Your Next Website',     desc:'"Your next website could look like this" — closer' },
+];
+
+let selected = null;
+
+function buildGallery() {
+    const g = document.getElementById('gallery');
+    g.innerHTML = '';
+    ads.forEach((ad, i) => {
+        const el = document.getElementById(ad.id);
+        const clone = el.cloneNode(true);
+        clone.id = '';
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.dataset.id = ad.id;
+        card.onclick = () => selectAd(ad.id);
+        card.innerHTML = `
+            <div class="card-preview"></div>
+            <div class="card-info">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+                    <span style="font-size:12px;font-weight:700;color:#7c3aed;">V${i+1}</span>
+                    <button onclick="event.stopPropagation();dlOne('${ad.id}','${ad.title}')" style="background:none;border:none;color:#555;cursor:pointer;font-size:12px;" title="Download">⬇</button>
+                </div>
+                <h3 style="font-size:14px;font-weight:700;margin-bottom:2px;">${ad.title}</h3>
+                <p style="font-size:11px;color:#666;">${ad.desc}</p>
+            </div>`;
+        card.querySelector('.card-preview').appendChild(clone);
+        g.appendChild(card);
+    });
+}
+
+function selectAd(id) {
+    document.querySelectorAll('.card').forEach(c => c.classList.remove('selected'));
+    const card = document.querySelector(`[data-id="${id}"]`);
+    if (card) card.classList.add('selected');
+    selected = id;
+    document.getElementById('selBtn').disabled = false;
+}
+
+function status(m) { document.getElementById('status').textContent = m; }
+
+async function capture(id) {
+    const el = document.getElementById(id);
+    return html2canvas(el, { scale:1, useCORS:true, allowTaint:true, backgroundColor:null, width:1080, height:1920 });
+}
+
+async function dlOne(id, title) {
+    status(`Generating ${title}...`);
+    const c = await capture(id);
+    const a = document.createElement('a');
+    a.download = `crftd-tiktok-${id}.png`;
+    a.href = c.toDataURL('image/png');
+    a.click();
+    status(`✓ ${title} downloaded`);
+}
+
+async function downloadAll() {
+    status('Generating all 8 variations...');
+    for (let i = 0; i < ads.length; i++) {
+        status(`${i+1}/8 — ${ads[i].title}...`);
+        await dlOne(ads[i].id, ads[i].title);
+        await new Promise(r => setTimeout(r, 400));
+    }
+    status('✓ All 8 portfolio ads downloaded!');
+}
+
+function downloadSelected() {
+    if (!selected) return;
+    const ad = ads.find(a => a.id === selected);
+    if (ad) dlOne(ad.id, ad.title);
+}
+
+buildGallery();
+</script>
+</body>
+</html>

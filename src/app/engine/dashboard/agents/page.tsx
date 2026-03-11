@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { useAuth } from '@/lib/firebase/AuthContext';
 import { deductCredits, updateUserProfile, saveChatSession, getChatSessions, updateChatSession, ChatSession } from '@/lib/firebase/firestore';
+import { Timestamp } from 'firebase/firestore';
 
 const agents = [
   {
@@ -150,102 +151,6 @@ interface Message {
   content: string;
 }
 
-function generateMockResponse(agentId: string, userMessage: string): string {
-  const responses: Record<string, string> = {
-    'offer-architect': `Based on your input, here's a high-ticket offer framework:
-
-**Offer Name:** The [Transformation] Accelerator
-
-**Target Price:** $4,997 - $7,497
-
-**Core Promise:** Help [target audience] achieve [specific outcome] in [timeframe]
-
-**Offer Stack:**
-1. **Core Training** - 8-week implementation program
-2. **Weekly Coaching Calls** - Live Q&A and hot seats
-3. **Private Community** - 24/7 support and networking
-4. **Done-For-You Templates** - Swipe files and frameworks
-5. **Bonus: 1:1 Strategy Session** - Personalized roadmap
-
-**Guarantee:** 100% results or we work with you until you get them
-
-Would you like me to elaborate on any of these elements?`,
-
-    'niche-architect': `Here's my analysis of your niche opportunity:
-
-**Market Overview:**
-- Total Addressable Market: $2.3B
-- Annual Growth Rate: 18%
-- Competition Level: Medium
-
-**Top Pain Points:**
-1. Struggling to acquire quality clients
-2. Unable to scale beyond 1:1 work
-3. No predictable revenue system
-
-**Recommended Sub-Niche:**
-Focus on [specific segment] because they have:
-- Higher willingness to pay
-- Clearer buying triggers
-- Less competition
-
-**Next Steps:**
-1. Validate with 5-10 discovery calls
-2. Test messaging on social media
-3. Create a minimum viable offer
-
-Want me to help you craft discovery call questions?`,
-
-    'vsl-builder': `Here's your VSL script outline:
-
-**Hook (0-30 sec):**
-"If you're a [target audience] who wants [outcome] without [pain point], this might be the most important video you watch this year..."
-
-**Problem (30 sec - 2 min):**
-- Agitate the pain
-- Show you understand them
-- Share why typical solutions fail
-
-**Solution (2-5 min):**
-- Introduce your unique mechanism
-- Share your story/credibility
-- Present the transformation
-
-**Proof (5-7 min):**
-- Case studies
-- Testimonials
-- Results
-
-**Offer (7-10 min):**
-- Present the full stack
-- Price anchor and reveal
-- Guarantee
-- Call to action
-
-Would you like me to write out any section in full?`,
-
-    'default': `I've analyzed your request. Here are my recommendations:
-
-**Key Insights:**
-1. Your target market shows strong demand signals
-2. There's a clear gap in current solutions
-3. Premium positioning is viable
-
-**Recommended Actions:**
-1. Start with a minimum viable offer
-2. Test messaging with your audience
-3. Iterate based on feedback
-
-**Next Steps:**
-- I can help you dive deeper into any of these areas
-- Let me know which aspect you'd like to explore further
-
-What would you like to focus on next?`
-  };
-
-  return responses[agentId] || responses['default'];
-}
-
 export default function AgentsPage() {
   const { user, profile, refreshProfile } = useAuth();
   const [selectedAgent, setSelectedAgent] = useState<typeof agents[0] | null>(null);
@@ -342,7 +247,7 @@ export default function AgentsPage() {
             agentId: selectedAgent.id,
             role: msg.role,
             content: msg.content,
-            createdAt: new Date() as any,
+            createdAt: Timestamp.fromDate(new Date()),
           })));
         } else if (updatedMessages.length >= 2) {
           // Create new session after first exchange

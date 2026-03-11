@@ -1,8 +1,10 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { SystemsFlowDiagram, ModuleHeader, SystemsHierarchy } from '@/components/playbook/visuals';
+import { useAuth } from '@/lib/firebase/AuthContext';
+import { getPlaybookProgress, updatePlaybookSystemStatus, trackPlaybookModuleVisit } from '@/lib/firebase/firestore';
 
 interface SystemStep {
   title: string;
@@ -127,12 +129,31 @@ export default function SystemizePage() {
   const [systems, setSystems] = useState(businessSystems);
   const [activeSystem, setActiveSystem] = useState<string | null>(null);
   const [expandedStep, setExpandedStep] = useState<string | null>(null);
+  const { user } = useAuth();
+
+  // Track module visit and load saved system statuses
+  useEffect(() => {
+    if (user) {
+      trackPlaybookModuleVisit(user.uid, 'systemize').catch(() => {});
+      getPlaybookProgress(user.uid).then(progress => {
+        if (progress?.systemStatuses) {
+          setSystems(prev => prev.map(s => ({
+            ...s,
+            status: (progress.systemStatuses[s.id] as BusinessSystem['status']) || s.status,
+          })));
+        }
+      }).catch(() => {});
+    }
+  }, [user]);
 
   const operationalCount = systems.filter(s => s.status === 'operational').length;
   const buildingCount = systems.filter(s => s.status === 'building').length;
 
   const updateStatus = (id: string, status: BusinessSystem['status']) => {
     setSystems(systems.map(s => s.id === id ? { ...s, status } : s));
+    if (user) {
+      updatePlaybookSystemStatus(user.uid, id, status).catch(() => {});
+    }
   };
 
   const selectedSystem = systems.find(s => s.id === activeSystem);

@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { useState } from 'react';
+import { sendDemoRequest } from '@/app/actions/sendDemoRequest';
 
 export default function DemoPage() {
   const [formData, setFormData] = useState({
@@ -12,11 +13,26 @@ export default function DemoPage() {
     challenge: '',
   });
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // In production, send to your CRM/calendar booking system
-    setSubmitted(true);
+    setSubmitting(true);
+    setError('');
+    
+    try {
+      const result = await sendDemoRequest(formData);
+      if (result.success) {
+        setSubmitted(true);
+      } else {
+        setError(result.error || 'Something went wrong. Please try again.');
+      }
+    } catch {
+      setError('Something went wrong. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   if (submitted) {
@@ -202,10 +218,15 @@ export default function DemoPage() {
 
                 <button
                   type="submit"
-                  className="w-full bg-gradient-to-r from-purple-600 to-violet-600 text-white py-4 rounded-xl font-semibold hover:opacity-90 transition-opacity"
+                  disabled={submitting}
+                  className="w-full bg-gradient-to-r from-purple-600 to-violet-600 text-white py-4 rounded-xl font-semibold hover:opacity-90 transition-opacity disabled:opacity-50"
                 >
-                  Book My Strategy Call
+                  {submitting ? 'Submitting...' : 'Book My Strategy Call'}
                 </button>
+
+                {error && (
+                  <p className="text-red-400 text-sm text-center">{error}</p>
+                )}
 
                 <p className="text-white/40 text-xs text-center">
                   By submitting, you agree to our Terms and Privacy Policy.

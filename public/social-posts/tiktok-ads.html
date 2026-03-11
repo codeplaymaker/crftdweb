@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TikTok Ad Creatives — CRFTD Engine</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #0a0a0a; color: white; }
+
+        .controls { position: sticky; top: 0; z-index: 50; background: #0a0a0a; border-bottom: 1px solid #1a1a1a; }
+        .btn { padding: 12px 28px; border-radius: 12px; font-weight: 700; font-size: 14px; border: none; cursor: pointer; transition: all .2s; }
+        .btn:hover { transform: translateY(-1px); }
+        .btn-purple { background: linear-gradient(135deg, #7c3aed, #a855f7); color: white; }
+        .btn-white { background: white; color: black; }
+        .btn-outline { background: transparent; border: 1px solid #333; color: #999; }
+        .btn-outline:hover { border-color: #7c3aed; color: white; }
+
+        .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
+        .card { background: #111; border-radius: 16px; overflow: hidden; border: 1px solid #1a1a1a; transition: all .3s; }
+        .card:hover { border-color: #7c3aed; transform: translateY(-4px); box-shadow: 0 12px 40px rgba(124,58,237,.15); }
+        .card-preview { width: 100%; aspect-ratio: 9/16; overflow: hidden; position: relative; }
+        .card-preview > div { transform: scale(0.259); transform-origin: top left; position: absolute; top: 0; left: 0; }
+        .card-info { padding: 16px; }
+
+        .post-canvas { position: absolute; left: -9999px; top: 0; }
+
+        /* Shared frame styles */
+        .frame { width: 1080px; height: 1920px; position: relative; overflow: hidden; display: flex; flex-direction: column; }
+        .frame * { font-family: 'Inter', sans-serif; }
+
+        /* Noise texture overlay */
+        .noise::after {
+            content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none; opacity: .04;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        }
+
+        /* Glow effects */
+        .glow-purple { box-shadow: 0 0 80px rgba(124,58,237,.4), 0 0 160px rgba(124,58,237,.15); }
+        .glow-text { text-shadow: 0 0 60px rgba(124,58,237,.5); }
+
+        .tag-pill { display: inline-block; padding: 8px 20px; border-radius: 100px; font-size: 18px; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; }
+    </style>
+</head>
+<body>
+
+<!-- ═══════════════════ CONTROLS ═══════════════════ -->
+<div class="controls">
+    <div class="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between flex-wrap gap-4">
+        <div>
+            <h1 class="text-xl font-bold">TikTok Ad Creatives</h1>
+            <p class="text-sm text-gray-500">CRFTD Engine — 9:16 / 1080×1920</p>
+        </div>
+        <div class="flex gap-3 flex-wrap">
+            <button onclick="downloadAll()" class="btn btn-purple">⬇ Download All (PNG)</button>
+            <button onclick="downloadSingle()" class="btn btn-outline" id="singleBtn" disabled>⬇ Download Selected</button>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════ STATUS ═══════════════════ -->
+<div id="status" class="text-center py-3 text-sm text-gray-500"></div>
+
+<!-- ═══════════════════ GALLERY ═══════════════════ -->
+<div class="max-w-7xl mx-auto px-6 pb-20">
+    <div class="gallery" id="gallery"></div>
+</div>
+
+<!-- ═══════════════════ CANVASES (off-screen) ═══════════════════ -->
+<div class="post-canvas">
+
+    <!-- ────────── AD 1: THE HOOK — "Stop Selling $500 Websites" ────────── -->
+    <div id="ad-hook" class="frame noise" style="background: linear-gradient(165deg, #0a0014 0%, #1a0030 40%, #0d001a 100%);">
+        <!-- Top accent line -->
+        <div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,transparent,#7c3aed,transparent);"></div>
+        <!-- Radial glow -->
+        <div style="position:absolute;top:15%;left:50%;transform:translateX(-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(124,58,237,.12) 0%,transparent 70%);"></div>
+
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px;position:relative;z-index:2;">
+            <div class="tag-pill" style="background:rgba(239,68,68,.15);color:#f87171;margin-bottom:60px;">THE HARD TRUTH</div>
+
+            <h1 style="font-size:88px;font-weight:900;text-align:center;line-height:1;letter-spacing:-0.03em;margin-bottom:48px;">
+                Stop selling<br>
+                <span style="color:#ef4444;">$500</span> websites.
+            </h1>
+
+            <div style="width:120px;height:2px;background:linear-gradient(90deg,transparent,#7c3aed,transparent);margin-bottom:48px;"></div>
+
+            <p style="font-size:36px;text-align:center;color:rgba(255,255,255,.45);line-height:1.5;max-width:700px;">
+                Start selling<br>
+                <span style="color:white;font-weight:700;">$5,000 systems.</span>
+            </p>
+        </div>
+
+        <!-- Bottom bar -->
+        <div style="padding:40px 80px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(255,255,255,.06);position:relative;z-index:2;">
+            <span style="font-size:22px;font-weight:800;letter-spacing:.05em;">CRFTD ENGINE</span>
+            <span style="font-size:18px;color:rgba(255,255,255,.35);">Link in bio ↗</span>
+        </div>
+    </div>
+
+    <!-- ────────── AD 2: THE PROBLEM — "The Low-Ticket Trap" ────────── -->
+    <div id="ad-problem" class="frame noise" style="background:#050505;">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#ef4444,#f97316);"></div>
+
+        <div style="flex:1;display:flex;flex-direction:column;padding:80px;position:relative;z-index:2;">
+            <div class="tag-pill" style="background:rgba(239,68,68,.12);color:#f87171;margin-bottom:60px;align-self:flex-start;">THE OLD WAY</div>
+
+            <h1 style="font-size:72px;font-weight:900;line-height:1.05;letter-spacing:-0.03em;margin-bottom:60px;">
+                The Low-Ticket<br>Trap
+            </h1>
+
+            <div style="display:flex;flex-direction:column;gap:32px;margin-bottom:60px;">
+                <div style="display:flex;align-items:flex-start;gap:20px;">
+                    <span style="font-size:28px;color:#ef4444;">✕</span>
+                    <span style="font-size:30px;color:rgba(255,255,255,.55);line-height:1.4;">Competing on price against thousands of freelancers</span>
+                </div>
+                <div style="display:flex;align-items:flex-start;gap:20px;">
+                    <span style="font-size:28px;color:#ef4444;">✕</span>
+                    <span style="font-size:30px;color:rgba(255,255,255,.55);line-height:1.4;">Trading hours for dollars with no leverage</span>
+                </div>
+                <div style="display:flex;align-items:flex-start;gap:20px;">
+                    <span style="font-size:28px;color:#ef4444;">✕</span>
+                    <span style="font-size:30px;color:rgba(255,255,255,.55);line-height:1.4;">Burning out chasing the next project</span>
+                </div>
+                <div style="display:flex;align-items:flex-start;gap:20px;">
+                    <span style="font-size:28px;color:#ef4444;">✕</span>
+                    <span style="font-size:30px;color:rgba(255,255,255,.55);line-height:1.4;">No systems, no recurring revenue</span>
+                </div>
+            </div>
+
+            <div style="flex:1;"></div>
+
+            <div style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.15);border-radius:20px;padding:40px;text-align:center;">
+                <p style="font-size:34px;font-weight:700;color:rgba(255,255,255,.8);">Sound familiar?</p>
+                <p style="font-size:24px;color:rgba(255,255,255,.35);margin-top:12px;">There's a better way ↓</p>
+            </div>
+        </div>
+
+        <div style="padding:40px 80px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(255,255,255,.06);position:relative;z-index:2;">
+            <span style="font-size:22px;font-weight:800;letter-spacing:.05em;">CRFTD ENGINE</span>
+            <span style="font-size:18px;color:rgba(255,255,255,.35);">1/5</span>
+        </div>
+    </div>
+
+    <!-- ────────── AD 3: THE SOLUTION — "One AI System" ────────── -->
+    <div id="ad-solution" class="frame noise" style="background:linear-gradient(170deg,#0a0014,#12002a 50%,#0a0014);">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#7c3aed,#a855f7);"></div>
+        <div style="position:absolute;top:20%;left:50%;transform:translate(-50%,-50%);width:500px;height:500px;background:radial-gradient(circle,rgba(124,58,237,.1),transparent 70%);"></div>
+
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px;position:relative;z-index:2;">
+            <div class="tag-pill" style="background:rgba(124,58,237,.15);color:#a78bfa;margin-bottom:48px;">INTRODUCING</div>
+
+            <h1 style="font-size:84px;font-weight:900;text-align:center;line-height:1.05;letter-spacing:-0.03em;margin-bottom:20px;">
+                One AI System.
+            </h1>
+            <p style="font-size:42px;text-align:center;line-height:1.3;margin-bottom:64px;">
+                <span style="background:linear-gradient(90deg,#a78bfa,#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:800;">Build, Launch & Scale</span><br>
+                <span style="color:rgba(255,255,255,.45);">High-Ticket Offers</span>
+            </p>
+
+            <!-- Feature grid -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;width:100%;max-width:800px;">
+                <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:28px;">
+                    <div style="font-size:32px;margin-bottom:8px;">🏗️</div>
+                    <div style="font-size:22px;font-weight:700;">Offer Builder</div>
+                    <div style="font-size:16px;color:rgba(255,255,255,.35);margin-top:4px;">Design & price in one session</div>
+                </div>
+                <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:28px;">
+                    <div style="font-size:32px;margin-bottom:8px;">🤖</div>
+                    <div style="font-size:22px;font-weight:700;">AI Sales Agents</div>
+                    <div style="font-size:16px;color:rgba(255,255,255,.35);margin-top:4px;">Qualify & book 24/7</div>
+                </div>
+                <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:28px;">
+                    <div style="font-size:32px;margin-bottom:8px;">⚡</div>
+                    <div style="font-size:22px;font-weight:700;">Funnel Automation</div>
+                    <div style="font-size:16px;color:rgba(255,255,255,.35);margin-top:4px;">Click → Close on autopilot</div>
+                </div>
+                <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:28px;">
+                    <div style="font-size:32px;margin-bottom:8px;">📊</div>
+                    <div style="font-size:22px;font-weight:700;">Analytics</div>
+                    <div style="font-size:16px;color:rgba(255,255,255,.35);margin-top:4px;">Know exactly what works</div>
+                </div>
+            </div>
+        </div>
+
+        <div style="padding:40px 80px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(255,255,255,.06);position:relative;z-index:2;">
+            <span style="font-size:22px;font-weight:800;letter-spacing:.05em;">CRFTD ENGINE</span>
+            <span style="font-size:18px;color:rgba(255,255,255,.35);">crftdweb.com/engine</span>
+        </div>
+    </div>
+
+    <!-- ────────── AD 4: THE AGENTS — "8 AI Agents" ────────── -->
+    <div id="ad-agents" class="frame noise" style="background:#050508;">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#7c3aed,#ec4899);"></div>
+
+        <div style="flex:1;display:flex;flex-direction:column;padding:80px;position:relative;z-index:2;">
+            <div class="tag-pill" style="background:rgba(124,58,237,.12);color:#a78bfa;margin-bottom:40px;align-self:flex-start;">YOUR AI TEAM</div>
+
+            <h1 style="font-size:72px;font-weight:900;line-height:1;letter-spacing:-0.03em;margin-bottom:56px;">
+                8 Specialized<br>
+                <span style="background:linear-gradient(90deg,#a78bfa,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">AI Agents</span>
+            </h1>
+
+            <div style="display:flex;flex-direction:column;gap:18px;">
+                <div style="display:flex;align-items:center;gap:16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);border-radius:14px;padding:22px 28px;">
+                    <span style="font-size:16px;color:#22c55e;font-weight:800;width:80px;">SALES</span>
+                    <span style="font-size:24px;font-weight:700;">Offer Architect</span>
+                    <span style="flex:1;"></span>
+                    <span style="font-size:18px;color:rgba(255,255,255,.3);">Design compelling offers</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);border-radius:14px;padding:22px 28px;">
+                    <span style="font-size:16px;color:#3b82f6;font-weight:800;width:80px;">RESEARCH</span>
+                    <span style="font-size:24px;font-weight:700;">Niche Architect</span>
+                    <span style="flex:1;"></span>
+                    <span style="font-size:18px;color:rgba(255,255,255,.3);">Validate profitable niches</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);border-radius:14px;padding:22px 28px;">
+                    <span style="font-size:16px;color:#f97316;font-weight:800;width:80px;">CONTENT</span>
+                    <span style="font-size:24px;font-weight:700;">VSL Builder</span>
+                    <span style="flex:1;"></span>
+                    <span style="font-size:18px;color:rgba(255,255,255,.3);">High-converting VSLs</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);border-radius:14px;padding:22px 28px;">
+                    <span style="font-size:16px;color:#ec4899;font-weight:800;width:80px;">ADS</span>
+                    <span style="font-size:24px;font-weight:700;">Ads Architect</span>
+                    <span style="flex:1;"></span>
+                    <span style="font-size:18px;color:rgba(255,255,255,.3);">Copy that converts</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);border-radius:14px;padding:22px 28px;">
+                    <span style="font-size:16px;color:#a855f7;font-weight:800;width:80px;">STRATEGY</span>
+                    <span style="font-size:24px;font-weight:700;">Category Architect</span>
+                    <span style="flex:1;"></span>
+                    <span style="font-size:18px;color:rgba(255,255,255,.3);">Own your market</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);border-radius:14px;padding:22px 28px;">
+                    <span style="font-size:16px;color:#22c55e;font-weight:800;width:80px;">SALES</span>
+                    <span style="font-size:24px;font-weight:700;">Sales Asset Builder</span>
+                    <span style="flex:1;"></span>
+                    <span style="font-size:18px;color:rgba(255,255,255,.3);">Marketing assets fast</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);border-radius:14px;padding:22px 28px;">
+                    <span style="font-size:16px;color:#f97316;font-weight:800;width:80px;">CONTENT</span>
+                    <span style="font-size:24px;font-weight:700;">Landing Page Writer</span>
+                    <span style="flex:1;"></span>
+                    <span style="font-size:18px;color:rgba(255,255,255,.3);">Direct response copy</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);border-radius:14px;padding:22px 28px;">
+                    <span style="font-size:16px;color:#3b82f6;font-weight:800;width:80px;">RESEARCH</span>
+                    <span style="font-size:24px;font-weight:700;">Research Agent</span>
+                    <span style="flex:1;"></span>
+                    <span style="font-size:18px;color:rgba(255,255,255,.3);">Intel on demand</span>
+                </div>
+            </div>
+        </div>
+
+        <div style="padding:40px 80px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(255,255,255,.06);position:relative;z-index:2;">
+            <span style="font-size:22px;font-weight:800;letter-spacing:.05em;">CRFTD ENGINE</span>
+            <span style="font-size:18px;color:rgba(255,255,255,.35);">Start free →</span>
+        </div>
+    </div>
+
+    <!-- ────────── AD 5: THE OBJECTION KILLER — "No Audience Needed" ────────── -->
+    <div id="ad-objection" class="frame noise" style="background:linear-gradient(170deg,#000a0a,#001a1a 50%,#000a0a);">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#06b6d4,#22d3ee);"></div>
+        <div style="position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:700px;height:700px;background:radial-gradient(circle,rgba(6,182,212,.08),transparent 70%);"></div>
+
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px;position:relative;z-index:2;">
+            <div class="tag-pill" style="background:rgba(6,182,212,.12);color:#67e8f9;margin-bottom:48px;">OBJECTION DESTROYED</div>
+
+            <h1 style="font-size:76px;font-weight:900;text-align:center;line-height:1.05;letter-spacing:-0.03em;margin-bottom:48px;">
+                "But I don't have<br>a big audience"
+            </h1>
+
+            <div style="width:120px;height:2px;background:linear-gradient(90deg,transparent,#22d3ee,transparent);margin-bottom:48px;"></div>
+
+            <p style="font-size:34px;text-align:center;color:rgba(255,255,255,.5);line-height:1.5;max-width:700px;margin-bottom:64px;">
+                You don't need one.
+            </p>
+
+            <!-- The math -->
+            <div style="background:rgba(6,182,212,.06);border:1px solid rgba(6,182,212,.12);border-radius:24px;padding:48px;width:100%;max-width:780px;text-align:center;">
+                <div style="display:flex;align-items:center;justify-content:center;gap:24px;margin-bottom:24px;">
+                    <div>
+                        <div style="font-size:64px;font-weight:900;background:linear-gradient(90deg,#22d3ee,#67e8f9);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">2-5</div>
+                        <div style="font-size:20px;color:rgba(255,255,255,.4);">clients/month</div>
+                    </div>
+                    <div style="font-size:36px;color:rgba(255,255,255,.2);">×</div>
+                    <div>
+                        <div style="font-size:64px;font-weight:900;background:linear-gradient(90deg,#22d3ee,#67e8f9);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">$5K</div>
+                        <div style="font-size:20px;color:rgba(255,255,255,.4);">per offer</div>
+                    </div>
+                    <div style="font-size:36px;color:rgba(255,255,255,.2);">=</div>
+                    <div>
+                        <div style="font-size:64px;font-weight:900;color:white;">$25K</div>
+                        <div style="font-size:20px;color:rgba(255,255,255,.4);">per month</div>
+                    </div>
+                </div>
+                <p style="font-size:22px;color:rgba(255,255,255,.3);">Quality over quantity. Engine finds the right buyers.</p>
+            </div>
+        </div>
+
+        <div style="padding:40px 80px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(255,255,255,.06);position:relative;z-index:2;">
+            <span style="font-size:22px;font-weight:800;letter-spacing:.05em;">CRFTD ENGINE</span>
+            <span style="font-size:18px;color:rgba(255,255,255,.35);">Link in bio ↗</span>
+        </div>
+    </div>
+
+    <!-- ────────── AD 6: THE SPEED — "48 Hours" ────────── -->
+    <div id="ad-speed" class="frame noise" style="background:#050505;">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#f59e0b,#f97316);"></div>
+        <div style="position:absolute;top:30%;left:50%;transform:translate(-50%,-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(245,158,11,.08),transparent 70%);"></div>
+
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px;position:relative;z-index:2;">
+            <div class="tag-pill" style="background:rgba(245,158,11,.12);color:#fbbf24;margin-bottom:48px;">SPEED TO MARKET</div>
+
+            <h1 style="font-size:160px;font-weight:900;text-align:center;line-height:.9;letter-spacing:-0.04em;margin-bottom:16px;">
+                <span style="background:linear-gradient(180deg,#fbbf24,#f97316);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">48</span>
+            </h1>
+            <p style="font-size:48px;font-weight:800;color:rgba(255,255,255,.7);margin-bottom:64px;">HOURS</p>
+
+            <p style="font-size:36px;text-align:center;color:rgba(255,255,255,.4);line-height:1.5;max-width:700px;margin-bottom:60px;">
+                From zero to a fully packaged,<br>
+                <span style="color:white;font-weight:700;">priced, and positioned</span><br>
+                high-ticket offer.
+            </p>
+
+            <!-- Timeline -->
+            <div style="display:flex;flex-direction:column;gap:24px;width:100%;max-width:700px;">
+                <div style="display:flex;align-items:center;gap:20px;">
+                    <div style="width:56px;height:56px;border-radius:14px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#fbbf24;">0h</div>
+                    <div style="flex:1;height:1px;background:rgba(255,255,255,.06);"></div>
+                    <span style="font-size:22px;color:rgba(255,255,255,.5);">Sign up free</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:20px;">
+                    <div style="width:56px;height:56px;border-radius:14px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#fbbf24;">4h</div>
+                    <div style="flex:1;height:1px;background:rgba(255,255,255,.06);"></div>
+                    <span style="font-size:22px;color:rgba(255,255,255,.5);">AI builds your offer</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:20px;">
+                    <div style="width:56px;height:56px;border-radius:14px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#fbbf24;">24h</div>
+                    <div style="flex:1;height:1px;background:rgba(255,255,255,.06);"></div>
+                    <span style="font-size:22px;color:rgba(255,255,255,.5);">Funnel + content ready</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:20px;">
+                    <div style="width:56px;height:56px;border-radius:14px;background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.3);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#fbbf24;">48h</div>
+                    <div style="flex:1;height:1px;background:rgba(255,255,255,.06);"></div>
+                    <span style="font-size:22px;color:white;font-weight:700;">Live and selling</span>
+                </div>
+            </div>
+        </div>
+
+        <div style="padding:40px 80px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(255,255,255,.06);position:relative;z-index:2;">
+            <span style="font-size:22px;font-weight:800;letter-spacing:.05em;">CRFTD ENGINE</span>
+            <span style="font-size:18px;color:rgba(255,255,255,.35);">crftdweb.com/engine</span>
+        </div>
+    </div>
+
+    <!-- ────────── AD 7: THE PRICING — "$0 to Start" ────────── -->
+    <div id="ad-pricing" class="frame noise" style="background:linear-gradient(170deg,#040014,#0f002e 50%,#040014);">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#22c55e,#10b981);"></div>
+        <div style="position:absolute;top:25%;left:50%;transform:translate(-50%,-50%);width:500px;height:500px;background:radial-gradient(circle,rgba(34,197,94,.08),transparent 70%);"></div>
+
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px;position:relative;z-index:2;">
+            <div class="tag-pill" style="background:rgba(34,197,94,.12);color:#4ade80;margin-bottom:48px;">PRICING</div>
+
+            <h1 style="font-size:140px;font-weight:900;line-height:.85;letter-spacing:-0.04em;text-align:center;margin-bottom:12px;">
+                <span style="background:linear-gradient(180deg,#4ade80,#22c55e);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">$0</span>
+            </h1>
+            <p style="font-size:36px;color:rgba(255,255,255,.45);margin-bottom:72px;">to start. Seriously.</p>
+
+            <!-- Plans -->
+            <div style="display:flex;flex-direction:column;gap:20px;width:100%;max-width:780px;">
+                <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:18px;padding:32px 36px;display:flex;align-items:center;justify-content:space-between;">
+                    <div>
+                        <div style="font-size:26px;font-weight:800;">Starter</div>
+                        <div style="font-size:18px;color:rgba(255,255,255,.35);margin-top:4px;">5 reports · 3 conversations/day</div>
+                    </div>
+                    <div style="font-size:32px;font-weight:900;color:#4ade80;">FREE</div>
+                </div>
+                <div style="background:linear-gradient(135deg,rgba(124,58,237,.12),rgba(168,85,247,.08));border:2px solid rgba(124,58,237,.3);border-radius:18px;padding:32px 36px;display:flex;align-items:center;justify-content:space-between;position:relative;">
+                    <div style="position:absolute;top:-12px;right:24px;background:linear-gradient(90deg,#7c3aed,#a855f7);padding:4px 14px;border-radius:100px;font-size:13px;font-weight:700;">MOST POPULAR</div>
+                    <div>
+                        <div style="font-size:26px;font-weight:800;">Pro</div>
+                        <div style="font-size:18px;color:rgba(255,255,255,.35);margin-top:4px;">Unlimited everything · Custom branding</div>
+                    </div>
+                    <div style="font-size:32px;font-weight:900;">$47<span style="font-size:18px;color:rgba(255,255,255,.35)">/mo</span></div>
+                </div>
+                <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:18px;padding:32px 36px;display:flex;align-items:center;justify-content:space-between;">
+                    <div>
+                        <div style="font-size:26px;font-weight:800;">Agency</div>
+                        <div style="font-size:18px;color:rgba(255,255,255,.35);margin-top:4px;">White-label · 5 team seats · API</div>
+                    </div>
+                    <div style="font-size:32px;font-weight:900;">$197<span style="font-size:18px;color:rgba(255,255,255,.35)">/mo</span></div>
+                </div>
+            </div>
+
+            <p style="font-size:22px;color:rgba(255,255,255,.25);margin-top:40px;">No contracts. Cancel anytime. Save 20% annually.</p>
+        </div>
+
+        <div style="padding:40px 80px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(255,255,255,.06);position:relative;z-index:2;">
+            <span style="font-size:22px;font-weight:800;letter-spacing:.05em;">CRFTD ENGINE</span>
+            <span style="font-size:18px;color:rgba(255,255,255,.35);">Start free →</span>
+        </div>
+    </div>
+
+    <!-- ────────── AD 8: THE SOCIAL PROOF — "Results" ────────── -->
+    <div id="ad-proof" class="frame noise" style="background:#050505;">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#7c3aed,#06b6d4);"></div>
+
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px;position:relative;z-index:2;">
+            <div class="tag-pill" style="background:rgba(124,58,237,.12);color:#a78bfa;margin-bottom:48px;">THE RESULTS</div>
+
+            <h1 style="font-size:72px;font-weight:900;text-align:center;line-height:1.05;letter-spacing:-0.03em;margin-bottom:64px;">
+                What happens when<br>you stop guessing
+            </h1>
+
+            <!-- Stats grid -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;width:100%;max-width:780px;margin-bottom:56px;">
+                <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:20px;padding:40px;text-align:center;">
+                    <div style="font-size:64px;font-weight:900;background:linear-gradient(180deg,#a78bfa,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">48h</div>
+                    <div style="font-size:20px;color:rgba(255,255,255,.35);margin-top:8px;">Offer → Live</div>
+                </div>
+                <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:20px;padding:40px;text-align:center;">
+                    <div style="font-size:64px;font-weight:900;background:linear-gradient(180deg,#67e8f9,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">8</div>
+                    <div style="font-size:20px;color:rgba(255,255,255,.35);margin-top:8px;">AI Agents Working</div>
+                </div>
+                <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:20px;padding:40px;text-align:center;">
+                    <div style="font-size:64px;font-weight:900;background:linear-gradient(180deg,#fbbf24,#f59e0b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">24/7</div>
+                    <div style="font-size:20px;color:rgba(255,255,255,.35);margin-top:8px;">Sales Automation</div>
+                </div>
+                <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:20px;padding:40px;text-align:center;">
+                    <div style="font-size:64px;font-weight:900;background:linear-gradient(180deg,#4ade80,#22c55e);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">$0</div>
+                    <div style="font-size:20px;color:rgba(255,255,255,.35);margin-top:8px;">To Start</div>
+                </div>
+            </div>
+
+            <!-- Quote -->
+            <div style="background:rgba(124,58,237,.06);border:1px solid rgba(124,58,237,.12);border-radius:20px;padding:40px;max-width:780px;text-align:center;">
+                <p style="font-size:28px;color:rgba(255,255,255,.6);line-height:1.5;font-style:italic;">
+                    "I launched my first $5K offer in 2 days. The AI did 80% of the work."
+                </p>
+                <p style="font-size:20px;color:rgba(255,255,255,.3);margin-top:16px;">— Agency Owner, Engine User</p>
+            </div>
+        </div>
+
+        <div style="padding:40px 80px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(255,255,255,.06);position:relative;z-index:2;">
+            <span style="font-size:22px;font-weight:800;letter-spacing:.05em;">CRFTD ENGINE</span>
+            <span style="font-size:18px;color:rgba(255,255,255,.35);">crftdweb.com/engine</span>
+        </div>
+    </div>
+
+    <!-- ────────── AD 9: THE WHITELABEL — "Sell It As Yours" ────────── -->
+    <div id="ad-whitelabel" class="frame noise" style="background:linear-gradient(170deg,#0a0005,#1a000f 50%,#0a0005);">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#ec4899,#f43f5e);"></div>
+        <div style="position:absolute;top:35%;left:50%;transform:translate(-50%,-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(236,72,153,.08),transparent 70%);"></div>
+
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px;position:relative;z-index:2;">
+            <div class="tag-pill" style="background:rgba(236,72,153,.12);color:#f472b6;margin-bottom:48px;">FOR AGENCIES</div>
+
+            <h1 style="font-size:80px;font-weight:900;text-align:center;line-height:1.05;letter-spacing:-0.03em;margin-bottom:24px;">
+                Sell it as<br>
+                <span style="background:linear-gradient(90deg,#f472b6,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">your own.</span>
+            </h1>
+
+            <p style="font-size:32px;text-align:center;color:rgba(255,255,255,.4);line-height:1.5;max-width:700px;margin-bottom:64px;">
+                White-label the entire CRFTD Engine.<br>Your brand. Your clients. Your revenue.
+            </p>
+
+            <!-- What you get -->
+            <div style="display:flex;flex-direction:column;gap:20px;width:100%;max-width:700px;">
+                <div style="display:flex;align-items:center;gap:20px;">
+                    <div style="width:48px;height:48px;border-radius:12px;background:rgba(236,72,153,.1);border:1px solid rgba(236,72,153,.2);display:flex;align-items:center;justify-content:center;font-size:20px;">🏷️</div>
+                    <span style="font-size:26px;font-weight:600;">Custom domains & branding</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:20px;">
+                    <div style="width:48px;height:48px;border-radius:12px;background:rgba(236,72,153,.1);border:1px solid rgba(236,72,153,.2);display:flex;align-items:center;justify-content:center;font-size:20px;">🤖</div>
+                    <span style="font-size:26px;font-weight:600;">All 8 AI agents included</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:20px;">
+                    <div style="width:48px;height:48px;border-radius:12px;background:rgba(236,72,153,.1);border:1px solid rgba(236,72,153,.2);display:flex;align-items:center;justify-content:center;font-size:20px;">👥</div>
+                    <span style="font-size:26px;font-weight:600;">5 team member seats</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:20px;">
+                    <div style="width:48px;height:48px;border-radius:12px;background:rgba(236,72,153,.1);border:1px solid rgba(236,72,153,.2);display:flex;align-items:center;justify-content:center;font-size:20px;">🔌</div>
+                    <span style="font-size:26px;font-weight:600;">API access + custom integrations</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:20px;">
+                    <div style="width:48px;height:48px;border-radius:12px;background:rgba(236,72,153,.1);border:1px solid rgba(236,72,153,.2);display:flex;align-items:center;justify-content:center;font-size:20px;">📞</div>
+                    <span style="font-size:26px;font-weight:600;">Dedicated account manager</span>
+                </div>
+            </div>
+        </div>
+
+        <div style="padding:40px 80px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(255,255,255,.06);position:relative;z-index:2;">
+            <span style="font-size:22px;font-weight:800;letter-spacing:.05em;">CRFTD ENGINE</span>
+            <span style="font-size:18px;color:rgba(255,255,255,.35);">Book a demo →</span>
+        </div>
+    </div>
+
+    <!-- ────────── AD 10: THE CTA — "Your Move" ────────── -->
+    <div id="ad-cta" class="frame noise" style="background:linear-gradient(170deg,#0a0014 0%,#18003a 50%,#0a0014 100%);">
+        <div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#7c3aed,#a855f7,#c084fc);"></div>
+        <div style="position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:800px;height:800px;background:radial-gradient(circle,rgba(124,58,237,.15),transparent 60%);"></div>
+
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px;position:relative;z-index:2;">
+            <h1 style="font-size:94px;font-weight:900;text-align:center;line-height:1;letter-spacing:-0.04em;margin-bottom:32px;">
+                Your offer is<br>
+                <span style="background:linear-gradient(90deg,#a78bfa,#c084fc,#e879f9);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">waiting.</span>
+            </h1>
+
+            <p style="font-size:34px;text-align:center;color:rgba(255,255,255,.4);line-height:1.5;max-width:650px;margin-bottom:72px;">
+                Stop scrolling. Start building.<br>
+                The AI does the heavy lifting.
+            </p>
+
+            <!-- CTA Button -->
+            <div style="background:white;color:black;padding:28px 72px;border-radius:100px;font-size:32px;font-weight:900;letter-spacing:.02em;margin-bottom:24px;">
+                START FREE →
+            </div>
+            <p style="font-size:20px;color:rgba(255,255,255,.25);">No credit card required</p>
+
+            <div style="margin-top:72px;display:flex;align-items:center;gap:32px;color:rgba(255,255,255,.2);font-size:16px;letter-spacing:.15em;text-transform:uppercase;">
+                <span>AI-Powered</span>
+                <span style="width:4px;height:4px;background:rgba(255,255,255,.15);border-radius:50%;"></span>
+                <span>8 Agents</span>
+                <span style="width:4px;height:4px;background:rgba(255,255,255,.15);border-radius:50%;"></span>
+                <span>Whitelabel Ready</span>
+            </div>
+        </div>
+
+        <!-- Bottom branding -->
+        <div style="padding:40px 80px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(255,255,255,.06);position:relative;z-index:2;">
+            <span style="font-size:28px;font-weight:900;letter-spacing:.05em;">CRFTD ENGINE</span>
+            <span style="font-size:20px;color:rgba(255,255,255,.35);">crftdweb.com/engine</span>
+        </div>
+    </div>
+
+</div><!-- end .post-canvas -->
+
+<!-- ═══════════════════ SCRIPTS ═══════════════════ -->
+<script>
+const ads = [
+    { id: 'ad-hook',       title: 'The Hook',            desc: 'Stop selling $500 websites — scroll stopper' },
+    { id: 'ad-problem',    title: 'The Problem',         desc: 'Low-ticket trap pain points' },
+    { id: 'ad-solution',   title: 'The Solution',        desc: 'One AI system — features overview' },
+    { id: 'ad-agents',     title: 'The Agents',          desc: '8 specialized AI agents breakdown' },
+    { id: 'ad-objection',  title: 'Objection Killer',    desc: '"No audience needed" — simple math' },
+    { id: 'ad-speed',      title: 'Speed to Market',     desc: '48 hours from zero to live' },
+    { id: 'ad-pricing',    title: 'The Pricing',         desc: '$0 to start — transparent tiers' },
+    { id: 'ad-proof',      title: 'Social Proof',        desc: 'Stats + testimonial' },
+    { id: 'ad-whitelabel', title: 'Whitelabel',          desc: 'Sell it as your own — agency play' },
+    { id: 'ad-cta',        title: 'Final CTA',           desc: '"Your offer is waiting" — close it' },
+];
+
+let selectedAd = null;
+
+function buildGallery() {
+    const gallery = document.getElementById('gallery');
+    gallery.innerHTML = '';
+
+    ads.forEach((ad, i) => {
+        const el = document.getElementById(ad.id);
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.setAttribute('data-id', ad.id);
+        card.onclick = () => selectAd(ad.id);
+
+        // Clone for preview
+        const clone = el.cloneNode(true);
+        clone.id = '';
+        clone.style.cssText = el.style.cssText;
+
+        card.innerHTML = `
+            <div class="card-preview"></div>
+            <div class="card-info">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+                    <span style="font-size:13px;font-weight:700;color:#7c3aed;">${String(i+1).padStart(2,'0')}</span>
+                    <button onclick="event.stopPropagation();downloadOne('${ad.id}','${ad.title}')" style="background:none;border:none;color:#555;cursor:pointer;font-size:13px;" title="Download">⬇</button>
+                </div>
+                <h3 style="font-size:15px;font-weight:700;margin-bottom:2px;">${ad.title}</h3>
+                <p style="font-size:12px;color:#666;">${ad.desc}</p>
+            </div>
+        `;
+
+        card.querySelector('.card-preview').appendChild(clone);
+        gallery.appendChild(card);
+    });
+}
+
+function selectAd(id) {
+    document.querySelectorAll('.card').forEach(c => c.style.borderColor = '#1a1a1a');
+    const card = document.querySelector(`[data-id="${id}"]`);
+    if (card) { card.style.borderColor = '#7c3aed'; }
+    selectedAd = id;
+    document.getElementById('singleBtn').disabled = false;
+}
+
+function updateStatus(msg) {
+    document.getElementById('status').textContent = msg;
+}
+
+async function capture(id) {
+    const el = document.getElementById(id);
+    return html2canvas(el, { scale: 1, useCORS: true, backgroundColor: null, width: 1080, height: 1920 });
+}
+
+async function downloadOne(id, title) {
+    updateStatus(`Generating ${title}...`);
+    const canvas = await capture(id);
+    const link = document.createElement('a');
+    link.download = `crftd-tiktok-${id}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    updateStatus(`✓ ${title} downloaded`);
+}
+
+async function downloadAll() {
+    updateStatus('Generating all 10 ads...');
+    for (let i = 0; i < ads.length; i++) {
+        updateStatus(`Generating ${i+1}/10 — ${ads[i].title}...`);
+        await downloadOne(ads[i].id, ads[i].title);
+        await new Promise(r => setTimeout(r, 300));
+    }
+    updateStatus('✓ All 10 TikTok ads downloaded!');
+}
+
+function downloadSingle() {
+    if (!selectedAd) return;
+    const ad = ads.find(a => a.id === selectedAd);
+    if (ad) downloadOne(ad.id, ad.title);
+}
+
+// Init
+buildGallery();
+</script>
+
+</body>
+</html>

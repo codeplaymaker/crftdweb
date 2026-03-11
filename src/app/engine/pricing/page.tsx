@@ -84,6 +84,9 @@ export default function PricingPage() {
             <span className={`text-sm ${!annual ? 'text-white' : 'text-white/50'}`}>Monthly</span>
             <button
               onClick={() => setAnnual(!annual)}
+              role="switch"
+              aria-checked={annual}
+              aria-label="Toggle annual billing"
               className={`relative w-14 h-8 rounded-full transition-colors ${
                 annual ? 'bg-purple-600' : 'bg-white/20'
               }`}

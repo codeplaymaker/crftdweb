@@ -4,13 +4,16 @@ import { ReactNode } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useState } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { useAuth, AuthProvider } from '@/lib/firebase/AuthContext';
 
 function PlaybookNavbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
   const isDashboard = pathname?.startsWith('/playbook/dashboard');
+  const { user, signOut } = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -77,23 +80,43 @@ function PlaybookNavbar() {
 
             {/* CTA Buttons */}
             <div className="flex items-center gap-3">
-              <Link 
-                href="/playbook/signin" 
-                className="text-white/70 hover:text-white transition-colors text-sm hidden sm:block"
-              >
-                Log in
-              </Link>
-              <Link 
-                href="/playbook/diagnose"
-                className="bg-white text-black px-4 py-2 rounded-full text-sm font-medium hover:bg-white/90 transition-colors hidden sm:block"
-              >
-                Start Assessment
-              </Link>
+              {user ? (
+                <>
+                  <Link 
+                    href="/playbook/dashboard" 
+                    className="bg-white text-black px-4 py-2 rounded-full text-sm font-medium hover:bg-white/90 transition-colors hidden sm:block"
+                  >
+                    Dashboard
+                  </Link>
+                  <button
+                    onClick={async () => { await signOut(); router.push('/playbook'); }}
+                    className="text-white/50 hover:text-white transition-colors text-sm hidden sm:block"
+                  >
+                    Log out
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link 
+                    href="/playbook/signin" 
+                    className="text-white/70 hover:text-white transition-colors text-sm hidden sm:block"
+                  >
+                    Log in
+                  </Link>
+                  <Link 
+                    href="/playbook/diagnose"
+                    className="bg-white text-black px-4 py-2 rounded-full text-sm font-medium hover:bg-white/90 transition-colors hidden sm:block"
+                  >
+                    Start Assessment
+                  </Link>
+                </>
+              )}
               
               {/* Mobile Menu Button */}
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 className="md:hidden p-2 text-white"
+                aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   {mobileMenuOpen ? (
@@ -118,13 +141,22 @@ function PlaybookNavbar() {
             className="fixed top-24 left-0 right-0 z-30 bg-black/95 backdrop-blur-xl border-b border-white/10 md:hidden"
           >
             <div className="container mx-auto px-4 py-6 space-y-4">
-              <Link href="/playbook#framework" className="block text-white/70 hover:text-white transition-colors py-2">Framework</Link>
-              <Link href="/playbook#stages" className="block text-white/70 hover:text-white transition-colors py-2">6 Stages</Link>
-              <Link href="/playbook#systems" className="block text-white/70 hover:text-white transition-colors py-2">Systems</Link>
-              <Link href="/playbook/diagnose" className="block text-white/70 hover:text-white transition-colors py-2">Diagnose</Link>
+              <Link href="/playbook#framework" onClick={() => setMobileMenuOpen(false)} className="block text-white/70 hover:text-white transition-colors py-2">Framework</Link>
+              <Link href="/playbook#stages" onClick={() => setMobileMenuOpen(false)} className="block text-white/70 hover:text-white transition-colors py-2">6 Stages</Link>
+              <Link href="/playbook#systems" onClick={() => setMobileMenuOpen(false)} className="block text-white/70 hover:text-white transition-colors py-2">Systems</Link>
+              <Link href="/playbook/diagnose" onClick={() => setMobileMenuOpen(false)} className="block text-white/70 hover:text-white transition-colors py-2">Diagnose</Link>
               <hr className="border-white/10" />
-              <Link href="/playbook/signin" className="block text-white/70 hover:text-white transition-colors py-2">Log in</Link>
-              <Link href="/playbook/diagnose" className="block bg-white text-black px-4 py-3 rounded-full text-center font-medium">Start Assessment</Link>
+              {user ? (
+                <>
+                  <Link href="/playbook/dashboard" onClick={() => setMobileMenuOpen(false)} className="block bg-white text-black px-4 py-3 rounded-full text-center font-medium">Dashboard</Link>
+                  <button onClick={async () => { setMobileMenuOpen(false); await signOut(); router.push('/playbook'); }} className="block text-white/70 hover:text-white transition-colors py-2 w-full text-left">Log out</button>
+                </>
+              ) : (
+                <>
+                  <Link href="/playbook/signin" onClick={() => setMobileMenuOpen(false)} className="block text-white/70 hover:text-white transition-colors py-2">Log in</Link>
+                  <Link href="/playbook/diagnose" onClick={() => setMobileMenuOpen(false)} className="block bg-white text-black px-4 py-3 rounded-full text-center font-medium">Start Assessment</Link>
+                </>
+              )}
             </div>
           </motion.div>
         )}
@@ -207,12 +239,14 @@ export default function PlaybookLayout({ children }: { children: ReactNode }) {
   const isDashboard = pathname?.startsWith('/playbook/dashboard');
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      <PlaybookNavbar />
-      <main className={isDashboard ? '' : 'pt-24'}>
-        {children}
-      </main>
-      <PlaybookFooter />
-    </div>
+    <AuthProvider>
+      <div className="min-h-screen bg-black text-white">
+        <PlaybookNavbar />
+        <main className={isDashboard ? '' : 'pt-24'}>
+          {children}
+        </main>
+        <PlaybookFooter />
+      </div>
+    </AuthProvider>
   );
 }

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { verifyAuthToken, unauthorizedResponse } from '@/lib/engine/auth-guard';
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
@@ -140,6 +141,9 @@ Be comprehensive but organized. Use headers and bullet points for clarity.`,
 };
 
 export async function POST(request: NextRequest) {
+  const auth = await verifyAuthToken(request);
+  if (!auth) return unauthorizedResponse();
+
   try {
     const { agentId, message, history = [], offerContext } = await request.json();
 

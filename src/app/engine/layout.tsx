@@ -4,48 +4,15 @@ import { ReactNode } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useState } from 'react';
-import { usePathname } from 'next/navigation';
-
-function CountdownTimer() {
-  const [timeLeft, setTimeLeft] = useState({
-    days: 1,
-    hours: 14,
-    minutes: 37,
-  });
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft(prev => {
-        let { days, hours, minutes } = prev;
-        minutes--;
-        if (minutes < 0) {
-          minutes = 59;
-          hours--;
-        }
-        if (hours < 0) {
-          hours = 23;
-          days--;
-        }
-        if (days < 0) {
-          return { days: 0, hours: 0, minutes: 0 };
-        }
-        return { days, hours, minutes };
-      });
-    }, 60000);
-    return () => clearInterval(timer);
-  }, []);
-
-  return (
-    <span className="font-mono">
-      {timeLeft.days}d {timeLeft.hours}h {timeLeft.minutes}m
-    </span>
-  );
-}
+import { usePathname, useRouter } from 'next/navigation';
+import { useAuth, AuthProvider } from '@/lib/firebase';
 
 function EngineNavbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
+  const { user, signOut } = useAuth();
   const isDashboard = pathname?.startsWith('/engine/dashboard');
 
   useEffect(() => {
@@ -64,14 +31,14 @@ function EngineNavbar() {
       {/* Announcement Bar */}
       <div className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-purple-600 via-violet-600 to-purple-600 text-white text-sm py-2 px-4">
         <div className="container mx-auto flex items-center justify-center gap-2">
-          <span className="hidden sm:inline font-medium">FOUNDER'S COHORT: LIVE</span>
+          <span className="hidden sm:inline font-medium">THE CRFTD ENGINE</span>
           <span className="text-white/80">|</span>
-          <CountdownTimer />
+          <span className="text-white/90">AI-powered content &amp; marketing for agencies</span>
           <Link 
-            href="/engine/truth#pricing" 
+            href="/engine/demo" 
             className="ml-2 text-white hover:text-white/90 font-medium flex items-center gap-1"
           >
-            Gain Access →
+            Book a Demo →
           </Link>
         </div>
       </div>
@@ -114,23 +81,43 @@ function EngineNavbar() {
 
             {/* CTA Buttons */}
             <div className="flex items-center gap-3">
-              <Link 
-                href="/engine/signin" 
-                className="text-white/70 hover:text-white transition-colors text-sm hidden sm:block"
-              >
-                Log in
-              </Link>
-              <Link 
-                href="/engine/demo"
-                className="bg-white text-black px-4 py-2 rounded-full text-sm font-medium hover:bg-white/90 transition-colors hidden sm:block"
-              >
-                Book a Call
-              </Link>
+              {user ? (
+                <>
+                  <Link 
+                    href="/engine/dashboard" 
+                    className="text-white/70 hover:text-white transition-colors text-sm hidden sm:block"
+                  >
+                    Dashboard
+                  </Link>
+                  <button 
+                    onClick={async () => { await signOut(); router.push('/engine'); }}
+                    className="bg-white text-black px-4 py-2 rounded-full text-sm font-medium hover:bg-white/90 transition-colors hidden sm:block"
+                  >
+                    Log out
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link 
+                    href="/engine/signin" 
+                    className="text-white/70 hover:text-white transition-colors text-sm hidden sm:block"
+                  >
+                    Log in
+                  </Link>
+                  <Link 
+                    href="/engine/demo"
+                    className="bg-white text-black px-4 py-2 rounded-full text-sm font-medium hover:bg-white/90 transition-colors hidden sm:block"
+                  >
+                    Book a Call
+                  </Link>
+                </>
+              )}
               
               {/* Mobile Menu Button */}
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 className="md:hidden p-2 text-white"
+                aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   {mobileMenuOpen ? (
@@ -155,13 +142,22 @@ function EngineNavbar() {
             className="fixed top-24 left-0 right-0 z-30 bg-black/95 backdrop-blur-xl border-b border-white/10 md:hidden"
           >
             <div className="container mx-auto px-4 py-6 space-y-4">
-              <Link href="/engine#features" className="block text-white/70 hover:text-white transition-colors py-2">Features</Link>
-              <Link href="/engine/pricing" className="block text-white/70 hover:text-white transition-colors py-2">Pricing</Link>
-              <Link href="/engine/whitelabel" className="block text-white/70 hover:text-white transition-colors py-2">Whitelabel</Link>
-              <Link href="/engine/help" className="block text-white/70 hover:text-white transition-colors py-2">Help</Link>
+              <Link href="/engine#features" onClick={() => setMobileMenuOpen(false)} className="block text-white/70 hover:text-white transition-colors py-2">Features</Link>
+              <Link href="/engine/pricing" onClick={() => setMobileMenuOpen(false)} className="block text-white/70 hover:text-white transition-colors py-2">Pricing</Link>
+              <Link href="/engine/whitelabel" onClick={() => setMobileMenuOpen(false)} className="block text-white/70 hover:text-white transition-colors py-2">Whitelabel</Link>
+              <Link href="/engine/help" onClick={() => setMobileMenuOpen(false)} className="block text-white/70 hover:text-white transition-colors py-2">Help</Link>
               <hr className="border-white/10" />
-              <Link href="/engine/signin" className="block text-white/70 hover:text-white transition-colors py-2">Log in</Link>
-              <Link href="/engine/demo" className="block bg-white text-black px-4 py-3 rounded-full text-center font-medium">Book a Call</Link>
+              {user ? (
+                <>
+                  <Link href="/engine/dashboard" onClick={() => setMobileMenuOpen(false)} className="block text-white/70 hover:text-white transition-colors py-2">Dashboard</Link>
+                  <button onClick={async () => { setMobileMenuOpen(false); await signOut(); router.push('/engine'); }} className="block w-full text-left bg-white text-black px-4 py-3 rounded-full text-center font-medium">Log out</button>
+                </>
+              ) : (
+                <>
+                  <Link href="/engine/signin" onClick={() => setMobileMenuOpen(false)} className="block text-white/70 hover:text-white transition-colors py-2">Log in</Link>
+                  <Link href="/engine/demo" onClick={() => setMobileMenuOpen(false)} className="block bg-white text-black px-4 py-3 rounded-full text-center font-medium">Book a Call</Link>
+                </>
+              )}
             </div>
           </motion.div>
         )}
@@ -227,7 +223,7 @@ function EngineFooter() {
 
         <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-white/40 text-sm">
-            © 2026 Engine by CrftdWeb. All rights reserved.
+            © {new Date().getFullYear()} Engine by CrftdWeb. All rights reserved.
           </p>
           <div className="flex items-center gap-6">
             <Link href="/engine/privacy" className="text-white/40 hover:text-white/60 text-sm transition-colors">Privacy</Link>
@@ -241,6 +237,14 @@ function EngineFooter() {
 }
 
 export default function EngineLayout({ children }: { children: ReactNode }) {
+  return (
+    <AuthProvider>
+      <EngineLayoutContent>{children}</EngineLayoutContent>
+    </AuthProvider>
+  );
+}
+
+function EngineLayoutContent({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const isDashboard = pathname?.startsWith('/engine/dashboard');
 

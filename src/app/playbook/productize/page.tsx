@@ -1,9 +1,11 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import { ProductizationFlow, ModuleHeader, SweetSpotVenn } from '@/components/playbook/visuals';
+import { useAuth } from '@/lib/firebase/AuthContext';
+import { trackPlaybookModuleVisit, getPlaybookProgress, savePlaybookProgress } from '@/lib/firebase/firestore';
 
 const pathSteps = [
   {
@@ -71,6 +73,33 @@ const pathSteps = [
 export default function ProductizePage() {
   const [activeStep, setActiveStep] = useState('skill');
   const [worksheetAnswers, setWorksheetAnswers] = useState<Record<string, string>>({});
+  const { user } = useAuth();
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (user) {
+      trackPlaybookModuleVisit(user.uid, 'productize').catch(() => {});
+      getPlaybookProgress(user.uid).then(progress => {
+        if (progress?.worksheetAnswers && Object.keys(progress.worksheetAnswers).length > 0) {
+          setWorksheetAnswers(progress.worksheetAnswers);
+        }
+      }).catch(() => {});
+    }
+  }, [user]);
+
+  // Debounced save for worksheet answers
+  const saveWorksheetAnswers = useCallback((answers: Record<string, string>) => {
+    if (user) {
+      savePlaybookProgress(user.uid, { worksheetAnswers: answers }).catch(() => {});
+    }
+  }, [user]);
+
+  const handleAnswerChange = (key: string, value: string) => {
+    const updated = { ...worksheetAnswers, [key]: value };
+    setWorksheetAnswers(updated);
+    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+    saveTimerRef.current = setTimeout(() => saveWorksheetAnswers(updated), 1000);
+  };
 
   const currentStep = pathSteps.find(s => s.id === activeStep) || pathSteps[0];
   const currentIndex = pathSteps.findIndex(s => s.id === activeStep);
@@ -175,10 +204,7 @@ export default function ProductizePage() {
                   <p className="text-white/50 text-sm mb-4">{exercise.prompt}</p>
                   <textarea
                     value={worksheetAnswers[`${currentStep.id}-${index}`] || ''}
-                    onChange={(e) => setWorksheetAnswers({
-                      ...worksheetAnswers,
-                      [`${currentStep.id}-${index}`]: e.target.value,
-                    })}
+                    onChange={(e) => handleAnswerChange(`${currentStep.id}-${index}`, e.target.value)}
                     placeholder={exercise.placeholder}
                     className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/20 focus:outline-none focus:border-emerald-500/50 min-h-[120px] text-sm resize-none"
                   />

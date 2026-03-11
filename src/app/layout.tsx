@@ -3,8 +3,7 @@ import { Inter as FontSans } from "next/font/google";
 import localFont from 'next/font/local';
 import "./globals.css";
 import { cn } from "@/lib/utils";
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
+import RootLayoutShell from '@/components/RootLayoutShell';
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -18,8 +17,30 @@ const classicismo = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "CrftdWeb",
-  description: "Premium Web Development Agency",
+  title: {
+    default: "CrftdWeb — Premium Web Development Agency",
+    template: "%s | CrftdWeb",
+  },
+  description: "CrftdWeb is a premium web development agency crafting high-performance websites, brands, and digital products for ambitious businesses.",
+  keywords: ["web development", "web design", "branding", "UI/UX", "Next.js", "premium agency"],
+  authors: [{ name: "CrftdWeb" }],
+  creator: "CrftdWeb",
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    siteName: "CrftdWeb",
+    title: "CrftdWeb — Premium Web Development Agency",
+    description: "High-performance websites, brands, and digital products for ambitious businesses.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "CrftdWeb — Premium Web Development Agency",
+    description: "High-performance websites, brands, and digital products for ambitious businesses.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
   icons: {
     icon: [
       { url: '/favicon_io-6/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
@@ -46,11 +67,9 @@ export default function RootLayout({
           classicismo.variable
         )}
       >
-        <Navbar />
-        <main className="pt-16">
+        <RootLayoutShell>
           {children}
-        </main>
-        <Footer />
+        </RootLayoutShell>
       </body>
     </html>
   );

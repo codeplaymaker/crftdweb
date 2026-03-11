@@ -52,7 +52,7 @@ The development of CrftdWeb's own agency website following Apple design language
 6. **Week 10:** Launch & Monitoring
 
 ## Project Team
-- Design Lead: [Name]
-- Front-End Developer: [Name]
-- Content Strategist: [Name]
-- Project Manager: [Name]
+- Design Lead: CrftdWeb Team
+- Front-End Developer: CrftdWeb Team
+- Content Strategist: CrftdWeb Team
+- Project Manager: CrftdWeb Team

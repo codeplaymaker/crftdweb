@@ -1,9 +1,11 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ModuleHeader, MilestoneProgressFlow, ConsistencyPattern } from '@/components/playbook/visuals';
+import { useAuth } from '@/lib/firebase/AuthContext';
+import { getPlaybookProgress, updatePlaybookMilestone, savePlaybookProgress, trackPlaybookModuleVisit } from '@/lib/firebase/firestore';
 
 interface Milestone {
   id: string;
@@ -62,10 +64,44 @@ export default function TrackPage() {
   const [milestones, setMilestones] = useState(defaultMilestones);
   const [activeStageFilter, setActiveStageFilter] = useState<string | null>(null);
   const [showAddProof, setShowAddProof] = useState(false);
-  const [proofEntries] = useState<{ title: string; type: string; date: string }[]>([
-    { title: 'Client website launched — 3x traffic increase', type: 'Case Study', date: '2026-02-20' },
-    { title: 'Testimonial from ABC Corp', type: 'Testimonial', date: '2026-02-18' },
-  ]);
+  const [proofEntries, setProofEntries] = useState<{ title: string; type: string; date: string }[]>([]);
+  const [newProofTitle, setNewProofTitle] = useState('');
+  const [newProofType, setNewProofType] = useState('case-study');
+  const [savingProof, setSavingProof] = useState(false);
+  const { user } = useAuth();
+
+  // Track module visit and load saved milestones + proof entries
+  useEffect(() => {
+    if (user) {
+      trackPlaybookModuleVisit(user.uid, 'track').catch(() => {});
+      getPlaybookProgress(user.uid).then(progress => {
+        if (progress?.milestones) {
+          setMilestones(prev => prev.map(m => ({
+            ...m,
+            completed: progress.milestones[m.id] ?? m.completed,
+          })));
+        }
+        if (progress?.trackProofEntries && progress.trackProofEntries.length > 0) {
+          setProofEntries(progress.trackProofEntries);
+        }
+      }).catch(() => {});
+    }
+  }, [user]);
+
+  const handleSaveProof = async () => {
+    if (!user || !newProofTitle.trim()) return;
+    setSavingProof(true);
+    const entry = { title: newProofTitle, type: newProofType, date: new Date().toISOString().split('T')[0] };
+    const updated = [...proofEntries, entry];
+    setProofEntries(updated);
+    try {
+      await savePlaybookProgress(user.uid, { trackProofEntries: updated });
+    } catch { /* handled */ }
+    setNewProofTitle('');
+    setNewProofType('case-study');
+    setShowAddProof(false);
+    setSavingProof(false);
+  };
 
   const stages = ['Mindset', 'Skill', 'Process', 'Reputation', 'Product', 'Authority'];
   const filteredMilestones = activeStageFilter 
@@ -77,13 +113,21 @@ export default function TrackPage() {
   const overallProgress = (completedCount / totalCount) * 100;
 
   const toggleMilestone = (id: string) => {
-    setMilestones(milestones.map(m => m.id === id ? { ...m, completed: !m.completed } : m));
+    const milestone = milestones.find(m => m.id === id);
+    const newCompleted = !milestone?.completed;
+    setMilestones(milestones.map(m => m.id === id ? { ...m, completed: newCompleted } : m));
+    if (user) {
+      updatePlaybookMilestone(user.uid, id, newCompleted).catch(() => {});
+    }
   };
 
-  // 80/20 calculation
-  const highLeverageHours = 8; // example
-  const totalHours = 40; // example
-  const leverageRatio = Math.round((highLeverageHours / totalHours) * 100);
+  // Dynamic stats
+  const thisWeekEntries = proofEntries.filter(e => {
+    const d = new Date(e.date);
+    const now = new Date();
+    const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    return d >= weekAgo;
+  });
 
   return (
     <section className="min-h-screen py-20 relative">
@@ -133,7 +177,7 @@ export default function TrackPage() {
             >
               <p className="text-white/50 text-sm mb-1">Proof Items</p>
               <p className="text-white text-2xl font-bold">{proofEntries.length}</p>
-              <p className="text-emerald-400 text-xs mt-2">+1 this week</p>
+              <p className="text-emerald-400 text-xs mt-2">{thisWeekEntries.length > 0 ? `+${thisWeekEntries.length} this week` : 'Add your first proof'}</p>
             </motion.div>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -142,8 +186,8 @@ export default function TrackPage() {
               className="bg-white/5 border border-white/10 rounded-2xl p-5"
             >
               <p className="text-white/50 text-sm mb-1">Content Output</p>
-              <p className="text-white text-2xl font-bold">10</p>
-              <p className="text-emerald-400 text-xs mt-2">pieces this week</p>
+              <p className="text-white text-2xl font-bold">{proofEntries.filter(e => e.type === 'Content Published').length}</p>
+              <p className="text-emerald-400 text-xs mt-2">pieces tracked</p>
             </motion.div>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -151,10 +195,10 @@ export default function TrackPage() {
               transition={{ delay: 0.25 }}
               className="bg-white/5 border border-white/10 rounded-2xl p-5"
             >
-              <p className="text-white/50 text-sm mb-1">80/20 Ratio</p>
-              <p className="text-white text-2xl font-bold">{leverageRatio}%</p>
-              <p className={`text-xs mt-2 ${leverageRatio >= 20 ? 'text-emerald-400' : 'text-orange-400'}`}>
-                {leverageRatio >= 20 ? 'On target' : 'Needs improvement'}
+              <p className="text-white/50 text-sm mb-1">Completion</p>
+              <p className="text-white text-2xl font-bold">{Math.round(overallProgress)}%</p>
+              <p className={`text-xs mt-2 ${overallProgress >= 50 ? 'text-emerald-400' : 'text-orange-400'}`}>
+                {overallProgress >= 50 ? 'Great progress' : 'Keep going'}
               </p>
             </motion.div>
           </div>
@@ -270,17 +314,27 @@ export default function TrackPage() {
                     <input
                       type="text"
                       placeholder="What did you accomplish?"
+                      value={newProofTitle}
+                      onChange={(e) => setNewProofTitle(e.target.value)}
                       className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-sm placeholder-white/30 focus:outline-none focus:border-emerald-500/50"
                     />
-                    <select className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500/50">
+                    <select
+                      value={newProofType}
+                      onChange={(e) => setNewProofType(e.target.value)}
+                      className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500/50"
+                    >
                       <option value="case-study" className="bg-black">Case Study</option>
                       <option value="testimonial" className="bg-black">Testimonial</option>
                       <option value="revenue" className="bg-black">Revenue Milestone</option>
-                      <option value="content" className="bg-black">Content Published</option>
+                      <option value="Content Published" className="bg-black">Content Published</option>
                       <option value="system" className="bg-black">System Built</option>
                     </select>
-                    <button className="w-full bg-emerald-500/20 text-emerald-400 py-2 rounded-xl text-sm font-medium hover:bg-emerald-500/30 transition-colors">
-                      Save Proof
+                    <button
+                      onClick={handleSaveProof}
+                      disabled={savingProof || !newProofTitle.trim() || !user}
+                      className="w-full bg-emerald-500/20 text-emerald-400 py-2 rounded-xl text-sm font-medium hover:bg-emerald-500/30 transition-colors disabled:opacity-50"
+                    >
+                      {savingProof ? 'Saving...' : !user ? 'Sign in to save' : 'Save Proof'}
                     </button>
                   </motion.div>
                 )}

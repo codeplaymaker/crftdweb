@@ -1,9 +1,11 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ProofPriceLoop, PricingScale, ModuleHeader } from '@/components/playbook/visuals';
+import { useAuth } from '@/lib/firebase/AuthContext';
+import { getPlaybookProgress, savePlaybookProgress, trackPlaybookModuleVisit } from '@/lib/firebase/firestore';
 
 interface ProofItem {
   id: string;
@@ -43,10 +45,71 @@ const caseStudyTemplate = {
 };
 
 export default function ProvePage() {
-  const [proofItems] = useState(sampleProof);
+  const [proofItems, setProofItems] = useState(sampleProof);
   const [activeTab, setActiveTab] = useState<'loop' | 'sequence' | 'builder' | 'library'>('loop');
   const [caseStudyAnswers, setCaseStudyAnswers] = useState<Record<string, string>>({});
   const [showAddProof, setShowAddProof] = useState(false);
+  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+  const [savingCaseStudy, setSavingCaseStudy] = useState(false);
+  const [caseStudySaved, setCaseStudySaved] = useState(false);
+  const [newProof, setNewProof] = useState({ title: '', type: 'testimonial' as ProofItem['type'], client: '', content: '' });
+  const [savingProof, setSavingProof] = useState(false);
+  const { user } = useAuth();
+
+  // Track module visit and load saved proof items + case study answers
+  useEffect(() => {
+    if (user) {
+      trackPlaybookModuleVisit(user.uid, 'prove').catch(() => {});
+      getPlaybookProgress(user.uid).then(progress => {
+        if (progress?.proofItems && progress.proofItems.length > 0) {
+          setProofItems(progress.proofItems as ProofItem[]);
+        }
+        if (progress?.caseStudyAnswers && Object.keys(progress.caseStudyAnswers).length > 0) {
+          setCaseStudyAnswers(progress.caseStudyAnswers);
+        }
+      }).catch(() => {});
+    }
+  }, [user]);
+
+  const handleCopyTemplate = (template: string, index: number) => {
+    navigator.clipboard.writeText(template).then(() => {
+      setCopiedIndex(index);
+      setTimeout(() => setCopiedIndex(null), 2000);
+    }).catch(() => {});
+  };
+
+  const handleSaveCaseStudy = async () => {
+    if (!user) return;
+    setSavingCaseStudy(true);
+    try {
+      await savePlaybookProgress(user.uid, { caseStudyAnswers });
+      setCaseStudySaved(true);
+      setTimeout(() => setCaseStudySaved(false), 3000);
+    } catch { /* handled */ }
+    setSavingCaseStudy(false);
+  };
+
+  const handleSaveProof = async () => {
+    if (!user || !newProof.title.trim()) return;
+    setSavingProof(true);
+    const item: ProofItem = {
+      id: Date.now().toString(),
+      type: newProof.type,
+      title: newProof.title,
+      content: newProof.content,
+      client: newProof.client,
+      date: new Date().toISOString().split('T')[0],
+      status: 'draft',
+    };
+    const updated = [...proofItems, item];
+    setProofItems(updated);
+    try {
+      await savePlaybookProgress(user.uid, { proofItems: updated });
+    } catch { /* handled */ }
+    setNewProof({ title: '', type: 'testimonial', client: '', content: '' });
+    setShowAddProof(false);
+    setSavingProof(false);
+  };
 
   const publishedCount = proofItems.filter(p => p.status === 'published').length;
   const testimonialCount = proofItems.filter(p => p.type === 'testimonial').length;
@@ -195,8 +258,11 @@ export default function ProvePage() {
                         <div className="bg-black/40 rounded-lg p-3 mt-2">
                           <p className="text-white/50 text-sm font-mono whitespace-pre-wrap">{item.template}</p>
                         </div>
-                        <button className="text-emerald-400 text-xs mt-2 hover:text-emerald-300 transition-colors">
-                          Copy template →
+                        <button
+                          onClick={() => handleCopyTemplate(item.template, index)}
+                          className="text-emerald-400 text-xs mt-2 hover:text-emerald-300 transition-colors"
+                        >
+                          {copiedIndex === index ? 'Copied ✓' : 'Copy template →'}
                         </button>
                       </div>
                     </div>
@@ -232,8 +298,12 @@ export default function ProvePage() {
                   </div>
                 ))}
 
-                <button className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 text-white py-3 rounded-xl font-semibold hover:opacity-90 transition-opacity text-sm">
-                  Save Case Study
+                <button
+                  onClick={handleSaveCaseStudy}
+                  disabled={savingCaseStudy || !user}
+                  className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 text-white py-3 rounded-xl font-semibold hover:opacity-90 transition-opacity text-sm disabled:opacity-50"
+                >
+                  {savingCaseStudy ? 'Saving...' : caseStudySaved ? 'Saved ✓' : !user ? 'Sign in to save' : 'Save Case Study'}
                 </button>
               </div>
             </motion.div>
@@ -264,10 +334,16 @@ export default function ProvePage() {
                   <input
                     type="text"
                     placeholder="Title"
+                    value={newProof.title}
+                    onChange={(e) => setNewProof({ ...newProof, title: e.target.value })}
                     className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-emerald-500/50 text-sm"
                   />
                   <div className="grid grid-cols-2 gap-4">
-                    <select className="bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-emerald-500/50">
+                    <select
+                      value={newProof.type}
+                      onChange={(e) => setNewProof({ ...newProof, type: e.target.value as ProofItem['type'] })}
+                      className="bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-emerald-500/50"
+                    >
                       <option value="testimonial" className="bg-black">Testimonial</option>
                       <option value="case-study" className="bg-black">Case Study</option>
                       <option value="metric" className="bg-black">Metric</option>
@@ -276,15 +352,23 @@ export default function ProvePage() {
                     <input
                       type="text"
                       placeholder="Client name"
+                      value={newProof.client}
+                      onChange={(e) => setNewProof({ ...newProof, client: e.target.value })}
                       className="bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-emerald-500/50 text-sm"
                     />
                   </div>
                   <textarea
                     placeholder="Proof content..."
+                    value={newProof.content}
+                    onChange={(e) => setNewProof({ ...newProof, content: e.target.value })}
                     className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-emerald-500/50 min-h-[100px] text-sm resize-none"
                   />
-                  <button className="bg-emerald-500/20 text-emerald-400 px-4 py-2 rounded-xl text-sm font-medium hover:bg-emerald-500/30 transition-colors">
-                    Save
+                  <button
+                    onClick={handleSaveProof}
+                    disabled={savingProof || !newProof.title.trim() || !user}
+                    className="bg-emerald-500/20 text-emerald-400 px-4 py-2 rounded-xl text-sm font-medium hover:bg-emerald-500/30 transition-colors disabled:opacity-50"
+                  >
+                    {savingProof ? 'Saving...' : !user ? 'Sign in to save' : 'Save'}
                   </button>
                 </motion.div>
               )}

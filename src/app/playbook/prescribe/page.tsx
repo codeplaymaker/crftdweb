@@ -2,9 +2,11 @@
 
 import { motion } from 'framer-motion';
 import { useSearchParams } from 'next/navigation';
-import { useState, Suspense } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { ModuleHeader, StagePositionIndicator } from '@/components/playbook/visuals';
+import { useAuth } from '@/lib/firebase/AuthContext';
+import { trackPlaybookModuleVisit, getPlaybookProgress } from '@/lib/firebase/firestore';
 
 const stageActionPlans: Record<string, {
   title: string;
@@ -155,17 +157,61 @@ const goalToAdvice: Record<string, string> = {
 
 function PrescribeContent() {
   const searchParams = useSearchParams();
-  const stage = searchParams.get('stage') || 'mindset';
-  const score = searchParams.get('score') || '0';
-  const _businessType = searchParams.get('type') || '';
-  const _revenue = searchParams.get('revenue') || '';
+  const paramStage = searchParams.get('stage');
+  const paramScore = searchParams.get('score');
   const burnRate = searchParams.get('burn') || '';
   const goal = searchParams.get('goal') || '';
+
+  const [stage, setStage] = useState(paramStage || 'mindset');
+  const [score, setScore] = useState(paramScore || '0');
+  const [loading, setLoading] = useState(!paramStage);
+  const [expandedAction, setExpandedAction] = useState<number | null>(null);
+  const { user } = useAuth();
+
+  // If no URL params, try to load from Firestore
+  useEffect(() => {
+    if (user) {
+      trackPlaybookModuleVisit(user.uid, 'prescribe').catch(() => {});
+      if (!paramStage) {
+        getPlaybookProgress(user.uid).then(progress => {
+          if (progress?.diagnosisStage) {
+            setStage(progress.diagnosisStage.toLowerCase());
+            setScore(String(progress.diagnosisScore || 0));
+          }
+        }).catch(() => {}).finally(() => setLoading(false));
+      }
+    } else {
+      setLoading(false);
+    }
+  }, [user, paramStage]);
 
   const plan = stageActionPlans[stage] || stageActionPlans.mindset;
   const goalAdvice = goalToAdvice[goal] || '';
 
-  const [expandedAction, setExpandedAction] = useState<number | null>(null);
+  const moduleRoutes: Record<string, string> = {
+    'diagnose': '/playbook/diagnose',
+    'track': '/playbook/track',
+    'prove': '/playbook/prove',
+    'productize': '/playbook/productize',
+    'systemize': '/playbook/systemize',
+    'scale': '/playbook/scale',
+  };
+
+  function getModuleLink(mod: string): string | null {
+    const lower = mod.toLowerCase();
+    for (const [key, route] of Object.entries(moduleRoutes)) {
+      if (lower.includes(key)) return route;
+    }
+    return null;
+  }
+
+  if (loading) {
+    return (
+      <section className="min-h-screen py-20 flex items-center justify-center">
+        <div className="animate-spin h-8 w-8 border-2 border-emerald-500 border-t-transparent rounded-full" />
+      </section>
+    );
+  }
 
   return (
     <section className="min-h-screen py-20 relative">
@@ -313,12 +359,20 @@ function PrescribeContent() {
           <div className="bg-white/5 border border-white/10 rounded-2xl p-6 mb-8">
             <h3 className="text-white font-semibold mb-4">Recommended Modules</h3>
             <div className="space-y-2">
-              {plan.modules.map((mod, index) => (
-                <div key={index} className="flex items-center gap-3 text-white/60">
-                  <span className="text-emerald-400">→</span>
-                  <span className="text-sm">{mod}</span>
-                </div>
-              ))}
+              {plan.modules.map((mod, index) => {
+                const href = getModuleLink(mod);
+                return href ? (
+                  <Link key={index} href={href} className="flex items-center gap-3 text-white/60 hover:text-emerald-400 transition-colors group">
+                    <span className="text-emerald-400">→</span>
+                    <span className="text-sm group-hover:underline">{mod}</span>
+                  </Link>
+                ) : (
+                  <div key={index} className="flex items-center gap-3 text-white/60">
+                    <span className="text-emerald-400">→</span>
+                    <span className="text-sm">{mod}</span>
+                  </div>
+                );
+              })}
             </div>
           </div>
 

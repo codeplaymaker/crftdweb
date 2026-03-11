@@ -1,9 +1,11 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { TimeVsValueComparison, ModuleHeader, EffortRevenueChart } from '@/components/playbook/visuals';
+import { useAuth } from '@/lib/firebase/AuthContext';
+import { getPlaybookProgress, savePlaybookProgress, trackPlaybookModuleVisit } from '@/lib/firebase/firestore';
 
 interface RevenueStream {
   name: string;
@@ -24,6 +26,26 @@ export default function ScalePage() {
   const [streams, setStreams] = useState(defaultStreams);
   const [showAddStream, setShowAddStream] = useState(false);
   const [newStream, setNewStream] = useState<RevenueStream>({ name: '', type: 'active', monthlyRevenue: 0, hoursPerMonth: 0 });
+  const { user } = useAuth();
+
+  // Track module visit and load saved streams
+  useEffect(() => {
+    if (user) {
+      trackPlaybookModuleVisit(user.uid, 'scale').catch(() => {});
+      getPlaybookProgress(user.uid).then(progress => {
+        if (progress?.streams && progress.streams.length > 0) {
+          setStreams(progress.streams);
+        }
+      }).catch(() => {});
+    }
+  }, [user]);
+
+  // Debounced save streams to Firestore
+  const saveStreams = useCallback((updatedStreams: RevenueStream[]) => {
+    if (user) {
+      savePlaybookProgress(user.uid, { streams: updatedStreams }).catch(() => {});
+    }
+  }, [user]);
 
   const totalRevenue = streams.reduce((sum, s) => sum + s.monthlyRevenue, 0);
   const totalHours = streams.reduce((sum, s) => sum + s.hoursPerMonth, 0);
@@ -43,14 +65,18 @@ export default function ScalePage() {
 
   const addStream = () => {
     if (newStream.name) {
-      setStreams([...streams, newStream]);
+      const updatedStreams = [...streams, newStream];
+      setStreams(updatedStreams);
       setNewStream({ name: '', type: 'active', monthlyRevenue: 0, hoursPerMonth: 0 });
       setShowAddStream(false);
+      saveStreams(updatedStreams);
     }
   };
 
   const removeStream = (index: number) => {
-    setStreams(streams.filter((_, i) => i !== index));
+    const updatedStreams = streams.filter((_, i) => i !== index);
+    setStreams(updatedStreams);
+    saveStreams(updatedStreams);
   };
 
   // Freedom Score: higher when more income is leveraged/passive

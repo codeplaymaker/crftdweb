@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { verifyAuthToken, unauthorizedResponse } from '@/lib/engine/auth-guard';
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 const PERPLEXITY_API_KEY = process.env.PERPLEXITY_API_KEY;
@@ -11,7 +12,6 @@ function getCached(niche: string) {
   const key = niche.toLowerCase().trim();
   const cached = cache.get(key);
   if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
-    console.log('Cache hit for:', key);
     return cached.data;
   }
   return null;
@@ -61,7 +61,6 @@ function extractRedditQuotes(text: string): { quote: string; subreddit: string; 
     }
   }
   
-  console.log(`Extracted ${quotes.length} Reddit quotes`);
   return quotes.slice(0, 5); // Max 5 quotes
 }
 
@@ -113,7 +112,6 @@ If you cannot find real quotes for this exact niche, search for related topics a
     }
     const data = await response.json();
     const content = data.choices[0]?.message?.content || '';
-    console.log('Reddit search result preview:', content.substring(0, 300));
     return content;
   } catch (err) {
     console.error('Reddit search exception:', err);
@@ -238,6 +236,9 @@ The viability score should reflect:
 Return ONLY valid JSON, no markdown or explanation.`;
 
 export async function POST(request: NextRequest) {
+  const auth = await verifyAuthToken(request);
+  if (!auth) return unauthorizedResponse();
+
   try {
     const { niche, skipCache } = await request.json();
 
@@ -264,9 +265,7 @@ export async function POST(request: NextRequest) {
     let extractedQuotes: { quote: string; subreddit: string; context: string }[] = [];
     if (webResearch.includes('---REDDIT INSIGHTS---')) {
       const redditSection = webResearch.split('---REDDIT INSIGHTS---')[1] || '';
-      console.log('Reddit Research Found:', redditSection?.substring(0, 500));
       extractedQuotes = extractRedditQuotes(redditSection);
-      console.log('Pre-extracted quotes:', JSON.stringify(extractedQuotes, null, 2));
     }
     
     // Step 2: Use OpenAI to analyze and structure the data
@@ -318,11 +317,7 @@ Make your analysis specific and data-driven based on the research provided.`
       // If OpenAI didn't include Reddit quotes but we extracted them, add them
       if ((!report.redditQuotes || report.redditQuotes.length === 0) && extractedQuotes.length > 0) {
         report.redditQuotes = extractedQuotes;
-        console.log('Injected pre-extracted Reddit quotes');
       }
-      
-      // Log Reddit quotes for debugging
-      console.log('Final Reddit quotes:', JSON.stringify(report.redditQuotes, null, 2));
       
       const finalReport = {
         ...report,

@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TikTok Portfolio Ads v3 — Playbook-Aligned — CrftdWeb</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Inter',sans-serif; background:#060606; color:white; }
+
+        .controls { position:sticky; top:0; z-index:50; background:rgba(6,6,6,.95); backdrop-filter:blur(12px); border-bottom:1px solid #1a1a1a; }
+        .btn { padding:11px 24px; border-radius:10px; font-weight:700; font-size:13px; border:none; cursor:pointer; transition:all .2s; }
+        .btn:hover { transform:translateY(-1px); }
+        .btn-purple { background:linear-gradient(135deg,#7c3aed,#a855f7); color:white; }
+        .btn-outline { background:transparent; border:1px solid #282828; color:#888; }
+        .btn-outline:hover { border-color:#7c3aed; color:white; }
+        .btn-green { background:rgba(34,197,94,.15); border:1px solid rgba(34,197,94,.3); color:#4ade80; }
+        .btn-green.active { background:rgba(34,197,94,.25); border-color:#22c55e; }
+        .gallery { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:20px; }
+        .card { background:#0e0e0e; border-radius:14px; overflow:hidden; border:1px solid #1a1a1a; transition:all .3s; cursor:pointer; }
+        .card:hover { border-color:#7c3aed; transform:translateY(-3px); box-shadow:0 12px 40px rgba(124,58,237,.12); }
+        .card.selected { border-color:#7c3aed; box-shadow:0 0 0 2px rgba(124,58,237,.3); }
+        .card-preview { width:100%; aspect-ratio:9/16; overflow:hidden; position:relative; }
+        .card-preview > div { transform:scale(0.241); transform-origin:top left; position:absolute; top:0; left:0; }
+        .card-info { padding:14px 16px; }
+        .post-canvas { position:absolute; left:-9999px; top:0; }
+        .type-tag { display:inline-block; padding:3px 10px; border-radius:100px; font-size:10px; font-weight:700; letter-spacing:.1em; }
+        .type-value { background:rgba(34,197,94,.15); color:#4ade80; }
+        .type-proof { background:rgba(6,182,212,.15); color:#67e8f9; }
+        .type-promo { background:rgba(124,58,237,.15); color:#a78bfa; }
+
+        /* ── Frame: 1080×1920 ── */
+        .frame { width:1080px; height:1920px; position:relative; overflow:hidden; display:flex; flex-direction:column; font-family:'Inter',sans-serif; }
+        .noise::after { content:''; position:absolute; inset:0; z-index:1; pointer-events:none; opacity:.035; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+
+        /* ── TIKTOK SAFE ZONES ── */
+        .safe { position:absolute; z-index:10; pointer-events:none; }
+        .safe-top    { top:0; left:0; right:0; height:150px; background:rgba(255,0,0,.12); border-bottom:2px dashed rgba(255,0,0,.4); }
+        .safe-bottom { bottom:0; left:0; right:0; height:440px; background:rgba(255,0,0,.12); border-top:2px dashed rgba(255,0,0,.4); }
+        .safe-right  { top:150px; right:0; width:150px; bottom:440px; background:rgba(255,0,0,.08); border-left:2px dashed rgba(255,0,0,.3); }
+        .safe-left   { top:150px; left:0; width:44px; bottom:440px; background:rgba(255,0,0,.05); border-right:2px dashed rgba(255,0,0,.2); }
+        .safe-label  { position:absolute; color:rgba(255,0,0,.6); font-size:14px; font-weight:700; letter-spacing:.1em; }
+        .safe-top .safe-label    { bottom:8px; left:50%; transform:translateX(-50%); }
+        .safe-bottom .safe-label { top:8px; left:50%; transform:translateX(-50%); }
+        .safe-right .safe-label  { top:50%; left:50%; transform:translate(-50%,-50%) rotate(-90deg); white-space:nowrap; }
+
+        .tag { display:inline-block; padding:7px 18px; border-radius:100px; font-size:16px; font-weight:700; letter-spacing:.15em; text-transform:uppercase; }
+
+        /* ── SAFE CONTENT WRAPPER ── */
+        .content-safe {
+            position:relative; z-index:2;
+            padding: 170px 170px 460px 64px;
+            width:100%; height:100%;
+            display:flex; flex-direction:column;
+        }
+    </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════
+     CONTROLS
+     ═══════════════════════════════════════════════════ -->
+<div class="controls">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between flex-wrap gap-3">
+        <div>
+            <h1 class="text-lg font-bold">
+                Portfolio Ads v3
+                <span class="text-green-400 text-xs font-normal ml-2">✓ Playbook-Aligned</span>
+                <span class="text-cyan-400 text-xs font-normal ml-2">✓ TikTok Safe Zone</span>
+            </h1>
+            <p class="text-xs text-gray-500">80/20 Rule — 6 Value + 2 Promo — "Speak in problems, solve in products"</p>
+        </div>
+        <div class="flex gap-3 flex-wrap">
+            <button onclick="toggleSafeZones()" class="btn btn-green" id="szBtn">👁 Safe Zones</button>
+            <button onclick="downloadAll()" class="btn btn-purple">⬇ Download All</button>
+            <button onclick="downloadSelected()" class="btn btn-outline" id="selBtn" disabled>⬇ Selected</button>
+        </div>
+    </div>
+</div>
+<div id="status" class="text-center py-2 text-xs text-gray-600"></div>
+
+<!-- ═══════════════════════════════════════════════════
+     GALLERY
+     ═══════════════════════════════════════════════════ -->
+<div class="max-w-7xl mx-auto px-6 pb-20">
+    <div class="gallery" id="gallery"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     AD FRAMES (off-screen for capture)
+
+     PLAYBOOK STRUCTURE:
+     80% VALUE (6 frames) — teach, share, case study
+     20% PROMO (2 frames) — sell, CTA
+
+     Framework applied:
+       • "Speak in problems" — hooks lead with THEIR pain
+       • "Give away your secrets" — teach the process
+       • "Proof & Price Loop" — let clients do the marketing
+       • "Content points out problem, product solves it"
+       • "Nobody cares what you can do — they care what
+          you can do FOR THEM"
+     ═══════════════════════════════════════════════════ -->
+<div class="post-canvas">
+
+
+<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     FRAME 1 — VALUE: Problem Hook
+     "Your website is losing you money"
+     Playbook: "Content that points out the problem"
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+<div id="v1-problem-hook" class="frame noise" style="background:#050505;">
+    <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#ef4444,#dc2626);"></div>
+    <div style="position:absolute;top:30%;left:30%;width:600px;height:600px;background:radial-gradient(circle,rgba(239,68,68,.05),transparent 70%);"></div>
+
+    <div class="content-safe">
+        <div class="tag" style="background:rgba(239,68,68,.08);color:#f87171;margin-bottom:28px;align-self:flex-start;">HARD TRUTH</div>
+
+        <h1 style="font-size:72px;font-weight:900;line-height:.95;letter-spacing:-0.04em;margin-bottom:32px;">
+            Your website<br>is <span style="color:#ef4444;">losing</span> you<br>money.
+        </h1>
+
+        <p style="font-size:22px;color:rgba(255,255,255,.35);line-height:1.5;margin-bottom:36px;max-width:620px;">
+            Every day it stays the same,<br>potential clients bounce to competitors<br>who look more credible than you.
+        </p>
+
+        <!-- stats that hit -->
+        <div style="display:flex;flex-direction:column;gap:16px;margin-bottom:auto;">
+            <div style="display:flex;align-items:center;gap:16px;">
+                <div style="width:56px;height:56px;border-radius:14px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.12);display:flex;align-items:center;justify-content:center;">
+                    <span style="font-size:22px;font-weight:900;color:#f87171;">88%</span>
+                </div>
+                <div>
+                    <div style="font-size:18px;font-weight:700;">Won't return after bad UX</div>
+                    <div style="font-size:14px;color:rgba(255,255,255,.25);">— Google / Forrester Research</div>
+                </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:16px;">
+                <div style="width:56px;height:56px;border-radius:14px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.12);display:flex;align-items:center;justify-content:center;">
+                    <span style="font-size:22px;font-weight:900;color:#f87171;">75%</span>
+                </div>
+                <div>
+                    <div style="font-size:18px;font-weight:700;">Judge credibility by design</div>
+                    <div style="font-size:14px;color:rgba(255,255,255,.25);">— Stanford Persuasive Tech Lab</div>
+                </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:16px;">
+                <div style="width:56px;height:56px;border-radius:14px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.12);display:flex;align-items:center;justify-content:center;">
+                    <span style="font-size:22px;font-weight:900;color:#f87171;">0.05s</span>
+                </div>
+                <div>
+                    <div style="font-size:18px;font-weight:700;">First impression is formed</div>
+                    <div style="font-size:14px;color:rgba(255,255,255,.25);">— Behaviour & Info Technology</div>
+                </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:16px;">
+                <div style="width:56px;height:56px;border-radius:14px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.12);display:flex;align-items:center;justify-content:center;">
+                    <span style="font-size:22px;font-weight:900;color:#f87171;">$0</span>
+                </div>
+                <div>
+                    <div style="font-size:18px;font-weight:700;">What a slow site earns you</div>
+                    <div style="font-size:14px;color:rgba(255,255,255,.25);">Every 1s delay = 7% fewer conversions</div>
+                </div>
+            </div>
+        </div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:24px;">
+            <span style="font-size:14px;color:rgba(255,255,255,.15);letter-spacing:.05em;">Is this your site? ↓</span>
+            <span style="font-size:16px;font-weight:800;letter-spacing:.08em;color:rgba(255,255,255,.2);">CRFTDWEB</span>
+        </div>
+    </div>
+</div>
+
+
+<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     FRAME 2 — VALUE: Educational
+     "5 signs your website isn't converting"
+     Playbook: "Give away your secrets"
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+<div id="v2-five-signs" class="frame noise" style="background:#050505;">
+    <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#f59e0b,#eab308);"></div>
+
+    <div class="content-safe">
+        <div class="tag" style="background:rgba(245,158,11,.08);color:#fbbf24;margin-bottom:24px;align-self:flex-start;">FREE KNOWLEDGE</div>
+
+        <h1 style="font-size:62px;font-weight:900;line-height:.98;letter-spacing:-0.04em;margin-bottom:12px;">
+            5 signs your<br>website isn't<br><span style="color:#fbbf24;">converting.</span>
+        </h1>
+        <p style="font-size:18px;color:rgba(255,255,255,.25);margin-bottom:32px;">Save this. Check yours right now.</p>
+
+        <div style="display:flex;flex-direction:column;gap:14px;flex:1;">
+            <!-- Sign 1 -->
+            <div style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:22px 24px;flex:1;display:flex;align-items:center;gap:18px;">
+                <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,rgba(245,158,11,.15),rgba(245,158,11,.05));display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <span style="font-size:18px;font-weight:900;color:#fbbf24;">01</span>
+                </div>
+                <div>
+                    <div style="font-size:20px;font-weight:800;margin-bottom:2px;">No clear CTA above the fold</div>
+                    <div style="font-size:14px;color:rgba(255,255,255,.3);line-height:1.3;">Visitors don't scroll — if they can't act in 3 seconds, they leave</div>
+                </div>
+            </div>
+            <!-- Sign 2 -->
+            <div style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:22px 24px;flex:1;display:flex;align-items:center;gap:18px;">
+                <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,rgba(245,158,11,.15),rgba(245,158,11,.05));display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <span style="font-size:18px;font-weight:900;color:#fbbf24;">02</span>
+                </div>
+                <div>
+                    <div style="font-size:20px;font-weight:800;margin-bottom:2px;">Zero social proof visible</div>
+                    <div style="font-size:14px;color:rgba(255,255,255,.3);line-height:1.3;">No testimonials, no logos, no results = no trust = no sale</div>
+                </div>
+            </div>
+            <!-- Sign 3 -->
+            <div style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:22px 24px;flex:1;display:flex;align-items:center;gap:18px;">
+                <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,rgba(245,158,11,.15),rgba(245,158,11,.05));display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <span style="font-size:18px;font-weight:900;color:#fbbf24;">03</span>
+                </div>
+                <div>
+                    <div style="font-size:20px;font-weight:800;margin-bottom:2px;">Loads slower than 3 seconds</div>
+                    <div style="font-size:14px;color:rgba(255,255,255,.3);line-height:1.3;">53% of mobile visitors leave if it takes longer — Google data</div>
+                </div>
+            </div>
+            <!-- Sign 4 -->
+            <div style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:22px 24px;flex:1;display:flex;align-items:center;gap:18px;">
+                <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,rgba(245,158,11,.15),rgba(245,158,11,.05));display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <span style="font-size:18px;font-weight:900;color:#fbbf24;">04</span>
+                </div>
+                <div>
+                    <div style="font-size:20px;font-weight:800;margin-bottom:2px;">You talk about yourself, not them</div>
+                    <div style="font-size:14px;color:rgba(255,255,255,.3);line-height:1.3;">"We are..." vs "You get..." — the second one converts</div>
+                </div>
+            </div>
+            <!-- Sign 5 -->
+            <div style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:22px 24px;flex:1;display:flex;align-items:center;gap:18px;">
+                <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,rgba(245,158,11,.15),rgba(245,158,11,.05));display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <span style="font-size:18px;font-weight:900;color:#fbbf24;">05</span>
+                </div>
+                <div>
+                    <div style="font-size:20px;font-weight:800;margin-bottom:2px;">Looks like a template</div>
+                    <div style="font-size:14px;color:rgba(255,255,255,.3);line-height:1.3;">If you can tell it's a template, so can your customers</div>
+                </div>
+            </div>
+        </div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:20px;">
+            <span style="font-size:14px;color:rgba(255,255,255,.15);">How many apply to you? 👀</span>
+            <span style="font-size:16px;font-weight:800;letter-spacing:.08em;color:rgba(255,255,255,.2);">CRFTDWEB</span>
+        </div>
+    </div>
+</div>
+
+
+<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     FRAME 3 — VALUE / PROOF: Case Study — Microbiome Design
+     Playbook: "Problem → Process → Result"
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+<div id="v3-case-micro" class="frame noise" style="background:#020208;">
+    <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#22c55e,#10b981);"></div>
+    <!-- Hero bg bleed -->
+    <div style="position:absolute;top:0;left:0;right:0;height:600px;overflow:hidden;">
+        <img src="/microbiome-design-pic.png" style="width:100%;height:100%;object-fit:cover;opacity:.2;" crossorigin="anonymous"/>
+        <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(2,2,8,.3) 0%,#020208 100%);"></div>
+    </div>
+
+    <div class="content-safe">
+        <div class="tag" style="background:rgba(34,197,94,.08);color:#4ade80;margin-bottom:24px;align-self:flex-start;">CASE STUDY</div>
+
+        <h1 style="font-size:54px;font-weight:900;line-height:.98;letter-spacing:-0.03em;margin-bottom:32px;">
+            How a biotech startup<br>went from <span style="color:rgba(255,255,255,.3);">invisible</span><br>to <span style="color:#4ade80;">industry-leading.</span>
+        </h1>
+
+        <!-- Problem → Process → Result -->
+        <div style="display:flex;flex-direction:column;gap:14px;flex:1;">
+            <!-- PROBLEM -->
+            <div style="background:rgba(239,68,68,.03);border:1px solid rgba(239,68,68,.08);border-radius:16px;padding:22px 24px;flex:1;">
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+                    <div style="width:8px;height:8px;border-radius:50%;background:#ef4444;"></div>
+                    <span style="font-size:13px;font-weight:800;color:#f87171;letter-spacing:.12em;text-transform:uppercase;">THE PROBLEM</span>
+                </div>
+                <div style="font-size:20px;font-weight:700;margin-bottom:4px;">"No one takes us seriously online"</div>
+                <div style="font-size:15px;color:rgba(255,255,255,.3);line-height:1.4;">Cutting-edge microbiome science but a website that looked like a student project. Investors and partners bounced.</div>
+            </div>
+            <!-- PROCESS -->
+            <div style="background:rgba(245,158,11,.03);border:1px solid rgba(245,158,11,.08);border-radius:16px;padding:22px 24px;flex:1;">
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+                    <div style="width:8px;height:8px;border-radius:50%;background:#f59e0b;"></div>
+                    <span style="font-size:13px;font-weight:800;color:#fbbf24;letter-spacing:.12em;text-transform:uppercase;">THE PROCESS</span>
+                </div>
+                <div style="font-size:20px;font-weight:700;margin-bottom:4px;">Trust-First Design Framework</div>
+                <div style="font-size:15px;color:rgba(255,255,255,.3);line-height:1.4;">Discover → Design → Develop → Deliver. Rebuilt around credibility signals, scientific authority, and conversion flow.</div>
+            </div>
+            <!-- RESULT -->
+            <div style="background:rgba(34,197,94,.03);border:1px solid rgba(34,197,94,.1);border-radius:16px;padding:22px 24px;flex:1;">
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+                    <div style="width:8px;height:8px;border-radius:50%;background:#22c55e;"></div>
+                    <span style="font-size:13px;font-weight:800;color:#4ade80;letter-spacing:.12em;text-transform:uppercase;">THE RESULT</span>
+                </div>
+                <div style="display:flex;gap:24px;">
+                    <div>
+                        <div style="font-size:36px;font-weight:900;color:#4ade80;">4.8%</div>
+                        <div style="font-size:12px;color:rgba(255,255,255,.25);">Conversion rate<br><span style="color:rgba(255,255,255,.12);">(was 1.2%)</span></div>
+                    </div>
+                    <div>
+                        <div style="font-size:36px;font-weight:900;color:#4ade80;">3×</div>
+                        <div style="font-size:12px;color:rgba(255,255,255,.25);">Organic traffic<br><span style="color:rgba(255,255,255,.12);">in 90 days</span></div>
+                    </div>
+                    <div>
+                        <div style="font-size:36px;font-weight:900;color:#4ade80;">90+</div>
+                        <div style="font-size:12px;color:rgba(255,255,255,.25);">PageSpeed<br><span style="color:rgba(255,255,255,.12);">mobile + desktop</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Project image -->
+        <div style="height:160px;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.06);margin-top:16px;position:relative;">
+            <img src="/microbiome-design-pic.png" style="width:100%;height:100%;object-fit:cover;" crossorigin="anonymous"/>
+            <div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(2,2,8,.7) 0%,transparent 60%);"></div>
+            <div style="position:absolute;bottom:14px;left:18px;z-index:2;">
+                <span style="font-size:18px;font-weight:800;">Microbiome Design</span>
+                <span style="font-size:12px;color:rgba(255,255,255,.3);margin-left:10px;">microbiome-design.vercel.app</span>
+            </div>
+        </div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;">
+            <span style="font-size:14px;color:rgba(255,255,255,.15);">Full case study → link in bio</span>
+            <span style="font-size:16px;font-weight:800;letter-spacing:.08em;color:rgba(255,255,255,.2);">CRFTDWEB</span>
+        </div>
+    </div>
+</div>
+
+
+<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     FRAME 4 — VALUE / PROOF: Case Study — Life Lab HQ
+     Playbook: "Problem → Process → Result"
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+<div id="v4-case-lifelab" class="frame noise" style="background:#020208;">
+    <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#06b6d4,#0891b2);"></div>
+    <div style="position:absolute;top:0;left:0;right:0;height:600px;overflow:hidden;">
+        <img src="/life-lab.jpg" style="width:100%;height:100%;object-fit:cover;opacity:.2;" crossorigin="anonymous"/>
+        <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(2,2,8,.3) 0%,#020208 100%);"></div>
+    </div>
+
+    <div class="content-safe">
+        <div class="tag" style="background:rgba(6,182,212,.08);color:#67e8f9;margin-bottom:24px;align-self:flex-start;">CASE STUDY</div>
+
+        <h1 style="font-size:54px;font-weight:900;line-height:.98;letter-spacing:-0.03em;margin-bottom:32px;">
+            How a wellness brand<br>turned visitors into<br><span style="color:#22d3ee;">paying members.</span>
+        </h1>
+
+        <div style="display:flex;flex-direction:column;gap:14px;flex:1;">
+            <!-- PROBLEM -->
+            <div style="background:rgba(239,68,68,.03);border:1px solid rgba(239,68,68,.08);border-radius:16px;padding:22px 24px;flex:1;">
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+                    <div style="width:8px;height:8px;border-radius:50%;background:#ef4444;"></div>
+                    <span style="font-size:13px;font-weight:800;color:#f87171;letter-spacing:.12em;text-transform:uppercase;">THE PROBLEM</span>
+                </div>
+                <div style="font-size:20px;font-weight:700;margin-bottom:4px;">"People visit but never sign up"</div>
+                <div style="font-size:15px;color:rgba(255,255,255,.3);line-height:1.4;">Great content, real expertise — but the website didn't communicate trust or guide visitors to take action.</div>
+            </div>
+            <!-- PROCESS -->
+            <div style="background:rgba(245,158,11,.03);border:1px solid rgba(245,158,11,.08);border-radius:16px;padding:22px 24px;flex:1;">
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+                    <div style="width:8px;height:8px;border-radius:50%;background:#f59e0b;"></div>
+                    <span style="font-size:13px;font-weight:800;color:#fbbf24;letter-spacing:.12em;text-transform:uppercase;">THE PROCESS</span>
+                </div>
+                <div style="font-size:20px;font-weight:700;margin-bottom:4px;">Conversion-first redesign</div>
+                <div style="font-size:15px;color:rgba(255,255,255,.3);line-height:1.4;">Mapped the customer journey. Rebuilt every page around a single conversion goal. Added proof at every decision point.</div>
+            </div>
+            <!-- RESULT -->
+            <div style="background:rgba(6,182,212,.03);border:1px solid rgba(6,182,212,.1);border-radius:16px;padding:22px 24px;flex:1;">
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+                    <div style="width:8px;height:8px;border-radius:50%;background:#06b6d4;"></div>
+                    <span style="font-size:13px;font-weight:800;color:#67e8f9;letter-spacing:.12em;text-transform:uppercase;">THE RESULT</span>
+                </div>
+                <div style="display:flex;gap:24px;">
+                    <div>
+                        <div style="font-size:36px;font-weight:900;color:#22d3ee;">340%</div>
+                        <div style="font-size:12px;color:rgba(255,255,255,.25);">More sign-ups<br><span style="color:rgba(255,255,255,.12);">vs. old site</span></div>
+                    </div>
+                    <div>
+                        <div style="font-size:36px;font-weight:900;color:#22d3ee;">52</div>
+                        <div style="font-size:12px;color:rgba(255,255,255,.25);">Leads generated<br><span style="color:rgba(255,255,255,.12);">first quarter</span></div>
+                    </div>
+                    <div>
+                        <div style="font-size:36px;font-weight:900;color:#22d3ee;">$47K</div>
+                        <div style="font-size:12px;color:rgba(255,255,255,.25);">Revenue from<br><span style="color:rgba(255,255,255,.12);">web-sourced leads</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="height:160px;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.06);margin-top:16px;position:relative;">
+            <img src="/life-lab.jpg" style="width:100%;height:100%;object-fit:cover;" crossorigin="anonymous"/>
+            <div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(2,2,8,.7) 0%,transparent 60%);"></div>
+            <div style="position:absolute;bottom:14px;left:18px;z-index:2;">
+                <span style="font-size:18px;font-weight:800;">The Life Lab HQ</span>
+                <span style="font-size:12px;color:rgba(255,255,255,.3);margin-left:10px;">thelifelabhq.com</span>
+            </div>
+        </div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;">
+            <span style="font-size:14px;color:rgba(255,255,255,.15);">Full case study → link in bio</span>
+            <span style="font-size:16px;font-weight:800;letter-spacing:.08em;color:rgba(255,255,255,.2);">CRFTDWEB</span>
+        </div>
+    </div>
+</div>
+
+
+<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     FRAME 5 — VALUE: Give Away the Process
+     "The Trust-First Design Framework"
+     Playbook: "Give away your secrets — people pay
+     for implementation"
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+<div id="v5-framework" class="frame noise" style="background:#050505;">
+    <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#8b5cf6,#6d28d9);"></div>
+    <div style="position:absolute;top:15%;left:40%;width:600px;height:600px;background:radial-gradient(circle,rgba(139,92,246,.06),transparent 70%);"></div>
+
+    <div class="content-safe">
+        <div class="tag" style="background:rgba(139,92,246,.08);color:#a78bfa;margin-bottom:24px;align-self:flex-start;">MY FRAMEWORK</div>
+
+        <h1 style="font-size:56px;font-weight:900;line-height:.98;letter-spacing:-0.03em;margin-bottom:12px;">
+            The Trust-First<br><span style="background:linear-gradient(90deg,#a78bfa,#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Design Framework.</span>
+        </h1>
+        <p style="font-size:20px;color:rgba(255,255,255,.3);margin-bottom:32px;">Here's my entire process. Free. Use it.</p>
+
+        <div style="display:flex;flex-direction:column;gap:14px;flex:1;">
+            <!-- Step 1 -->
+            <div style="background:rgba(255,255,255,.02);border:1px solid rgba(139,92,246,.1);border-radius:16px;padding:22px 24px;flex:1;display:flex;gap:18px;">
+                <div style="width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,#f97316,#fb923c);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <span style="font-size:22px;font-weight:900;color:white;">01</span>
+                </div>
+                <div style="flex:1;">
+                    <div style="font-size:22px;font-weight:800;margin-bottom:3px;">Discover</div>
+                    <div style="font-size:14px;color:rgba(255,255,255,.35);line-height:1.4;">Deep-dive into who your customer actually is. Not demographics — psychographics. What do they fear? What do they want?</div>
+                </div>
+            </div>
+            <!-- Step 2 -->
+            <div style="background:rgba(255,255,255,.02);border:1px solid rgba(139,92,246,.1);border-radius:16px;padding:22px 24px;flex:1;display:flex;gap:18px;">
+                <div style="width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,#ec4899,#f472b6);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <span style="font-size:22px;font-weight:900;color:white;">02</span>
+                </div>
+                <div style="flex:1;">
+                    <div style="font-size:22px;font-weight:800;margin-bottom:3px;">Design</div>
+                    <div style="font-size:14px;color:rgba(255,255,255,.35);line-height:1.4;">Every section answers ONE question in the buyer's mind. Trust signals at every scroll point. Beauty that builds credibility.</div>
+                </div>
+            </div>
+            <!-- Step 3 -->
+            <div style="background:rgba(255,255,255,.02);border:1px solid rgba(139,92,246,.1);border-radius:16px;padding:22px 24px;flex:1;display:flex;gap:18px;">
+                <div style="width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,#7c3aed,#a855f7);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <span style="font-size:22px;font-weight:900;color:white;">03</span>
+                </div>
+                <div style="flex:1;">
+                    <div style="font-size:22px;font-weight:800;margin-bottom:3px;">Develop</div>
+                    <div style="font-size:14px;color:rgba(255,255,255,.35);line-height:1.4;">Hand-coded. No templates. 90+ PageSpeed. Sub-2s load on mobile. Every millisecond matters — it's your first impression.</div>
+                </div>
+            </div>
+            <!-- Step 4 -->
+            <div style="background:rgba(255,255,255,.02);border:1px solid rgba(139,92,246,.1);border-radius:16px;padding:22px 24px;flex:1;display:flex;gap:18px;">
+                <div style="width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,#22c55e,#4ade80);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <span style="font-size:22px;font-weight:900;color:white;">04</span>
+                </div>
+                <div style="flex:1;">
+                    <div style="font-size:22px;font-weight:800;margin-bottom:3px;">Deliver</div>
+                    <div style="font-size:14px;color:rgba(255,255,255,.35);line-height:1.4;">Launch isn't the end — it's the start. A/B test headlines, track conversions, optimize until the site is a revenue machine.</div>
+                </div>
+            </div>
+        </div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:20px;">
+            <span style="font-size:14px;color:rgba(255,255,255,.15);">Steal this. Seriously.</span>
+            <span style="font-size:16px;font-weight:800;letter-spacing:.08em;color:rgba(255,255,255,.2);">CRFTDWEB</span>
+        </div>
+    </div>
+</div>
+
+
+<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     FRAME 6 — VALUE: "Speak in Problems"
+     "$500 website vs. $5K website"
+     Playbook: "Content points out the problem"
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+<div id="v6-cost-comparison" class="frame noise" style="background:#050505;">
+    <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#ef4444,#7c3aed);"></div>
+
+    <div class="content-safe">
+        <div class="tag" style="background:rgba(239,68,68,.08);color:#f87171;margin-bottom:24px;align-self:flex-start;">THE MATH</div>
+
+        <h1 style="font-size:58px;font-weight:900;line-height:.98;letter-spacing:-0.04em;margin-bottom:12px;">
+            Your <span style="color:#ef4444;">$500</span> website<br>is costing you<br><span style="color:rgba(255,255,255,.3);">$50,000.</span>
+        </h1>
+        <p style="font-size:18px;color:rgba(255,255,255,.25);margin-bottom:28px;">Here's why cheap is expensive.</p>
+
+        <!-- Side by side -->
+        <div style="display:flex;gap:14px;flex:1;">
+            <!-- Cheap side -->
+            <div style="flex:1;background:rgba(239,68,68,.02);border:1px solid rgba(239,68,68,.08);border-radius:16px;padding:22px;display:flex;flex-direction:column;">
+                <div style="font-size:14px;font-weight:800;color:#f87171;letter-spacing:.1em;text-transform:uppercase;margin-bottom:14px;">💸 THE $500 SITE</div>
+                <div style="display:flex;flex-direction:column;gap:12px;flex:1;">
+                    <div style="font-size:16px;color:rgba(255,255,255,.35);">✕ Template — looks like 10K others</div>
+                    <div style="font-size:16px;color:rgba(255,255,255,.35);">✕ 40 PageSpeed — visitors leave</div>
+                    <div style="font-size:16px;color:rgba(255,255,255,.35);">✕ 0.5% conversion rate</div>
+                    <div style="font-size:16px;color:rgba(255,255,255,.35);">✕ No trust signals</div>
+                    <div style="font-size:16px;color:rgba(255,255,255,.35);">✕ "We are a leading provider..."</div>
+                </div>
+                <div style="border-top:1px solid rgba(239,68,68,.1);padding-top:14px;margin-top:14px;">
+                    <div style="font-size:14px;color:rgba(255,255,255,.2);">1,000 visitors/mo × 0.5% × $200 avg</div>
+                    <div style="font-size:28px;font-weight:900;color:#f87171;">= $1,000/mo</div>
+                </div>
+            </div>
+            <!-- Premium side -->
+            <div style="flex:1;background:rgba(34,197,94,.02);border:1px solid rgba(34,197,94,.1);border-radius:16px;padding:22px;display:flex;flex-direction:column;">
+                <div style="font-size:14px;font-weight:800;color:#4ade80;letter-spacing:.1em;text-transform:uppercase;margin-bottom:14px;">✦ THE $5K SITE</div>
+                <div style="display:flex;flex-direction:column;gap:12px;flex:1;">
+                    <div style="font-size:16px;color:rgba(255,255,255,.6);">✓ Custom — built for YOUR brand</div>
+                    <div style="font-size:16px;color:rgba(255,255,255,.6);">✓ 90+ PageSpeed — fast as it gets</div>
+                    <div style="font-size:16px;color:rgba(255,255,255,.6);">✓ 4.8% conversion rate</div>
+                    <div style="font-size:16px;color:rgba(255,255,255,.6);">✓ Proof at every touchpoint</div>
+                    <div style="font-size:16px;color:rgba(255,255,255,.6);">✓ "You get 3× more leads..."</div>
+                </div>
+                <div style="border-top:1px solid rgba(34,197,94,.1);padding-top:14px;margin-top:14px;">
+                    <div style="font-size:14px;color:rgba(255,255,255,.2);">1,000 visitors/mo × 4.8% × $200 avg</div>
+                    <div style="font-size:28px;font-weight:900;color:#4ade80;">= $9,600/mo</div>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align:center;margin-top:16px;">
+            <div style="font-size:18px;color:rgba(255,255,255,.3);">The "cheap" site costs you <span style="color:#ef4444;font-weight:800;">$8,600/mo</span> in lost revenue.</div>
+        </div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;">
+            <span style="font-size:14px;color:rgba(255,255,255,.15);">Still think your site is "fine"?</span>
+            <span style="font-size:16px;font-weight:800;letter-spacing:.08em;color:rgba(255,255,255,.2);">CRFTDWEB</span>
+        </div>
+    </div>
+</div>
+
+
+<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     FRAME 7 — PROMO (20%): Client Voices / Proof Flywheel
+     Playbook: "Let customers do the marketing"
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+<div id="v7-proof-flywheel" class="frame noise" style="background:linear-gradient(170deg,#020008,#0c0020 50%,#020008);">
+    <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#a855f7,#7c3aed);"></div>
+    <div style="position:absolute;top:20%;left:40%;width:500px;height:500px;background:radial-gradient(circle,rgba(168,85,247,.06),transparent 70%);"></div>
+
+    <div class="content-safe">
+        <div class="tag" style="background:rgba(168,85,247,.08);color:#c084fc;margin-bottom:24px;align-self:flex-start;">CLIENT RESULTS</div>
+
+        <h1 style="font-size:56px;font-weight:900;line-height:.98;letter-spacing:-0.03em;margin-bottom:32px;">
+            Don't take my<br>word for it.
+        </h1>
+
+        <!-- Testimonial cards -->
+        <div style="display:flex;flex-direction:column;gap:14px;flex:1;">
+            <!-- Client 1 -->
+            <div style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:24px;flex:1;display:flex;flex-direction:column;justify-content:center;">
+                <div style="font-size:36px;height:32px;margin-bottom:8px;color:rgba(168,85,247,.3);">"</div>
+                <div style="font-size:19px;font-weight:600;line-height:1.4;margin-bottom:16px;color:rgba(255,255,255,.85);">
+                    They completely transformed our online presence. Our conversion rate went from 1.2% to 4.8% in the first month.
+                </div>
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#a855f7);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;">S</div>
+                    <div>
+                        <div style="font-size:14px;font-weight:700;">Sarah K.</div>
+                        <div style="font-size:12px;color:rgba(255,255,255,.25);">SaaS Founder</div>
+                    </div>
+                    <div style="margin-left:auto;background:rgba(34,197,94,.08);padding:4px 12px;border-radius:100px;">
+                        <span style="font-size:12px;font-weight:700;color:#4ade80;">+300% CVR</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Client 2 -->
+            <div style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:24px;flex:1;display:flex;flex-direction:column;justify-content:center;">
+                <div style="font-size:36px;height:32px;margin-bottom:8px;color:rgba(6,182,212,.3);">"</div>
+                <div style="font-size:19px;font-weight:600;line-height:1.4;margin-bottom:16px;color:rgba(255,255,255,.85);">
+                    340% increase in conversions and $120K in additional revenue within 90 days. Best investment we've made.
+                </div>
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#06b6d4,#22d3ee);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;">T</div>
+                    <div>
+                        <div style="font-size:14px;font-weight:700;">TechStore Co.</div>
+                        <div style="font-size:12px;color:rgba(255,255,255,.25);">E-commerce — Redesign</div>
+                    </div>
+                    <div style="margin-left:auto;background:rgba(6,182,212,.08);padding:4px 12px;border-radius:100px;">
+                        <span style="font-size:12px;font-weight:700;color:#67e8f9;">+$120K rev</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Client 3 -->
+            <div style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:24px;flex:1;display:flex;flex-direction:column;justify-content:center;">
+                <div style="font-size:36px;height:32px;margin-bottom:8px;color:rgba(245,158,11,.3);">"</div>
+                <div style="font-size:19px;font-weight:600;line-height:1.4;margin-bottom:16px;color:rgba(255,255,255,.85);">
+                    3× organic traffic, 52 leads, 8 deals closed — $47K from web leads alone. The site pays for itself every month.
+                </div>
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#f59e0b,#fbbf24);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#000;">M</div>
+                    <div>
+                        <div style="font-size:14px;font-weight:700;">MPM Trading</div>
+                        <div style="font-size:12px;color:rgba(255,255,255,.25);">FinTech Platform</div>
+                    </div>
+                    <div style="margin-left:auto;background:rgba(245,158,11,.08);padding:4px 12px;border-radius:100px;">
+                        <span style="font-size:12px;font-weight:700;color:#fbbf24;">$47K leads</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- portfolio strip -->
+        <div style="display:flex;gap:8px;margin-top:16px;">
+            <div style="flex:1;height:80px;border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,.04);">
+                <img src="/microbiome-design-pic.png" style="width:100%;height:100%;object-fit:cover;" crossorigin="anonymous"/>
+            </div>
+            <div style="flex:1;height:80px;border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,.04);">
+                <img src="/life-lab.jpg" style="width:100%;height:100%;object-fit:cover;" crossorigin="anonymous"/>
+            </div>
+            <div style="flex:1;height:80px;border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,.04);">
+                <img src="/mpm-hero.jpg" style="width:100%;height:100%;object-fit:cover;" crossorigin="anonymous"/>
+            </div>
+        </div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;">
+            <span style="font-size:14px;color:rgba(255,255,255,.15);">Real clients. Real results. No cap.</span>
+            <span style="font-size:16px;font-weight:800;letter-spacing:.08em;color:rgba(255,255,255,.2);">CRFTDWEB</span>
+        </div>
+    </div>
+</div>
+
+
+<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     FRAME 8 — PROMO (20%): CTA — Problem-first closer
+     Playbook: "Speak in problems" even in the CTA
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+<div id="v8-cta" class="frame noise" style="background:linear-gradient(170deg,#0a0014,#18003a 45%,#0a0014);">
+    <div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#7c3aed,#a855f7,#c084fc);"></div>
+    <div style="position:absolute;top:30%;left:40%;width:700px;height:700px;background:radial-gradient(circle,rgba(124,58,237,.1),transparent 60%);"></div>
+
+    <div class="content-safe" style="text-align:center;align-items:center;">
+        <!-- Project thumbnails at top -->
+        <div style="display:flex;gap:12px;width:100%;margin-bottom:24px;">
+            <div style="flex:1;height:140px;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.06);box-shadow:0 8px 28px rgba(0,0,0,.4);position:relative;">
+                <img src="/microbiome-design-pic.png" style="width:100%;height:100%;object-fit:cover;" crossorigin="anonymous"/>
+                <div style="position:absolute;bottom:8px;left:0;right:0;text-align:center;"><span style="font-size:11px;font-weight:700;background:rgba(0,0,0,.6);padding:2px 10px;border-radius:100px;">1.2% → 4.8% CVR</span></div>
+            </div>
+            <div style="flex:1;height:140px;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.06);box-shadow:0 8px 28px rgba(0,0,0,.4);position:relative;">
+                <img src="/life-lab.jpg" style="width:100%;height:100%;object-fit:cover;" crossorigin="anonymous"/>
+                <div style="position:absolute;bottom:8px;left:0;right:0;text-align:center;"><span style="font-size:11px;font-weight:700;background:rgba(0,0,0,.6);padding:2px 10px;border-radius:100px;">340% more sign-ups</span></div>
+            </div>
+            <div style="flex:1;height:140px;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.06);box-shadow:0 8px 28px rgba(0,0,0,.4);position:relative;">
+                <img src="/mpm-hero.jpg" style="width:100%;height:100%;object-fit:cover;" crossorigin="anonymous"/>
+                <div style="position:absolute;bottom:8px;left:0;right:0;text-align:center;"><span style="font-size:11px;font-weight:700;background:rgba(0,0,0,.6);padding:2px 10px;border-radius:100px;">$47K from web leads</span></div>
+            </div>
+        </div>
+
+        <!-- Headline — problem-first -->
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+            <h1 style="font-size:64px;font-weight:900;line-height:.98;letter-spacing:-0.04em;margin-bottom:16px;">
+                Still wondering<br>why your site isn't<br>
+                <span style="background:linear-gradient(90deg,#a78bfa,#c084fc,#e879f9);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">making you money?</span>
+            </h1>
+
+            <p style="font-size:20px;color:rgba(255,255,255,.3);line-height:1.4;max-width:520px;margin-bottom:32px;">
+                Your competitors already fixed this.<br>
+                The longer you wait, the more you lose.
+            </p>
+
+            <div style="background:white;color:black;padding:20px 52px;border-radius:100px;font-size:22px;font-weight:900;margin-bottom:10px;">
+                LET'S FIX YOUR SITE →
+            </div>
+            <p style="font-size:14px;color:rgba(255,255,255,.15);">DM or visit crftdweb.com</p>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:16px;color:rgba(255,255,255,.12);font-size:11px;letter-spacing:.12em;text-transform:uppercase;margin-top:12px;">
+            <span>Problem → Process → Result</span>
+            <span style="width:3px;height:3px;background:rgba(255,255,255,.08);border-radius:50%;"></span>
+            <span>Custom Design</span>
+            <span style="width:3px;height:3px;background:rgba(255,255,255,.08);border-radius:50%;"></span>
+            <span>Proven Results</span>
+        </div>
+    </div>
+</div>
+
+</div><!-- end .post-canvas -->
+
+
+<!-- ═══════════════════════════════════════════════════
+     SCRIPTS
+     ═══════════════════════════════════════════════════ -->
+<script>
+const ads = [
+    { id:'v1-problem-hook',    title:'Your Site Is Losing Money',  desc:'Problem-first hook — stats that hit',       type:'value' },
+    { id:'v2-five-signs',      title:'5 Signs It Isn\'t Converting', desc:'Educational — give away knowledge',        type:'value' },
+    { id:'v3-case-micro',      title:'Case Study: Microbiome',     desc:'Problem → Process → Result',                type:'value' },
+    { id:'v4-case-lifelab',    title:'Case Study: Life Lab HQ',    desc:'Problem → Process → Result',                type:'value' },
+    { id:'v5-framework',       title:'Trust-First Framework',      desc:'Give away secrets — people pay to implement',type:'value' },
+    { id:'v6-cost-comparison', title:'$500 vs $5K Website',        desc:'Speak in problems — the math hurts',        type:'value' },
+    { id:'v7-proof-flywheel',  title:'Client Results',             desc:'Proof flywheel — let clients market you',   type:'promo' },
+    { id:'v8-cta',             title:'Fix Your Site CTA',          desc:'Problem-first closer with social proof',    type:'promo' },
+];
+
+let selected = null;
+let safeZonesOn = false;
+
+const safeHTML = `
+    <div class="safe safe-top"><span class="safe-label">TOP 150px</span></div>
+    <div class="safe safe-bottom"><span class="safe-label">BOTTOM 440px — Caption / Music / Home bar</span></div>
+    <div class="safe safe-right"><span class="safe-label">RIGHT 150px — Like / Share</span></div>
+    <div class="safe safe-left"></div>
+`;
+
+function toggleSafeZones() {
+    safeZonesOn = !safeZonesOn;
+    document.getElementById('szBtn').classList.toggle('active', safeZonesOn);
+    document.getElementById('szBtn').textContent = safeZonesOn ? '👁 Hide Zones' : '👁 Safe Zones';
+    document.querySelectorAll('.frame').forEach(f => {
+        const existing = f.querySelectorAll('.safe');
+        if (safeZonesOn && existing.length === 0) f.insertAdjacentHTML('beforeend', safeHTML);
+        else if (!safeZonesOn) existing.forEach(s => s.remove());
+    });
+}
+
+function buildGallery() {
+    const g = document.getElementById('gallery');
+    g.innerHTML = '';
+    ads.forEach((ad, i) => {
+        const el = document.getElementById(ad.id);
+        const clone = el.cloneNode(true);
+        clone.id = '';
+        const typeClass = ad.type === 'value' ? 'type-value' : ad.type === 'proof' ? 'type-proof' : 'type-promo';
+        const typeLabel = ad.type.toUpperCase();
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.dataset.id = ad.id;
+        card.onclick = () => selectAd(ad.id);
+        card.innerHTML = `
+            <div class="card-preview"></div>
+            <div class="card-info">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+                    <div style="display:flex;align-items:center;gap:6px;">
+                        <span style="font-size:12px;font-weight:700;color:#7c3aed;">${i+1}/8</span>
+                        <span class="type-tag ${typeClass}">${typeLabel}</span>
+                    </div>
+                    <button onclick="event.stopPropagation();dlOne('${ad.id}','${ad.title}')" style="background:none;border:none;color:#555;cursor:pointer;font-size:12px;" title="Download">⬇</button>
+                </div>
+                <h3 style="font-size:14px;font-weight:700;margin-bottom:2px;">${ad.title}</h3>
+                <p style="font-size:11px;color:#666;">${ad.desc}</p>
+            </div>`;
+        card.querySelector('.card-preview').appendChild(clone);
+        g.appendChild(card);
+    });
+}
+
+function selectAd(id) {
+    document.querySelectorAll('.card').forEach(c => c.classList.remove('selected'));
+    const card = document.querySelector(`[data-id="${id}"]`);
+    if (card) card.classList.add('selected');
+    selected = id;
+    document.getElementById('selBtn').disabled = false;
+}
+
+function status(m) { document.getElementById('status').textContent = m; }
+
+async function capture(id) {
+    const el = document.getElementById(id);
+    el.querySelectorAll('.safe').forEach(s => s.remove());
+    const canvas = await html2canvas(el, { scale:1, useCORS:true, allowTaint:true, backgroundColor:null, width:1080, height:1920 });
+    if (safeZonesOn && !el.querySelector('.safe')) el.insertAdjacentHTML('beforeend', safeHTML);
+    return canvas;
+}
+
+async function dlOne(id, title) {
+    status(`Generating ${title}...`);
+    const c = await capture(id);
+    const a = document.createElement('a');
+    a.download = `crftd-playbook-${id}.png`;
+    a.href = c.toDataURL('image/png');
+    a.click();
+    status(`✓ ${title} downloaded`);
+}
+
+async function downloadAll() {
+    status('Generating all 8 Playbook-aligned ads...');
+    for (let i = 0; i < ads.length; i++) {
+        status(`${i+1}/8 — ${ads[i].title}...`);
+        await dlOne(ads[i].id, ads[i].title);
+        await new Promise(r => setTimeout(r, 400));
+    }
+    status('✓ All 8 downloaded — 80% value, 20% promo — Playbook-aligned.');
+}
+
+function downloadSelected() {
+    if (!selected) return;
+    const ad = ads.find(a => a.id === selected);
+    if (ad) dlOne(ad.id, ad.title);
+}
+
+buildGallery();
+</script>
+</body>
+</html>

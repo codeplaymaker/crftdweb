@@ -98,7 +98,12 @@ export default function PlaybookSignInPage() {
             </div>
 
             <div>
-              <label className="block text-white/70 text-sm font-medium mb-2">Password</label>
+              <div className="flex items-center justify-between mb-2">
+                <label className="block text-white/70 text-sm font-medium">Password</label>
+                <Link href="/engine/forgot-password" className="text-emerald-400 hover:text-emerald-300 text-xs">
+                  Forgot password?
+                </Link>
+              </div>
               <input
                 type="password"
                 value={password}

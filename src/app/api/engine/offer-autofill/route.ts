@@ -1,8 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { verifyAuthToken, unauthorizedResponse } from '@/lib/engine/auth-guard';
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
 export async function POST(req: NextRequest) {
+  const auth = await verifyAuthToken(req);
+  if (!auth) return unauthorizedResponse();
+
+  if (!OPENAI_API_KEY) {
+    return NextResponse.json({ error: 'OpenAI API key is not configured' }, { status: 500 });
+  }
+
   try {
     const {
       niche,
