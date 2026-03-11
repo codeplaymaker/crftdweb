@@ -13,7 +13,7 @@ const projects = [
     result: "A site that matches the quality of their science. Professional presence that gives investors confidence from the first click.",
     image: "/microbiome-design-pic.png",
     category: "Science & Research",
-    href: "https://microbiome-design.vercel.app",
+    href: "https://www.microbiomedesign.org/",
     tags: ["Custom Design", "Next.js", "Conversion-Focused"],
   },
   {
