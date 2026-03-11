@@ -11,7 +11,7 @@ const projects = [
     problem: "A cutting-edge company with real science but a website that looked like a student project. Investors weren't taking them seriously.",
     process: "Full discovery into their audience (researchers, investors, partners). Rebuilt around credibility signals, clear value proposition, and a conversion-focused layout.",
     result: "A site that matches the quality of their science. Professional presence that gives investors confidence from the first click.",
-    image: "/microbiome-design-pic.png",
+    image: "/Microbiome Design - SHOWCASE.png",
     category: "Science & Research",
     href: "https://www.microbiomedesign.org/",
     tags: ["Custom Design", "Next.js", "Conversion-Focused"],
