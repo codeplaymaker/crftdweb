@@ -74,16 +74,6 @@ export default function Hero() {
             </Link>
           </motion.div>
 
-          {/* Social proof line */}
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.8 }}
-            className="mt-8 text-xs text-muted-foreground/60"
-          >
-            Microbiome Design · The Life Lab HQ · MPM Trading
-          </motion.p>
-
           {/* Process mini-flow */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
