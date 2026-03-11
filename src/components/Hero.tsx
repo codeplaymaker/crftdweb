@@ -81,7 +81,7 @@ export default function Hero() {
             transition={{ duration: 0.8, delay: 0.8 }}
             className="mt-8 text-xs text-muted-foreground/60"
           >
-            Built for Microbiome Design · The Life Lab HQ · MPM Trading
+            Microbiome Design · The Life Lab HQ · MPM Trading
           </motion.p>
 
           {/* Process mini-flow */}
