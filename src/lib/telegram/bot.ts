@@ -19,7 +19,7 @@ export async function sendMessage(chatId: string | number, text: string, parseMo
 export async function sendPhoto(chatId: string | number, photoBuffer: Buffer, caption?: string) {
   const formData = new FormData();
   formData.append('chat_id', String(chatId));
-  formData.append('photo', new Blob([photoBuffer], { type: 'image/png' }), 'visual.png');
+  formData.append('photo', new Blob([new Uint8Array(photoBuffer)], { type: 'image/png' }), 'visual.png');
   if (caption) {
     formData.append('caption', caption);
     formData.append('parse_mode', 'HTML');
@@ -35,7 +35,7 @@ export async function sendPhoto(chatId: string | number, photoBuffer: Buffer, ca
 export async function sendDocument(chatId: string | number, docBuffer: Buffer, filename: string, caption?: string) {
   const formData = new FormData();
   formData.append('chat_id', String(chatId));
-  formData.append('document', new Blob([docBuffer], { type: 'image/png' }), filename);
+  formData.append('document', new Blob([new Uint8Array(docBuffer)], { type: 'image/png' }), filename);
   if (caption) {
     formData.append('caption', caption);
     formData.append('parse_mode', 'HTML');
