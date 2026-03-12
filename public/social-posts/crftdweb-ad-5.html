@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRFTD Web — Ad 5: Checklist</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family:'Inter',sans-serif;
+            background:#111;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            min-height:100vh;
+            overflow:auto;
+        }
+
+        .frame-wrapper {
+            transform:scale(0.45);
+            transform-origin:top center;
+            margin:20px auto;
+        }
+
+        .frame {
+            width:1080px;
+            height:1920px;
+            background:#0a0a0a;
+            position:relative;
+            overflow:hidden;
+            font-family:'Inter',sans-serif;
+        }
+
+        .frame::before {
+            content:'';
+            position:absolute;
+            top:25%;
+            left:50%;
+            transform:translateX(-50%);
+            width:900px;
+            height:900px;
+            background:radial-gradient(circle, rgba(239,68,68,.04) 0%, transparent 70%);
+            pointer-events:none;
+        }
+
+        .safe-overlay {
+            display:none;
+            position:absolute;
+            inset:0;
+            z-index:100;
+            pointer-events:none;
+        }
+        #showSafe:checked ~ .frame-wrapper .safe-overlay { display:block; }
+        .safe-overlay .safe-top    { position:absolute; top:0; left:0; right:0; height:150px; background:rgba(255,0,0,.12); border-bottom:2px dashed rgba(255,0,0,.4); }
+        .safe-overlay .safe-bottom { position:absolute; bottom:0; left:0; right:0; height:480px; background:rgba(255,0,0,.12); border-top:2px dashed rgba(255,0,0,.4); }
+        .safe-overlay .safe-right  { position:absolute; top:150px; right:0; width:150px; bottom:480px; background:rgba(255,0,0,.08); border-left:2px dashed rgba(255,0,0,.3); }
+        .safe-overlay .safe-left   { position:absolute; top:150px; left:0; width:60px; bottom:480px; background:rgba(255,0,0,.05); border-right:1px dashed rgba(255,0,0,.2); }
+
+        .content {
+            position:absolute;
+            top:150px;
+            left:0;
+            right:0;
+            bottom:480px;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            z-index:10;
+            padding:0 80px;
+        }
+
+        .logo-top {
+            height:36px;
+            opacity:.4;
+            margin-top:20px;
+            margin-bottom:40px;
+        }
+
+        .headline {
+            font-size:72px;
+            font-weight:900;
+            line-height:.92;
+            letter-spacing:-0.04em;
+            color:white;
+            text-align:center;
+            margin-bottom:0;
+        }
+
+        .headline-accent {
+            font-size:72px;
+            font-weight:300;
+            font-style:italic;
+            color:rgba(239,68,68,.3);
+            text-align:center;
+            line-height:.95;
+            margin-bottom:50px;
+        }
+
+        /* Checklist */
+        .checklist {
+            width:100%;
+            max-width:860px;
+            display:flex;
+            flex-direction:column;
+            gap:14px;
+            margin-bottom:auto;
+        }
+
+        .check-item {
+            display:flex;
+            align-items:center;
+            gap:22px;
+            padding:28px 32px;
+            border-radius:20px;
+            transition:all .2s;
+        }
+
+        .check-item.bad {
+            background:rgba(239,68,68,.05);
+            border:1.5px solid rgba(239,68,68,.12);
+        }
+
+        .check-item.good {
+            background:rgba(16,185,129,.05);
+            border:1.5px solid rgba(16,185,129,.12);
+        }
+
+        .check-icon {
+            width:48px;
+            height:48px;
+            border-radius:14px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:24px;
+            font-weight:900;
+            flex-shrink:0;
+        }
+
+        .bad .check-icon {
+            background:rgba(239,68,68,.12);
+            color:#ef4444;
+        }
+
+        .good .check-icon {
+            background:rgba(16,185,129,.12);
+            color:#10b981;
+        }
+
+        .check-text {
+            flex:1;
+        }
+
+        .check-label {
+            font-size:22px;
+            font-weight:700;
+            color:white;
+            margin-bottom:4px;
+        }
+
+        .check-desc {
+            font-size:15px;
+            color:rgba(255,255,255,.3);
+            font-weight:500;
+        }
+
+        .check-stat {
+            font-size:28px;
+            font-weight:900;
+            text-align:right;
+            flex-shrink:0;
+        }
+
+        .bad .check-stat { color:#ef4444; }
+        .good .check-stat { color:#10b981; }
+
+        /* Verdict bar */
+        .verdict {
+            width:100%;
+            max-width:860px;
+            margin-top:28px;
+            padding:24px 32px;
+            border-radius:16px;
+            background:rgba(255,255,255,.03);
+            border:1px solid rgba(255,255,255,.06);
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+        }
+
+        .verdict-label {
+            font-size:16px;
+            font-weight:700;
+            color:rgba(255,255,255,.4);
+            text-transform:uppercase;
+            letter-spacing:0.1em;
+        }
+
+        .verdict-score {
+            font-size:36px;
+            font-weight:900;
+            color:#ef4444;
+        }
+
+        /* CTA */
+        .cta-area {
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            margin-top:40px;
+            z-index:15;
+        }
+
+        .cta-btn {
+            background:white;
+            color:#0a0a0a;
+            font-size:24px;
+            font-weight:800;
+            padding:22px 60px;
+            border-radius:100px;
+            border:none;
+            cursor:pointer;
+            margin-bottom:14px;
+            box-shadow:0 4px 28px rgba(255,255,255,.1);
+            font-family:'Inter',sans-serif;
+        }
+
+        .cta-sub {
+            font-size:15px;
+            color:rgba(255,255,255,.22);
+        }
+
+        .controls {
+            position:fixed;
+            top:0; left:0; right:0;
+            z-index:9999;
+            background:rgba(0,0,0,.85);
+            backdrop-filter:blur(10px);
+            padding:12px 24px;
+            display:flex;
+            align-items:center;
+            gap:20px;
+            font-size:13px;
+            color:white;
+        }
+        .controls label { display:flex; align-items:center; gap:6px; cursor:pointer; font-weight:500; }
+        .controls button {
+            background:white; color:#0a0a0a; border:none; padding:8px 24px;
+            border-radius:100px; font-family:'Inter',sans-serif; font-size:13px; font-weight:700; cursor:pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="controls">
+    <label><input type="checkbox" id="showSafe"> Show TikTok Safe Zones</label>
+    <button id="dl">⬇ Download PNG (1080×1920)</button>
+</div>
+
+<input type="checkbox" id="showSafe" style="display:none;">
+
+<div class="frame-wrapper">
+    <div class="frame" id="frame">
+
+        <div class="safe-overlay">
+            <div class="safe-top"></div>
+            <div class="safe-bottom"></div>
+            <div class="safe-right"></div>
+            <div class="safe-left"></div>
+        </div>
+
+        <div class="content">
+            <img src="../CW-logo-white.png" alt="CRFTD Web" class="logo-top">
+            <div class="headline">Is your website</div>
+            <div class="headline-accent">costing you clients?</div>
+
+            <div class="checklist">
+                <div class="check-item bad">
+                    <div class="check-icon">✕</div>
+                    <div class="check-text">
+                        <div class="check-label">Slow Load Speed</div>
+                        <div class="check-desc">53% of visitors leave after 3 seconds</div>
+                    </div>
+                    <div class="check-stat">6.2s</div>
+                </div>
+
+                <div class="check-item bad">
+                    <div class="check-icon">✕</div>
+                    <div class="check-text">
+                        <div class="check-label">Not Mobile Optimised</div>
+                        <div class="check-desc">68% of traffic comes from mobile</div>
+                    </div>
+                    <div class="check-stat">Broken</div>
+                </div>
+
+                <div class="check-item bad">
+                    <div class="check-icon">✕</div>
+                    <div class="check-text">
+                        <div class="check-label">No SEO Strategy</div>
+                        <div class="check-desc">Invisible to Google = invisible to clients</div>
+                    </div>
+                    <div class="check-stat">Page 5</div>
+                </div>
+
+                <div class="check-item bad">
+                    <div class="check-icon">✕</div>
+                    <div class="check-text">
+                        <div class="check-label">Poor Conversion</div>
+                        <div class="check-desc">Average site converts at 0.8%</div>
+                    </div>
+                    <div class="check-stat">0.8%</div>
+                </div>
+
+                <div class="check-item good">
+                    <div class="check-icon">✓</div>
+                    <div class="check-text">
+                        <div class="check-label">After CRFTD Web</div>
+                        <div class="check-desc">95+ PageSpeed · 4.8% CVR · Page 1 SEO</div>
+                    </div>
+                    <div class="check-stat">Fixed</div>
+                </div>
+            </div>
+
+            <div class="verdict">
+                <span class="verdict-label">Average Site Health Score</span>
+                <span class="verdict-score">34 / 100</span>
+            </div>
+
+            <div class="cta-area">
+                <button class="cta-btn">Check Your Score Free ›</button>
+                <div class="cta-sub">60-second audit · No sign-up needed</div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+document.querySelector('.controls label input').addEventListener('change', function() {
+    document.getElementById('showSafe').checked = this.checked;
+});
+document.getElementById('dl').addEventListener('click', async () => {
+    const btn = document.getElementById('dl');
+    btn.textContent = 'Generating...';
+    const frame = document.getElementById('frame');
+    const wrapper = frame.parentElement;
+    const origTransform = wrapper.style.transform;
+    wrapper.style.transform = 'none';
+    const safeOverlay = frame.querySelector('.safe-overlay');
+    safeOverlay.style.display = 'none';
+    try {
+        const canvas = await html2canvas(frame, {
+            width:1080, height:1920, scale:1, useCORS:true,
+            backgroundColor:'#0a0a0a', scrollX:0, scrollY:-window.scrollY,
+            windowWidth:1080, windowHeight:1920,
+        });
+        const link = document.createElement('a');
+        link.download = 'crftdweb-ad-5-1080x1920.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+    } finally {
+        wrapper.style.transform = origTransform;
+        safeOverlay.style.display = '';
+        btn.textContent = '⬇ Download PNG (1080×1920)';
+    }
+});
+</script>
+</body>
+</html>

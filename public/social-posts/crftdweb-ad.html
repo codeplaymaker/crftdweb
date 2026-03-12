@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRFTD Web — TikTok Ad</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family:'Inter',sans-serif;
+            background:#111;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            min-height:100vh;
+            overflow:auto;
+        }
+
+        /*
+         * TikTok Safe Zones (1080×1920):
+         * Top:    ~150px  (status bar, back button)
+         * Bottom: ~480px  (caption, username, song, nav bar)
+         * Right:  ~150px  (like, comment, share, bookmark buttons)
+         * Left:   ~60px   (minimal)
+         * Center safe area: 60px–930px horizontal, 150px–1440px vertical
+         */
+
+        /* Wrapper scales down for browser viewing but keeps 1080x1920 for capture */
+        .frame-wrapper {
+            transform:scale(0.45);
+            transform-origin:top center;
+            margin:20px auto;
+        }
+
+        .frame {
+            width:1080px;
+            height:1920px;
+            background:#0a0a0a;
+            position:relative;
+            overflow:hidden;
+            font-family:'Inter',sans-serif;
+        }
+
+        /* subtle radial glow */
+        .frame::before {
+            content:'';
+            position:absolute;
+            top:20%;
+            left:50%;
+            transform:translateX(-50%);
+            width:1000px;
+            height:1000px;
+            background:radial-gradient(circle, rgba(255,255,255,.035) 0%, transparent 70%);
+            pointer-events:none;
+        }
+
+        /* Safe zone overlay (toggle with checkbox) */
+        .safe-overlay {
+            display:none;
+            position:absolute;
+            inset:0;
+            z-index:100;
+            pointer-events:none;
+        }
+        #showSafe:checked ~ .frame-wrapper .safe-overlay { display:block; }
+        .safe-overlay .safe-top    { position:absolute; top:0; left:0; right:0; height:150px; background:rgba(255,0,0,.12); border-bottom:2px dashed rgba(255,0,0,.4); }
+        .safe-overlay .safe-bottom { position:absolute; bottom:0; left:0; right:0; height:480px; background:rgba(255,0,0,.12); border-top:2px dashed rgba(255,0,0,.4); }
+        .safe-overlay .safe-right  { position:absolute; top:150px; right:0; width:150px; bottom:480px; background:rgba(255,0,0,.08); border-left:2px dashed rgba(255,0,0,.3); }
+        .safe-overlay .safe-left   { position:absolute; top:150px; left:0; width:60px; bottom:480px; background:rgba(255,0,0,.05); border-right:1px dashed rgba(255,0,0,.2); }
+
+        /* Content — centered in frame */
+        .content {
+            position:absolute;
+            top:150px;
+            left:0;
+            right:0;
+            bottom:480px;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            z-index:10;
+        }
+
+        .stars {
+            font-size:36px;
+            letter-spacing:10px;
+            color:white;
+            margin-bottom:18px;
+            margin-top:20px;
+        }
+
+        .subtitle {
+            font-size:18px;
+            font-weight:600;
+            letter-spacing:0.28em;
+            color:rgba(255,255,255,.4);
+            text-transform:uppercase;
+            margin-bottom:28px;
+        }
+
+        .headline {
+            font-size:90px;
+            font-weight:900;
+            line-height:.92;
+            letter-spacing:-0.04em;
+            color:white;
+            text-align:center;
+            margin-bottom:0;
+        }
+
+        .headline-accent {
+            font-size:90px;
+            font-weight:300;
+            font-style:italic;
+            color:rgba(255,255,255,.22);
+            text-align:center;
+            line-height:.95;
+            margin-bottom:36px;
+        }
+
+        /* Phone mockup — sized to content */
+        .phone-wrapper {
+            position:relative;
+            width:420px;
+            display:flex;
+            flex-direction:column;
+        }
+
+        .phone {
+            width:420px;
+            background:#1a1a1a;
+            border-radius:44px;
+            border:3px solid rgba(255,255,255,.08);
+            padding:18px;
+            box-shadow:0 40px 80px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.04);
+            position:relative;
+            z-index:5;
+        }
+
+        .phone-notch {
+            width:150px;
+            height:30px;
+            background:#0a0a0a;
+            border-radius:0 0 22px 22px;
+            margin:0 auto 14px;
+        }
+
+        .phone-statusbar {
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            padding:0 10px;
+            margin-bottom:14px;
+            font-size:14px;
+            font-weight:600;
+            color:white;
+        }
+
+        .phone-screen {
+            background:#ffffff;
+            border-radius:30px;
+            padding:26px 22px;
+        }
+
+        .screen-header {
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            margin-bottom:22px;
+        }
+
+        .screen-title {
+            font-size:24px;
+            font-weight:800;
+            color:#0a0a0a;
+        }
+
+        .screen-icons {
+            display:flex;
+            gap:8px;
+        }
+
+        .screen-icon {
+            width:30px;
+            height:30px;
+            border-radius:8px;
+            background:rgba(0,0,0,.04);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:13px;
+        }
+
+        .greeting {
+            display:flex;
+            align-items:center;
+            gap:12px;
+            margin-bottom:20px;
+            padding:14px 16px;
+            background:rgba(0,0,0,.02);
+            border-radius:14px;
+            border:1px solid rgba(0,0,0,.04);
+        }
+
+        .greeting-avatar {
+            width:36px;
+            height:36px;
+            border-radius:10px;
+            overflow:hidden;
+            flex-shrink:0;
+        }
+
+        .greeting-avatar img {
+            width:100%;
+            height:100%;
+            object-fit:contain;
+        }
+
+        .greeting-text {
+            font-size:15px;
+            font-weight:700;
+            color:#0a0a0a;
+        }
+
+        .greeting-sub {
+            font-size:11px;
+            color:rgba(0,0,0,.3);
+        }
+
+        /* Quick stats row */
+        .stats-row {
+            display:flex;
+            gap:8px;
+            margin-bottom:22px;
+        }
+
+        .stat-card {
+            flex:1;
+            text-align:center;
+            padding:12px 6px;
+            background:rgba(0,0,0,.02);
+            border-radius:12px;
+            border:1px solid rgba(0,0,0,.04);
+        }
+
+        .stat-icon { font-size:15px; margin-bottom:3px; }
+        .stat-label { font-size:10px; color:rgba(0,0,0,.3); text-transform:uppercase; letter-spacing:.04em; margin-bottom:2px; }
+        .stat-value { font-size:20px; font-weight:900; color:#0a0a0a; }
+
+        /* Metrics section */
+        .metrics-title {
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            margin-bottom:16px;
+        }
+
+        .metrics-label { font-size:15px; font-weight:700; color:#0a0a0a; }
+        .metrics-link  { font-size:12px; color:rgba(0,0,0,.25); }
+
+        .metric-row {
+            display:flex;
+            align-items:center;
+            gap:14px;
+            padding:14px 16px;
+            border-radius:14px;
+            border:1px solid rgba(0,0,0,.04);
+            margin-bottom:8px;
+            background:white;
+        }
+
+        .metric-icon-box {
+            width:36px;
+            height:36px;
+            border-radius:10px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:16px;
+            flex-shrink:0;
+        }
+
+        .metric-info   { flex:1; }
+        .metric-name   { font-size:14px; font-weight:700; color:#0a0a0a; }
+        .metric-sub    { font-size:11px; color:rgba(0,0,0,.3); }
+        .metric-score  { font-size:20px; font-weight:900; }
+
+        .metric-bar {
+            height:3px;
+            border-radius:2px;
+            background:rgba(0,0,0,.04);
+            margin-top:6px;
+            position:relative;
+            overflow:hidden;
+        }
+
+        .metric-bar-fill {
+            position:absolute;
+            left:0; top:0; height:100%;
+            border-radius:2px;
+        }
+
+        .bar-labels { display:flex; justify-content:space-between; margin-top:3px; }
+        .needs-work { font-size:9px; color:rgba(0,0,0,.15); }
+        .excellent  { font-size:9px; color:rgba(0,0,0,.15); text-align:right; }
+
+        /* Floating badges — positioned within safe zone (left side, away from right buttons) */
+        .badge {
+            position:absolute;
+            z-index:20;
+            padding:14px 24px;
+            border-radius:100px;
+            font-size:18px;
+            font-weight:700;
+            color:white;
+            display:flex;
+            align-items:center;
+            gap:10px;
+            box-shadow:0 8px 28px rgba(0,0,0,.4);
+            white-space:nowrap;
+        }
+
+        .badge-icon { font-size:20px; }
+
+        /* Left badges */
+        .badge-pagespeed  { top:630px;  left:40px;  background:rgba(16,185,129,.92); }
+        .badge-seo        { top:730px;  left:50px;  background:rgba(99,102,241,.88); }
+        .badge-speed      { top:830px;  left:40px;  background:rgba(59,130,246,.88); }
+
+        /* Right badges — stay inside safe zone (max right edge: 930px) */
+        .badge-conversion { top:670px;  right:180px; background:rgba(245,158,11,.92); }
+        .badge-uptime     { top:780px;  right:170px; background:rgba(236,72,153,.88); }
+
+        /* CTA — standalone below phone */
+        .cta-area {
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            margin-top:40px;
+            z-index:15;
+        }
+
+        .cta-btn {
+            background:white;
+            color:#0a0a0a;
+            font-size:24px;
+            font-weight:800;
+            padding:22px 60px;
+            border-radius:100px;
+            border:none;
+            cursor:pointer;
+            margin-bottom:14px;
+            box-shadow:0 4px 28px rgba(255,255,255,.15);
+            font-family:'Inter',sans-serif;
+        }
+
+        .cta-sub {
+            font-size:15px;
+            color:rgba(255,255,255,.22);
+        }
+
+        /* Controls bar */
+        .controls {
+            position:fixed;
+            top:0;
+            left:0;
+            right:0;
+            z-index:9999;
+            background:rgba(0,0,0,.85);
+            backdrop-filter:blur(10px);
+            padding:12px 24px;
+            display:flex;
+            align-items:center;
+            gap:20px;
+            font-size:13px;
+            color:white;
+        }
+
+        .controls label {
+            display:flex;
+            align-items:center;
+            gap:6px;
+            cursor:pointer;
+            font-weight:500;
+        }
+
+        .controls button {
+            background:white;
+            color:#0a0a0a;
+            border:none;
+            padding:8px 24px;
+            border-radius:100px;
+            font-family:'Inter',sans-serif;
+            font-size:13px;
+            font-weight:700;
+            cursor:pointer;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Controls -->
+<div class="controls">
+    <label><input type="checkbox" id="showSafe"> Show TikTok Safe Zones</label>
+    <button id="dl">⬇ Download PNG (1080×1920)</button>
+</div>
+
+<input type="checkbox" id="showSafe" style="display:none;">
+
+<div class="frame-wrapper">
+    <div class="frame" id="frame">
+
+        <!-- Safe zone overlay -->
+        <div class="safe-overlay">
+            <div class="safe-top"></div>
+            <div class="safe-bottom"></div>
+            <div class="safe-right"></div>
+            <div class="safe-left"></div>
+        </div>
+
+        <!-- Content — inside safe zone -->
+        <div class="content">
+            <div class="stars">★★★★★</div>
+            <div class="subtitle">Premium Web Design & Development</div>
+            <div class="headline">Websites that</div>
+            <div class="headline-accent">actually convert.</div>
+
+            <!-- Phone mockup -->
+            <div class="phone-wrapper" style="margin-top:10px;">
+                <div class="phone">
+                    <div class="phone-notch"></div>
+                    <div class="phone-statusbar">
+                        <span>9:41</span>
+                        <span>⚡ 📶</span>
+                    </div>
+                    <div class="phone-screen">
+                        <div class="screen-header">
+                            <div class="screen-title">Dashboard</div>
+                            <div class="screen-icons">
+                                <div class="screen-icon">🔔</div>
+                                <div class="screen-icon">⚙️</div>
+                            </div>
+                        </div>
+
+                        <div class="greeting">
+                            <div class="greeting-avatar"><img src="../CW-logo.png" alt="CW" /></div>
+                            <div>
+                                <div class="greeting-text">Your site is performing</div>
+                                <div class="greeting-sub">Last scanned 2 hours ago</div>
+                            </div>
+                        </div>
+
+                        <div class="stats-row">
+                            <div class="stat-card">
+                                <div class="stat-icon">📊</div>
+                                <div class="stat-label">Score</div>
+                                <div class="stat-value">94</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">👥</div>
+                                <div class="stat-label">Visitors</div>
+                                <div class="stat-value">2.4K</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">🎯</div>
+                                <div class="stat-label">Leads</div>
+                                <div class="stat-value">52</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">💰</div>
+                                <div class="stat-label">Revenue</div>
+                                <div class="stat-value">£18K</div>
+                            </div>
+                        </div>
+
+                        <div class="metrics-title">
+                            <span class="metrics-label">Your Site Health</span>
+                            <span class="metrics-link">View All →</span>
+                        </div>
+
+                        <div class="metric-row">
+                            <div class="metric-icon-box" style="background:rgba(16,185,129,.1);">⚡</div>
+                            <div class="metric-info">
+                                <div class="metric-name">PageSpeed</div>
+                                <div class="metric-sub">Performance</div>
+                            </div>
+                            <div class="metric-score" style="color:#10b981;">95<span style="font-size:13px;font-weight:500;">/100</span></div>
+                        </div>
+                        <div class="metric-bar"><div class="metric-bar-fill" style="width:95%;background:#10b981;"></div></div>
+                        <div class="bar-labels"><span class="needs-work">Needs Work</span><span class="excellent">Excellent</span></div>
+
+                        <div class="metric-row" style="margin-top:4px;">
+                            <div class="metric-icon-box" style="background:rgba(245,158,11,.1);">🎯</div>
+                            <div class="metric-info">
+                                <div class="metric-name">Conversion</div>
+                                <div class="metric-sub">CVR</div>
+                            </div>
+                            <div class="metric-score" style="color:#f59e0b;">4.8<span style="font-size:13px;font-weight:500;">%</span></div>
+                        </div>
+                        <div class="metric-bar"><div class="metric-bar-fill" style="width:85%;background:#f59e0b;"></div></div>
+                        <div class="bar-labels"><span class="needs-work">Needs Work</span><span class="excellent">Excellent</span></div>
+
+                        <div class="metric-row" style="margin-top:4px;">
+                            <div class="metric-icon-box" style="background:rgba(99,102,241,.1);">🔍</div>
+                            <div class="metric-info">
+                                <div class="metric-name">SEO</div>
+                                <div class="metric-sub">Visibility</div>
+                            </div>
+                            <div class="metric-score" style="color:#6366f1;">92<span style="font-size:13px;font-weight:500;">/100</span></div>
+                        </div>
+                        <div class="metric-bar"><div class="metric-bar-fill" style="width:92%;background:#6366f1;"></div></div>
+                        <div class="bar-labels"><span class="needs-work">Needs Work</span><span class="excellent">Excellent</span></div>
+
+                        <div class="metric-row" style="margin-top:4px;">
+                            <div class="metric-icon-box" style="background:rgba(59,130,246,.1);">🚀</div>
+                            <div class="metric-info">
+                                <div class="metric-name">Load Time</div>
+                                <div class="metric-sub">Speed</div>
+                            </div>
+                            <div class="metric-score" style="color:#3b82f6;">1.2<span style="font-size:13px;font-weight:500;">s</span></div>
+                        </div>
+                        <div class="metric-bar"><div class="metric-bar-fill" style="width:90%;background:#3b82f6;"></div></div>
+                        <div class="bar-labels"><span class="needs-work">Needs Work</span><span class="excellent">Excellent</span></div>
+
+                        <div class="metric-row" style="margin-top:4px;">
+                            <div class="metric-icon-box" style="background:rgba(236,72,153,.1);">🛡️</div>
+                            <div class="metric-info">
+                                <div class="metric-name">Uptime</div>
+                                <div class="metric-sub">Reliability</div>
+                            </div>
+                            <div class="metric-score" style="color:#ec4899;">99.9<span style="font-size:13px;font-weight:500;">%</span></div>
+                        </div>
+                        <div class="metric-bar"><div class="metric-bar-fill" style="width:99%;background:#ec4899;"></div></div>
+                        <div class="bar-labels"><span class="needs-work">Needs Work</span><span class="excellent">Excellent</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CTA — standalone below phone -->
+            <div class="cta-area">
+                <button class="cta-btn">Get Your Free Audit ›</button>
+                <div class="cta-sub">No credit card required</div>
+            </div>
+        </div>
+
+        <!-- Floating badges — within safe zone -->
+        <div class="badge badge-pagespeed"><span class="badge-icon">⚡</span> PageSpeed 95+</div>
+        <div class="badge badge-conversion"><span class="badge-icon">🎯</span> CVR 4.8%</div>
+        <div class="badge badge-seo"><span class="badge-icon">🔍</span> SEO 92/100</div>
+        <div class="badge badge-uptime"><span class="badge-icon">🛡️</span> 99.9% Uptime</div>
+        <div class="badge badge-speed"><span class="badge-icon">🚀</span> 1.2s Load</div>
+
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+// Wire safe-zone toggle
+document.querySelector('.controls label input').addEventListener('change', function() {
+    document.getElementById('showSafe').checked = this.checked;
+});
+
+// Download at full 1080x1920
+document.getElementById('dl').addEventListener('click', async () => {
+    const btn = document.getElementById('dl');
+    btn.textContent = 'Generating...';
+    const frame = document.getElementById('frame');
+    const wrapper = frame.parentElement;
+
+    // Temporarily remove scale transform so html2canvas captures at full resolution
+    const origTransform = wrapper.style.transform;
+    wrapper.style.transform = 'none';
+
+    // Hide safe zone overlay and controls for clean capture
+    const safeOverlay = frame.querySelector('.safe-overlay');
+    safeOverlay.style.display = 'none';
+
+    try {
+        const canvas = await html2canvas(frame, {
+            width: 1080,
+            height: 1920,
+            scale: 1,
+            useCORS: true,
+            backgroundColor: '#0a0a0a',
+            scrollX: 0,
+            scrollY: -window.scrollY,
+            windowWidth: 1080,
+            windowHeight: 1920,
+        });
+
+        const link = document.createElement('a');
+        link.download = 'crftdweb-ad-1080x1920.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+    } finally {
+        wrapper.style.transform = origTransform;
+        safeOverlay.style.display = '';
+        btn.textContent = '⬇ Download PNG (1080×1920)';
+    }
+});
+</script>
+
+</body>
+</html>

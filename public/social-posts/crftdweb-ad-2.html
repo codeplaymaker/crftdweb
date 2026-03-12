@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRFTD Web — Ad 2: Pain Point</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family:'Inter',sans-serif;
+            background:#111;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            min-height:100vh;
+            overflow:auto;
+        }
+
+        .frame-wrapper {
+            transform:scale(0.45);
+            transform-origin:top center;
+            margin:20px auto;
+        }
+
+        .frame {
+            width:1080px;
+            height:1920px;
+            background:#0a0a0a;
+            position:relative;
+            overflow:hidden;
+            font-family:'Inter',sans-serif;
+        }
+
+        .frame::before {
+            content:'';
+            position:absolute;
+            top:30%;
+            left:50%;
+            transform:translateX(-50%);
+            width:900px;
+            height:900px;
+            background:radial-gradient(circle, rgba(239,68,68,.06) 0%, transparent 70%);
+            pointer-events:none;
+        }
+
+        .safe-overlay {
+            display:none;
+            position:absolute;
+            inset:0;
+            z-index:100;
+            pointer-events:none;
+        }
+        #showSafe:checked ~ .frame-wrapper .safe-overlay { display:block; }
+        .safe-overlay .safe-top    { position:absolute; top:0; left:0; right:0; height:150px; background:rgba(255,0,0,.12); border-bottom:2px dashed rgba(255,0,0,.4); }
+        .safe-overlay .safe-bottom { position:absolute; bottom:0; left:0; right:0; height:480px; background:rgba(255,0,0,.12); border-top:2px dashed rgba(255,0,0,.4); }
+        .safe-overlay .safe-right  { position:absolute; top:150px; right:0; width:150px; bottom:480px; background:rgba(255,0,0,.08); border-left:2px dashed rgba(255,0,0,.3); }
+        .safe-overlay .safe-left   { position:absolute; top:150px; left:0; width:60px; bottom:480px; background:rgba(255,0,0,.05); border-right:1px dashed rgba(255,0,0,.2); }
+
+        .content {
+            position:absolute;
+            top:150px;
+            left:0;
+            right:0;
+            bottom:480px;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            z-index:10;
+        }
+
+        .warning-tag {
+            display:inline-flex;
+            align-items:center;
+            gap:8px;
+            padding:12px 28px;
+            border-radius:100px;
+            background:rgba(239,68,68,.12);
+            border:1px solid rgba(239,68,68,.25);
+            color:#ef4444;
+            font-size:16px;
+            font-weight:700;
+            letter-spacing:0.08em;
+            text-transform:uppercase;
+            margin-top:30px;
+            margin-bottom:36px;
+        }
+
+        .headline {
+            font-size:82px;
+            font-weight:900;
+            line-height:.92;
+            letter-spacing:-0.04em;
+            color:white;
+            text-align:center;
+            margin-bottom:0;
+        }
+
+        .headline-accent {
+            font-size:82px;
+            font-weight:300;
+            font-style:italic;
+            color:rgba(239,68,68,.35);
+            text-align:center;
+            line-height:.95;
+            margin-bottom:44px;
+        }
+
+        /* Before / After comparison cards */
+        .comparison {
+            display:flex;
+            gap:24px;
+            width:820px;
+            margin-bottom:auto;
+        }
+
+        .compare-card {
+            flex:1;
+            border-radius:28px;
+            padding:32px 28px;
+            position:relative;
+        }
+
+        .compare-card.before {
+            background:rgba(239,68,68,.06);
+            border:1.5px solid rgba(239,68,68,.15);
+        }
+
+        .compare-card.after {
+            background:rgba(16,185,129,.06);
+            border:1.5px solid rgba(16,185,129,.15);
+        }
+
+        .compare-label {
+            font-size:14px;
+            font-weight:800;
+            letter-spacing:0.15em;
+            text-transform:uppercase;
+            margin-bottom:28px;
+            padding:8px 18px;
+            border-radius:100px;
+            display:inline-block;
+        }
+
+        .before .compare-label {
+            color:#ef4444;
+            background:rgba(239,68,68,.1);
+        }
+
+        .after .compare-label {
+            color:#10b981;
+            background:rgba(16,185,129,.1);
+        }
+
+        .compare-metric {
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            padding:16px 0;
+            border-bottom:1px solid rgba(255,255,255,.04);
+        }
+
+        .compare-metric:last-child { border-bottom:none; }
+
+        .compare-metric-name {
+            font-size:17px;
+            font-weight:500;
+            color:rgba(255,255,255,.5);
+        }
+
+        .compare-metric-value {
+            font-size:24px;
+            font-weight:900;
+        }
+
+        .before .compare-metric-value { color:#ef4444; }
+        .after .compare-metric-value { color:#10b981; }
+
+        .compare-metric-icon {
+            font-size:16px;
+            margin-right:10px;
+        }
+
+        /* Arrow between cards */
+        .arrow-divider {
+            position:absolute;
+            top:50%;
+            left:50%;
+            transform:translate(-50%, -50%);
+            width:64px;
+            height:64px;
+            background:#0a0a0a;
+            border:2px solid rgba(255,255,255,.08);
+            border-radius:50%;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:28px;
+            color:white;
+            z-index:5;
+        }
+
+        .comparison-wrapper {
+            position:relative;
+        }
+
+        /* CTA */
+        .cta-area {
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            margin-top:44px;
+            z-index:15;
+        }
+
+        .cta-btn {
+            background:white;
+            color:#0a0a0a;
+            font-size:24px;
+            font-weight:800;
+            padding:22px 60px;
+            border-radius:100px;
+            border:none;
+            cursor:pointer;
+            margin-bottom:14px;
+            box-shadow:0 4px 28px rgba(255,255,255,.1);
+            font-family:'Inter',sans-serif;
+        }
+
+        .cta-sub {
+            font-size:15px;
+            color:rgba(255,255,255,.22);
+        }
+
+        /* Logo watermark at bottom of safe zone */
+        .logo-mark {
+            position:absolute;
+            bottom:500px;
+            left:50%;
+            transform:translateX(-50%);
+            display:flex;
+            align-items:center;
+            gap:12px;
+            z-index:10;
+        }
+
+        .logo-mark img {
+            height:32px;
+            opacity:.3;
+        }
+
+        .controls {
+            position:fixed;
+            top:0; left:0; right:0;
+            z-index:9999;
+            background:rgba(0,0,0,.85);
+            backdrop-filter:blur(10px);
+            padding:12px 24px;
+            display:flex;
+            align-items:center;
+            gap:20px;
+            font-size:13px;
+            color:white;
+        }
+        .controls label { display:flex; align-items:center; gap:6px; cursor:pointer; font-weight:500; }
+        .controls button {
+            background:white; color:#0a0a0a; border:none; padding:8px 24px;
+            border-radius:100px; font-family:'Inter',sans-serif; font-size:13px; font-weight:700; cursor:pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="controls">
+    <label><input type="checkbox" id="showSafe"> Show TikTok Safe Zones</label>
+    <button id="dl">⬇ Download PNG (1080×1920)</button>
+</div>
+
+<input type="checkbox" id="showSafe" style="display:none;">
+
+<div class="frame-wrapper">
+    <div class="frame" id="frame">
+
+        <div class="safe-overlay">
+            <div class="safe-top"></div>
+            <div class="safe-bottom"></div>
+            <div class="safe-right"></div>
+            <div class="safe-left"></div>
+        </div>
+
+        <div class="content">
+            <div class="warning-tag">⚠️ Website Audit</div>
+            <div class="headline">Your website is</div>
+            <div class="headline-accent">losing you money.</div>
+
+            <div class="comparison-wrapper">
+                <div class="comparison">
+                    <div class="compare-card before">
+                        <div class="compare-label">Before</div>
+                        <div class="compare-metric">
+                            <span class="compare-metric-name"><span class="compare-metric-icon">⚡</span>PageSpeed</span>
+                            <span class="compare-metric-value">34</span>
+                        </div>
+                        <div class="compare-metric">
+                            <span class="compare-metric-name"><span class="compare-metric-icon">🎯</span>Conversion</span>
+                            <span class="compare-metric-value">0.8%</span>
+                        </div>
+                        <div class="compare-metric">
+                            <span class="compare-metric-name"><span class="compare-metric-icon">🔍</span>SEO</span>
+                            <span class="compare-metric-value">41</span>
+                        </div>
+                        <div class="compare-metric">
+                            <span class="compare-metric-name"><span class="compare-metric-icon">🚀</span>Load Time</span>
+                            <span class="compare-metric-value">6.2s</span>
+                        </div>
+                        <div class="compare-metric">
+                            <span class="compare-metric-name"><span class="compare-metric-icon">💰</span>Revenue</span>
+                            <span class="compare-metric-value">£2.1K</span>
+                        </div>
+                    </div>
+
+                    <div class="compare-card after">
+                        <div class="compare-label">After CRFTD</div>
+                        <div class="compare-metric">
+                            <span class="compare-metric-name"><span class="compare-metric-icon">⚡</span>PageSpeed</span>
+                            <span class="compare-metric-value">95</span>
+                        </div>
+                        <div class="compare-metric">
+                            <span class="compare-metric-name"><span class="compare-metric-icon">🎯</span>Conversion</span>
+                            <span class="compare-metric-value">4.8%</span>
+                        </div>
+                        <div class="compare-metric">
+                            <span class="compare-metric-name"><span class="compare-metric-icon">🔍</span>SEO</span>
+                            <span class="compare-metric-value">92</span>
+                        </div>
+                        <div class="compare-metric">
+                            <span class="compare-metric-name"><span class="compare-metric-icon">🚀</span>Load Time</span>
+                            <span class="compare-metric-value">1.2s</span>
+                        </div>
+                        <div class="compare-metric">
+                            <span class="compare-metric-name"><span class="compare-metric-icon">💰</span>Revenue</span>
+                            <span class="compare-metric-value">£18K</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="arrow-divider">→</div>
+            </div>
+
+            <div class="cta-area">
+                <button class="cta-btn">Get Your Free Audit ›</button>
+                <div class="cta-sub">See what's holding your site back</div>
+            </div>
+        </div>
+
+        <div class="logo-mark">
+            <img src="../CW-logo-white.png" alt="CRFTD Web">
+        </div>
+
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+document.querySelector('.controls label input').addEventListener('change', function() {
+    document.getElementById('showSafe').checked = this.checked;
+});
+document.getElementById('dl').addEventListener('click', async () => {
+    const btn = document.getElementById('dl');
+    btn.textContent = 'Generating...';
+    const frame = document.getElementById('frame');
+    const wrapper = frame.parentElement;
+    const origTransform = wrapper.style.transform;
+    wrapper.style.transform = 'none';
+    const safeOverlay = frame.querySelector('.safe-overlay');
+    safeOverlay.style.display = 'none';
+    try {
+        const canvas = await html2canvas(frame, {
+            width:1080, height:1920, scale:1, useCORS:true,
+            backgroundColor:'#0a0a0a', scrollX:0, scrollY:-window.scrollY,
+            windowWidth:1080, windowHeight:1920,
+        });
+        const link = document.createElement('a');
+        link.download = 'crftdweb-ad-2-1080x1920.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+    } finally {
+        wrapper.style.transform = origTransform;
+        safeOverlay.style.display = '';
+        btn.textContent = '⬇ Download PNG (1080×1920)';
+    }
+});
+</script>
+</body>
+</html>
