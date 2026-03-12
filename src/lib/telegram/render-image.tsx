@@ -3,15 +3,16 @@ import { type TemplateData, TEMPLATE_THEMES, type ThemeConfig } from './template
 
 /* ─── Font loading ─── */
 async function fetchFont(weight: number): Promise<ArrayBuffer> {
+  // Use a legacy UA so Google Fonts returns .ttf instead of .woff2
+  // (Satori only supports TTF/OTF, not WOFF2)
   const api = `https://fonts.googleapis.com/css2?family=Inter:wght@${weight}&display=swap`;
   const css = await fetch(api, {
     headers: {
-      'User-Agent':
-        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      'User-Agent': 'Mozilla/5.0 (Linux; U; Android 2.2)',
     },
   }).then((r) => r.text());
   const url = css.match(/src:\s*url\(([^)]+)\)/)?.[1];
-  if (!url) throw new Error(`Inter wght ${weight}: font URL not found`);
+  if (!url) throw new Error(`Inter wght ${weight}: font URL not found in CSS`);
   return fetch(url).then((r) => r.arrayBuffer());
 }
 
