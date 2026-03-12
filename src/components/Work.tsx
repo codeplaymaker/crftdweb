@@ -31,7 +31,7 @@ const projects = [
     problem: "Traders needed a tool for journaling, insights, and custom plans but existing platforms were clunky and overwhelming. The founder needed a clean, usable product.",
     process: "Designed a minimal, data-focused interface. Built trading journal, insights dashboard, and personalized plan features. Prioritized speed and clarity over feature bloat.",
     result: "A trading platform that users actually use daily. Clean interface that makes complex data approachable and actionable.",
-    image: "/mpm-hero.jpg",
+    image: "/MPM - SHOWCASE.png",
     category: "Web App",
     href: "https://www.marketplaymaker.com",
     tags: ["Web App", "Dashboard Design", "User Auth"],

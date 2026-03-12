@@ -62,7 +62,7 @@ export default function Features() {
           </span>
           <h2 className="text-3xl md:text-5xl font-bold tracking-tight leading-tight mb-5">
             A pretty site is worthless<br className="hidden md:block" />
-            <span className="text-muted-foreground">if it doesn&apos;t convert.</span>
+            {' '}<span className="text-muted-foreground">if it doesn&apos;t convert.</span>
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed">
             We build websites that look exceptional <em>and</em> drive real business results.
