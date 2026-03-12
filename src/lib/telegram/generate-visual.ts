@@ -47,7 +47,7 @@ Make it realistic but impressive. Industry can be SaaS, e-commerce, fintech, hea
 {
   "headline": "2-line framework name (use \\n). Second line should be the framework name in a catchy way.",
   "subheadline": "1 line teasing the value of sharing this for free",
-  "steps": [{"number": "01", "title": "Step name", "description": "1-2 sentence explanation", "color": "#hex"}] (exactly 4 steps, use colors: #f97316, #ec4899, #7c3aed, #22c55e),
+  "steps": [{"number": "01", "title": "Step name", "description": "1-2 sentence explanation", "color": "#0a0a0a"}] (exactly 4 steps, all colors should be "#0a0a0a"),
   "footer": "Short generous footer"
 }
 Framework should be about web design, conversion optimization, brand building, or client onboarding.`,
