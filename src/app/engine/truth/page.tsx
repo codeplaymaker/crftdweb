@@ -57,7 +57,7 @@ function TruthHeroSection() {
           </p>
 
           <Link
-            href="#pricing"
+            href="/engine/demo"
             className="inline-block bg-gradient-to-r from-purple-600 to-violet-600 text-white px-8 py-4 rounded-full font-semibold hover:opacity-90 transition-opacity"
           >
             Gain Access
@@ -674,9 +674,9 @@ function PricingSection() {
               ))}
             </div>
 
-            <button className="w-full bg-gradient-to-r from-purple-600 to-violet-600 text-white px-8 py-4 rounded-full font-semibold hover:opacity-90 transition-opacity">
+            <Link href="/engine/demo" className="block w-full text-center bg-gradient-to-r from-purple-600 to-violet-600 text-white px-8 py-4 rounded-full font-semibold hover:opacity-90 transition-opacity">
               Gain Access
-            </button>
+            </Link>
 
             <p className="text-white/30 text-sm mt-4">
               Safe & Secure 256-Bit SSL Encrypted Checkout
@@ -822,7 +822,7 @@ function TruthFinalCTASection() {
             Stop wasting time on ideas that don't work. Get the Truth Engine and build your business on real market demand.
           </p>
           <Link
-            href="#pricing"
+            href="/engine/demo"
             className="inline-block bg-gradient-to-r from-purple-600 to-violet-600 text-white px-8 py-4 rounded-full font-semibold hover:opacity-90 transition-opacity"
           >
             Gain Access

@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRFTD Web — Ad 9: Habbo Build</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family:'Inter',sans-serif;
+            background:#111;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            min-height:100vh;
+            overflow:auto;
+        }
+
+        .frame-wrapper {
+            transform:scale(0.45);
+            transform-origin:top center;
+            margin:20px auto;
+        }
+
+        .frame {
+            width:1080px;
+            height:1920px;
+            background:#0a0a0a;
+            position:relative;
+            overflow:hidden;
+            font-family:'Inter',sans-serif;
+        }
+
+        .safe-overlay {
+            display:none;
+            position:absolute;
+            inset:0;
+            z-index:100;
+            pointer-events:none;
+        }
+        #showSafe:checked ~ .frame-wrapper .safe-overlay { display:block; }
+        .safe-overlay .safe-top    { position:absolute; top:0; left:0; right:0; height:150px; background:rgba(255,0,0,.12); border-bottom:2px dashed rgba(255,0,0,.4); }
+        .safe-overlay .safe-bottom { position:absolute; bottom:0; left:0; right:0; height:480px; background:rgba(255,0,0,.12); border-top:2px dashed rgba(255,0,0,.4); }
+        .safe-overlay .safe-right  { position:absolute; top:150px; right:0; width:150px; bottom:480px; background:rgba(255,0,0,.08); border-left:2px dashed rgba(255,0,0,.3); }
+        .safe-overlay .safe-left   { position:absolute; top:150px; left:0; width:60px; bottom:480px; background:rgba(255,0,0,.05); border-right:1px dashed rgba(255,0,0,.2); }
+
+        .content {
+            position:absolute;
+            top:150px;
+            left:0;
+            right:0;
+            bottom:480px;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            z-index:10;
+        }
+
+        .logo-top {
+            height:36px;
+            opacity:.4;
+            margin-top:20px;
+            margin-bottom:24px;
+        }
+
+        .room-bar {
+            display:flex;
+            align-items:center;
+            gap:14px;
+            padding:14px 30px;
+            border-radius:14px;
+            background:rgba(245,158,11,.06);
+            border:2px solid rgba(245,158,11,.15);
+            margin-bottom:24px;
+        }
+
+        .room-bar-icon {
+            width:32px;
+            height:32px;
+            background:rgba(245,158,11,.15);
+            border-radius:8px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:16px;
+        }
+
+        .room-bar-text {
+            font-family:'Press Start 2P',monospace;
+            font-size:11px;
+            color:#fbbf24;
+        }
+
+        .room-bar-status {
+            font-family:'Press Start 2P',monospace;
+            font-size:9px;
+            color:rgba(245,158,11,.4);
+            margin-left:auto;
+        }
+
+        .headline {
+            font-size:72px;
+            font-weight:900;
+            line-height:.90;
+            letter-spacing:-0.04em;
+            color:white;
+            text-align:center;
+            margin-bottom:0;
+        }
+
+        .headline-accent {
+            font-size:72px;
+            font-weight:300;
+            font-style:italic;
+            color:rgba(245,158,11,.2);
+            text-align:center;
+            line-height:.95;
+            margin-bottom:32px;
+        }
+
+        /* ========== 4 STACKED ISOMETRIC FLOORS ========== */
+        .tower {
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            gap:0;
+            position:relative;
+            width:920px;
+        }
+
+        .floor-row {
+            display:flex;
+            align-items:center;
+            width:100%;
+            gap:0;
+        }
+
+        /* Floor label on left */
+        .floor-label {
+            width:120px;
+            text-align:right;
+            padding-right:24px;
+            flex-shrink:0;
+        }
+
+        .fl-step {
+            font-family:'Press Start 2P',monospace;
+            font-size:9px;
+            margin-bottom:4px;
+        }
+
+        .fl-name {
+            font-size:18px;
+            font-weight:800;
+            color:white;
+        }
+
+        .fl-sub {
+            font-size:12px;
+            color:rgba(255,255,255,.25);
+            font-weight:500;
+            margin-top:2px;
+        }
+
+        /* Iso room tile */
+        .floor-tile {
+            flex:1;
+            height:140px;
+            position:relative;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+        }
+
+        .iso-mini {
+            width:220px;
+            height:120px;
+            position:relative;
+            transform:rotateX(55deg) rotateZ(-45deg);
+            transform-style:preserve-3d;
+        }
+
+        .iso-mini-floor {
+            position:absolute;
+            inset:0;
+            border-radius:4px;
+            border:2px solid;
+            background-size:20px 20px;
+        }
+
+        /* Floor specific colours */
+        .floor-1 .fl-step { color:rgba(59,130,246,.5); }
+        .floor-1 .iso-mini-floor {
+            background-color:rgba(59,130,246,.04);
+            border-color:rgba(59,130,246,.18);
+            background-image:
+                repeating-linear-gradient(0deg, rgba(59,130,246,.06) 0px, rgba(59,130,246,.06) 1px, transparent 1px, transparent 20px),
+                repeating-linear-gradient(90deg, rgba(59,130,246,.06) 0px, rgba(59,130,246,.06) 1px, transparent 1px, transparent 20px);
+        }
+
+        .floor-2 .fl-step { color:rgba(236,72,153,.5); }
+        .floor-2 .iso-mini-floor {
+            background-color:rgba(236,72,153,.04);
+            border-color:rgba(236,72,153,.18);
+            background-image:
+                repeating-linear-gradient(0deg, rgba(236,72,153,.06) 0px, rgba(236,72,153,.06) 1px, transparent 1px, transparent 20px),
+                repeating-linear-gradient(90deg, rgba(236,72,153,.06) 0px, rgba(236,72,153,.06) 1px, transparent 1px, transparent 20px);
+        }
+
+        .floor-3 .fl-step { color:rgba(16,185,129,.5); }
+        .floor-3 .iso-mini-floor {
+            background-color:rgba(16,185,129,.04);
+            border-color:rgba(16,185,129,.18);
+            background-image:
+                repeating-linear-gradient(0deg, rgba(16,185,129,.06) 0px, rgba(16,185,129,.06) 1px, transparent 1px, transparent 20px),
+                repeating-linear-gradient(90deg, rgba(16,185,129,.06) 0px, rgba(16,185,129,.06) 1px, transparent 1px, transparent 20px);
+        }
+
+        .floor-4 .fl-step { color:rgba(245,158,11,.5); }
+        .floor-4 .iso-mini-floor {
+            background-color:rgba(245,158,11,.04);
+            border-color:rgba(245,158,11,.18);
+            background-image:
+                repeating-linear-gradient(0deg, rgba(245,158,11,.06) 0px, rgba(245,158,11,.06) 1px, transparent 1px, transparent 20px),
+                repeating-linear-gradient(90deg, rgba(245,158,11,.06) 0px, rgba(245,158,11,.06) 1px, transparent 1px, transparent 20px);
+        }
+
+        /* Furniture inside floors */
+        .mini-obj {
+            position:absolute;
+            border-radius:3px;
+            transform:translateZ(12px);
+        }
+
+        /* Floor 1: Wireframe — outlines only */
+        .wireframe-box {
+            border:2px dashed rgba(59,130,246,.35);
+            background:transparent;
+        }
+        .wf1 { width:60px; height:30px; top:20px; left:20px; }
+        .wf2 { width:40px; height:40px; top:20px; right:30px; }
+        .wf3 { width:100px; height:20px; bottom:20px; left:40px; }
+
+        /* Floor 2: Design — filled colour blocks */
+        .design-block {
+            border:none;
+        }
+        .db1 { width:50px; height:35px; top:18px; left:22px; background:rgba(236,72,153,.25); border-radius:6px; }
+        .db2 { width:35px; height:35px; top:18px; right:35px; background:rgba(139,92,246,.25); border-radius:50%; }
+        .db3 { width:80px; height:14px; bottom:22px; left:50px; background:rgba(236,72,153,.2); border-radius:8px; }
+        .db4 { width:30px; height:14px; bottom:22px; right:30px; background:rgba(236,72,153,.35); border-radius:8px; }
+
+        /* Floor 3: Code — terminal blocks */
+        .code-block {
+            background:#0d1117;
+            border:2px solid rgba(16,185,129,.2);
+            border-radius:4px;
+            overflow:hidden;
+        }
+        .cb1 { width:80px; height:50px; top:16px; left:20px; }
+        .cb2 { width:60px; height:50px; top:16px; right:28px; }
+
+        .cb-line {
+            height:2px;
+            border-radius:1px;
+            margin:5px 6px;
+        }
+
+        /* Floor 4: Live — completed with glow */
+        .live-block {
+            border-radius:6px;
+        }
+        .lb1 { width:70px; height:30px; top:18px; left:18px; background:rgba(245,158,11,.2); border:2px solid rgba(245,158,11,.3); }
+        .lb2 { width:40px; height:40px; top:18px; right:30px; background:rgba(16,185,129,.2); border:2px solid rgba(16,185,129,.3); border-radius:10px; }
+        .lb3 { width:110px; height:16px; bottom:18px; left:35px; background:rgba(255,255,255,.08); border:2px solid rgba(255,255,255,.1); border-radius:10px; }
+
+        /* Status badge per floor */
+        .floor-status {
+            width:100px;
+            flex-shrink:0;
+            padding-left:20px;
+        }
+
+        .status-badge {
+            font-family:'Press Start 2P',monospace;
+            font-size:8px;
+            padding:6px 12px;
+            border-radius:6px;
+            display:inline-block;
+        }
+
+        .sb-done {
+            background:rgba(16,185,129,.12);
+            color:#34d399;
+            border:1px solid rgba(16,185,129,.2);
+        }
+
+        .sb-progress {
+            background:rgba(245,158,11,.12);
+            color:#fbbf24;
+            border:1px solid rgba(245,158,11,.2);
+        }
+
+        .sb-building {
+            background:rgba(236,72,153,.12);
+            color:#f472b6;
+            border:1px solid rgba(236,72,153,.2);
+        }
+
+        .sb-live {
+            background:rgba(16,185,129,.15);
+            color:#10b981;
+            border:1px solid rgba(16,185,129,.25);
+            box-shadow:0 0 12px rgba(16,185,129,.2);
+        }
+
+        /* Divider lines between floors */
+        .floor-divider {
+            width:700px;
+            height:1px;
+            background:rgba(255,255,255,.04);
+            margin:0 auto;
+        }
+
+        /* Progress bar */
+        .build-progress {
+            width:700px;
+            margin-top:28px;
+            display:flex;
+            flex-direction:column;
+            gap:8px;
+        }
+
+        .bp-header {
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+        }
+
+        .bp-label {
+            font-family:'Press Start 2P',monospace;
+            font-size:10px;
+            color:rgba(255,255,255,.3);
+        }
+
+        .bp-pct {
+            font-family:'Press Start 2P',monospace;
+            font-size:12px;
+            color:#fbbf24;
+        }
+
+        .bp-track {
+            height:14px;
+            background:rgba(255,255,255,.04);
+            border-radius:8px;
+            overflow:hidden;
+            border:1px solid rgba(255,255,255,.06);
+        }
+
+        .bp-fill {
+            height:100%;
+            border-radius:8px;
+            background:linear-gradient(90deg, #3b82f6, #ec4899, #10b981, #f59e0b);
+            width:100%;
+        }
+
+        .bp-stages {
+            display:flex;
+            justify-content:space-between;
+        }
+
+        .bp-stage {
+            font-family:'Press Start 2P',monospace;
+            font-size:7px;
+            color:rgba(255,255,255,.15);
+        }
+
+        .bp-stage.active { color:rgba(245,158,11,.6); }
+
+        /* CTA */
+        .cta-area {
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            margin-top:32px;
+            z-index:15;
+        }
+
+        .cta-btn {
+            background:white;
+            color:#0a0a0a;
+            font-size:24px;
+            font-weight:800;
+            padding:22px 60px;
+            border-radius:100px;
+            border:none;
+            cursor:pointer;
+            margin-bottom:14px;
+            box-shadow:0 4px 28px rgba(255,255,255,.1);
+            font-family:'Inter',sans-serif;
+        }
+
+        .cta-sub {
+            font-size:15px;
+            color:rgba(255,255,255,.22);
+        }
+
+        .controls {
+            position:fixed;
+            top:0; left:0; right:0;
+            z-index:9999;
+            background:rgba(0,0,0,.85);
+            backdrop-filter:blur(10px);
+            padding:12px 24px;
+            display:flex;
+            align-items:center;
+            gap:20px;
+            font-size:13px;
+            color:white;
+        }
+        .controls label { display:flex; align-items:center; gap:6px; cursor:pointer; font-weight:500; }
+        .controls button {
+            background:white; color:#0a0a0a; border:none; padding:8px 24px;
+            border-radius:100px; font-family:'Inter',sans-serif; font-size:13px; font-weight:700; cursor:pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="controls">
+    <label><input type="checkbox" id="showSafe"> Show TikTok Safe Zones</label>
+    <button id="dl">⬇ Download PNG (1080×1920)</button>
+</div>
+
+<input type="checkbox" id="showSafe" style="display:none;">
+
+<div class="frame-wrapper">
+    <div class="frame" id="frame">
+
+        <div class="safe-overlay">
+            <div class="safe-top"></div>
+            <div class="safe-bottom"></div>
+            <div class="safe-right"></div>
+            <div class="safe-left"></div>
+        </div>
+
+        <div class="content">
+            <img src="../CW-logo-white.png" alt="CRFTD Web" class="logo-top">
+
+            <div class="room-bar">
+                <div class="room-bar-icon">🔨</div>
+                <div class="room-bar-text">Build Mode</div>
+                <div class="room-bar-status">project: yours</div>
+            </div>
+
+            <div class="headline">Your site,</div>
+            <div class="headline-accent">room by room.</div>
+
+            <!-- 4 Floors stacked -->
+            <div class="tower">
+
+                <!-- Floor 1: Wireframe -->
+                <div class="floor-row floor-1">
+                    <div class="floor-label">
+                        <div class="fl-step">STEP 01</div>
+                        <div class="fl-name">Wireframe</div>
+                        <div class="fl-sub">Blueprint</div>
+                    </div>
+                    <div class="floor-tile">
+                        <div class="iso-mini">
+                            <div class="iso-mini-floor">
+                                <div class="mini-obj wireframe-box wf1"></div>
+                                <div class="mini-obj wireframe-box wf2"></div>
+                                <div class="mini-obj wireframe-box wf3"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="floor-status">
+                        <div class="status-badge sb-done">DONE ✓</div>
+                    </div>
+                </div>
+
+                <div class="floor-divider"></div>
+
+                <!-- Floor 2: Design -->
+                <div class="floor-row floor-2">
+                    <div class="floor-label">
+                        <div class="fl-step">STEP 02</div>
+                        <div class="fl-name">Design</div>
+                        <div class="fl-sub">Visual layer</div>
+                    </div>
+                    <div class="floor-tile">
+                        <div class="iso-mini">
+                            <div class="iso-mini-floor">
+                                <div class="mini-obj design-block db1"></div>
+                                <div class="mini-obj design-block db2"></div>
+                                <div class="mini-obj design-block db3"></div>
+                                <div class="mini-obj design-block db4"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="floor-status">
+                        <div class="status-badge sb-done">DONE ✓</div>
+                    </div>
+                </div>
+
+                <div class="floor-divider"></div>
+
+                <!-- Floor 3: Development -->
+                <div class="floor-row floor-3">
+                    <div class="floor-label">
+                        <div class="fl-step">STEP 03</div>
+                        <div class="fl-name">Develop</div>
+                        <div class="fl-sub">Code it real</div>
+                    </div>
+                    <div class="floor-tile">
+                        <div class="iso-mini">
+                            <div class="iso-mini-floor">
+                                <div class="mini-obj code-block cb1">
+                                    <div class="cb-line" style="width:30px;background:rgba(16,185,129,.5);"></div>
+                                    <div class="cb-line" style="width:45px;background:rgba(139,92,246,.4);"></div>
+                                    <div class="cb-line" style="width:20px;background:rgba(245,158,11,.4);"></div>
+                                    <div class="cb-line" style="width:38px;background:rgba(16,185,129,.3);"></div>
+                                </div>
+                                <div class="mini-obj code-block cb2">
+                                    <div class="cb-line" style="width:25px;background:rgba(59,130,246,.4);"></div>
+                                    <div class="cb-line" style="width:35px;background:rgba(236,72,153,.4);"></div>
+                                    <div class="cb-line" style="width:15px;background:rgba(16,185,129,.4);"></div>
+                                    <div class="cb-line" style="width:40px;background:rgba(139,92,246,.3);"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="floor-status">
+                        <div class="status-badge sb-building">BUILD</div>
+                    </div>
+                </div>
+
+                <div class="floor-divider"></div>
+
+                <!-- Floor 4: Launch -->
+                <div class="floor-row floor-4">
+                    <div class="floor-label">
+                        <div class="fl-step">STEP 04</div>
+                        <div class="fl-name">Launch</div>
+                        <div class="fl-sub">Go live 🚀</div>
+                    </div>
+                    <div class="floor-tile">
+                        <div class="iso-mini">
+                            <div class="iso-mini-floor">
+                                <div class="mini-obj live-block lb1"></div>
+                                <div class="mini-obj live-block lb2"></div>
+                                <div class="mini-obj live-block lb3"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="floor-status">
+                        <div class="status-badge sb-progress">NEXT</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Build progress -->
+            <div class="build-progress">
+                <div class="bp-header">
+                    <div class="bp-label">BUILD PROGRESS</div>
+                    <div class="bp-pct">75%</div>
+                </div>
+                <div class="bp-track">
+                    <div class="bp-fill" style="width:75%;"></div>
+                </div>
+                <div class="bp-stages">
+                    <div class="bp-stage active">WIREFRAME</div>
+                    <div class="bp-stage active">DESIGN</div>
+                    <div class="bp-stage active">DEVELOP</div>
+                    <div class="bp-stage">LAUNCH</div>
+                </div>
+            </div>
+
+            <div class="cta-area">
+                <button class="cta-btn">Start Your Build ›</button>
+                <div class="cta-sub">From blueprint to launch in 14 days</div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+document.querySelector('.controls label input').addEventListener('change', function() {
+    document.getElementById('showSafe').checked = this.checked;
+});
+document.getElementById('dl').addEventListener('click', async () => {
+    const btn = document.getElementById('dl');
+    btn.textContent = 'Generating...';
+    const frame = document.getElementById('frame');
+    const wrapper = frame.parentElement;
+    const origTransform = wrapper.style.transform;
+    wrapper.style.transform = 'none';
+    const safeOverlay = frame.querySelector('.safe-overlay');
+    safeOverlay.style.display = 'none';
+    try {
+        const canvas = await html2canvas(frame, {
+            width:1080, height:1920, scale:1, useCORS:true,
+            backgroundColor:'#0a0a0a', scrollX:0, scrollY:-window.scrollY,
+            windowWidth:1080, windowHeight:1920,
+        });
+        const link = document.createElement('a');
+        link.download = 'crftdweb-ad-9-1080x1920.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+    } finally {
+        wrapper.style.transform = origTransform;
+        safeOverlay.style.display = '';
+        btn.textContent = '⬇ Download PNG (1080×1920)';
+    }
+});
+</script>
+</body>
+</html>

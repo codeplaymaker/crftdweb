@@ -72,7 +72,7 @@ export default function HelpPage() {
         </svg>
       ),
       articles: [
-        { title: 'Managing Your Subscription', href: '/engine/pricing' },
+        { title: 'Managing Your Subscription', href: '/engine/help' },
         { title: 'Updating Payment Methods', href: '/engine/dashboard/settings' },
         { title: 'Understanding Your Usage', href: '/engine/dashboard/analytics' },
         { title: 'Cancellation & Refunds', href: '/engine/terms' },

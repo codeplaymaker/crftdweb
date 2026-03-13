@@ -106,29 +106,15 @@ const categories = [
 
 function IntegrationCard({ 
   integration, 
-  savedIntegration,
-  onConnect, 
-  onDisconnect,
-  loading 
 }: { 
   integration: typeof availableIntegrations[0];
-  savedIntegration?: Integration;
-  onConnect: () => void;
-  onDisconnect: () => void;
-  loading: boolean;
 }) {
-  const isConnected = savedIntegration?.connected || false;
-  const status = savedIntegration?.status || 'disconnected';
-  const lastSync = savedIntegration?.lastSync;
-  const records = savedIntegration?.records || 0;
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className={`bg-gradient-to-br from-[#1a1a2e] to-[#16162a] border rounded-2xl p-6 ${
-        isConnected ? 'border-green-500/30' : 'border-purple-500/20'
-      }`}
+      className="bg-gradient-to-br from-[#1a1a2e] to-[#16162a] border rounded-2xl p-6 border-purple-500/20 opacity-75"
     >
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3">
@@ -140,57 +126,17 @@ function IntegrationCard({
             <p className="text-white/50 text-sm">{integration.description}</p>
           </div>
         </div>
-        {isConnected && (
-          <div className={`px-2 py-1 rounded-full text-xs ${
-            status === 'synced' ? 'bg-green-500/20 text-green-400' :
-            status === 'syncing' ? 'bg-yellow-500/20 text-yellow-400' :
-            'bg-red-500/20 text-red-400'
-          }`}>
-            {status === 'synced' ? '● Connected' :
-             status === 'syncing' ? '○ Syncing...' : '● Error'}
-          </div>
-        )}
+        <div className="px-2 py-1 rounded-full text-xs bg-amber-500/15 text-amber-400 border border-amber-500/20">
+          Coming Soon
+        </div>
       </div>
 
-      {isConnected ? (
-        <div className="space-y-3">
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-white/50">Last synced</span>
-            <span className="text-white">
-              {lastSync ? (lastSync.toDate ? lastSync.toDate().toLocaleString() : new Date(lastSync as unknown as string).toLocaleString()) : 'Never'}
-            </span>
-          </div>
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-white/50">Records synced</span>
-            <span className="text-white">{records.toLocaleString()}</span>
-          </div>
-          <div className="flex gap-2 mt-4">
-            <button 
-              onClick={onDisconnect}
-              disabled={loading}
-              className="flex-1 py-2 bg-red-500/20 text-red-400 rounded-xl text-sm hover:bg-red-500/30 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
-            >
-              <X className="w-4 h-4" />
-              Disconnect
-            </button>
-          </div>
-        </div>
-      ) : (
-        <button 
-          onClick={onConnect}
-          disabled={loading}
-          className="w-full py-3 bg-gradient-to-r from-purple-600 to-violet-600 text-white rounded-xl font-medium hover:from-purple-500 hover:to-violet-500 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
-        >
-          {loading ? (
-            <>
-              <RefreshCw className="w-4 h-4 animate-spin" />
-              Connecting...
-            </>
-          ) : (
-            'Connect'
-          )}
-        </button>
-      )}
+      <button 
+        disabled
+        className="w-full py-3 bg-white/5 text-white/30 rounded-xl font-medium cursor-not-allowed flex items-center justify-center gap-2 border border-white/5"
+      >
+        Coming Soon
+      </button>
     </motion.div>
   );
 }
@@ -365,13 +311,22 @@ export default function IntegrationsPage() {
           </div>
           <p className="text-white/50">Connect your favorite tools and sync data automatically</p>
         </div>
-        <button className="px-6 py-3 bg-gradient-to-r from-purple-600 to-violet-600 text-white rounded-xl font-medium hover:from-purple-500 hover:to-violet-500 transition-all flex items-center gap-2">
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-          </svg>
-          Request Integration
-        </button>
       </div>
+
+      {/* Coming Soon Banner */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-500/20 rounded-2xl p-5 flex items-start gap-4"
+      >
+        <div className="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center flex-shrink-0">
+          <span className="text-lg">🚧</span>
+        </div>
+        <div>
+          <h3 className="text-amber-400 font-semibold text-sm">Integrations are in development</h3>
+          <p className="text-white/40 text-sm mt-1">We&apos;re building native connections to all the tools below. Want early access or have a specific integration request? <Link href="/engine/demo" className="text-amber-400 underline underline-offset-2 hover:text-amber-300">Let us know</Link>.</p>
+        </div>
+      </motion.div>
 
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -459,10 +414,6 @@ export default function IntegrationsPage() {
                 <IntegrationCard 
                   key={integration.provider} 
                   integration={integration}
-                  savedIntegration={savedIntegrations.find(s => s.provider === integration.provider)}
-                  onConnect={() => handleConnect(integration.provider)}
-                  onDisconnect={() => handleDisconnect(integration.provider)}
-                  loading={connectingId === integration.provider}
                 />
               ))}
             </div>

@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRFTD Web — Ad 8: Habbo Studio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family:'Inter',sans-serif;
+            background:#111;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            min-height:100vh;
+            overflow:auto;
+        }
+
+        .frame-wrapper {
+            transform:scale(0.45);
+            transform-origin:top center;
+            margin:20px auto;
+        }
+
+        .frame {
+            width:1080px;
+            height:1920px;
+            background:#0a0a0a;
+            position:relative;
+            overflow:hidden;
+            font-family:'Inter',sans-serif;
+        }
+
+        .safe-overlay {
+            display:none;
+            position:absolute;
+            inset:0;
+            z-index:100;
+            pointer-events:none;
+        }
+        #showSafe:checked ~ .frame-wrapper .safe-overlay { display:block; }
+        .safe-overlay .safe-top    { position:absolute; top:0; left:0; right:0; height:150px; background:rgba(255,0,0,.12); border-bottom:2px dashed rgba(255,0,0,.4); }
+        .safe-overlay .safe-bottom { position:absolute; bottom:0; left:0; right:0; height:480px; background:rgba(255,0,0,.12); border-top:2px dashed rgba(255,0,0,.4); }
+        .safe-overlay .safe-right  { position:absolute; top:150px; right:0; width:150px; bottom:480px; background:rgba(255,0,0,.08); border-left:2px dashed rgba(255,0,0,.3); }
+        .safe-overlay .safe-left   { position:absolute; top:150px; left:0; width:60px; bottom:480px; background:rgba(255,0,0,.05); border-right:1px dashed rgba(255,0,0,.2); }
+
+        .content {
+            position:absolute;
+            top:150px;
+            left:0;
+            right:0;
+            bottom:480px;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            z-index:10;
+        }
+
+        .logo-top {
+            height:36px;
+            opacity:.4;
+            margin-top:20px;
+            margin-bottom:28px;
+        }
+
+        /* Habbo-style room name bar */
+        .room-bar {
+            display:flex;
+            align-items:center;
+            gap:14px;
+            padding:14px 30px;
+            border-radius:14px;
+            background:rgba(139,92,246,.06);
+            border:2px solid rgba(139,92,246,.15);
+            margin-bottom:28px;
+        }
+
+        .room-bar-icon {
+            width:32px;
+            height:32px;
+            background:rgba(139,92,246,.15);
+            border-radius:8px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:16px;
+        }
+
+        .room-bar-text {
+            font-family:'Press Start 2P',monospace;
+            font-size:11px;
+            color:#a78bfa;
+        }
+
+        .room-bar-users {
+            font-family:'Press Start 2P',monospace;
+            font-size:9px;
+            color:rgba(139,92,246,.4);
+            margin-left:auto;
+        }
+
+        .headline {
+            font-size:78px;
+            font-weight:900;
+            line-height:.90;
+            letter-spacing:-0.04em;
+            color:white;
+            text-align:center;
+            margin-bottom:0;
+        }
+
+        .headline-accent {
+            font-size:78px;
+            font-weight:300;
+            font-style:italic;
+            color:rgba(255,255,255,.15);
+            text-align:center;
+            line-height:.95;
+            margin-bottom:36px;
+        }
+
+        /* ========== ISOMETRIC ROOM ========== */
+        .iso-scene {
+            width:920px;
+            height:560px;
+            position:relative;
+            margin-bottom:auto;
+        }
+
+        .iso-room {
+            position:absolute;
+            top:50%;
+            left:50%;
+            transform:translate(-50%, -50%) rotateX(60deg) rotateZ(-45deg);
+            transform-style:preserve-3d;
+            width:480px;
+            height:480px;
+        }
+
+        /* Floor grid */
+        .iso-floor {
+            position:absolute;
+            inset:0;
+            background:
+                repeating-linear-gradient(
+                    0deg,
+                    rgba(139,92,246,.08) 0px,
+                    rgba(139,92,246,.08) 2px,
+                    transparent 2px,
+                    transparent 60px
+                ),
+                repeating-linear-gradient(
+                    90deg,
+                    rgba(139,92,246,.08) 0px,
+                    rgba(139,92,246,.08) 2px,
+                    transparent 2px,
+                    transparent 60px
+                );
+            background-color:rgba(139,92,246,.03);
+            border:3px solid rgba(139,92,246,.15);
+            border-radius:4px;
+        }
+
+        /* Isometric furniture blocks */
+        .iso-obj {
+            position:absolute;
+            transform-style:preserve-3d;
+        }
+
+        /* Desk blocks */
+        .iso-desk {
+            width:100px;
+            height:100px;
+        }
+
+        .iso-desk .top {
+            position:absolute;
+            width:100px;
+            height:100px;
+            transform:translateZ(30px);
+            border-radius:4px;
+        }
+
+        .iso-desk .front {
+            position:absolute;
+            width:100px;
+            height:30px;
+            bottom:0;
+            transform-origin:bottom;
+            transform:rotateX(-90deg);
+            border-radius:0 0 4px 4px;
+        }
+
+        .iso-desk .side {
+            position:absolute;
+            width:30px;
+            height:100px;
+            right:0;
+            transform-origin:right;
+            transform:rotateY(90deg);
+            border-radius:0 4px 4px 0;
+        }
+
+        .desk-1 { top:60px; left:60px; }
+        .desk-1 .top   { background:rgba(59,130,246,.2); border:2px solid rgba(59,130,246,.3); }
+        .desk-1 .front { background:rgba(59,130,246,.12); border:2px solid rgba(59,130,246,.2); }
+        .desk-1 .side  { background:rgba(59,130,246,.08); border:2px solid rgba(59,130,246,.15); }
+
+        .desk-2 { top:60px; left:200px; }
+        .desk-2 .top   { background:rgba(236,72,153,.2); border:2px solid rgba(236,72,153,.3); }
+        .desk-2 .front { background:rgba(236,72,153,.12); border:2px solid rgba(236,72,153,.2); }
+        .desk-2 .side  { background:rgba(236,72,153,.08); border:2px solid rgba(236,72,153,.15); }
+
+        .desk-3 { top:60px; left:340px; }
+        .desk-3 .top   { background:rgba(16,185,129,.2); border:2px solid rgba(16,185,129,.3); }
+        .desk-3 .front { background:rgba(16,185,129,.12); border:2px solid rgba(16,185,129,.2); }
+        .desk-3 .side  { background:rgba(16,185,129,.08); border:2px solid rgba(16,185,129,.15); }
+
+        /* Server/cabinet */
+        .iso-server {
+            width:50px;
+            height:50px;
+            top:340px; left:380px;
+        }
+
+        .iso-server .top {
+            position:absolute;
+            width:50px; height:50px;
+            transform:translateZ(60px);
+            background:rgba(245,158,11,.2);
+            border:2px solid rgba(245,158,11,.3);
+            border-radius:4px;
+        }
+
+        .iso-server .front {
+            position:absolute;
+            width:50px; height:60px;
+            bottom:0;
+            transform-origin:bottom;
+            transform:rotateX(-90deg);
+            background:rgba(245,158,11,.1);
+            border:2px solid rgba(245,158,11,.2);
+        }
+
+        .iso-server .side {
+            position:absolute;
+            width:60px; height:50px;
+            right:0;
+            transform-origin:right;
+            transform:rotateY(90deg);
+            background:rgba(245,158,11,.06);
+            border:2px solid rgba(245,158,11,.12);
+        }
+
+        /* Sofa */
+        .iso-sofa {
+            width:140px; height:60px;
+            top:300px; left:60px;
+        }
+
+        .iso-sofa .top {
+            position:absolute;
+            width:140px; height:60px;
+            transform:translateZ(20px);
+            background:rgba(139,92,246,.18);
+            border:2px solid rgba(139,92,246,.28);
+            border-radius:6px;
+        }
+
+        .iso-sofa .front {
+            position:absolute;
+            width:140px; height:20px;
+            bottom:0;
+            transform-origin:bottom;
+            transform:rotateX(-90deg);
+            background:rgba(139,92,246,.1);
+            border:2px solid rgba(139,92,246,.18);
+        }
+
+        /* Whiteboard on wall */
+        .iso-board {
+            width:160px; height:10px;
+            top:10px; left:160px;
+        }
+
+        .iso-board .top {
+            position:absolute;
+            width:160px; height:10px;
+            transform:translateZ(80px);
+            background:rgba(255,255,255,.08);
+            border:2px solid rgba(255,255,255,.15);
+        }
+
+        .iso-board .front {
+            position:absolute;
+            width:160px; height:80px;
+            bottom:0;
+            transform-origin:bottom;
+            transform:rotateX(-90deg);
+            background:rgba(255,255,255,.04);
+            border:2px solid rgba(255,255,255,.1);
+            border-radius:2px;
+        }
+
+        /* ====== FLAT OVERLAID ELEMENTS (non-isometric) ====== */
+
+        /* Habbo-style speech bubbles */
+        .bubble {
+            position:absolute;
+            z-index:20;
+            padding:12px 18px;
+            border-radius:12px;
+            font-family:'Press Start 2P',monospace;
+            font-size:9px;
+            line-height:1.5;
+            max-width:200px;
+            white-space:nowrap;
+        }
+
+        .bubble::after {
+            content:'';
+            position:absolute;
+            bottom:-8px;
+            left:20px;
+            width:0; height:0;
+            border-left:8px solid transparent;
+            border-right:8px solid transparent;
+        }
+
+        .bubble-1 {
+            top:60px; left:80px;
+            background:rgba(59,130,246,.12);
+            border:2px solid rgba(59,130,246,.25);
+            color:#60a5fa;
+        }
+        .bubble-1::after { border-top:8px solid rgba(59,130,246,.25); }
+
+        .bubble-2 {
+            top:30px; left:380px;
+            background:rgba(236,72,153,.12);
+            border:2px solid rgba(236,72,153,.25);
+            color:#f472b6;
+        }
+        .bubble-2::after { border-top:8px solid rgba(236,72,153,.25); }
+
+        .bubble-3 {
+            top:90px; right:60px;
+            background:rgba(16,185,129,.12);
+            border:2px solid rgba(16,185,129,.25);
+            color:#34d399;
+        }
+        .bubble-3::after { border-top:8px solid rgba(16,185,129,.25); }
+
+        .bubble-4 {
+            bottom:70px; left:160px;
+            background:rgba(139,92,246,.12);
+            border:2px solid rgba(139,92,246,.25);
+            color:#a78bfa;
+        }
+        .bubble-4::after { border-top:8px solid rgba(139,92,246,.25); }
+
+        /* Flat pixel avatars overlaid on scene */
+        .hab-avatar {
+            position:absolute;
+            z-index:15;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            gap:4px;
+        }
+
+        .hab-body {
+            width:36px;
+            height:52px;
+            border-radius:4px 4px 2px 2px;
+            image-rendering:pixelated;
+            position:relative;
+        }
+
+        /* Pixel head */
+        .hab-head {
+            width:28px;
+            height:28px;
+            border-radius:4px;
+            position:absolute;
+            top:-6px;
+            left:50%;
+            transform:translateX(-50%);
+            border:2px solid rgba(0,0,0,.2);
+        }
+
+        .hab-torso {
+            width:36px;
+            height:28px;
+            position:absolute;
+            bottom:0;
+            border-radius:2px;
+        }
+
+        .hab-name {
+            font-family:'Press Start 2P',monospace;
+            font-size:8px;
+            padding:3px 10px;
+            border-radius:4px;
+            white-space:nowrap;
+            background:rgba(0,0,0,.6);
+            color:white;
+        }
+
+        .hav-1 { bottom:120px; left:170px; }
+        .hav-1 .hab-head  { background:#3b82f6; }
+        .hav-1 .hab-torso { background:#2563eb; }
+
+        .hav-2 { bottom:100px; left:380px; }
+        .hav-2 .hab-head  { background:#ec4899; }
+        .hav-2 .hab-torso { background:#db2777; }
+
+        .hav-3 { bottom:140px; right:140px; }
+        .hav-3 .hab-head  { background:#10b981; }
+        .hav-3 .hab-torso { background:#059669; }
+
+        .hav-4 { bottom:80px; left:280px; }
+        .hav-4 .hab-head  { background:#8b5cf6; }
+        .hav-4 .hab-torso { background:#7c3aed; }
+
+        /* User count and online indicator */
+        .online-bar {
+            display:flex;
+            align-items:center;
+            gap:12px;
+            margin-top:28px;
+            margin-bottom:8px;
+        }
+
+        .online-dot {
+            width:10px;
+            height:10px;
+            border-radius:50%;
+            background:#10b981;
+            box-shadow:0 0 8px rgba(16,185,129,.6);
+        }
+
+        .online-text {
+            font-family:'Press Start 2P',monospace;
+            font-size:10px;
+            color:rgba(255,255,255,.3);
+        }
+
+        /* Stats row */
+        .stats-row {
+            display:flex;
+            gap:16px;
+            margin-top:20px;
+        }
+
+        .stat-pill {
+            padding:14px 26px;
+            border-radius:100px;
+            background:rgba(255,255,255,.04);
+            border:1px solid rgba(255,255,255,.06);
+            color:rgba(255,255,255,.55);
+            font-size:17px;
+            font-weight:600;
+            display:flex;
+            align-items:center;
+            gap:8px;
+        }
+
+        .stat-pill .sp-icon { font-size:18px; }
+
+        .cta-area {
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            margin-top:36px;
+            z-index:15;
+        }
+
+        .cta-btn {
+            background:white;
+            color:#0a0a0a;
+            font-size:24px;
+            font-weight:800;
+            padding:22px 60px;
+            border-radius:100px;
+            border:none;
+            cursor:pointer;
+            margin-bottom:14px;
+            box-shadow:0 4px 28px rgba(255,255,255,.1);
+            font-family:'Inter',sans-serif;
+        }
+
+        .cta-sub {
+            font-size:15px;
+            color:rgba(255,255,255,.22);
+        }
+
+        .controls {
+            position:fixed;
+            top:0; left:0; right:0;
+            z-index:9999;
+            background:rgba(0,0,0,.85);
+            backdrop-filter:blur(10px);
+            padding:12px 24px;
+            display:flex;
+            align-items:center;
+            gap:20px;
+            font-size:13px;
+            color:white;
+        }
+        .controls label { display:flex; align-items:center; gap:6px; cursor:pointer; font-weight:500; }
+        .controls button {
+            background:white; color:#0a0a0a; border:none; padding:8px 24px;
+            border-radius:100px; font-family:'Inter',sans-serif; font-size:13px; font-weight:700; cursor:pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="controls">
+    <label><input type="checkbox" id="showSafe"> Show TikTok Safe Zones</label>
+    <button id="dl">⬇ Download PNG (1080×1920)</button>
+</div>
+
+<input type="checkbox" id="showSafe" style="display:none;">
+
+<div class="frame-wrapper">
+    <div class="frame" id="frame">
+
+        <div class="safe-overlay">
+            <div class="safe-top"></div>
+            <div class="safe-bottom"></div>
+            <div class="safe-right"></div>
+            <div class="safe-left"></div>
+        </div>
+
+        <div class="content">
+            <img src="../CW-logo-white.png" alt="CRFTD Web" class="logo-top">
+
+            <div class="room-bar">
+                <div class="room-bar-icon">🏠</div>
+                <div class="room-bar-text">CRFTD Studio</div>
+                <div class="room-bar-users">4/8 online</div>
+            </div>
+
+            <div class="headline">Welcome to</div>
+            <div class="headline-accent">the studio.</div>
+
+            <!-- Isometric Room Scene -->
+            <div class="iso-scene">
+                <!-- Isometric Room -->
+                <div class="iso-room">
+                    <div class="iso-floor"></div>
+
+                    <!-- Desks -->
+                    <div class="iso-obj iso-desk desk-1">
+                        <div class="top"></div>
+                        <div class="front"></div>
+                        <div class="side"></div>
+                    </div>
+                    <div class="iso-obj iso-desk desk-2">
+                        <div class="top"></div>
+                        <div class="front"></div>
+                        <div class="side"></div>
+                    </div>
+                    <div class="iso-obj iso-desk desk-3">
+                        <div class="top"></div>
+                        <div class="front"></div>
+                        <div class="side"></div>
+                    </div>
+
+                    <!-- Server -->
+                    <div class="iso-obj iso-server">
+                        <div class="top"></div>
+                        <div class="front"></div>
+                        <div class="side"></div>
+                    </div>
+
+                    <!-- Sofa -->
+                    <div class="iso-obj iso-sofa">
+                        <div class="top"></div>
+                        <div class="front"></div>
+                    </div>
+
+                    <!-- Whiteboard -->
+                    <div class="iso-obj iso-board">
+                        <div class="top"></div>
+                        <div class="front"></div>
+                    </div>
+                </div>
+
+                <!-- Speech Bubbles (flat overlay) -->
+                <div class="bubble bubble-1">Strategy locked ✓</div>
+                <div class="bubble bubble-2">Designs approved ✓</div>
+                <div class="bubble bubble-3">Deploying now...</div>
+                <div class="bubble bubble-4">PageSpeed: 97 🔥</div>
+
+                <!-- Pixel Avatars (flat overlay) -->
+                <div class="hab-avatar hav-1">
+                    <div class="hab-body">
+                        <div class="hab-head"></div>
+                        <div class="hab-torso"></div>
+                    </div>
+                    <div class="hab-name">Strategist</div>
+                </div>
+
+                <div class="hab-avatar hav-2">
+                    <div class="hab-body">
+                        <div class="hab-head"></div>
+                        <div class="hab-torso"></div>
+                    </div>
+                    <div class="hab-name">Designer</div>
+                </div>
+
+                <div class="hab-avatar hav-3">
+                    <div class="hab-body">
+                        <div class="hab-head"></div>
+                        <div class="hab-torso"></div>
+                    </div>
+                    <div class="hab-name">Developer</div>
+                </div>
+
+                <div class="hab-avatar hav-4">
+                    <div class="hab-body">
+                        <div class="hab-head"></div>
+                        <div class="hab-torso"></div>
+                    </div>
+                    <div class="hab-name">You</div>
+                </div>
+            </div>
+
+            <div class="online-bar">
+                <div class="online-dot"></div>
+                <div class="online-text">Your team is online</div>
+            </div>
+
+            <div class="stats-row">
+                <div class="stat-pill"><span class="sp-icon">🎨</span> Custom Design</div>
+                <div class="stat-pill"><span class="sp-icon">⚡</span> 95+ PageSpeed</div>
+                <div class="stat-pill"><span class="sp-icon">🚀</span> 14-Day Launch</div>
+            </div>
+
+            <div class="cta-area">
+                <button class="cta-btn">Enter The Studio ›</button>
+                <div class="cta-sub">See how your project gets built</div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+document.querySelector('.controls label input').addEventListener('change', function() {
+    document.getElementById('showSafe').checked = this.checked;
+});
+document.getElementById('dl').addEventListener('click', async () => {
+    const btn = document.getElementById('dl');
+    btn.textContent = 'Generating...';
+    const frame = document.getElementById('frame');
+    const wrapper = frame.parentElement;
+    const origTransform = wrapper.style.transform;
+    wrapper.style.transform = 'none';
+    const safeOverlay = frame.querySelector('.safe-overlay');
+    safeOverlay.style.display = 'none';
+    try {
+        const canvas = await html2canvas(frame, {
+            width:1080, height:1920, scale:1, useCORS:true,
+            backgroundColor:'#0a0a0a', scrollX:0, scrollY:-window.scrollY,
+            windowWidth:1080, windowHeight:1920,
+        });
+        const link = document.createElement('a');
+        link.download = 'crftdweb-ad-8-1080x1920.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+    } finally {
+        wrapper.style.transform = origTransform;
+        safeOverlay.style.display = '';
+        btn.textContent = '⬇ Download PNG (1080×1920)';
+    }
+});
+</script>
+</body>
+</html>

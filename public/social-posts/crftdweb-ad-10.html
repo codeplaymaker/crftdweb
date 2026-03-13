@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRFTD Web — Ad 10: RuneScape</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family:'Inter',sans-serif;
+            background:#111;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            min-height:100vh;
+            overflow:auto;
+        }
+
+        .frame-wrapper {
+            transform:scale(0.45);
+            transform-origin:top center;
+            margin:20px auto;
+        }
+
+        .frame {
+            width:1080px;
+            height:1920px;
+            background:#0a0a0a;
+            position:relative;
+            overflow:hidden;
+            font-family:'Inter',sans-serif;
+        }
+
+        /* Dark parchment texture */
+        .frame::before {
+            content:'';
+            position:absolute;
+            inset:0;
+            background:
+                radial-gradient(ellipse at 30% 20%, rgba(139,92,10,.04) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 70%, rgba(139,92,10,.03) 0%, transparent 50%);
+            pointer-events:none;
+        }
+
+        .safe-overlay {
+            display:none;
+            position:absolute;
+            inset:0;
+            z-index:100;
+            pointer-events:none;
+        }
+        #showSafe:checked ~ .frame-wrapper .safe-overlay { display:block; }
+        .safe-overlay .safe-top    { position:absolute; top:0; left:0; right:0; height:150px; background:rgba(255,0,0,.12); border-bottom:2px dashed rgba(255,0,0,.4); }
+        .safe-overlay .safe-bottom { position:absolute; bottom:0; left:0; right:0; height:480px; background:rgba(255,0,0,.12); border-top:2px dashed rgba(255,0,0,.4); }
+        .safe-overlay .safe-right  { position:absolute; top:150px; right:0; width:150px; bottom:480px; background:rgba(255,0,0,.08); border-left:2px dashed rgba(255,0,0,.3); }
+        .safe-overlay .safe-left   { position:absolute; top:150px; left:0; width:60px; bottom:480px; background:rgba(255,0,0,.05); border-right:1px dashed rgba(255,0,0,.2); }
+
+        .content {
+            position:absolute;
+            top:150px;
+            left:0;
+            right:0;
+            bottom:480px;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            z-index:10;
+        }
+
+        .logo-top {
+            height:36px;
+            opacity:.4;
+            margin-top:16px;
+            margin-bottom:20px;
+        }
+
+        /* RS-style skill tab header */
+        .skill-tab {
+            display:flex;
+            align-items:center;
+            gap:12px;
+            padding:12px 28px;
+            border-radius:4px;
+            background:linear-gradient(180deg, rgba(60,50,30,.6) 0%, rgba(40,32,18,.8) 100%);
+            border:2px solid rgba(139,115,52,.4);
+            margin-bottom:24px;
+            box-shadow:inset 0 1px 0 rgba(255,255,255,.06);
+        }
+
+        .skill-tab-icon {
+            font-size:20px;
+        }
+
+        .skill-tab-text {
+            font-family:'Press Start 2P',monospace;
+            font-size:11px;
+            color:#d4a937;
+            text-shadow:1px 1px 0 rgba(0,0,0,.6);
+        }
+
+        .headline {
+            font-size:76px;
+            font-weight:900;
+            line-height:.90;
+            letter-spacing:-0.04em;
+            color:#d4a937;
+            text-align:center;
+            margin-bottom:0;
+            text-shadow:2px 2px 0 rgba(0,0,0,.4);
+        }
+
+        .headline-accent {
+            font-size:76px;
+            font-weight:300;
+            font-style:italic;
+            color:rgba(212,169,55,.2);
+            text-align:center;
+            line-height:.95;
+            margin-bottom:28px;
+        }
+
+        /* ========== SKILL PANEL ========== */
+        .skill-panel {
+            width:860px;
+            background:linear-gradient(180deg, rgba(30,28,20,.9) 0%, rgba(20,18,12,.95) 100%);
+            border:3px solid rgba(139,115,52,.35);
+            border-radius:6px;
+            padding:0;
+            box-shadow:0 20px 60px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.04);
+            overflow:hidden;
+        }
+
+        /* Panel header bar */
+        .panel-header {
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            padding:14px 22px;
+            background:linear-gradient(180deg, rgba(60,50,30,.5) 0%, rgba(40,32,18,.6) 100%);
+            border-bottom:2px solid rgba(139,115,52,.25);
+        }
+
+        .panel-title {
+            font-family:'Press Start 2P',monospace;
+            font-size:11px;
+            color:#d4a937;
+            text-shadow:1px 1px 0 rgba(0,0,0,.6);
+        }
+
+        .total-level {
+            font-family:'Press Start 2P',monospace;
+            font-size:9px;
+            color:rgba(212,169,55,.45);
+        }
+
+        /* Skill grid — 3 columns like RS */
+        .skill-grid {
+            display:grid;
+            grid-template-columns:1fr 1fr 1fr;
+            gap:0;
+            padding:8px;
+        }
+
+        .skill-row {
+            display:flex;
+            align-items:center;
+            gap:10px;
+            padding:14px 14px;
+            border:1px solid rgba(139,115,52,.08);
+            position:relative;
+        }
+
+        .skill-row:hover {
+            background:rgba(139,115,52,.04);
+        }
+
+        .skill-icon-box {
+            width:36px;
+            height:36px;
+            border-radius:4px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:18px;
+            flex-shrink:0;
+            background:rgba(0,0,0,.3);
+            border:1.5px solid rgba(139,115,52,.2);
+        }
+
+        .skill-info {
+            flex:1;
+            min-width:0;
+        }
+
+        .skill-name {
+            font-family:'Press Start 2P',monospace;
+            font-size:8px;
+            color:rgba(255,255,255,.6);
+            text-shadow:1px 1px 0 rgba(0,0,0,.5);
+            margin-bottom:3px;
+        }
+
+        .skill-bar-track {
+            height:6px;
+            background:rgba(0,0,0,.4);
+            border-radius:3px;
+            border:1px solid rgba(139,115,52,.12);
+            overflow:hidden;
+        }
+
+        .skill-bar-fill {
+            height:100%;
+            border-radius:2px;
+        }
+
+        .skill-level {
+            font-family:'Press Start 2P',monospace;
+            font-size:12px;
+            color:#d4a937;
+            text-shadow:1px 1px 0 rgba(0,0,0,.6);
+            flex-shrink:0;
+            min-width:32px;
+            text-align:right;
+        }
+
+        /* Colour per skill */
+        .sk-speed .skill-bar-fill     { background:linear-gradient(90deg, #10b981, #34d399); }
+        .sk-seo .skill-bar-fill       { background:linear-gradient(90deg, #6366f1, #818cf8); }
+        .sk-design .skill-bar-fill    { background:linear-gradient(90deg, #ec4899, #f472b6); }
+        .sk-convert .skill-bar-fill   { background:linear-gradient(90deg, #f59e0b, #fbbf24); }
+        .sk-security .skill-bar-fill  { background:linear-gradient(90deg, #ef4444, #f87171); }
+        .sk-uptime .skill-bar-fill    { background:linear-gradient(90deg, #3b82f6, #60a5fa); }
+        .sk-mobile .skill-bar-fill    { background:linear-gradient(90deg, #8b5cf6, #a78bfa); }
+        .sk-ux .skill-bar-fill        { background:linear-gradient(90deg, #14b8a6, #2dd4bf); }
+        .sk-revenue .skill-bar-fill   { background:linear-gradient(90deg, #d4a937, #fbbf24); }
+
+        /* Level up notification */
+        .level-up {
+            width:860px;
+            margin-top:20px;
+            padding:20px 28px;
+            border-radius:6px;
+            background:linear-gradient(180deg, rgba(60,50,30,.4) 0%, rgba(40,32,18,.5) 100%);
+            border:2px solid rgba(212,169,55,.25);
+            display:flex;
+            align-items:center;
+            gap:18px;
+            box-shadow:0 0 20px rgba(212,169,55,.08);
+        }
+
+        .lu-icon {
+            width:52px;
+            height:52px;
+            border-radius:6px;
+            background:rgba(212,169,55,.12);
+            border:2px solid rgba(212,169,55,.3);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:26px;
+            flex-shrink:0;
+        }
+
+        .lu-text {
+            flex:1;
+        }
+
+        .lu-title {
+            font-family:'Press Start 2P',monospace;
+            font-size:12px;
+            color:#d4a937;
+            text-shadow:1px 1px 0 rgba(0,0,0,.5);
+            margin-bottom:6px;
+        }
+
+        .lu-desc {
+            font-size:14px;
+            color:rgba(255,255,255,.3);
+            font-weight:500;
+        }
+
+        .lu-xp {
+            font-family:'Press Start 2P',monospace;
+            font-size:14px;
+            color:#10b981;
+            text-shadow:1px 1px 0 rgba(0,0,0,.5);
+            flex-shrink:0;
+        }
+
+        /* Chat log style */
+        .chat-log {
+            width:860px;
+            margin-top:16px;
+            display:flex;
+            flex-direction:column;
+            gap:4px;
+        }
+
+        .chat-line {
+            font-family:'Press Start 2P',monospace;
+            font-size:9px;
+            line-height:1.6;
+            padding:4px 8px;
+        }
+
+        .chat-name { font-weight:700; }
+        .chat-name-you { color:#d4a937; }
+        .chat-name-sys { color:#10b981; }
+        .chat-msg { color:rgba(255,255,255,.35); }
+        .chat-highlight { color:#fbbf24; }
+
+        /* CTA */
+        .cta-area {
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            margin-top:28px;
+            z-index:15;
+        }
+
+        .cta-btn {
+            background:linear-gradient(180deg, #d4a937 0%, #a67c1a 100%);
+            color:#1a1408;
+            font-size:22px;
+            font-weight:900;
+            padding:20px 56px;
+            border-radius:6px;
+            border:2px solid rgba(212,169,55,.6);
+            cursor:pointer;
+            margin-bottom:12px;
+            box-shadow:0 4px 20px rgba(212,169,55,.2), inset 0 1px 0 rgba(255,255,255,.15);
+            font-family:'Inter',sans-serif;
+            text-shadow:0 1px 0 rgba(255,255,255,.15);
+        }
+
+        .cta-sub {
+            font-family:'Press Start 2P',monospace;
+            font-size:9px;
+            color:rgba(212,169,55,.25);
+        }
+
+        .controls {
+            position:fixed;
+            top:0; left:0; right:0;
+            z-index:9999;
+            background:rgba(0,0,0,.85);
+            backdrop-filter:blur(10px);
+            padding:12px 24px;
+            display:flex;
+            align-items:center;
+            gap:20px;
+            font-size:13px;
+            color:white;
+        }
+        .controls label { display:flex; align-items:center; gap:6px; cursor:pointer; font-weight:500; }
+        .controls button {
+            background:white; color:#0a0a0a; border:none; padding:8px 24px;
+            border-radius:100px; font-family:'Inter',sans-serif; font-size:13px; font-weight:700; cursor:pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="controls">
+    <label><input type="checkbox" id="showSafe"> Show TikTok Safe Zones</label>
+    <button id="dl">⬇ Download PNG (1080×1920)</button>
+</div>
+
+<input type="checkbox" id="showSafe" style="display:none;">
+
+<div class="frame-wrapper">
+    <div class="frame" id="frame">
+
+        <div class="safe-overlay">
+            <div class="safe-top"></div>
+            <div class="safe-bottom"></div>
+            <div class="safe-right"></div>
+            <div class="safe-left"></div>
+        </div>
+
+        <div class="content">
+            <img src="../CW-logo-white.png" alt="CRFTD Web" class="logo-top">
+
+            <div class="skill-tab">
+                <span class="skill-tab-icon">⚔️</span>
+                <span class="skill-tab-text">Website Skills</span>
+            </div>
+
+            <div class="headline">Level up</div>
+            <div class="headline-accent">your website.</div>
+
+            <!-- Skill Grid Panel -->
+            <div class="skill-panel">
+                <div class="panel-header">
+                    <span class="panel-title">⚔️ Site Stats</span>
+                    <span class="total-level">Total Lvl: 847</span>
+                </div>
+                <div class="skill-grid">
+
+                    <div class="skill-row sk-speed">
+                        <div class="skill-icon-box">⚡</div>
+                        <div class="skill-info">
+                            <div class="skill-name">SPEED</div>
+                            <div class="skill-bar-track"><div class="skill-bar-fill" style="width:95%"></div></div>
+                        </div>
+                        <div class="skill-level">95</div>
+                    </div>
+
+                    <div class="skill-row sk-seo">
+                        <div class="skill-icon-box">🔍</div>
+                        <div class="skill-info">
+                            <div class="skill-name">SEO</div>
+                            <div class="skill-bar-track"><div class="skill-bar-fill" style="width:92%"></div></div>
+                        </div>
+                        <div class="skill-level">92</div>
+                    </div>
+
+                    <div class="skill-row sk-design">
+                        <div class="skill-icon-box">🎨</div>
+                        <div class="skill-info">
+                            <div class="skill-name">DESIGN</div>
+                            <div class="skill-bar-track"><div class="skill-bar-fill" style="width:99%"></div></div>
+                        </div>
+                        <div class="skill-level">99</div>
+                    </div>
+
+                    <div class="skill-row sk-convert">
+                        <div class="skill-icon-box">🎯</div>
+                        <div class="skill-info">
+                            <div class="skill-name">CONVERT</div>
+                            <div class="skill-bar-track"><div class="skill-bar-fill" style="width:88%"></div></div>
+                        </div>
+                        <div class="skill-level">88</div>
+                    </div>
+
+                    <div class="skill-row sk-security">
+                        <div class="skill-icon-box">🛡️</div>
+                        <div class="skill-info">
+                            <div class="skill-name">SECURITY</div>
+                            <div class="skill-bar-track"><div class="skill-bar-fill" style="width:94%"></div></div>
+                        </div>
+                        <div class="skill-level">94</div>
+                    </div>
+
+                    <div class="skill-row sk-uptime">
+                        <div class="skill-icon-box">💎</div>
+                        <div class="skill-info">
+                            <div class="skill-name">UPTIME</div>
+                            <div class="skill-bar-track"><div class="skill-bar-fill" style="width:99%"></div></div>
+                        </div>
+                        <div class="skill-level">99</div>
+                    </div>
+
+                    <div class="skill-row sk-mobile">
+                        <div class="skill-icon-box">📱</div>
+                        <div class="skill-info">
+                            <div class="skill-name">MOBILE</div>
+                            <div class="skill-bar-track"><div class="skill-bar-fill" style="width:96%"></div></div>
+                        </div>
+                        <div class="skill-level">96</div>
+                    </div>
+
+                    <div class="skill-row sk-ux">
+                        <div class="skill-icon-box">✨</div>
+                        <div class="skill-info">
+                            <div class="skill-name">UX</div>
+                            <div class="skill-bar-track"><div class="skill-bar-fill" style="width:91%"></div></div>
+                        </div>
+                        <div class="skill-level">91</div>
+                    </div>
+
+                    <div class="skill-row sk-revenue">
+                        <div class="skill-icon-box">💰</div>
+                        <div class="skill-info">
+                            <div class="skill-name">REVENUE</div>
+                            <div class="skill-bar-track"><div class="skill-bar-fill" style="width:93%"></div></div>
+                        </div>
+                        <div class="skill-level">93</div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Level Up Notification -->
+            <div class="level-up">
+                <div class="lu-icon">🎉</div>
+                <div class="lu-text">
+                    <div class="lu-title">LEVEL UP!</div>
+                    <div class="lu-desc">Your Design skill is now 99 (mastered)</div>
+                </div>
+                <div class="lu-xp">+15K XP</div>
+            </div>
+
+            <!-- Chat Log -->
+            <div class="chat-log">
+                <div class="chat-line">
+                    <span class="chat-name chat-name-sys">[System]:</span>
+                    <span class="chat-msg"> Your site has reached </span>
+                    <span class="chat-highlight">Total Level 847</span>
+                </div>
+                <div class="chat-line">
+                    <span class="chat-name chat-name-you">[You]:</span>
+                    <span class="chat-msg"> When did we max SEO?</span>
+                </div>
+                <div class="chat-line">
+                    <span class="chat-name chat-name-sys">[CRFTD]:</span>
+                    <span class="chat-msg"> Week 2. You were busy levelling </span>
+                    <span class="chat-highlight">Revenue</span>
+                    <span class="chat-msg"> 🔥</span>
+                </div>
+            </div>
+
+            <div class="cta-area">
+                <button class="cta-btn">Start Levelling ›</button>
+                <div class="cta-sub">Free site audit · Check your stats</div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+document.querySelector('.controls label input').addEventListener('change', function() {
+    document.getElementById('showSafe').checked = this.checked;
+});
+document.getElementById('dl').addEventListener('click', async () => {
+    const btn = document.getElementById('dl');
+    btn.textContent = 'Generating...';
+    const frame = document.getElementById('frame');
+    const wrapper = frame.parentElement;
+    const origTransform = wrapper.style.transform;
+    wrapper.style.transform = 'none';
+    const safeOverlay = frame.querySelector('.safe-overlay');
+    safeOverlay.style.display = 'none';
+    try {
+        const canvas = await html2canvas(frame, {
+            width:1080, height:1920, scale:1, useCORS:true,
+            backgroundColor:'#0a0a0a', scrollX:0, scrollY:-window.scrollY,
+            windowWidth:1080, windowHeight:1920,
+        });
+        const link = document.createElement('a');
+        link.download = 'crftdweb-ad-10-1080x1920.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+    } finally {
+        wrapper.style.transform = origTransform;
+        safeOverlay.style.display = '';
+        btn.textContent = '⬇ Download PNG (1080×1920)';
+    }
+});
+</script>
+</body>
+</html>

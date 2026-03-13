@@ -68,9 +68,6 @@ function EngineNavbar() {
               <Link href="/engine#features" className="text-white/70 hover:text-white transition-colors text-sm">
                 Features
               </Link>
-              <Link href="/engine/pricing" className="text-white/70 hover:text-white transition-colors text-sm">
-                Pricing
-              </Link>
               <Link href="/engine/whitelabel" className="text-white/70 hover:text-white transition-colors text-sm">
                 Whitelabel
               </Link>
@@ -143,7 +140,6 @@ function EngineNavbar() {
           >
             <div className="container mx-auto px-4 py-6 space-y-4">
               <Link href="/engine#features" onClick={() => setMobileMenuOpen(false)} className="block text-white/70 hover:text-white transition-colors py-2">Features</Link>
-              <Link href="/engine/pricing" onClick={() => setMobileMenuOpen(false)} className="block text-white/70 hover:text-white transition-colors py-2">Pricing</Link>
               <Link href="/engine/whitelabel" onClick={() => setMobileMenuOpen(false)} className="block text-white/70 hover:text-white transition-colors py-2">Whitelabel</Link>
               <Link href="/engine/help" onClick={() => setMobileMenuOpen(false)} className="block text-white/70 hover:text-white transition-colors py-2">Help</Link>
               <hr className="border-white/10" />
@@ -204,7 +200,6 @@ function EngineFooter() {
           <div>
             <h4 className="text-white font-semibold mb-4">Company</h4>
             <ul className="space-y-2">
-              <li><Link href="/engine/pricing" className="text-white/50 hover:text-white text-sm transition-colors">Pricing</Link></li>
               <li><Link href="/" className="text-white/50 hover:text-white text-sm transition-colors">CrftdWeb Agency</Link></li>
               <li><Link href="/contact" className="text-white/50 hover:text-white text-sm transition-colors">Contact</Link></li>
             </ul>
