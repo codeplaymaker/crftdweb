@@ -68,9 +68,6 @@ function EngineNavbar() {
               <Link href="/engine#features" className="text-white/70 hover:text-white transition-colors text-sm">
                 Features
               </Link>
-              <Link href="/engine/whitelabel" className="text-white/70 hover:text-white transition-colors text-sm">
-                Whitelabel
-              </Link>
               <Link href="/engine/help" className="text-white/70 hover:text-white transition-colors text-sm">
                 Help
               </Link>
@@ -140,7 +137,6 @@ function EngineNavbar() {
           >
             <div className="container mx-auto px-4 py-6 space-y-4">
               <Link href="/engine#features" onClick={() => setMobileMenuOpen(false)} className="block text-white/70 hover:text-white transition-colors py-2">Features</Link>
-              <Link href="/engine/whitelabel" onClick={() => setMobileMenuOpen(false)} className="block text-white/70 hover:text-white transition-colors py-2">Whitelabel</Link>
               <Link href="/engine/help" onClick={() => setMobileMenuOpen(false)} className="block text-white/70 hover:text-white transition-colors py-2">Help</Link>
               <hr className="border-white/10" />
               {user ? (
