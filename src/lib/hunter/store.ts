@@ -6,7 +6,7 @@ import type { Hunt, Business, AuditResult, Preview, PipelineStats } from './type
 
 export async function createHunt(data: Omit<Hunt, 'id' | 'createdAt'>): Promise<string> {
   const ref = adminDb.collection('hunts').doc();
-  await ref.set({ ...data, id: ref.id, createdAt: FieldValue.serverTimestamp() });
+  await ref.set({ ...data, id: ref.id, auditsCompleted: 0, createdAt: FieldValue.serverTimestamp() });
   return ref.id;
 }
 
@@ -17,6 +17,22 @@ export async function getHunt(huntId: string): Promise<Hunt | null> {
 
 export async function updateHunt(huntId: string, data: Partial<Hunt>) {
   await adminDb.collection('hunts').doc(huntId).update(data);
+}
+
+/**
+ * Atomically increment the auditsCompleted counter on a hunt.
+ * Returns the NEW value after increment. Only one caller will see it equal `total`.
+ */
+export async function incrementAuditCount(huntId: string): Promise<number> {
+  const ref = adminDb.collection('hunts').doc(huntId);
+  // Use a transaction to read-increment-write atomically
+  return adminDb.runTransaction(async (tx) => {
+    const snap = await tx.get(ref);
+    const current = snap.data()?.auditsCompleted ?? 0;
+    const next = current + 1;
+    tx.update(ref, { auditsCompleted: next });
+    return next;
+  });
 }
 
 export async function getRecentHunts(max = 10): Promise<Hunt[]> {

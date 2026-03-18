@@ -3,6 +3,7 @@ import { auditWebsite } from '@/lib/hunter/auditor';
 import { gradeWebsite } from '@/lib/hunter/grader';
 import {
   getBusinessesByHunt, saveAudit, updateHunt, getHunt, getAuditsByHunt,
+  incrementAuditCount,
 } from '@/lib/hunter/store';
 import { sendMessage } from '@/lib/telegram/bot';
 
@@ -80,27 +81,27 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // Check if all audits are now complete
-    const audits = await getAuditsByHunt(huntId);
-    const done = audits.length >= total;
+    // Atomically increment counter — only the call that hits `total` finalizes
+    const completed = await incrementAuditCount(huntId);
 
     // Progress updates at 25%, 50%, 75%
     if (chatId && total > 0) {
-      const pct = audits.length / total;
+      const pct = completed / total;
+      const prevPct = (completed - 1) / total;
       const milestones = [0.25, 0.5, 0.75];
       for (const m of milestones) {
-        if (pct >= m && (audits.length - 1) / total < m) {
-          await sendMessage(chatId, `⏳ Audited ${audits.length}/${total}...`);
+        if (pct >= m && prevPct < m) {
+          await sendMessage(chatId, `⏳ Audited ${completed}/${total}...`);
           break;
         }
       }
     }
 
-    if (done) {
+    if (completed === total) {
       await finalize(huntId, chatId, total);
     }
 
-    return NextResponse.json({ audited: index, done });
+    return NextResponse.json({ audited: index, done: completed === total });
   } catch (error) {
     console.error('[hunt/audit] error:', error);
     return NextResponse.json({ error: 'audit failed' }, { status: 500 });
@@ -111,11 +112,8 @@ export async function POST(req: NextRequest) {
  * Finalize the hunt: tally grades, update hunt record, send Telegram summary.
  */
 async function finalize(huntId: string, chatId: string | null, total: number) {
-  // Double-check we haven't already finalized (race condition guard)
-  const hunt = await getHunt(huntId);
-  if (hunt?.status === 'complete') return;
-
   const audits = await getAuditsByHunt(huntId);
+  const hunt = await getHunt(huntId);
 
   const gradeCounts = { A: 0, B: 0, C: 0, D: 0 };
   for (const a of audits) {
