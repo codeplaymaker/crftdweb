@@ -66,7 +66,7 @@ async function runPageSpeed(url: string, apiKey?: string): Promise<Omit<AuditDat
   try {
     const res = await fetch(
       `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?${params}`,
-      { signal: AbortSignal.timeout(30000) },
+      { signal: AbortSignal.timeout(7000) },  // 7s — must fit within Vercel 10s limit
     );
     const data: LighthouseAudit = await res.json();
 
@@ -124,7 +124,7 @@ async function captureScreenshot(url: string): Promise<string | null> {
     });
 
     const res = await fetch(`https://api.microlink.io?${params}`, {
-      signal: AbortSignal.timeout(15000),
+      signal: AbortSignal.timeout(5000),  // 5s — runs in parallel with PageSpeed
     });
     const data = await res.json();
 

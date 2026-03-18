@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { after } from 'next/server';
 import { auditWebsite } from '@/lib/hunter/auditor';
 import { gradeWebsite } from '@/lib/hunter/grader';
 import {
@@ -6,7 +7,7 @@ import {
 } from '@/lib/hunter/store';
 import { sendMessage } from '@/lib/telegram/bot';
 
-const BATCH_SIZE = 2; // Audit 2 businesses per call (~6-8s, under 10s limit)
+const BATCH_SIZE = 2; // Audit 2 businesses per call (in parallel, ~7s, under 10s limit)
 
 /**
  * POST /api/hunter/hunt/audit
@@ -32,8 +33,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ done: true, huntId });
     }
 
-    // Audit this batch
-    for (const biz of batch) {
+    // Audit this batch IN PARALLEL (2 businesses × ~7s each = ~7s total)
+    await Promise.all(batch.map(async (biz) => {
       if (biz.website) {
         try {
           const auditData = await auditWebsite(biz.website);
@@ -85,28 +86,30 @@ export async function POST(req: NextRequest) {
           gradeReason: 'No website',
         });
       }
-    }
+    }));
 
     const nextOffset = offset + BATCH_SIZE;
     const progress = Math.min(nextOffset, businesses.length);
 
-    // Progress update every 4 businesses
-    if (chatId && progress % 4 === 0) {
-      await sendMessage(chatId, `⏳ Audited ${progress}/${businesses.length}...`);
-    }
-
-    // Trigger next batch (await to ensure it fires before Vercel freezes the lambda)
+    // Trigger next batch via after() — response returns immediately,
+    // Vercel keeps function alive to fire the chain trigger
     if (nextOffset < businesses.length) {
       const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.crftdweb.com';
-      try {
-        await fetch(`${baseUrl}/api/hunter/hunt/audit`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ huntId, chatId, offset: nextOffset }),
-        });
-      } catch (err) {
-        console.error('[audit-chain] trigger failed:', err);
-      }
+      after(async () => {
+        try {
+          // Progress update every 4 businesses
+          if (chatId && progress % 4 === 0) {
+            await sendMessage(chatId, `⏳ Audited ${progress}/${businesses.length}...`);
+          }
+          await fetch(`${baseUrl}/api/hunter/hunt/audit`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ huntId, chatId, offset: nextOffset }),
+          });
+        } catch (err) {
+          console.error('[audit-chain] trigger failed:', err);
+        }
+      });
     } else {
       // Last batch — finalize
       await finalize(huntId, chatId, businesses.length);

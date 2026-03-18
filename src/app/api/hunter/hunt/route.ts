@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { after } from 'next/server';
 import { scrapeBusinesses } from '@/lib/hunter/scraper';
 import { createHunt, saveBusiness, updateHunt } from '@/lib/hunter/store';
 import { sendMessage } from '@/lib/telegram/bot';
@@ -57,17 +58,20 @@ export async function POST(req: NextRequest) {
 
     await updateHunt(huntId, { businessCount: places.length });
 
-    // 3. Trigger audit step (await to ensure it fires before Vercel freezes the lambda)
+    // 3. Trigger audit step — use after() so response returns immediately
+    //    but Vercel keeps the function alive to fire the chain trigger
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.crftdweb.com';
-    try {
-      await fetch(`${baseUrl}/api/hunter/hunt/audit`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ huntId, chatId, offset: 0 }),
-      });
-    } catch (err) {
-      console.error('[hunt] audit trigger failed:', err);
-    }
+    after(async () => {
+      try {
+        await fetch(`${baseUrl}/api/hunter/hunt/audit`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ huntId, chatId, offset: 0 }),
+        });
+      } catch (err) {
+        console.error('[hunt] audit trigger failed:', err);
+      }
+    });
 
     return NextResponse.json({ success: true, huntId, businessCount: places.length });
   } catch (error) {
