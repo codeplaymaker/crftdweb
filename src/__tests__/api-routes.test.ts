@@ -22,6 +22,11 @@ vi.mock('firebase-admin/auth', () => ({
   })),
 }));
 
+vi.mock('firebase-admin/firestore', () => ({
+  getFirestore: vi.fn(() => ({})),
+  FieldValue: { serverTimestamp: vi.fn() },
+}));
+
 const authHeaders = {
   'Content-Type': 'application/json',
   'Authorization': 'Bearer test-firebase-token-1234567890',

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getPreviewBySlug, updatePreview } from '@/lib/hunter/store';
-import { Timestamp } from 'firebase/firestore';
+import { FieldValue } from 'firebase-admin/firestore';
+import type { Preview } from '@/lib/hunter/types';
 
 export async function POST(req: NextRequest) {
   const slug = req.nextUrl.searchParams.get('slug');
@@ -12,7 +13,7 @@ export async function POST(req: NextRequest) {
   // Only update if first click
   if (!preview.previewClickedAt) {
     await updatePreview(preview.id, {
-      previewClickedAt: Timestamp.now(),
+      previewClickedAt: FieldValue.serverTimestamp(),
       status: preview.status === 'sent' || preview.status === 'opened' ? 'clicked' : preview.status,
     });
   }

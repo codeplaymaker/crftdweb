@@ -5,7 +5,7 @@ import {
 } from '@/lib/hunter/store';
 import { sendOutreachEmail } from '@/lib/hunter/outreach';
 import { sendMessage } from '@/lib/telegram/bot';
-import { Timestamp } from 'firebase/firestore';
+import { FieldValue } from 'firebase-admin/firestore';
 
 /**
  * POST /api/hunter/outreach
@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
       if (msgId) {
         await updatePreview(preview.id, {
           status: 'sent',
-          emailSentAt: Timestamp.now(),
+          emailSentAt: FieldValue.serverTimestamp(),
         });
       }
 
@@ -85,7 +85,7 @@ export async function POST(req: NextRequest) {
         if (msgId) {
           await updatePreview(preview.id, {
             status: 'sent',
-            emailSentAt: Timestamp.now(),
+            emailSentAt: FieldValue.serverTimestamp(),
           });
           sent++;
         } else {

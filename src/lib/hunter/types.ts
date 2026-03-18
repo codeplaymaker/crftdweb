@@ -1,4 +1,7 @@
 import { Timestamp } from 'firebase/firestore';
+import { FieldValue } from 'firebase-admin/firestore';
+
+type TimestampLike = Timestamp | FieldValue;
 
 /* ─── Hunt ───────────────────────────────────── */
 
@@ -10,7 +13,7 @@ export interface Hunt {
   status: 'running' | 'complete' | 'error';
   businessCount: number;
   gradeCounts: { A: number; B: number; C: number; D: number };
-  createdAt: Timestamp;
+  createdAt: TimestampLike;
 }
 
 /* ─── Business ───────────────────────────────── */
@@ -26,7 +29,7 @@ export interface Business {
   reviewCount: number;
   placeId: string;
   types: string[];       // Google Places types (e.g. "plumber", "dentist")
-  createdAt: Timestamp;
+  createdAt: TimestampLike;
 }
 
 /* ─── Audit ──────────────────────────────────── */
@@ -51,7 +54,7 @@ export interface AuditResult {
   grade: 'A' | 'B' | 'C' | 'D';
   gradeReason: string;
   screenshotUrl: string | null;
-  createdAt: Timestamp;
+  createdAt: TimestampLike;
 }
 
 /* ─── Preview ────────────────────────────────── */
@@ -72,11 +75,11 @@ export interface Preview {
   ctaText: string;
   // Outreach
   status: PreviewStatus;
-  emailSentAt: Timestamp | null;
-  emailOpenedAt: Timestamp | null;
-  previewClickedAt: Timestamp | null;
-  callBookedAt: Timestamp | null;
-  createdAt: Timestamp;
+  emailSentAt: TimestampLike | null;
+  emailOpenedAt: TimestampLike | null;
+  previewClickedAt: TimestampLike | null;
+  callBookedAt: TimestampLike | null;
+  createdAt: TimestampLike;
 }
 
 /* ─── Pipeline summary ───────────────────────── */
