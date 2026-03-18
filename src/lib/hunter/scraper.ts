@@ -115,7 +115,7 @@ export async function getPlaceDetails(
 export async function scrapeBusinesses(
   niche: string,
   city: string,
-  maxResults = 60,
+  maxResults = 20,
 ) {
   const places = await searchBusinesses(niche, city, maxResults);
 
