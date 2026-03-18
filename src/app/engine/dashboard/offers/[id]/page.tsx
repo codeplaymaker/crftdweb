@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/lib/firebase/AuthContext';
 import { getOffer, updateOffer, Offer } from '@/lib/firebase/firestore';
+import { toast } from 'sonner';
 
 export default function OfferDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -659,7 +660,7 @@ export default function OfferDetailPage({ params }: { params: Promise<{ id: stri
           onClick={() => {
             const offerText = `${offer.name}\n${'━'.repeat(30)}\n\nInvestment: $${offer.price?.toLocaleString()}\nTimeframe: ${offer.timeframe || 'Not specified'}\n\nWho It's For:\n${offer.targetAudience}\n\nThe Transformation:\n${offer.transformation}\n\nWhat's Included:\n${offer.deliverables?.map(d => `- ${d}`).join('\n') || 'Not specified'}\n\nBonuses:\n${offer.bonuses?.map(b => `- ${b}`).join('\n') || 'None'}\n\nGuarantee:\n${offer.guarantee || 'Not specified'}`;
             navigator.clipboard.writeText(offerText);
-            alert('Offer copied to clipboard!');
+            toast.success('Offer copied to clipboard!');
           }}
           className="bg-white/10 border border-white/20 text-white px-6 py-3 rounded-xl font-medium hover:bg-white/20 transition-colors flex items-center gap-2"
         >

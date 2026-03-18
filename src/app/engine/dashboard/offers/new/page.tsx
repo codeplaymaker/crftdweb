@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/firebase/AuthContext';
 import { saveOffer } from '@/lib/firebase/firestore';
+import { toast } from 'sonner';
 
 const steps = [
   { id: 1, name: 'Niche', description: 'Define your target market' },
@@ -165,7 +166,7 @@ export default function NewOfferPage() {
   const handleAIAutoFill = async () => {
     const cachedReport = localStorage.getItem('lastTruthReport');
     if (!cachedReport) {
-      alert('No Truth Engine report found. Run a niche research first to use AI Auto-Fill.');
+      toast.error('No Truth Engine report found. Run a niche research first to use AI Auto-Fill.');
       return;
     }
 
@@ -211,7 +212,7 @@ export default function NewOfferPage() {
 
     } catch (err) {
       console.error('Error with AI Auto-Fill:', err);
-      alert('Failed to generate AI suggestions. Please try again.');
+      toast.error('Failed to generate AI suggestions. Please try again.');
     } finally {
       setAiLoading(false);
     }

@@ -4,6 +4,7 @@ import { useState, useRef } from 'react';
 import Link from 'next/link';
 import { Download, Search, ImageIcon } from 'lucide-react';
 import html2canvas from 'html2canvas';
+import { toast } from 'sonner';
 
 type AssetCategory = 'All Assets' | 'Posters' | 'Socials' | 'TikToks' | 'Banners';
 
@@ -74,7 +75,7 @@ export default function MarketingPage() {
       }, 'image/png', 1.0); // Quality set to 1.0 (maximum)
     } catch (error) {
       console.error('Error generating image:', error);
-      alert('Failed to download image. Please try again.');
+      toast.error('Failed to download image. Please try again.');
     }
   };
 

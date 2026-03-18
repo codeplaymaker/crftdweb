@@ -7,6 +7,7 @@ import { updateUserProfile } from '@/lib/firebase/firestore';
 import { updateProfile, deleteUser as firebaseDeleteUser } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { doc, deleteDoc, getFirestore } from 'firebase/firestore';
+import { toast } from 'sonner';
 
 export default function SettingsPage() {
   const { user, profile, refreshProfile, signOut } = useAuth();
@@ -143,7 +144,7 @@ export default function SettingsPage() {
                   const file = e.target.files?.[0];
                   if (file) {
                     // TODO: Upload to Firebase Storage when configured
-                    alert('Avatar upload will be available when Firebase Storage is configured.');
+                    toast('Avatar upload coming soon.');
                   }
                 }}
               />

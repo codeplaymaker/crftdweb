@@ -4,6 +4,24 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 vi.stubEnv('OPENAI_API_KEY', 'test-key');
 vi.stubEnv('PERPLEXITY_API_KEY', 'test-perplexity-key');
 
+// Mock Firebase Admin so auth guard verifies our test tokens
+vi.mock('firebase-admin/app', () => ({
+  initializeApp: vi.fn(() => ({})),
+  getApps: vi.fn(() => [{}]),
+  cert: vi.fn(),
+}));
+
+vi.mock('firebase-admin/auth', () => ({
+  getAuth: vi.fn(() => ({
+    verifyIdToken: vi.fn(async (token: string) => {
+      if (token === 'test-firebase-token-1234567890') {
+        return { uid: 'test-user-123' };
+      }
+      throw new Error('Invalid token');
+    }),
+  })),
+}));
+
 const authHeaders = {
   'Content-Type': 'application/json',
   'Authorization': 'Bearer test-firebase-token-1234567890',

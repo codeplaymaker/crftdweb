@@ -28,9 +28,8 @@ export default function Footer() {
             <h4 className="font-semibold mb-4 text-sm tracking-wide">Services</h4>
             <ul className="space-y-2">
               <li><Link href="/services" className="text-white/50 hover:text-white text-sm transition-colors">All Services</Link></li>
-              <li><Link href="/services/web-design" className="text-white/50 hover:text-white text-sm transition-colors">Web Design</Link></li>
-              <li><Link href="/services/branding" className="text-white/50 hover:text-white text-sm transition-colors">Branding</Link></li>
-              <li><Link href="/services/ui-ux" className="text-white/50 hover:text-white text-sm transition-colors">UI/UX Design</Link></li>
+              <li><Link href="/services#process" className="text-white/50 hover:text-white text-sm transition-colors">Our Process</Link></li>
+              <li><Link href="/work" className="text-white/50 hover:text-white text-sm transition-colors">Case Studies</Link></li>
             </ul>
           </div>
 

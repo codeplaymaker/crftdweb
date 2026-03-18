@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/lib/firebase/AuthContext';
 import { saveTruthReport } from '@/lib/firebase/firestore';
+import { toast } from 'sonner';
 
 interface RedditQuote {
   quote: string;
@@ -543,7 +544,7 @@ export default function TruthEngineDashboard() {
       doc.save(`truth-engine-${report.niche.toLowerCase().replace(/\s+/g, '-')}.pdf`);
     } catch (err) {
       console.error('PDF export error:', err);
-      alert('Failed to export PDF. Please try again.');
+      toast.error('Failed to export PDF. Please try again.');
     } finally {
       setExporting(false);
     }

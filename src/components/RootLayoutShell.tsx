@@ -2,6 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 import { ReactNode } from 'react';
+import { Toaster } from 'sonner';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 
@@ -18,6 +19,12 @@ export default function RootLayoutShell({ children }: { children: ReactNode }) {
         {children}
       </main>
       {!hasOwnLayout && <Footer />}
+      <Toaster
+        position="bottom-right"
+        toastOptions={{
+          style: { background: '#18181b', color: '#fff', border: '1px solid rgba(255,255,255,0.1)' },
+        }}
+      />
     </>
   );
 }

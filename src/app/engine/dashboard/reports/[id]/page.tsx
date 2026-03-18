@@ -8,6 +8,7 @@ import { useAuth } from '@/lib/firebase/AuthContext';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase/config';
 import { TruthReport } from '@/lib/firebase/firestore';
+import { toast } from 'sonner';
 
 export default function ReportDetailPage() {
   const params = useParams();
@@ -527,7 +528,7 @@ export default function ReportDetailPage() {
       pdfDoc.save(`truth-engine-${report.niche.toLowerCase().replace(/\s+/g, '-')}.pdf`);
     } catch (err) {
       console.error('PDF export error:', err);
-      alert('Failed to export PDF. Please try again.');
+      toast.error('Failed to export PDF. Please try again.');
     } finally {
       setExporting(false);
     }

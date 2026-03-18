@@ -63,10 +63,6 @@ const faqs = [
     question: 'Do I need a big audience?',
     answer: 'No. High-ticket is quality over quantity. You only need 2-5 clients per month at $3K-$10K to hit significant revenue. Engine helps you attract the right buyers.',
   },
-  {
-    question: 'Can I white-label this for my clients?',
-    answer: 'Yes. The whitelabel program lets you resell Engine under your own brand — custom domains, logos, and the complete platform included.',
-  },
 ];
 
 const categoryColors: Record<string, string> = {
@@ -140,7 +136,7 @@ function HeroSection() {
             <span className="w-1 h-1 bg-white/20 rounded-full" />
             <span>8 Specialized Agents</span>
             <span className="w-1 h-1 bg-white/20 rounded-full" />
-            <span>Whitelabel Ready</span>
+            <span>Enterprise Ready</span>
           </motion.div>
         </motion.div>
       </div>
@@ -389,7 +385,7 @@ function ProcessSection() {
     {
       step: '04',
       title: 'Scale & Optimize',
-      description: 'Analytics show what\'s working. Double down on winners. Add new offers. Whitelabel to clients.',
+      description: 'Analytics show what\'s working. Double down on winners. Add new offers. Scale with confidence.',
     },
   ];
 
@@ -432,65 +428,6 @@ function ProcessSection() {
               </motion.div>
             ))}
           </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ────────────────────────────── WHITELABEL ─── */
-
-function WhitelabelSection() {
-  return (
-    <section className="py-32 relative" id="whitelabel">
-      <div className="container mx-auto px-4">
-        <div className="max-w-4xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="border border-purple-500/15 bg-purple-500/[0.02] rounded-3xl p-10 md:p-14"
-          >
-            <span className="text-[10px] font-semibold tracking-[0.25em] uppercase text-purple-400/60 block mb-6">
-              WHITELABEL PROGRAM
-            </span>
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 tracking-tight">
-              Sell Engine to your clients — under your brand
-            </h2>
-            <p className="text-white/40 text-base leading-relaxed mb-10 max-w-2xl">
-              Don&apos;t just use the system. Own it. Resell the entire platform to your coaching clients and agency customers.
-            </p>
-
-            <div className="grid sm:grid-cols-2 gap-6">
-              {[
-                { title: 'Your Brand, Your Platform', description: 'Custom domains, logos, colors. Your clients never see Engine.' },
-                { title: 'Instant Client Workspaces', description: 'Spin up isolated accounts in seconds. Full data separation.' },
-                { title: 'Agency Revenue Model', description: 'Charge $997-$2,997/month. You keep 100% of the margin.' },
-                { title: 'Full System Access', description: 'Content AI, sales agents, analytics — everything under your brand.' },
-              ].map((item, index) => (
-                <motion.div
-                  key={item.title}
-                  initial={{ opacity: 0, y: 10 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.06 }}
-                >
-                  <h4 className="text-white font-semibold text-sm mb-1">{item.title}</h4>
-                  <p className="text-white/40 text-sm leading-relaxed">{item.description}</p>
-                </motion.div>
-              ))}
-            </div>
-
-            <div className="mt-10">
-              <Link
-                href="/engine/whitelabel"
-                className="text-purple-400/80 text-sm font-medium hover:text-purple-400 transition-colors inline-flex items-center gap-2"
-              >
-                Learn about the whitelabel program
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 2l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-              </Link>
-            </div>
-          </motion.div>
         </div>
       </div>
     </section>
@@ -608,7 +545,6 @@ export default function EnginePage() {
       <FeaturesSection />
       <AgentsSection />
       <ProcessSection />
-      <WhitelabelSection />
       <FAQSection />
       <FinalCTASection />
     </>

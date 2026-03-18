@@ -10,7 +10,7 @@ export default function ChangelogPage() {
       date: 'February 4, 2026',
       tag: 'New',
       changes: [
-        { type: 'feature', text: 'Added Whitelabel program for agencies and coaches' },
+        { type: 'feature', text: 'Added multi-workspace support for agencies and teams' },
         { type: 'feature', text: 'New AI Agent: Landing Page Copywriter' },
         { type: 'improvement', text: 'Improved Truth Engine accuracy by 40%' },
         { type: 'fix', text: 'Fixed report export formatting issues' },

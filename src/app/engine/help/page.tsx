@@ -134,10 +134,10 @@ export default function HelpPage() {
           className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16"
         >
           {[
-            { label: 'Video Tutorials', icon: '🎬', href: '/engine/demo', tag: 'Coming Soon' },
-            { label: 'Community Forum', icon: '💬', href: '/contact', tag: 'Coming Soon' },
+            { label: 'Getting Started', icon: '🚀', href: '/engine/demo' },
             { label: 'Feature Requests', icon: '💡', href: '/contact' },
             { label: 'Contact Support', icon: '📧', href: '/contact' },
+            { label: 'Changelog', icon: '📋', href: '/engine/changelog' },
           ].map((item) => (
             <Link
               key={item.label}
@@ -146,9 +146,6 @@ export default function HelpPage() {
             >
               <span className="text-2xl mb-2 block">{item.icon}</span>
               <span className="text-white/70 text-sm">{item.label}</span>
-              {item.tag && (
-                <span className="absolute top-2 right-2 text-[10px] bg-purple-500/20 text-purple-400 px-1.5 py-0.5 rounded-full">{item.tag}</span>
-              )}
             </Link>
           ))}
         </motion.div>

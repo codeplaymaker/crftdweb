@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useAuth } from '@/lib/firebase';
 import { getIntegrations, saveIntegration, updateIntegration, Integration } from '@/lib/firebase/firestore';
 import { Link2, Database, RefreshCw, Settings, X } from 'lucide-react';
+import { toast } from 'sonner';
 
 // Available integrations that users can connect
 const availableIntegrations = [
@@ -444,7 +445,7 @@ export default function IntegrationsPage() {
                 Access our full REST API to build custom integrations and automate workflows.
               </p>
               <button 
-                onClick={() => alert('API documentation coming soon!')}
+                onClick={() => toast('API documentation coming soon.')}
                 className="w-full py-3 bg-white/10 text-white rounded-xl font-medium hover:bg-white/20 transition-all"
               >
                 View API Docs (Coming Soon)
