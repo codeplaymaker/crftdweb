@@ -1,73 +1,47 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { after } from 'next/server';
 import { auditWebsite } from '@/lib/hunter/auditor';
 import { gradeWebsite } from '@/lib/hunter/grader';
 import {
-  getBusinessesByHunt, saveAudit, updateHunt, getHunt,
+  getBusinessesByHunt, saveAudit, updateHunt, getHunt, getAuditsByHunt,
 } from '@/lib/hunter/store';
 import { sendMessage } from '@/lib/telegram/bot';
 
-const BATCH_SIZE = 2; // Audit 2 businesses per call (in parallel, ~7s, under 10s limit)
-
 /**
  * POST /api/hunter/hunt/audit
- * Body: { huntId, chatId, offset }
+ * Body: { huntId, chatId, index, total }
  *
- * Daisy-chain step: audits BATCH_SIZE businesses starting at offset,
- * then triggers itself for the next batch. When done, sends summary.
+ * Audits ONE business by index. All 20 calls fire in parallel from the hunt route.
+ * When a call finishes and detects all audits are complete, it finalizes the hunt.
+ * No chaining needed — each call is independent and under 10s.
  */
 export async function POST(req: NextRequest) {
   try {
-    const { huntId, chatId, offset = 0 } = await req.json();
+    const { huntId, chatId, index, total } = await req.json();
 
-    if (!huntId) {
-      return NextResponse.json({ error: 'huntId required' }, { status: 400 });
+    if (!huntId || index === undefined) {
+      return NextResponse.json({ error: 'huntId and index required' }, { status: 400 });
     }
 
     const businesses = await getBusinessesByHunt(huntId);
-    const batch = businesses.slice(offset, offset + BATCH_SIZE);
+    const biz = businesses[index];
 
-    if (batch.length === 0) {
-      // All done — finalize
-      await finalize(huntId, chatId, businesses.length);
-      return NextResponse.json({ done: true, huntId });
+    if (!biz) {
+      return NextResponse.json({ error: `No business at index ${index}` }, { status: 404 });
     }
 
-    // Audit this batch IN PARALLEL (2 businesses × ~7s each = ~7s total)
-    await Promise.all(batch.map(async (biz) => {
-      if (biz.website) {
-        try {
-          const auditData = await auditWebsite(biz.website);
-          const { grade, reason } = gradeWebsite(auditData);
-          await saveAudit({
-            businessId: biz.id,
-            huntId,
-            ...auditData,
-            grade,
-            gradeReason: reason,
-          });
-        } catch {
-          // Audit failed — save as D
-          await saveAudit({
-            businessId: biz.id,
-            huntId,
-            performanceScore: 0,
-            lcp: 0,
-            cls: 0,
-            fcp: 0,
-            speedIndex: 0,
-            mobile: false,
-            https: false,
-            hasMetaDescription: false,
-            hasOgTags: false,
-            hasCTA: false,
-            screenshotUrl: null,
-            grade: 'D',
-            gradeReason: 'Audit failed — site unreachable or timed out',
-          });
-        }
-      } else {
-        // No website — D grade
+    // Audit this single business
+    if (biz.website) {
+      try {
+        const auditData = await auditWebsite(biz.website);
+        const { grade, reason } = gradeWebsite(auditData);
+        await saveAudit({
+          businessId: biz.id,
+          huntId,
+          ...auditData,
+          grade,
+          gradeReason: reason,
+        });
+      } catch {
         await saveAudit({
           businessId: biz.id,
           huntId,
@@ -83,42 +57,53 @@ export async function POST(req: NextRequest) {
           hasCTA: false,
           screenshotUrl: null,
           grade: 'D',
-          gradeReason: 'No website',
+          gradeReason: 'Audit failed — site unreachable or timed out',
         });
       }
-    }));
-
-    const nextOffset = offset + BATCH_SIZE;
-    const progress = Math.min(nextOffset, businesses.length);
-
-    // Trigger next batch via after() — response returns immediately,
-    // Vercel keeps function alive to fire the chain trigger
-    if (nextOffset < businesses.length) {
-      const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.crftdweb.com';
-      after(async () => {
-        try {
-          // Progress update every 4 businesses
-          if (chatId && progress % 4 === 0) {
-            await sendMessage(chatId, `⏳ Audited ${progress}/${businesses.length}...`);
-          }
-          await fetch(`${baseUrl}/api/hunter/hunt/audit`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ huntId, chatId, offset: nextOffset }),
-          });
-        } catch (err) {
-          console.error('[audit-chain] trigger failed:', err);
-        }
-      });
     } else {
-      // Last batch — finalize
-      await finalize(huntId, chatId, businesses.length);
+      await saveAudit({
+        businessId: biz.id,
+        huntId,
+        performanceScore: 0,
+        lcp: 0,
+        cls: 0,
+        fcp: 0,
+        speedIndex: 0,
+        mobile: false,
+        https: false,
+        hasMetaDescription: false,
+        hasOgTags: false,
+        hasCTA: false,
+        screenshotUrl: null,
+        grade: 'D',
+        gradeReason: 'No website',
+      });
     }
 
-    return NextResponse.json({ audited: progress, total: businesses.length });
+    // Check if all audits are now complete
+    const audits = await getAuditsByHunt(huntId);
+    const done = audits.length >= total;
+
+    // Progress updates at 25%, 50%, 75%
+    if (chatId && total > 0) {
+      const pct = audits.length / total;
+      const milestones = [0.25, 0.5, 0.75];
+      for (const m of milestones) {
+        if (pct >= m && (audits.length - 1) / total < m) {
+          await sendMessage(chatId, `⏳ Audited ${audits.length}/${total}...`);
+          break;
+        }
+      }
+    }
+
+    if (done) {
+      await finalize(huntId, chatId, total);
+    }
+
+    return NextResponse.json({ audited: index, done });
   } catch (error) {
     console.error('[hunt/audit] error:', error);
-    return NextResponse.json({ error: 'audit batch failed' }, { status: 500 });
+    return NextResponse.json({ error: 'audit failed' }, { status: 500 });
   }
 }
 
@@ -126,9 +111,11 @@ export async function POST(req: NextRequest) {
  * Finalize the hunt: tally grades, update hunt record, send Telegram summary.
  */
 async function finalize(huntId: string, chatId: string | null, total: number) {
-  const { getAuditsByHunt } = await import('@/lib/hunter/store');
-  const audits = await getAuditsByHunt(huntId);
+  // Double-check we haven't already finalized (race condition guard)
   const hunt = await getHunt(huntId);
+  if (hunt?.status === 'complete') return;
+
+  const audits = await getAuditsByHunt(huntId);
 
   const gradeCounts = { A: 0, B: 0, C: 0, D: 0 };
   for (const a of audits) {

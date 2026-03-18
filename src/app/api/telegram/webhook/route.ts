@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
 <b>🚀 CRFTD Web Bot</b>
 
 <b>🔍 Hunter — Find &amp; Close Leads:</b>
-/hunt &lt;niche&gt; &lt;city&gt; — Find businesses &amp; audit sites
+/hunt &lt;niche&gt; &lt;city&gt; [country] — Find businesses &amp; audit sites
 /results &lt;huntId&gt; — Show hunt results
 /grade &lt;A|B|C|D&gt; &lt;huntId&gt; — List by grade
 /status &lt;huntId&gt; — Hunt status summary
@@ -187,21 +187,31 @@ ${post.content}
       // ──────────────────────────────────────────────
 
       case '/hunt': {
+        // Support: /hunt <niche> <city> or /hunt <niche> <city> <country>
         const niche = args[0];
-        const city = args.slice(1).join(' ');
+        // Check if last arg looks like a country code (2-3 chars) or known country
+        const lastArg = args[args.length - 1];
+        const countryPattern = /^(UK|US|USA|AU|CA|NZ|IE|DE|FR|ES|IT|NL|SE|NO|DK|FI|BE|AT|CH|PT|PL|CZ|IN|SG|HK|JP|KR|ZA|BR|MX|AE|SA)$/i;
+        let country = 'UK';
+        let cityArgs = args.slice(1);
+        if (args.length >= 3 && countryPattern.test(lastArg)) {
+          country = lastArg.toUpperCase();
+          cityArgs = args.slice(1, -1);
+        }
+        const city = cityArgs.join(' ');
         if (!niche || !city) {
-          await sendMessage(chatId, '❌ Usage: /hunt &lt;niche&gt; &lt;city&gt;\nExample: /hunt plumber London');
+          await sendMessage(chatId, '❌ Usage: /hunt &lt;niche&gt; &lt;city&gt; [country]\nExample: /hunt plumber London\nExample: /hunt dentist Miami US');
           break;
         }
 
-        await sendMessage(chatId, `🔍 Hunting ${niche} in ${city}... This may take a few minutes.`);
+        await sendMessage(chatId, `🔍 Hunting ${niche} in ${city}, ${country}... This may take a few minutes.`);
 
         // Fire and forget — the API route sends Telegram updates itself
         const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.crftdweb.com';
         fetch(`${baseUrl}/api/hunter/hunt`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ niche, city, chatId: String(chatId) }),
+          body: JSON.stringify({ niche, city, chatId: String(chatId), country }),
         }).catch(err => {
           console.error('[hunt] fire-and-forget error:', err);
           sendMessage(chatId, '❌ Hunt failed to start. Check server logs.');

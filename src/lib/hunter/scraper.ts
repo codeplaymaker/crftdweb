@@ -42,6 +42,7 @@ interface PlaceDetailsResponse {
 export async function searchBusinesses(
   niche: string,
   city: string,
+  country = 'UK',
   maxResults = 60,
 ): Promise<PlaceResult[]> {
   const all: PlaceResult[] = [];
@@ -50,7 +51,7 @@ export async function searchBusinesses(
 
   for (let page = 0; page < pages; page++) {
     const params = new URLSearchParams({
-      query: `${niche} in ${city}`,
+      query: `${niche} in ${city}, ${country}`,
       key: API_KEY(),
     });
 
@@ -115,9 +116,10 @@ export async function getPlaceDetails(
 export async function scrapeBusinesses(
   niche: string,
   city: string,
+  country = 'UK',
   maxResults = 20,
 ) {
-  const places = await searchBusinesses(niche, city, maxResults);
+  const places = await searchBusinesses(niche, city, country, maxResults);
 
   // Enrich in batches of 5 to avoid rate limits
   const enriched: Array<Omit<PlaceResult, 'website'> & { website: string | null; phone: string | null }> = [];

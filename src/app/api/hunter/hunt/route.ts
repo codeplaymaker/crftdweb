@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
     }
 
     // 1. Scrape businesses (fast — 1-3s)
-    const places = await scrapeBusinesses(niche, city);
+    const places = await scrapeBusinesses(niche, city, country);
 
     if (chatId) {
       await sendMessage(chatId, `📋 Found <b>${places.length}</b> businesses. Starting audits...`);
@@ -58,16 +58,26 @@ export async function POST(req: NextRequest) {
 
     await updateHunt(huntId, { businessCount: places.length });
 
-    // 3. Trigger audit step — use after() so response returns immediately
-    //    but Vercel keeps the function alive to fire the chain trigger
+    // 3. Fire all individual audit calls in parallel via after()
+    //    Each call audits ONE business (~7s), well under 10s limit.
+    //    No chaining needed — after() keeps function alive to dispatch all fetches.
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.crftdweb.com';
     after(async () => {
       try {
-        await fetch(`${baseUrl}/api/hunter/hunt/audit`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ huntId, chatId, offset: 0 }),
-        });
+        // Fire all audit calls concurrently
+        const results = await Promise.allSettled(
+          places.map((_, idx) =>
+            fetch(`${baseUrl}/api/hunter/hunt/audit`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ huntId, chatId, index: idx, total: places.length }),
+            })
+          )
+        );
+        const failures = results.filter(r => r.status === 'rejected').length;
+        if (failures > 0) {
+          console.error(`[hunt] ${failures}/${places.length} audit triggers failed`);
+        }
       } catch (err) {
         console.error('[hunt] audit trigger failed:', err);
       }
