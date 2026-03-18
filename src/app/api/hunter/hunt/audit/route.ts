@@ -95,14 +95,18 @@ export async function POST(req: NextRequest) {
       await sendMessage(chatId, `⏳ Audited ${progress}/${businesses.length}...`);
     }
 
-    // Trigger next batch (daisy-chain)
+    // Trigger next batch (await to ensure it fires before Vercel freezes the lambda)
     if (nextOffset < businesses.length) {
       const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.crftdweb.com';
-      fetch(`${baseUrl}/api/hunter/hunt/audit`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ huntId, chatId, offset: nextOffset }),
-      }).catch(err => console.error('[audit-chain] trigger failed:', err));
+      try {
+        await fetch(`${baseUrl}/api/hunter/hunt/audit`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ huntId, chatId, offset: nextOffset }),
+        });
+      } catch (err) {
+        console.error('[audit-chain] trigger failed:', err);
+      }
     } else {
       // Last batch — finalize
       await finalize(huntId, chatId, businesses.length);

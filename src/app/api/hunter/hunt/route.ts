@@ -57,13 +57,17 @@ export async function POST(req: NextRequest) {
 
     await updateHunt(huntId, { businessCount: places.length });
 
-    // 3. Trigger audit step (fire-and-forget daisy-chain)
+    // 3. Trigger audit step (await to ensure it fires before Vercel freezes the lambda)
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.crftdweb.com';
-    fetch(`${baseUrl}/api/hunter/hunt/audit`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ huntId, chatId, offset: 0 }),
-    }).catch(err => console.error('[hunt] audit trigger failed:', err));
+    try {
+      await fetch(`${baseUrl}/api/hunter/hunt/audit`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ huntId, chatId, offset: 0 }),
+      });
+    } catch (err) {
+      console.error('[hunt] audit trigger failed:', err);
+    }
 
     return NextResponse.json({ success: true, huntId, businessCount: places.length });
   } catch (error) {
