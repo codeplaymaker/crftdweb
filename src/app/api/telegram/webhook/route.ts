@@ -50,32 +50,30 @@ export async function POST(req: NextRequest) {
       case '/start':
       case '/help': {
         await sendMessage(chatId, `
-<b>🚀 CRFTD Web Marketing Bot</b>
+<b>🚀 CRFTD Web Bot</b>
 
-Generate marketing posts on-demand:
+<b>🔍 Hunter — Find &amp; Close Leads:</b>
+/hunt &lt;niche&gt; &lt;city&gt; — Find businesses &amp; audit sites
+/results &lt;huntId&gt; — Show hunt results
+/grade &lt;A|B|C|D&gt; &lt;huntId&gt; — List by grade
+/status &lt;huntId&gt; — Hunt status summary
+/build &lt;businessId&gt; — Build one preview
+/build-all &lt;D|C&gt; &lt;huntId&gt; — Build previews for grade
+/approve &lt;previewId&gt; — Approve preview
+/approve-all &lt;huntId&gt; — Approve all built
+/send &lt;previewId&gt; &lt;email&gt; — Send outreach email
+/send-all &lt;huntId&gt; — Send to all approved
+/pipeline — Pipeline stats
+/hunts — Recent hunts
 
 <b>📝 Text Posts:</b>
 /post — Random marketing post
-/post tip — Actionable design/conversion tip
-/post case-study — Mini case study teaser
-/post myth-bust — Bust a web design myth
-/post cta — Call-to-action post
-/post stat — Performance stat insight
-/post bts — Behind-the-scenes
-/post hot-take — Bold industry opinion
-/batch [count] — Generate multiple posts (default: 5)
+/post tip|case-study|myth-bust|cta|stat|bts|hot-take
+/batch [count] — Generate multiple (default: 5)
 
 <b>🎨 Visuals (TikTok/Social):</b>
 /visual — Random branded visual
-/visual problem — Problem hook visual
-/visual signs — 5 signs list visual
-/visual case — Case study visual
-/visual framework — Process framework
-/visual compare — Cost comparison
-/visual proof — Client testimonials
-/visual cta — Call-to-action visual
-/visual tip — Web tip visual
-/visual all — All 8 default templates
+/visual problem|signs|case|framework|compare|proof|cta|tip|all
 
 /help — Show this menu
         `.trim());
@@ -181,6 +179,236 @@ ${post.content}
           console.error('Visual generation failed:', err);
           await sendMessage(chatId, `❌ Failed to generate visual. Error: ${err instanceof Error ? err.message : 'Unknown error'}`);
         }
+        break;
+      }
+
+      // ──────────────────────────────────────────────
+      // HUNTER COMMANDS
+      // ──────────────────────────────────────────────
+
+      case '/hunt': {
+        const niche = args[0];
+        const city = args.slice(1).join(' ');
+        if (!niche || !city) {
+          await sendMessage(chatId, '❌ Usage: /hunt &lt;niche&gt; &lt;city&gt;\nExample: /hunt plumber London');
+          break;
+        }
+
+        await sendMessage(chatId, `🔍 Hunting ${niche} in ${city}... This may take a few minutes.`);
+
+        // Fire and forget — the API route sends Telegram updates itself
+        const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.crftdweb.com';
+        fetch(`${baseUrl}/api/hunter/hunt`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ niche, city, chatId: String(chatId) }),
+        }).catch(err => {
+          console.error('[hunt] fire-and-forget error:', err);
+          sendMessage(chatId, '❌ Hunt failed to start. Check server logs.');
+        });
+        break;
+      }
+
+      case '/results': {
+        const huntId = args[0];
+        if (!huntId) { await sendMessage(chatId, '❌ Usage: /results &lt;huntId&gt;'); break; }
+
+        const { getBusinessesByHunt } = await import('@/lib/hunter/store');
+        const { getAuditsByHunt } = await import('@/lib/hunter/store');
+        const businesses = await getBusinessesByHunt(huntId);
+        const audits = await getAuditsByHunt(huntId);
+
+        if (businesses.length === 0) {
+          await sendMessage(chatId, '❌ No businesses found for this hunt.');
+          break;
+        }
+
+        const auditMap = new Map(audits.map(a => [a.businessId, a]));
+        const lines = businesses.slice(0, 30).map((b, i) => {
+          const a = auditMap.get(b.id);
+          const grade = a ? a.grade : '?';
+          const score = a ? `${a.performanceScore}/100` : 'N/A';
+          return `${i + 1}. [${grade}] ${b.name} — ${score}${b.website ? ' 🌐' : ' ❌'}`;
+        });
+
+        await sendMessage(chatId, `<b>📊 Hunt Results (${businesses.length} businesses)</b>\n\n${lines.join('\n')}\n\n${businesses.length > 30 ? `...and ${businesses.length - 30} more\n\n` : ''}Use /grade D ${huntId} to filter by grade.`);
+        break;
+      }
+
+      case '/grade': {
+        const grade = args[0]?.toUpperCase() as 'A' | 'B' | 'C' | 'D';
+        const huntId = args[1];
+        if (!grade || !huntId || !['A', 'B', 'C', 'D'].includes(grade)) {
+          await sendMessage(chatId, '❌ Usage: /grade &lt;A|B|C|D&gt; &lt;huntId&gt;');
+          break;
+        }
+
+        const { getAuditsByGrade } = await import('@/lib/hunter/store');
+        const { getBusiness } = await import('@/lib/hunter/store');
+        const gradeAudits = await getAuditsByGrade(huntId, grade);
+
+        if (gradeAudits.length === 0) {
+          await sendMessage(chatId, `No ${grade}-grade businesses found.`);
+          break;
+        }
+
+        const lines: string[] = [];
+        for (const a of gradeAudits.slice(0, 25)) {
+          const biz = await getBusiness(a.businessId);
+          lines.push(`• ${biz?.name ?? 'Unknown'} — ${a.performanceScore}/100\n  ${a.gradeReason}\n  ID: <code>${a.businessId}</code>`);
+        }
+
+        await sendMessage(chatId, `<b>Grade ${grade} (${gradeAudits.length} businesses)</b>\n\n${lines.join('\n\n')}\n\nUse /build-all ${grade} ${huntId} to generate previews.`);
+        break;
+      }
+
+      case '/status': {
+        const huntId = args[0];
+        if (!huntId) { await sendMessage(chatId, '❌ Usage: /status &lt;huntId&gt;'); break; }
+
+        const { getHunt } = await import('@/lib/hunter/store');
+        const hunt = await getHunt(huntId);
+
+        if (!hunt) { await sendMessage(chatId, '❌ Hunt not found.'); break; }
+
+        await sendMessage(chatId, `<b>🔍 Hunt: ${hunt.niche} in ${hunt.city}</b>\n\nStatus: ${hunt.status}\nBusinesses: ${hunt.businessCount}\n\nGrades:\n  A: ${hunt.gradeCounts.A}\n  B: ${hunt.gradeCounts.B}\n  C: ${hunt.gradeCounts.C}\n  D: ${hunt.gradeCounts.D}`);
+        break;
+      }
+
+      case '/hunts': {
+        const { getRecentHunts } = await import('@/lib/hunter/store');
+        const hunts = await getRecentHunts(10);
+
+        if (hunts.length === 0) {
+          await sendMessage(chatId, 'No hunts yet. Use /hunt &lt;niche&gt; &lt;city&gt; to start.');
+          break;
+        }
+
+        const lines = hunts.map(h =>
+          `• ${h.niche} in ${h.city} — ${h.businessCount} biz [${h.status}]\n  ID: <code>${h.id}</code>`,
+        );
+
+        await sendMessage(chatId, `<b>📋 Recent Hunts</b>\n\n${lines.join('\n\n')}`);
+        break;
+      }
+
+      case '/build': {
+        const businessId = args[0];
+        if (!businessId) { await sendMessage(chatId, '❌ Usage: /build &lt;businessId&gt;'); break; }
+
+        const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.crftdweb.com';
+        fetch(`${baseUrl}/api/hunter/build`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ businessId, chatId: String(chatId) }),
+        }).catch(err => {
+          console.error('[build] error:', err);
+          sendMessage(chatId, '❌ Build failed.');
+        });
+
+        await sendMessage(chatId, '🏗️ Building preview...');
+        break;
+      }
+
+      case '/build-all': {
+        const grade = args[0]?.toUpperCase();
+        const huntId = args[1];
+        if (!grade || !huntId || !['A', 'B', 'C', 'D'].includes(grade)) {
+          await sendMessage(chatId, '❌ Usage: /build-all &lt;D|C&gt; &lt;huntId&gt;');
+          break;
+        }
+
+        const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.crftdweb.com';
+        fetch(`${baseUrl}/api/hunter/build`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ huntId, grade, chatId: String(chatId) }),
+        }).catch(err => {
+          console.error('[build-all] error:', err);
+          sendMessage(chatId, '❌ Batch build failed.');
+        });
+        break;
+      }
+
+      case '/approve': {
+        const previewId = args[0];
+        if (!previewId) { await sendMessage(chatId, '❌ Usage: /approve &lt;previewId&gt;'); break; }
+
+        const { getPreview, updatePreview } = await import('@/lib/hunter/store');
+        const preview = await getPreview(previewId);
+        if (!preview) { await sendMessage(chatId, '❌ Preview not found.'); break; }
+
+        await updatePreview(previewId, { status: 'approved' });
+        await sendMessage(chatId, `✅ Approved: ${preview.previewUrl}\n\nUse /send ${previewId} &lt;email&gt; to send outreach.`);
+        break;
+      }
+
+      case '/approve-all': {
+        const huntId = args[0];
+        if (!huntId) { await sendMessage(chatId, '❌ Usage: /approve-all &lt;huntId&gt;'); break; }
+
+        const { getPreviewsByHunt, updatePreview } = await import('@/lib/hunter/store');
+        const previews = await getPreviewsByHunt(huntId);
+        const built = previews.filter(p => p.status === 'built');
+
+        if (built.length === 0) {
+          await sendMessage(chatId, 'No built previews to approve.');
+          break;
+        }
+
+        for (const p of built) {
+          await updatePreview(p.id, { status: 'approved' });
+        }
+
+        await sendMessage(chatId, `✅ Approved ${built.length} previews.\n\nUse /send-all ${huntId} to send outreach emails.`);
+        break;
+      }
+
+      case '/send': {
+        const previewId = args[0];
+        const email = args[1];
+        if (!previewId || !email) {
+          await sendMessage(chatId, '❌ Usage: /send &lt;previewId&gt; &lt;email&gt;');
+          break;
+        }
+
+        const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.crftdweb.com';
+        fetch(`${baseUrl}/api/hunter/outreach`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ previewId, email, chatId: String(chatId) }),
+        }).catch(err => {
+          console.error('[send] error:', err);
+          sendMessage(chatId, '❌ Send failed.');
+        });
+
+        await sendMessage(chatId, `📧 Sending outreach to ${email}...`);
+        break;
+      }
+
+      case '/send-all': {
+        const huntId = args[0];
+        if (!huntId) { await sendMessage(chatId, '❌ Usage: /send-all &lt;huntId&gt;'); break; }
+
+        const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.crftdweb.com';
+        fetch(`${baseUrl}/api/hunter/outreach`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ huntId, chatId: String(chatId) }),
+        }).catch(err => {
+          console.error('[send-all] error:', err);
+          sendMessage(chatId, '❌ Batch send failed.');
+        });
+
+        await sendMessage(chatId, '📧 Starting batch outreach...');
+        break;
+      }
+
+      case '/pipeline': {
+        const { getPipelineStats } = await import('@/lib/hunter/store');
+        const stats = await getPipelineStats();
+
+        await sendMessage(chatId, `<b>📊 Pipeline Stats</b>\n\n🔍 Hunts: ${stats.totalHunts}\n🏢 Businesses: ${stats.totalBusinesses}\n📋 Audited: ${stats.totalAudited}\n🏗️ Previews: ${stats.totalPreviews}\n📧 Sent: ${stats.totalSent}\n👀 Opened: ${stats.totalOpened}\n🔗 Clicked: ${stats.totalClicked}\n📅 Booked: ${stats.totalBooked}\n\nConversion: ${stats.totalSent > 0 ? ((stats.totalBooked / stats.totalSent) * 100).toFixed(1) : '0'}% booked`);
         break;
       }
 
