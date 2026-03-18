@@ -2,32 +2,34 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auditWebsite } from '@/lib/hunter/auditor';
 import { gradeWebsite } from '@/lib/hunter/grader';
 import {
-  getBusinessesByHunt, saveAudit, updateHunt, getHunt, getAuditsByHunt,
+  getBusiness, saveAudit, updateHunt, getHunt, getAuditsByHunt,
   incrementAuditCount,
 } from '@/lib/hunter/store';
 import { sendMessage } from '@/lib/telegram/bot';
 
 /**
  * POST /api/hunter/hunt/audit
- * Body: { huntId, chatId, index, total }
+ * Body: { huntId, chatId, businessId, total }
  *
- * Audits ONE business by index. All 20 calls fire in parallel from the hunt route.
- * When a call finishes and detects all audits are complete, it finalizes the hunt.
- * No chaining needed — each call is independent and under 10s.
+ * Audits ONE business by ID. All 20 calls fire in parallel from the hunt route.
+ * Each call is independent — no index lookups, no ordering dependency.
+ * When a call finishes and its atomic counter hits `total`, it finalizes the hunt.
  */
 export async function POST(req: NextRequest) {
   try {
-    const { huntId, chatId, index, total } = await req.json();
+    const { huntId, chatId, businessId, total } = await req.json();
 
-    if (!huntId || index === undefined) {
-      return NextResponse.json({ error: 'huntId and index required' }, { status: 400 });
+    if (!huntId || !businessId) {
+      return NextResponse.json({ error: 'huntId and businessId required' }, { status: 400 });
     }
 
-    const businesses = await getBusinessesByHunt(huntId);
-    const biz = businesses[index];
+    const biz = await getBusiness(businessId);
 
     if (!biz) {
-      return NextResponse.json({ error: `No business at index ${index}` }, { status: 404 });
+      // Still increment counter so finalize isn't blocked
+      const completed = await incrementAuditCount(huntId);
+      if (completed === total) await finalize(huntId, chatId, total);
+      return NextResponse.json({ error: `Business ${businessId} not found` }, { status: 404 });
     }
 
     // Audit this single business
@@ -101,7 +103,7 @@ export async function POST(req: NextRequest) {
       await finalize(huntId, chatId, total);
     }
 
-    return NextResponse.json({ audited: index, done: completed === total });
+    return NextResponse.json({ audited: businessId, done: completed === total });
   } catch (error) {
     console.error('[hunt/audit] error:', error);
     return NextResponse.json({ error: 'audit failed' }, { status: 500 });

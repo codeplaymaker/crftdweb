@@ -41,9 +41,10 @@ export async function POST(req: NextRequest) {
       await sendMessage(chatId, `📋 Found <b>${places.length}</b> businesses. Starting audits...`);
     }
 
-    // 2. Save all businesses to Firestore
+    // 2. Save all businesses to Firestore — collect IDs
+    const businessIds: string[] = [];
     for (const place of places) {
-      await saveBusiness({
+      const id = await saveBusiness({
         huntId,
         name: place.name,
         website: place.website || null,
@@ -54,23 +55,22 @@ export async function POST(req: NextRequest) {
         placeId: place.place_id,
         types: place.types || [],
       });
+      businessIds.push(id);
     }
 
     await updateHunt(huntId, { businessCount: places.length });
 
-    // 3. Fire all individual audit calls in parallel via after()
-    //    Each call audits ONE business (~7s), well under 10s limit.
-    //    No chaining needed — after() keeps function alive to dispatch all fetches.
+    // 3. Fire one audit call per business in parallel via after()
+    //    Pass businessId directly — no index lookups needed.
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.crftdweb.com';
     after(async () => {
       try {
-        // Fire all audit calls concurrently
         const results = await Promise.allSettled(
-          places.map((_, idx) =>
+          businessIds.map((businessId) =>
             fetch(`${baseUrl}/api/hunter/hunt/audit`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ huntId, chatId, index: idx, total: places.length }),
+              body: JSON.stringify({ huntId, chatId, businessId, total: places.length }),
             })
           )
         );
