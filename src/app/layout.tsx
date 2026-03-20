@@ -5,6 +5,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import RootLayoutShell from '@/components/RootLayoutShell';
 import { LocalBusinessJsonLd, WebSiteJsonLd } from '@/components/seo/JsonLd';
+import GoogleAnalytics from '@/components/GoogleAnalytics';
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -75,6 +76,7 @@ export default function RootLayout({
           classicismo.variable
         )}
       >
+        <GoogleAnalytics />
         <RootLayoutShell>
           {children}
         </RootLayoutShell>
