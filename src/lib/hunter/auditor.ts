@@ -66,12 +66,13 @@ async function runPageSpeed(url: string, apiKey?: string): Promise<Omit<AuditDat
   try {
     const res = await fetch(
       `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?${params}`,
-      { signal: AbortSignal.timeout(7000) },  // 7s — must fit within Vercel 10s limit
+      { signal: AbortSignal.timeout(9000) },  // 9s — tight but gives PageSpeed a fair shot
     );
     const data: LighthouseAudit = await res.json();
 
     if (data.error || !data.lighthouseResult) {
-      return fallbackAudit();
+      // PageSpeed failed — try lightweight check instead of returning zeros
+      return lightweightAudit(url);
     }
 
     const lh = data.lighthouseResult;
@@ -90,23 +91,65 @@ async function runPageSpeed(url: string, apiKey?: string): Promise<Omit<AuditDat
       hasCTA: (lh.categories.performance.score || 0) > 0.6,       // proxy: good sites tend to have CTAs
     };
   } catch {
-    return fallbackAudit();
+    // PageSpeed timed out — try lightweight check
+    return lightweightAudit(url);
   }
 }
 
-function fallbackAudit(): Omit<AuditData, 'screenshotUrl'> {
-  return {
-    performanceScore: 0,
-    lcp: 99999,
-    cls: 1,
-    fcp: 99999,
-    speedIndex: 99999,
-    mobile: false,
-    https: false,
-    hasMetaDescription: false,
-    hasOgTags: false,
-    hasCTA: false,
-  };
+/**
+ * Lightweight fallback: fetch the homepage directly and check for
+ * HTTPS, meta description, viewport tag, and CTA keywords.
+ * Gives a meaningful grade even when PageSpeed times out.
+ */
+async function lightweightAudit(url: string): Promise<Omit<AuditData, 'screenshotUrl'>> {
+  try {
+    const start = Date.now();
+    const res = await fetch(url, {
+      signal: AbortSignal.timeout(5000),
+      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; CrftdBot/1.0)' },
+      redirect: 'follow',
+    });
+    const elapsed = Date.now() - start;
+    const html = await res.text();
+    const lower = html.toLowerCase();
+
+    const isHttps = res.url.startsWith('https');
+    const hasViewport = lower.includes('name="viewport"') || lower.includes("name='viewport'");
+    const hasMeta = lower.includes('name="description"') || lower.includes("name='description'");
+    const hasOg = lower.includes('property="og:') || lower.includes("property='og:");
+    const hasCTA = /book|call|contact|quote|schedule|get started|free estimate/i.test(html);
+
+    // Estimate a rough performance score from response time
+    // < 1s = ~70, 1-3s = ~45, 3-5s = ~25
+    const perfScore = elapsed < 1000 ? 70 : elapsed < 3000 ? 45 : 25;
+
+    return {
+      performanceScore: perfScore,
+      lcp: elapsed,  // rough approximation
+      cls: 0,
+      fcp: elapsed,
+      speedIndex: elapsed,
+      mobile: hasViewport,
+      https: isHttps,
+      hasMetaDescription: hasMeta,
+      hasOgTags: hasOg,
+      hasCTA,
+    };
+  } catch {
+    // Site completely unreachable
+    return {
+      performanceScore: 0,
+      lcp: 99999,
+      cls: 1,
+      fcp: 99999,
+      speedIndex: 99999,
+      mobile: false,
+      https: false,
+      hasMetaDescription: false,
+      hasOgTags: false,
+      hasCTA: false,
+    };
+  }
 }
 
 /**

@@ -19,7 +19,7 @@ export interface GradeResult {
 export function gradeWebsite(audit: AuditData): GradeResult {
   const { performanceScore, lcp, mobile, https, hasMetaDescription, hasCTA } = audit;
 
-  // D — completely broken or performance 0 (site unreachable / errored)
+  // D — completely unreachable (score 0 only comes from total failure now)
   if (performanceScore === 0) {
     return { grade: 'D', reason: 'Site unreachable or broken' };
   }
@@ -34,6 +34,16 @@ export function gradeWebsite(audit: AuditData): GradeResult {
   if (!hasMetaDescription) issues.push('no meta description');
   if (!hasCTA) issues.push('no clear CTAs');
 
+  // Count how many positive signals the site has
+  const positives = [
+    performanceScore >= 50,
+    mobile,
+    https,
+    hasMetaDescription,
+    hasCTA,
+    lcp < 3000,
+  ].filter(Boolean).length;
+
   // A — everything good
   if (
     performanceScore >= 80 &&
@@ -46,13 +56,13 @@ export function gradeWebsite(audit: AuditData): GradeResult {
   }
 
   // B — decent but missing some pieces
-  if (performanceScore >= 60 && mobile && https) {
+  if (performanceScore >= 50 && mobile && https) {
     const minor = issues.length > 0 ? issues.join(', ') : 'minor optimizations needed';
     return { grade: 'B', reason: `Decent site — ${minor}` };
   }
 
-  // C — has some redeeming qualities
-  if (performanceScore >= 30 || mobile) {
+  // C — has some redeeming qualities (at least 2 positive signals)
+  if (positives >= 2 || performanceScore >= 25) {
     return { grade: 'C', reason: issues.join(', ') || 'mediocre performance' };
   }
 
