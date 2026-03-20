@@ -116,6 +116,38 @@ export async function updatePreview(id: string, data: Partial<Preview>) {
   await adminDb.collection('previews').doc(id).update(data);
 }
 
+export async function deletePreview(id: string) {
+  await adminDb.collection('previews').doc(id).delete();
+}
+
+export async function getRecentPreviews(max = 20): Promise<Preview[]> {
+  const snap = await adminDb.collection('previews').orderBy('createdAt', 'desc').limit(max).get();
+  return snap.docs.map(d => d.data() as Preview);
+}
+
+export async function deleteHunt(huntId: string) {
+  // Delete hunt + all related businesses, audits, and previews
+  const batch = adminDb.batch();
+  batch.delete(adminDb.collection('hunts').doc(huntId));
+
+  const [businesses, audits, previews] = await Promise.all([
+    adminDb.collection('businesses').where('huntId', '==', huntId).get(),
+    adminDb.collection('audits').where('huntId', '==', huntId).get(),
+    adminDb.collection('previews').where('huntId', '==', huntId).get(),
+  ]);
+
+  businesses.docs.forEach(d => batch.delete(d.ref));
+  audits.docs.forEach(d => batch.delete(d.ref));
+  previews.docs.forEach(d => batch.delete(d.ref));
+
+  await batch.commit();
+  return {
+    businesses: businesses.size,
+    audits: audits.size,
+    previews: previews.size,
+  };
+}
+
 /* ─── Pipeline stats ─────────────────────────── */
 
 export async function getPipelineStats(): Promise<PipelineStats> {

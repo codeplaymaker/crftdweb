@@ -57,14 +57,17 @@ export async function POST(req: NextRequest) {
 /results &lt;huntId&gt; — Show hunt results
 /grade &lt;A|B|C|D&gt; &lt;huntId&gt; — List by grade
 /status &lt;huntId&gt; — Hunt status summary
+/hunts — Recent hunts
 /build &lt;businessId&gt; — Build one preview
-/build-all &lt;D|C&gt; &lt;huntId&gt; — Build previews for grade
+/build-all &lt;D|C&gt; [huntId] — Build previews (latest hunt if omitted)
+/previews [huntId] — List built previews
 /approve &lt;previewId&gt; — Approve preview
 /approve-all &lt;huntId&gt; — Approve all built
 /send &lt;previewId&gt; &lt;email&gt; — Send outreach email
 /send-all &lt;huntId&gt; — Send to all approved
+/delete-preview &lt;previewId&gt; — Delete a preview
+/delete-hunt &lt;huntId&gt; — Delete hunt + all data
 /pipeline — Pipeline stats
-/hunts — Recent hunts
 
 <b>📝 Text Posts:</b>
 /post — Random marketing post
@@ -322,10 +325,23 @@ ${post.content}
 
       case '/build-all': {
         const grade = args[0]?.toUpperCase();
-        const huntId = args[1];
-        if (!grade || !huntId || !['A', 'B', 'C', 'D'].includes(grade)) {
-          await sendMessage(chatId, '❌ Usage: /build-all &lt;D|C&gt; &lt;huntId&gt;');
+        let huntId = args[1];
+
+        if (!grade || !['A', 'B', 'C', 'D'].includes(grade)) {
+          await sendMessage(chatId, '❌ Usage: /build-all &lt;D|C&gt; [huntId]\n\nOmit huntId to use latest hunt.');
           break;
+        }
+
+        // Auto-use latest hunt if not specified
+        if (!huntId) {
+          const { getRecentHunts } = await import('@/lib/hunter/store');
+          const recent = await getRecentHunts(1);
+          if (recent.length === 0) {
+            await sendMessage(chatId, '❌ No hunts found. Run /hunt first.');
+            break;
+          }
+          huntId = recent[0].id;
+          await sendMessage(chatId, `🔄 Using latest hunt: <b>${recent[0].niche}</b> in <b>${recent[0].city}</b>\n(${huntId})`);
         }
 
         const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.crftdweb.com';
@@ -419,6 +435,69 @@ ${post.content}
         const stats = await getPipelineStats();
 
         await sendMessage(chatId, `<b>📊 Pipeline Stats</b>\n\n🔍 Hunts: ${stats.totalHunts}\n🏢 Businesses: ${stats.totalBusinesses}\n📋 Audited: ${stats.totalAudited}\n🏗️ Previews: ${stats.totalPreviews}\n📧 Sent: ${stats.totalSent}\n👀 Opened: ${stats.totalOpened}\n🔗 Clicked: ${stats.totalClicked}\n📅 Booked: ${stats.totalBooked}\n\nConversion: ${stats.totalSent > 0 ? ((stats.totalBooked / stats.totalSent) * 100).toFixed(1) : '0'}% booked`);
+        break;
+      }
+
+      case '/previews': {
+        const huntId = args[0];
+        const { getRecentPreviews, getPreviewsByHunt } = await import('@/lib/hunter/store');
+
+        const previews = huntId
+          ? await getPreviewsByHunt(huntId)
+          : await getRecentPreviews(20);
+
+        if (previews.length === 0) {
+          await sendMessage(chatId, huntId ? `No previews for hunt ${huntId}.` : 'No previews yet.');
+          break;
+        }
+
+        const lines = previews.map((p, i) => {
+          const status = p.status === 'approved' ? '✅' : p.status === 'sent' ? '📧' : '🏗️';
+          const name = p.headline || p.slug || 'Unknown';
+          return `${i + 1}. ${status} <b>${name}</b>\n   ${p.previewUrl || 'No URL'}\n   ID: <code>${p.id}</code>`;
+        });
+
+        const header = huntId ? `<b>🏗️ Previews for hunt ${huntId}</b>` : '<b>🏗️ Recent Previews</b>';
+        await sendMessage(chatId, `${header}\n\n${lines.join('\n\n')}`);
+        break;
+      }
+
+      case '/delete-preview': {
+        const previewId = args[0];
+        if (!previewId) {
+          await sendMessage(chatId, '❌ Usage: /delete-preview &lt;previewId&gt;\n\nUse /previews to see IDs.');
+          break;
+        }
+
+        const { getPreview, deletePreview } = await import('@/lib/hunter/store');
+        const preview = await getPreview(previewId);
+        if (!preview) {
+          await sendMessage(chatId, '❌ Preview not found.');
+          break;
+        }
+
+        await deletePreview(previewId);
+        await sendMessage(chatId, `🗑️ Deleted preview: <b>${preview.headline || preview.slug}</b>\n(${previewId})`);
+        break;
+      }
+
+      case '/delete-hunt': {
+        const huntId = args[0];
+        if (!huntId) {
+          await sendMessage(chatId, '❌ Usage: /delete-hunt &lt;huntId&gt;\n\nUse /hunts to see IDs.');
+          break;
+        }
+
+        const { getHunt, deleteHunt } = await import('@/lib/hunter/store');
+        const hunt = await getHunt(huntId);
+        if (!hunt) {
+          await sendMessage(chatId, '❌ Hunt not found.');
+          break;
+        }
+
+        await sendMessage(chatId, `🗑️ Deleting hunt <b>${hunt.niche} in ${hunt.city}</b> and all related data...`);
+        const deleted = await deleteHunt(huntId);
+        await sendMessage(chatId, `✅ Deleted: ${deleted.businesses} businesses, ${deleted.audits} audits, ${deleted.previews} previews.`);
         break;
       }
 
