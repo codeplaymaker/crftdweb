@@ -70,6 +70,8 @@ export interface Preview {
   // Generated copy
   headline: string;
   subheadline: string;
+  problemHeadline: string;
+  problemSubheadline: string;
   painPoints: string[];
   services: string[];
   ctaText: string;

@@ -2,12 +2,14 @@
 
 import { useEffect, useState } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { ArrowRight, AlertTriangle, CheckCircle2, Phone, Star, ChevronDown } from 'lucide-react';
+import { ArrowRight, CheckCircle2, Phone, Star, ChevronDown, Shield } from 'lucide-react';
 import Link from 'next/link';
 
 interface PreviewData {
   headline: string;
   subheadline: string;
+  problemHeadline: string;
+  problemSubheadline: string;
   painPoints: string[];
   services: string[];
   ctaText: string;
@@ -189,12 +191,16 @@ export default function PreviewPage({ params }: { params: Promise<{ slug: string
             className="text-center mb-16"
           >
             <span className="text-xs font-semibold tracking-[0.2em] uppercase text-gray-400 mb-6 block">
-              THE PROBLEM
+              WHY CHOOSE US
             </span>
             <h2 className="text-3xl md:text-5xl font-bold tracking-tight leading-tight mb-5">
-              Your website might be{' '}
-              <span className="text-gray-400">costing you customers.</span>
+              {data.problemHeadline}
             </h2>
+            {data.problemSubheadline && (
+              <p className="text-gray-500 text-lg max-w-2xl mx-auto leading-relaxed">
+                {data.problemSubheadline}
+              </p>
+            )}
           </motion.div>
 
           <motion.div
@@ -210,8 +216,8 @@ export default function PreviewPage({ params }: { params: Promise<{ slug: string
                 variants={staggerItem}
                 className="p-6 rounded-xl bg-white border border-black/5 shadow-sm"
               >
-                <div className="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center mb-4">
-                  <AlertTriangle className="w-5 h-5 text-red-500" />
+                <div className="w-10 h-10 rounded-full bg-amber-50 flex items-center justify-center mb-4">
+                  <Shield className="w-5 h-5 text-amber-600" />
                 </div>
                 <p className="text-sm leading-relaxed text-gray-700">{point}</p>
               </motion.div>
@@ -261,54 +267,6 @@ export default function PreviewPage({ params }: { params: Promise<{ slug: string
           </motion.div>
         </div>
       </section>
-
-      {/* ─── Before / After ─── */}
-      {data.screenshotUrl && (
-        <section className="py-24 sm:py-32 bg-gray-50">
-          <div className="container">
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              variants={sectionAnim}
-              className="text-center mb-16"
-            >
-              <span className="text-xs font-semibold tracking-[0.2em] uppercase text-gray-400 mb-6 block">
-                CURRENT SITE
-              </span>
-              <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-5">
-                Here&apos;s what visitors see{' '}
-                <span className="text-gray-400">right now.</span>
-              </h2>
-              <p className="text-gray-500 text-lg max-w-xl mx-auto">
-                This is a live screenshot of your current website. We can do better.
-              </p>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="max-w-3xl mx-auto"
-            >
-              <div className="rounded-2xl border border-black/10 overflow-hidden shadow-lg bg-white p-2">
-                {/* Browser chrome */}
-                <div className="h-8 bg-gray-100 rounded-t-lg flex items-center gap-1.5 px-3">
-                  <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-yellow-400" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-green-400" />
-                </div>
-                <img
-                  src={data.screenshotUrl}
-                  alt={`Current ${data.businessName} website`}
-                  className="w-full rounded-b-lg"
-                />
-              </div>
-            </motion.div>
-          </div>
-        </section>
-      )}
 
       {/* ─── Social proof ─── */}
       <section className="py-24 sm:py-32">
@@ -362,12 +320,12 @@ export default function PreviewPage({ params }: { params: Promise<{ slug: string
               GET STARTED
             </span>
             <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-5">
-              Ready to get more{' '}
-              <span className="text-gray-400">customers?</span>
+              Ready to get{' '}
+              <span className="text-gray-400">started?</span>
             </h2>
             <p className="text-gray-500 text-lg mb-10 max-w-xl mx-auto leading-relaxed">
-              Your competitors are investing in sites that convert.
-              The longer you wait, the more you lose.
+              Get in touch today for a free, no-obligation quote.
+              We&apos;ll get back to you within 24 hours.
             </p>
 
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
@@ -381,7 +339,7 @@ export default function PreviewPage({ params }: { params: Promise<{ slug: string
             </motion.div>
 
             <p className="mt-6 text-xs text-gray-400">
-              Free consultation · No commitment · Response within 24 hours
+              Free quote · No obligation · Response within 24 hours
             </p>
           </motion.div>
         </div>

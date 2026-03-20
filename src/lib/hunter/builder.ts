@@ -49,6 +49,8 @@ export async function buildPreview(
     previewUrl,
     headline: copy.headline,
     subheadline: copy.subheadline,
+    problemHeadline: copy.problemHeadline,
+    problemSubheadline: copy.problemSubheadline,
     painPoints: copy.painPoints,
     services: copy.services,
     ctaText: copy.ctaText,

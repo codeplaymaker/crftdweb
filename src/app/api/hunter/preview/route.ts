@@ -16,6 +16,8 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({
     headline: preview.headline,
     subheadline: preview.subheadline,
+    problemHeadline: preview.problemHeadline || 'Why Choose Us?',
+    problemSubheadline: preview.problemSubheadline || '',
     painPoints: preview.painPoints,
     services: preview.services,
     ctaText: preview.ctaText,
