@@ -28,8 +28,12 @@ export default function Footer() {
             <h4 className="font-semibold mb-4 text-sm tracking-wide">Services</h4>
             <ul className="space-y-2">
               <li><Link href="/services" className="text-white/50 hover:text-white text-sm transition-colors">All Services</Link></li>
-              <li><Link href="/services#process" className="text-white/50 hover:text-white text-sm transition-colors">Our Process</Link></li>
-              <li><Link href="/work" className="text-white/50 hover:text-white text-sm transition-colors">Case Studies</Link></li>
+              <li><Link href="/services/web-design-for-restaurants" className="text-white/50 hover:text-white text-sm transition-colors">Restaurants</Link></li>
+              <li><Link href="/services/web-design-for-dentists" className="text-white/50 hover:text-white text-sm transition-colors">Dentists</Link></li>
+              <li><Link href="/services/web-design-for-salons" className="text-white/50 hover:text-white text-sm transition-colors">Salons</Link></li>
+              <li><Link href="/services/web-design-for-gyms" className="text-white/50 hover:text-white text-sm transition-colors">Gyms</Link></li>
+              <li><Link href="/services/web-design-for-real-estate" className="text-white/50 hover:text-white text-sm transition-colors">Estate Agents</Link></li>
+              <li><Link href="/services/website-cost" className="text-white/50 hover:text-white text-sm transition-colors">Pricing Guide</Link></li>
             </ul>
           </div>
 

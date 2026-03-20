@@ -212,6 +212,43 @@ const slides = [
     ],
   },
   {
+    id: 'testimonials',
+    type: 'testimonials' as const,
+    label: 'SOCIAL PROOF',
+    headline: 'Don\'t take our word for it.',
+    testimonials: [
+      {
+        name: 'Sarah Whitfield',
+        role: 'Founder, The Glow Studio',
+        industry: 'Health & Wellness',
+        quote: 'CrftdWeb turned our outdated site into a conversion machine. Bookings tripled in the first month — we had to hire two more therapists.',
+        rating: 5,
+        avatar: 'SW',
+      },
+      {
+        name: 'James Okafor',
+        role: 'MD, Apex Property Group',
+        industry: 'Property Services',
+        quote: 'Other agencies gave us templates. CrftdWeb gave us a competitive edge. Our CPL dropped 60% and leads have never been higher.',
+        rating: 5,
+        avatar: 'JO',
+      },
+      {
+        name: 'Priya Sharma',
+        role: 'Director, NoteWorthy Academy',
+        industry: 'Education',
+        quote: 'Fastest turnaround I\'ve ever seen. 12 days from brief to launch, and the site is genuinely the best in our industry.',
+        rating: 5,
+        avatar: 'PS',
+      },
+    ],
+    trustStats: [
+      { value: '50+', label: 'Projects Delivered' },
+      { value: '4.9', label: 'Avg. Client Rating' },
+      { value: '0', label: 'Refund Requests' },
+    ],
+  },
+  {
     id: 'differentiator',
     type: 'comparison' as const,
     label: 'WHY US',
@@ -768,7 +805,115 @@ function ResultsSlide({ data }: { data: typeof slides[5] }) {
   );
 }
 
-function ComparisonSlide({ data }: { data: typeof slides[6] }) {
+function TestimonialsSlide({ data }: { data: typeof slides[6] }) {
+  if (data.type !== 'testimonials') return null;
+  return (
+    <div className="flex flex-col justify-center h-full px-16 max-w-5xl mx-auto relative">
+      {/* Background glow */}
+      <div className="absolute left-1/2 -translate-x-1/2 top-[20%] w-[500px] h-[500px] bg-amber-500/[0.02] blur-3xl rounded-full pointer-events-none" />
+
+      <motion.span
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        className="text-xs font-semibold tracking-[0.3em] text-amber-400 mb-6"
+      >
+        {data.label}
+      </motion.span>
+      <div className="overflow-hidden mb-12">
+        <motion.h2
+          initial={{ y: 60, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.6, ease: [0.33, 1, 0.68, 1] }}
+          className="text-5xl font-bold tracking-tight bg-gradient-to-r from-white via-white to-amber-200/50 bg-clip-text text-transparent"
+        >
+          {data.headline}
+        </motion.h2>
+      </div>
+
+      {/* Testimonial cards */}
+      <div className="grid grid-cols-3 gap-5 mb-10">
+        {data.testimonials?.map((t, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, y: 40, rotateX: 8 }}
+            animate={{ opacity: 1, y: 0, rotateX: 0 }}
+            transition={{ delay: 0.15 + 0.15 * i, type: 'spring', stiffness: 80 }}
+            className="bg-white/[0.03] border border-white/[0.06] rounded-2xl p-7 relative overflow-hidden group hover:border-amber-500/15 transition-colors"
+          >
+            {/* Quote mark watermark */}
+            <div className="absolute -top-2 -left-1 text-[80px] font-serif text-white/[0.03] leading-none pointer-events-none select-none">&ldquo;</div>
+
+            {/* Stars */}
+            <div className="flex gap-1 mb-4">
+              {Array.from({ length: t.rating }, (_, j) => (
+                <motion.svg
+                  key={j}
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.4 + 0.15 * i + 0.06 * j, type: 'spring' }}
+                  className="w-3.5 h-3.5 text-amber-400"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                </motion.svg>
+              ))}
+            </div>
+
+            {/* Quote */}
+            <p className="text-sm text-white/50 leading-relaxed mb-6 relative z-10">&ldquo;{t.quote}&rdquo;</p>
+
+            {/* Divider */}
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ width: 32 }}
+              transition={{ delay: 0.5 + 0.15 * i, duration: 0.4 }}
+              className="h-[1px] bg-amber-500/15 mb-4"
+            />
+
+            {/* Author */}
+            <div className="flex items-center gap-3">
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.3 + 0.15 * i, type: 'spring' }}
+                className="w-9 h-9 rounded-full bg-gradient-to-br from-amber-500/20 to-orange-500/10 border border-amber-500/20 flex items-center justify-center"
+              >
+                <span className="text-[10px] font-bold text-amber-400/70">{t.avatar}</span>
+              </motion.div>
+              <div>
+                <p className="text-sm font-medium text-white/80">{t.name}</p>
+                <p className="text-[10px] text-white/25">{t.role}</p>
+              </div>
+            </div>
+
+            {/* Industry tag */}
+            <div className="absolute top-6 right-6">
+              <span className="text-[9px] font-mono text-white/10 tracking-wider uppercase">{t.industry}</span>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Trust stats row */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.8 }}
+        className="flex items-center justify-center gap-12"
+      >
+        {data.trustStats?.map((s, i) => (
+          <div key={i} className="text-center">
+            <div className="text-2xl font-bold text-white/80">{s.value}</div>
+            <div className="text-[10px] text-white/20 tracking-wider uppercase mt-1">{s.label}</div>
+          </div>
+        ))}
+      </motion.div>
+    </div>
+  );
+}
+
+function ComparisonSlide({ data }: { data: typeof slides[7] }) {
   if (data.type !== 'comparison') return null;
   return (
     <div className="flex flex-col justify-center h-full px-16 max-w-4xl mx-auto relative">
@@ -835,7 +980,7 @@ function ComparisonSlide({ data }: { data: typeof slides[6] }) {
   );
 }
 
-function InvestmentSlide({ data }: { data: typeof slides[7] }) {
+function InvestmentSlide({ data }: { data: typeof slides[8] }) {
   if (data.type !== 'investment') return null;
   return (
     <div className="flex flex-col justify-center h-full px-16 max-w-5xl mx-auto relative">
@@ -911,7 +1056,7 @@ function InvestmentSlide({ data }: { data: typeof slides[7] }) {
   );
 }
 
-function CTASlide({ data }: { data: typeof slides[9] }) {
+function CTASlide({ data }: { data: typeof slides[10] }) {
   if (data.type !== 'cta') return null;
   return (
     <div className="flex flex-col items-center justify-center h-full text-center px-16 relative overflow-hidden">
@@ -1029,7 +1174,8 @@ function CTASlide({ data }: { data: typeof slides[9] }) {
 // ─── Main Page ───
 
 export default function AdminDashboard() {
-  const [activeView, setActiveView] = useState<'home' | 'pitch'>('home');
+  const [activeView, setActiveView] = useState<'home' | 'pitch' | 'script'>('home');
+  const [scriptSection, setScriptSection] = useState(0);
   const [current, setCurrent] = useState(0);
   const [direction, setDirection] = useState(1);
   const total = slides.length;
@@ -1053,32 +1199,28 @@ export default function AdminDashboard() {
     setDirection(1);
   }, []);
 
-  // Keyboard navigation (only active during pitch)
+  const exitScript = useCallback(() => {
+    setActiveView('home');
+    setScriptSection(0);
+  }, []);
+
+  // Keyboard navigation (active during pitch or script)
   useEffect(() => {
-    if (activeView !== 'pitch') return;
+    if (activeView === 'home') return;
     const handler = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
-        e.preventDefault();
-        goNext();
+      if (activeView === 'pitch') {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); goNext(); }
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); goPrev(); }
+        if (e.key === 'f') { document.documentElement.requestFullscreen?.(); }
+        if (e.key === 'Escape') { document.fullscreenElement ? document.exitFullscreen?.() : exitPitch(); }
       }
-      if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
-        e.preventDefault();
-        goPrev();
-      }
-      if (e.key === 'f') {
-        document.documentElement.requestFullscreen?.();
-      }
-      if (e.key === 'Escape') {
-        if (document.fullscreenElement) {
-          document.exitFullscreen?.();
-        } else {
-          exitPitch();
-        }
+      if (activeView === 'script') {
+        if (e.key === 'Escape') exitScript();
       }
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [goNext, goPrev, activeView, exitPitch]);
+  }, [goNext, goPrev, activeView, exitPitch, exitScript]);
 
   // ─── Home view ───
   if (activeView === 'home') {
@@ -1120,7 +1262,7 @@ export default function AdminDashboard() {
                 </div>
                 <h3 className="text-lg font-semibold text-white mb-2">Client Pitch</h3>
                 <p className="text-sm text-white/35 leading-relaxed mb-4">
-                  10-slide presentation deck for sales calls. Covers problem, solution, process, results, and pricing.
+                  11-slide presentation deck for sales calls. Covers problem, solution, process, results, social proof, and pricing.
                 </p>
                 <div className="flex items-center gap-2 text-xs text-purple-400/60 font-medium">
                   <span>Launch presentation</span>
@@ -1130,7 +1272,36 @@ export default function AdminDashboard() {
                 </div>
                 {/* Slide count badge */}
                 <div className="absolute top-6 right-6 text-[10px] font-mono text-white/10 tracking-wider">
-                  10 SLIDES
+                  11 SLIDES
+                </div>
+              </motion.button>
+
+              {/* Sales Script Card */}
+              <motion.button
+                onClick={() => setActiveView('script')}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.08 }}
+                whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                className="group relative bg-white/[0.03] border border-white/[0.06] rounded-2xl p-8 text-left hover:border-emerald-500/30 hover:bg-emerald-500/[0.03] transition-colors cursor-pointer"
+              >
+                <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-5 group-hover:bg-emerald-500/15 transition-colors">
+                  <svg className="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 01-.825-.242m9.345-8.334a2.126 2.126 0 00-.476-.095 48.64 48.64 0 00-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0011.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-semibold text-white mb-2">Sales Script</h3>
+                <p className="text-sm text-white/35 leading-relaxed mb-4">
+                  Live call cheat sheet. Openers, discovery questions, objection handlers, and closing lines.
+                </p>
+                <div className="flex items-center gap-2 text-xs text-emerald-400/60 font-medium">
+                  <span>Open script</span>
+                  <svg className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+                <div className="absolute top-6 right-6 text-[10px] font-mono text-white/10 tracking-wider">
+                  9 SECTIONS
                 </div>
               </motion.button>
 
@@ -1150,6 +1321,354 @@ export default function AdminDashboard() {
     );
   }
 
+  // ─── Script view ───
+  if (activeView === 'script') {
+    const scriptSections = [
+      // ── 1. PRE-SUASION FRAME (Cialdini Pre-Suasion + Klaff Prize Frame + Voss Accusation Audit) ──
+      {
+        id: 'frame',
+        title: 'Set the Frame',
+        color: 'cyan',
+        icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />,
+        lines: [
+          { type: 'say' as const, text: "Hey [Name], appreciate you making time. Before we dive in — I should be upfront. We're not the cheapest option out there, and we're not for everyone. We take on 4 projects a month max, and this call is as much for me to see if we're a fit as it is for you." },
+          { type: 'say' as const, text: "You probably get pitched by agencies all the time, and I'm sure most of those calls are a waste of your time — so I'm not going to do that." },
+          { type: 'say' as const, text: "Instead, I want to do something different. I'd like to spend 5 minutes understanding your business, and if I see a way I can genuinely help, I'll tell you exactly what I'd do. If not, I'll tell you that too and point you in the right direction. Fair?" },
+        ],
+        tip: 'PRE-SUASION: The "we\'re not for everyone" line triggers scarcity + prize frame (Klaff). The accusation audit (Voss) — "you probably get pitched all the time" — names their resistance before they feel it, which disarms it. Asking "Fair?" gets your first micro-commitment (Cialdini: Commitment/Consistency).',
+      },
+      // ── 2. SPIN DISCOVERY — Situation + Problem (Rackham SPIN + Pink Attunement) ──
+      {
+        id: 'situation',
+        title: 'Discovery: Pain',
+        color: 'blue',
+        icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />,
+        lines: [
+          { type: 'ask' as const, text: "Walk me through how a new customer typically finds you right now." },
+          { type: 'ask' as const, text: "When someone lands on your website, what are you hoping they do?" },
+          { type: 'ask' as const, text: "And is that actually happening — or is there a gap between the traffic you get and the enquiries you receive?" },
+          { type: 'say' as const, text: "[MIRROR] So what I'm hearing is... [repeat their exact words back]. Did I get that right?" },
+          { type: 'ask' as const, text: "What's your current site built on? And when was the last time it had a proper overhaul?" },
+          { type: 'ask' as const, text: "What's the average lifetime value of a new customer to you? Rough number is fine." },
+        ],
+        tip: 'SPIN: These are Situation and Problem questions — get the facts, then surface the pain. MIRROR (Voss): Repeat back their last 1-3 words or paraphrase. They\'ll elaborate without you pushing. ATTUNEMENT (Pink): "Walk me through..." invites narrative, not yes/no. You learn 10x more.',
+      },
+      // ── 3. SPIN — Implication + Need-Payoff (The money questions) ──
+      {
+        id: 'implication',
+        title: 'Discovery: Impact',
+        color: 'indigo',
+        icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />,
+        lines: [
+          { type: 'ask' as const, text: "When someone visits your site and leaves without enquiring — what does that actually cost you? Like, per week, per month?" },
+          { type: 'ask' as const, text: "How long has this been the situation? And what's that added up to over the last 12 months in lost revenue?" },
+          { type: 'say' as const, text: "[LABEL] It sounds like you already know the site is holding you back — it's more a question of when you fix it, not if." },
+          { type: 'ask' as const, text: "If we could get your website converting at even 2-3% instead of whatever it's doing now — and that happened within the next 30 days — what would that change for your business?" },
+          { type: 'ask' as const, text: "What would it mean for you personally? Less stress? More freedom? Being able to invest in the parts of the business you actually enjoy?" },
+        ],
+        tip: 'IMPLICATION Qs (Rackham) make the pain 10x bigger WITHOUT you saying it — they calculate the cost themselves and feel it viscerally. NEED-PAYOFF Qs get them describing the dream outcome in their own words — now they\'re selling themselves. LABEL (Voss): "It sounds like..." names the emotion and makes them feel understood.',
+      },
+      // ── 4. COMMERCIAL INSIGHT — The Challenger Teach (Dixon + Klaff Novelty) ──
+      {
+        id: 'insight',
+        title: 'The Insight',
+        color: 'emerald',
+        icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.383a14.406 14.406 0 01-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 10-7.517 0c.85.493 1.509 1.333 1.509 2.316V18" />,
+        lines: [
+          { type: 'say' as const, text: "Can I share something with you that most business owners don't know? It might reframe how you think about your website entirely." },
+          { type: 'stat' as const, text: "Google's research shows 53% of mobile visitors leave a site that takes longer than 3 seconds to load. The average WordPress site loads in 4.7 seconds. So more than half your traffic is gone before they even see your homepage." },
+          { type: 'say' as const, text: "But here's the part nobody talks about — it's not just the speed. It's what happens AFTER they stay. Most websites are built like brochures. They have \"About\", \"Services\", \"Contact\" — and they expect the visitor to figure out what to do. That's like opening a shop with no salesperson." },
+          { type: 'say' as const, text: "The businesses growing fastest right now have figured out that your website is your #1 salesperson. It works 24/7, never calls in sick, never forgets the pitch. But only if it's engineered to convert — not just look pretty." },
+          { type: 'say' as const, text: "That's the shift. Most of your competitors are still treating their website as a digital business card. You have a window right now to leapfrog them — but that window closes once they figure this out too." },
+        ],
+        tip: 'CHALLENGER TEACH (Dixon): Don\'t lead with your product. Lead with an insight that reframes their problem. They should think "I never thought about it that way." NOVELTY (Klaff): New information triggers dopamine — their brain literally pays more attention after a stat they didn\'t know. URGENCY: "Window closes" creates time pressure without being pushy.',
+      },
+      // ── 5. THE PITCH — 3 Certainties (Belfort) + Contrast (Pink) + Reciprocity (Cialdini) ──
+      {
+        id: 'pitch',
+        title: 'The Pitch',
+        color: 'purple',
+        icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />,
+        lines: [
+          { type: 'say' as const, text: "Based on everything you've told me, I'm confident I can help. Let me show you exactly how." },
+          { type: 'say' as const, text: "[CONTRAST — WHERE THEY ARE] Right now, you've got a [WordPress/template] site that loads in [X] seconds, isn't converting your traffic, and is essentially a cost centre on your balance sheet." },
+          { type: 'say' as const, text: "[CONTRAST — WHERE THEY'D BE] What we'd build you is a fully custom-coded site, hand-built in Next.js — the same tech used by Nike, Netflix, and Notion. Sub-1.5-second loads. 95+ PageSpeed. Every section engineered to move the visitor toward [their goal]." },
+          { type: 'say' as const, text: "[CERTAINTY 2: YOU] I've personally built sites for businesses in [their industry or similar]. I know what makes your customers tick, what they need to see, and when they need to see the CTA. This isn't our first time." },
+          { type: 'say' as const, text: "We handle the full scope — strategy, design, copywriting structure, development, mobile, SEO foundations, analytics. You review and approve. We do the heavy lifting." },
+          { type: 'say' as const, text: "Timeline is 14 days. Not because we rush — because we don't waste time on broken plugins, theme conflicts, and back-and-forth with offshore freelancers. It's just us, focused entirely on your project." },
+          { type: 'stat' as const, text: "Our last 3 clients: a wellness studio saw +340% organic traffic, a property firm got +180% qualified leads, and a music academy saw +520% bookings. All within 90 days of launch." },
+        ],
+        tip: 'CONTRAST (Pink): Paint the "before" and "after" side-by-side so the gap is visceral. 3 CERTAINTIES (Belfort): Product certainty (it works), Personal certainty (I\'m the right person), Company certainty (CrftdWeb delivers). Hit all three or the sale dies. SOCIAL PROOF (Cialdini): Stats from similar businesses = "people like me got results."',
+      },
+      // ── 6. VALUE STACK + PRICING (Hormozi $100M Offers + Cialdini Anchoring) ──
+      {
+        id: 'pricing',
+        title: 'Value & Pricing',
+        color: 'amber',
+        icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" />,
+        lines: [
+          { type: 'say' as const, text: "[ANCHOR HIGH] If you hired a top agency in London for this — custom design, custom code, conversion strategy — you'd be looking at £15-25K minimum. And you'd wait 8-12 weeks." },
+          { type: 'say' as const, text: "[VALUE STACK] Here's what's included with us: custom-coded website, conversion-optimised wireframes, mobile-first responsive design, SEO technical setup, Google Analytics + heatmap integration, contact form with CRM routing, 30-90 day post-launch support, and a direct Slack line to me personally." },
+          { type: 'say' as const, text: "[PRICE DROP] Our Growth package — which is what I'd recommend based on what you've told me — is £4,997. That includes up to 10 pages, conversion copy structure, booking integration, blog, and 90 days of support." },
+          { type: 'say' as const, text: "[ROI MATH] You told me a new customer is worth roughly [£X] to you. So you'd need just [calculate: price ÷ customer value] new customers to cover the entire investment. After that, every enquiry your site generates is pure profit." },
+          { type: 'say' as const, text: "[RISK REVERSAL] And here's the thing — we offer a 100% money-back guarantee. If at any point before launch you're not completely happy with what we've built, you don't pay. Full refund. We've never had to use it, but it means you're risking nothing." },
+          { type: 'say' as const, text: "[SCARCITY — REAL] The reason I mentioned we take 4 projects a month — I've got [X] slots open for [month]. Once those fill, the next available start date is [month + 5 weeks]." },
+        ],
+        tip: 'VALUE EQUATION (Hormozi): Dream Outcome × Perceived Likelihood ÷ Time Delay × Effort Required. Stack the value BEFORE the price so the number feels small by comparison. ANCHOR (Cialdini): £15-25K agency anchor makes £4,997 feel like a steal. ROI MATH: When THEY do the maths, the price objection dies before it starts. SCARCITY: Must be real — manufactured urgency destroys trust.',
+      },
+      // ── 7. OBJECTION HANDLERS (Voss + Belfort + Cardone) ──
+      {
+        id: 'objections',
+        title: 'Objections',
+        color: 'red',
+        icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v3.75m0-10.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285zm0 13.036h.008v.008H12v-.008z" />,
+        lines: [
+          { type: 'objection' as const, text: '"It\'s too expensive"', response: "That's a fair concern — and I'd be worried if you didn't think carefully about where you invest. Let me ask you this: you said you're losing roughly [£X/month] in missed conversions. If we don't fix the site, that's [£X × 12] over the next year. So the real question isn't whether you can afford to do this — it's whether you can afford not to. And with the guarantee, the downside is literally zero." },
+          { type: 'objection' as const, text: '"I need to think about it"', response: "I completely respect that. Can I ask — what specifically feels unresolved? Is it the investment, the timing, or whether it'll actually work? [WAIT — let them answer]. The reason I ask is, in my experience, 'thinking about it' usually means there's one specific thing I haven't addressed. If I can answer that now, it saves you carrying it around. And if you still want time after — no pressure at all." },
+          { type: 'objection' as const, text: '"I need to talk to my partner / team"', response: "Makes total sense — a decision like this should involve the right people. What would be most helpful: should I jump on a quick 10-minute call with both of you, or put together a one-page summary they can review? I find that usually moves things forward faster than playing telephone." },
+          { type: 'objection' as const, text: '"I already have a web person"', response: "That's great — it tells me you already value having quality online. Genuine question though: if your current setup was converting the way you wanted, would we be having this conversation? I'm not here to replace anyone. But there's a difference between someone who maintains a site and someone who engineers it to sell. We can even work alongside your existing dev." },
+          { type: 'objection' as const, text: '"Can you do it cheaper?"', response: "I could reduce the scope — but I wouldn't reduce the quality. Here's why: the reason our sites outperform is because every detail is intentional. Cut one element and the conversion system breaks. It's like asking a surgeon to skip a step to save time. What I can do is start with the Launch package at £2,497 and upgrade later as you see results. That way you're investing less upfront but still getting the quality." },
+          { type: 'objection' as const, text: '"14 days sounds rushed"', response: "I used to think that too. But here's the reality — our 14 days of focused work equals about 8 weeks of agency time. Most of their timeline is you waiting: waiting for feedback loops, waiting for their offshore dev team, waiting for plugin fixes. We don't have any of that. It's one team, full focus, zero bureaucracy. Every project we've ever done launched on time or early." },
+          { type: 'objection' as const, text: '"I want to compare a few quotes"', response: "Smart move — you should. All I'd ask is that when you compare, you're comparing apples to apples. Ask them: is it custom-coded or a template? What's the guaranteed PageSpeed score? What happens if you're not happy? Do you get a direct line to the developer? And what's the refund policy? I'm confident in where we land when you compare on substance, not just price." },
+        ],
+        tip: 'LABEL FIRST (Voss): "That\'s a fair concern" validates the emotion before countering. CALIBRATED QUESTIONS: "What specifically..." makes them reveal the real objection. LOOPING (Belfort): Address the objection, then loop back to a certainty they already agreed with. NEVER ARGUE (Cardone): The moment you argue, you lose. Agree, redirect, reframe.',
+      },
+      // ── 8. THE CLOSE — Commitment Stacking (Cardone + Cialdini + Voss) ──
+      {
+        id: 'close',
+        title: 'The Close',
+        color: 'violet',
+        icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.59 14.37a6 6 0 01-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 006.16-12.12A14.98 14.98 0 009.631 8.41m5.96 5.96a14.926 14.926 0 01-5.841 2.58m-.119-8.54a6 6 0 00-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 00-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 01-2.448-2.448 14.9 14.9 0 01.06-.312m-2.24 2.39a4.493 4.493 0 00-1.757 4.306 4.493 4.493 0 004.306-1.758M16.5 9a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" />,
+        lines: [
+          { type: 'say' as const, text: "[SUMMARY CLOSE] So just to recap where we've landed — you need a site that [repeat their goal], you want it done properly without the 3-month agency runaround, and you want to see a return within 90 days. Does that sound right?" },
+          { type: 'say' as const, text: "[NEXT STEP — NOT 'BUY'] Here's what I'd suggest. I'll put together a custom proposal — scope, wireframe, timeline, investment — tailored to everything we discussed. You'll have it in your inbox within 24 hours." },
+          { type: 'say' as const, text: "[MICRO-COMMITMENT] Have a read through, share it with [partner/team] if you need to, and if it looks right, we can lock in your slot for [month]. Sound fair?" },
+          { type: 'say' as const, text: "[ASSUMPTIVE] What's the best email to send that to?" },
+          { type: 'say' as const, text: "[AFTER THEY GIVE EMAIL] Perfect. One more thing — are you on WhatsApp? I'll send you a quick confirmation there too so it doesn't get buried in your inbox." },
+          { type: 'say' as const, text: "[CONVICTION TRANSFER] Honestly [Name], I'm excited about this one. The businesses like yours are exactly where we see the biggest transformations. I'll make sure the proposal reflects that." },
+        ],
+        tip: 'SUMMARY CLOSE: Paraphrasing their own words back = Cialdini Commitment/Consistency. They can\'t disagree with their own stated needs. ASSUMPTIVE (Cardone): Don\'t ask "Are you interested?" — ask "What\'s the email?" The frame assumes they\'re moving forward. CONVICTION TRANSFER (Belfort): Your genuine excitement is contagious — if you believe it, they believe it. DOUBLE CONTACT: Getting WhatsApp + email doubles your reply rate and builds the personal connection.',
+      },
+      // ── 9. POST-CALL — Reciprocity Lock + Follow-up System ──
+      {
+        id: 'postcall',
+        title: 'After the Call',
+        color: 'rose',
+        icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />,
+        lines: [
+          { type: 'say' as const, text: "[WITHIN 5 MINS — WhatsApp] Hey [Name] 👋 Great chatting just now. Starting on your proposal now — you'll have it by [specific time tomorrow]. Talk soon." },
+          { type: 'say' as const, text: "[WITHIN 1 HOUR — Email] Subject: '[Name] x CrftdWeb — Your Proposal'. Include a brief recap of what you discussed, 1-2 insights specific to their industry, and a timeline of next steps. Attach no proposal yet — just set the stage." },
+          { type: 'say' as const, text: "[RECIPROCITY GIFT — Same day] Send them something useful for free before the proposal. A 2-minute Loom video auditing their current site, or a quick PageSpeed screenshot with 3 quick-win suggestions. This triggers reciprocity — they feel obligated to engage." },
+          { type: 'say' as const, text: "[WITHIN 24 HOURS] Send the full proposal. Keep it visual — one page, not a 12-page PDF. Include before/after concepts if possible. End with a clear CTA: 'Reply YES to lock in your [month] slot.'" },
+          { type: 'say' as const, text: "[IF NO REPLY IN 48H] 'Hey [Name], just floating this back to the top — I've got [Name]'s project kicking off on [date] and wanted to confirm your slot before it goes. No rush, but wanted to keep you in the loop.'" },
+          { type: 'say' as const, text: "[IF NO REPLY IN 7 DAYS] 'Totally understand if the timing isn't right, [Name]. I'll keep your brief on file — if things change in the next few months, just ping me and we'll pick up where we left off. Wishing you a great [season]. — Obi'" },
+        ],
+        tip: 'RECIPROCITY (Cialdini): The free Loom audit is the most powerful move in the entire script. Give value first = they feel compelled to reciprocate. SCARCITY + SOCIAL PROOF in follow-up: Mentioning another project kicking off implies demand without being sleazy. GRACEFUL EXIT: The 7-day message preserves the relationship for future conversion — 40% of deals close in months 2-6.',
+      },
+    ];
+
+    const colorMap: Record<string, { bg: string; border: string; text: string; glow: string; dot: string }> = {
+      cyan: { bg: 'bg-cyan-500/10', border: 'border-cyan-500/20', text: 'text-cyan-400', glow: 'bg-cyan-500/[0.03]', dot: 'bg-cyan-400' },
+      blue: { bg: 'bg-blue-500/10', border: 'border-blue-500/20', text: 'text-blue-400', glow: 'bg-blue-500/[0.03]', dot: 'bg-blue-400' },
+      indigo: { bg: 'bg-indigo-500/10', border: 'border-indigo-500/20', text: 'text-indigo-400', glow: 'bg-indigo-500/[0.03]', dot: 'bg-indigo-400' },
+      emerald: { bg: 'bg-emerald-500/10', border: 'border-emerald-500/20', text: 'text-emerald-400', glow: 'bg-emerald-500/[0.03]', dot: 'bg-emerald-400' },
+      purple: { bg: 'bg-purple-500/10', border: 'border-purple-500/20', text: 'text-purple-400', glow: 'bg-purple-500/[0.03]', dot: 'bg-purple-400' },
+      amber: { bg: 'bg-amber-500/10', border: 'border-amber-500/20', text: 'text-amber-400', glow: 'bg-amber-500/[0.03]', dot: 'bg-amber-400' },
+      red: { bg: 'bg-red-500/10', border: 'border-red-500/20', text: 'text-red-400', glow: 'bg-red-500/[0.03]', dot: 'bg-red-400' },
+      violet: { bg: 'bg-violet-500/10', border: 'border-violet-500/20', text: 'text-violet-400', glow: 'bg-violet-500/[0.03]', dot: 'bg-violet-400' },
+      rose: { bg: 'bg-rose-500/10', border: 'border-rose-500/20', text: 'text-rose-400', glow: 'bg-rose-500/[0.03]', dot: 'bg-rose-400' },
+    };
+
+    return (
+      <div className="min-h-screen bg-[#0a0a0a] flex">
+        {/* Sidebar nav */}
+        <div className="w-64 border-r border-white/[0.06] flex flex-col fixed top-0 left-0 bottom-0 z-20">
+          <div className="px-5 py-5 border-b border-white/[0.06]">
+            <button
+              onClick={exitScript}
+              className="flex items-center gap-2 text-xs text-white/30 hover:text-white/60 transition-colors cursor-pointer"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              Back to dashboard
+            </button>
+            <h2 className="text-lg font-bold text-white mt-4 tracking-tight">Sales Script</h2>
+            <p className="text-[10px] text-white/20 mt-1 tracking-wider uppercase">Live call reference</p>
+          </div>
+          <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+            {scriptSections.map((s, i) => {
+              const c = colorMap[s.color];
+              const isActive = scriptSection === i;
+              return (
+                <button
+                  key={s.id}
+                  onClick={() => setScriptSection(i)}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all cursor-pointer ${
+                    isActive
+                      ? `${c.glow} border ${c.border}`
+                      : 'hover:bg-white/[0.03] border border-transparent'
+                  }`}
+                >
+                  <div className={`w-8 h-8 rounded-lg ${isActive ? c.bg : 'bg-white/[0.04]'} flex items-center justify-center flex-shrink-0`}>
+                    <svg className={`w-4 h-4 ${isActive ? c.text : 'text-white/20'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      {s.icon}
+                    </svg>
+                  </div>
+                  <div>
+                    <span className={`text-sm font-medium ${isActive ? 'text-white' : 'text-white/40'}`}>{s.title}</span>
+                    <span className={`block text-[9px] tracking-wider ${isActive ? c.text + ' opacity-60' : 'text-white/15'}`}>
+                      {s.lines.length} {s.id === 'objections' ? 'handlers' : 'lines'}
+                    </span>
+                  </div>
+                </button>
+              );
+            })}
+          </nav>
+          {/* Quick key hint */}
+          <div className="px-5 py-4 border-t border-white/[0.06]">
+            <p className="text-[9px] text-white/10 font-mono tracking-wider">ESC to exit</p>
+          </div>
+        </div>
+
+        {/* Main content */}
+        <div className="flex-1 ml-64">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={scriptSection}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.25 }}
+              className="max-w-3xl mx-auto px-12 py-14"
+            >
+              {(() => {
+                const s = scriptSections[scriptSection];
+                const c = colorMap[s.color];
+                return (
+                  <>
+                    {/* Section header */}
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className={`w-10 h-10 rounded-xl ${c.bg} border ${c.border} flex items-center justify-center`}>
+                        <svg className={`w-5 h-5 ${c.text}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          {s.icon}
+                        </svg>
+                      </div>
+                      <div>
+                        <span className={`text-[10px] font-semibold tracking-[0.3em] ${c.text} uppercase`}>
+                          SECTION {scriptSection + 1} OF {scriptSections.length}
+                        </span>
+                        <h2 className="text-3xl font-bold text-white tracking-tight">{s.title}</h2>
+                      </div>
+                    </div>
+
+                    {/* Tip banner */}
+                    <motion.div
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.15 }}
+                      className={`mt-6 mb-10 px-5 py-3.5 rounded-xl ${c.glow} border ${c.border} flex items-start gap-3`}
+                    >
+                      <svg className={`w-4 h-4 ${c.text} mt-0.5 flex-shrink-0`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.383a14.406 14.406 0 01-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 10-7.517 0c.85.493 1.509 1.333 1.509 2.316V18" />
+                      </svg>
+                      <p className="text-sm text-white/40 leading-relaxed italic">{s.tip}</p>
+                    </motion.div>
+
+                    {/* Lines */}
+                    <div className="space-y-4">
+                      {s.lines.map((line, li) => (
+                        <motion.div
+                          key={li}
+                          initial={{ opacity: 0, x: -16 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.08 + 0.06 * li, type: 'spring', stiffness: 120, damping: 18 }}
+                        >
+                          {line.type === 'say' && (
+                            <div className="flex items-start gap-4 group">
+                              <div className="flex-shrink-0 mt-1.5">
+                                <div className={`w-2 h-2 rounded-full ${c.dot} opacity-40`} />
+                              </div>
+                              <div className="flex-1">
+                                <span className={`text-[9px] font-bold tracking-[0.2em] ${c.text} opacity-50 uppercase`}>SAY</span>
+                                <p className="text-[15px] text-white/70 leading-relaxed mt-1">&ldquo;{line.text}&rdquo;</p>
+                              </div>
+                            </div>
+                          )}
+                          {line.type === 'ask' && (
+                            <div className="flex items-start gap-4 group">
+                              <div className="flex-shrink-0 mt-1.5">
+                                <div className={`w-2 h-2 rounded-full ${c.dot} opacity-40`} />
+                              </div>
+                              <div className="flex-1">
+                                <span className={`text-[9px] font-bold tracking-[0.2em] ${c.text} opacity-50 uppercase`}>ASK</span>
+                                <p className="text-[15px] text-white/70 leading-relaxed mt-1">&ldquo;{line.text}&rdquo;</p>
+                              </div>
+                            </div>
+                          )}
+                          {line.type === 'stat' && (
+                            <div className="flex items-start gap-4 group">
+                              <div className="flex-shrink-0 mt-1.5">
+                                <div className="w-2 h-2 rounded-full bg-green-400 opacity-60" />
+                              </div>
+                              <div className="flex-1 bg-green-500/[0.04] border border-green-500/10 rounded-xl px-5 py-3">
+                                <span className="text-[9px] font-bold tracking-[0.2em] text-green-400 opacity-60 uppercase">DROP THE STAT</span>
+                                <p className="text-[15px] text-green-300/70 leading-relaxed mt-1 font-medium">&ldquo;{line.text}&rdquo;</p>
+                              </div>
+                            </div>
+                          )}
+                          {line.type === 'objection' && 'response' in line && (
+                            <div className="bg-white/[0.02] border border-white/[0.06] rounded-2xl overflow-hidden">
+                              <div className="px-5 py-3.5 bg-red-500/[0.04] border-b border-red-500/10">
+                                <span className="text-[9px] font-bold tracking-[0.2em] text-red-400 opacity-60 uppercase">THEY SAY</span>
+                                <p className="text-[15px] text-red-300/60 mt-1 font-medium">{line.text}</p>
+                              </div>
+                              <div className="px-5 py-4">
+                                <span className="text-[9px] font-bold tracking-[0.2em] text-emerald-400 opacity-60 uppercase">YOU SAY</span>
+                                <p className="text-[15px] text-white/60 leading-relaxed mt-1">&ldquo;{line.response}&rdquo;</p>
+                              </div>
+                            </div>
+                          )}
+                        </motion.div>
+                      ))}
+                    </div>
+
+                    {/* Navigation footer */}
+                    <div className="flex items-center justify-between mt-14 pt-6 border-t border-white/[0.06]">
+                      <button
+                        onClick={() => setScriptSection(Math.max(0, scriptSection - 1))}
+                        disabled={scriptSection === 0}
+                        className="flex items-center gap-2 text-sm text-white/25 hover:text-white/50 disabled:opacity-20 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                        </svg>
+                        {scriptSection > 0 ? scriptSections[scriptSection - 1].title : ''}
+                      </button>
+                      <span className="text-[10px] font-mono text-white/10 tracking-wider">
+                        {scriptSection + 1} / {scriptSections.length}
+                      </span>
+                      <button
+                        onClick={() => setScriptSection(Math.min(scriptSections.length - 1, scriptSection + 1))}
+                        disabled={scriptSection === scriptSections.length - 1}
+                        className="flex items-center gap-2 text-sm text-white/25 hover:text-white/50 disabled:opacity-20 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                      >
+                        {scriptSection < scriptSections.length - 1 ? scriptSections[scriptSection + 1].title : ''}
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </button>
+                    </div>
+                  </>
+                );
+              })()}
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </div>
+    );
+  }
+
   // ─── Pitch view ───
 
   const slide = slides[current];
@@ -1161,9 +1680,10 @@ export default function AdminDashboard() {
       case 'stat': return <StatSlide data={slide as typeof slides[2]} />;
       case 'process': return <ProcessSlide data={slide as typeof slides[4]} />;
       case 'results': return <ResultsSlide data={slide as typeof slides[5]} />;
-      case 'comparison': return <ComparisonSlide data={slide as typeof slides[6]} />;
-      case 'investment': return <InvestmentSlide data={slide as typeof slides[7]} />;
-      case 'cta': return <CTASlide data={slide as typeof slides[9]} />;
+      case 'testimonials': return <TestimonialsSlide data={slide as typeof slides[6]} />;
+      case 'comparison': return <ComparisonSlide data={slide as typeof slides[7]} />;
+      case 'investment': return <InvestmentSlide data={slide as typeof slides[8]} />;
+      case 'cta': return <CTASlide data={slide as typeof slides[10]} />;
       default: return null;
     }
   }

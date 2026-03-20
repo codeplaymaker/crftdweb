@@ -4,6 +4,7 @@ import localFont from 'next/font/local';
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import RootLayoutShell from '@/components/RootLayoutShell';
+import { LocalBusinessJsonLd, WebSiteJsonLd } from '@/components/seo/JsonLd';
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -17,12 +18,16 @@ const classicismo = localFont({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://www.crftdweb.com'),
   title: {
-    default: "CrftdWeb — Premium Web Development Agency",
+    default: "CrftdWeb — Web Design Agency | Custom Websites That Convert",
     template: "%s | CrftdWeb",
   },
-  description: "CrftdWeb is a premium web development agency crafting high-performance websites, brands, and digital products for ambitious businesses.",
-  keywords: ["web development", "web design", "branding", "UI/UX", "Next.js", "premium agency"],
+  description: "Premium web design & development agency. Custom-coded websites built in Next.js, delivered in 14 days. 95+ PageSpeed scores. Trusted by UK businesses.",
+  keywords: ["web design agency", "web development", "custom website", "Next.js developer", "web design UK", "small business website", "conversion optimisation"],
+  alternates: {
+    canonical: '/',
+  },
   authors: [{ name: "CrftdWeb" }],
   creator: "CrftdWeb",
   openGraph: {
@@ -59,7 +64,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head />
+      <head>
+        <LocalBusinessJsonLd />
+        <WebSiteJsonLd />
+      </head>
       <body
         className={cn(
           "min-h-screen bg-background font-sans antialiased",

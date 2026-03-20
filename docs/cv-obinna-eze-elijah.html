@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CV - Obinna Eze-Elijah</title>
+<style>
+  @page {
+    size: A4;
+    margin: 0;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  body {
+    font-family: 'Helvetica Neue', Arial, Helvetica, sans-serif;
+    font-size: 9.2pt;
+    line-height: 1.45;
+    color: #1a1a1a;
+    background: #fff;
+    padding: 32pt 36pt 28pt;
+    max-width: 210mm;
+    margin: 0 auto;
+  }
+
+  /* ── Header ── */
+  .header { text-align: center; margin-bottom: 14pt; }
+  .header h1 {
+    font-size: 22pt;
+    font-weight: 700;
+    letter-spacing: 0.5pt;
+    text-transform: uppercase;
+    color: #111;
+    margin-bottom: 5pt;
+  }
+  .header .contact {
+    font-size: 9pt;
+    color: #444;
+    letter-spacing: 0.2pt;
+  }
+  .header .contact a {
+    color: #444;
+    text-decoration: none;
+  }
+  .header .contact a:hover { text-decoration: underline; }
+  .header .contact .sep { margin: 0 6pt; color: #999; }
+
+  /* ── Section headings ── */
+  .section-title {
+    font-size: 10pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.2pt;
+    color: #111;
+    border-bottom: 1.5pt solid #111;
+    padding-bottom: 3pt;
+    margin-top: 14pt;
+    margin-bottom: 7pt;
+  }
+
+  /* ── Profile ── */
+  .profile {
+    font-size: 9.2pt;
+    color: #333;
+    line-height: 1.5;
+  }
+
+  /* ── Skills table ── */
+  .skills-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 2pt;
+  }
+  .skills-table td {
+    padding: 2.5pt 0;
+    vertical-align: top;
+    font-size: 9pt;
+  }
+  .skills-table td:first-child {
+    font-weight: 700;
+    width: 100pt;
+    color: #222;
+    padding-right: 10pt;
+    white-space: nowrap;
+  }
+  .skills-table td:last-child {
+    color: #333;
+  }
+  .skills-table tr + tr td {
+    border-top: 0.5pt solid #e8e8e8;
+  }
+
+  /* ── Project blocks ── */
+  .project { margin-bottom: 10pt; }
+  .project-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+  }
+  .project-title {
+    font-size: 10pt;
+    font-weight: 700;
+    color: #111;
+  }
+  .project-meta {
+    font-size: 8.5pt;
+    color: #555;
+  }
+  .project-role {
+    font-size: 8.8pt;
+    color: #444;
+    margin-top: 1pt;
+    font-style: italic;
+  }
+  .project-tech {
+    font-size: 8.5pt;
+    color: #555;
+    margin-top: 2pt;
+    margin-bottom: 3pt;
+  }
+  .project a {
+    color: #333;
+    text-decoration: none;
+    border-bottom: 0.5pt solid #aaa;
+  }
+
+  /* ── Sub-sections (Engine, Hunter, etc.) ── */
+  .subsection-title {
+    font-size: 9pt;
+    font-weight: 700;
+    color: #222;
+    margin-top: 5pt;
+    margin-bottom: 2pt;
+  }
+
+  /* ── Bullet lists ── */
+  ul {
+    margin-left: 14pt;
+    margin-top: 2pt;
+    margin-bottom: 3pt;
+  }
+  ul li {
+    margin-bottom: 1.5pt;
+    font-size: 9pt;
+    color: #333;
+  }
+  ul li::marker {
+    color: #888;
+  }
+
+  /* ── Education ── */
+  .edu-item {
+    margin-bottom: 3pt;
+  }
+  .edu-item strong {
+    color: #111;
+  }
+  .edu-item .edu-meta {
+    color: #555;
+    font-size: 8.5pt;
+  }
+  .edu-sub {
+    margin-left: 14pt;
+    font-size: 8.8pt;
+    color: #444;
+  }
+
+  /* ── References ── */
+  .references {
+    font-size: 9pt;
+    color: #555;
+    font-style: italic;
+  }
+
+  /* ── Utilities ── */
+  .mt-2 { margin-top: 2pt; }
+  .mt-4 { margin-top: 4pt; }
+  .mb-2 { margin-bottom: 2pt; }
+  .text-small { font-size: 8.5pt; }
+
+  @media print {
+    body { padding: 28pt 32pt 24pt; }
+    .project { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════ HEADER ════════════════════════════ -->
+<div class="header">
+  <h1>Obinna Eze-Elijah</h1>
+  <div class="contact">
+    Bristol, UK<span class="sep">|</span>+44 7308 514127<span class="sep">|</span><a href="mailto:obiezeelijah@gmail.com">obiezeelijah@gmail.com</a><span class="sep">|</span><a href="https://github.com/codeplaymaker">github.com/codeplaymaker</a>
+  </div>
+</div>
+
+<!-- ════════════════════════════ PROFILE ════════════════════════════ -->
+<div class="section-title">Profile</div>
+<p class="profile">
+  Full-stack developer building and running production SaaS products, from initial design to deployment and ongoing iteration. I run a web agency platform with a lead-gen pipeline, AI content tools, Telegram automation, and separately a quantitative trading platform with Monte Carlo risk modelling. I work across Next.js/React frontends, serverless API routes, Firebase backends, OpenAI integrations, Python scripting, Docker, and deploy across Vercel, Railway, and Netlify.
+</p>
+
+<!-- ════════════════════════════ SKILLS ════════════════════════════ -->
+<div class="section-title">Technical Skills</div>
+<table class="skills-table">
+  <tr><td>Languages</td><td>TypeScript, JavaScript (ES6+), Python, HTML5, CSS3</td></tr>
+  <tr><td>Frontend</td><td>Next.js 15 (App Router), React 19, Tailwind CSS, Framer Motion, Three.js / React Three Fiber, Radix UI, shadcn/ui</td></tr>
+  <tr><td>Backend / API</td><td>Next.js API Routes, Server Actions, Firebase Admin SDK, REST APIs, Webhook handlers, Cron jobs</td></tr>
+  <tr><td>AI / LLM</td><td>OpenAI SDK (GPT-4o / GPT-4o-mini), Multi-agent systems, Prompt engineering, Content generation</td></tr>
+  <tr><td>Databases</td><td>Cloud Firestore, SQLite, Firestore Security Rules</td></tr>
+  <tr><td>Auth</td><td>Firebase Auth (email/password, Google OAuth), Server-side token verification</td></tr>
+  <tr><td>DevOps / Infra</td><td>Vercel, Railway, Netlify, Docker, Git/GitHub, CI/CD</td></tr>
+  <tr><td>Integrations</td><td>Telegram Bot API, Google Places API, PageSpeed Insights API, Resend, Hunter.io, CoinGecko API, Microlink API</td></tr>
+  <tr><td>Testing</td><td>Vitest, React Testing Library, Mocked Firebase services, jsdom</td></tr>
+  <tr><td>Other</td><td>PDF generation (jsPDF), Markdown rendering, Pine Script (TradingView)</td></tr>
+</table>
+
+<!-- ════════════════════════════ EXPERIENCE ════════════════════════════ -->
+<div class="section-title">Projects &amp; Experience</div>
+
+<!-- CRFTD -->
+<div class="project">
+  <div class="project-header">
+    <span class="project-title">CRFTD: Web Agency Platform &amp; SaaS Engine</span>
+    <span class="project-meta">Mar 2024 – Present</span>
+  </div>
+  <div class="project-role">Founder &amp; Sole Developer · <a href="https://crftdweb.com">crftdweb.com</a> · <a href="https://github.com/codeplaymaker/crftdweb">GitHub</a></div>
+  <div class="project-tech">Next.js 15 · TypeScript · React 19 · Firebase · OpenAI · Tailwind CSS · Three.js · Vitest</div>
+
+  <div class="subsection-title">Engine (AI Content &amp; Business Intelligence)</div>
+  <ul>
+    <li>Set up 8 specialised AI agents (Offer Architect, VSL Builder, Ads Architect, Niche Researcher, Landing Page Writer, etc.) with chat sessions saved to Firestore</li>
+    <li>Content generation covers VSL scripts, webinar outlines, Facebook/Google/LinkedIn ads, email sequences, landing pages, sales pages, and cart abandonment flows</li>
+    <li>"Truth Report" feature scores niche viability by pulling competitor data, Reddit signals, and demand patterns through OpenAI</li>
+    <li>Three plan tiers (Free / Pro / Agency) with credit tracking and gated feature access</li>
+  </ul>
+
+  <div class="subsection-title">Hunter (Lead Generation Pipeline)</div>
+  <ul>
+    <li>Full outbound pipeline: scrape businesses via Google Places API, audit sites with PageSpeed Insights, grade them A to D, generate copy with GPT-4o-mini, build preview sites, then send comparison emails through Resend</li>
+    <li>Each lead moves through tracked stages in Firestore (pending, built, approved, sent, opened, clicked, booked)</li>
+    <li>AI copy costs about $0.01 per business using GPT-4o-mini with structured prompts</li>
+  </ul>
+
+  <div class="subsection-title">Telegram Marketing Bot</div>
+  <ul>
+    <li>Webhook-based Telegram bot with inline keyboard buttons and callback query handling</li>
+    <li>Generates 7 post types and 5 visual template types using OpenAI, renders images server-side with React</li>
+    <li>Scheduled auto-posting via Vercel cron jobs (Mon/Wed/Fri at 09:00)</li>
+  </ul>
+
+  <div class="subsection-title">Playbook (Business Coaching)</div>
+  <ul>
+    <li>Multi-module system: diagnose, prescribe, productize, prove, scale, systemize, track. Each module has its own dashboard and progress tracking</li>
+    <li>Freedom Score calculation that weights active vs. leveraged vs. passive income</li>
+  </ul>
+
+  <div class="subsection-title">Platform-Wide</div>
+  <ul>
+    <li>Firebase Auth (email/password + Google OAuth), Admin SDK token verification on the server, Firestore security rules across 8 collections</li>
+    <li>3D animated hero section using Three.js / React Three Fiber, page transitions with Framer Motion</li>
+    <li>Vitest test suite for API routes with mocked Firebase Admin, covering auth, validation, and business logic</li>
+    <li>Custom "TRAIN" design system (Typography, Restraint, Alignment, Image Treatment, Negative Space) with 12 visual device patterns documented</li>
+  </ul>
+</div>
+
+<!-- MarketPlaymaker -->
+<div class="project">
+  <div class="project-header">
+    <span class="project-title">MarketPlaymaker: Quantitative Trading Platform</span>
+    <span class="project-meta">Mar 2025 – Present</span>
+  </div>
+  <div class="project-role">Founder &amp; Sole Developer · <a href="https://marketplaymaker.com">marketplaymaker.com</a> · <a href="https://github.com/codeplaymaker/marketplaymaker">GitHub</a></div>
+  <div class="project-tech">React · Python · Docker · Firebase · Railway · Telegram Bot API · SQLite</div>
+  <ul>
+    <li>Trade journaling system where users log and review trades, with dashboard charts for analysis</li>
+    <li>Automated BTC trading bot in Python with Telegram signal labelling</li>
+    <li>Monte Carlo Value-at-Risk (VaR) module for quantitative risk analysis</li>
+    <li>Pulls live data from crypto, stocks, and ESPN feeds with an auto-scanner</li>
+    <li>Custom TradingView tools and Pine Script indicators</li>
+    <li>Runs in Docker on Railway with Firebase config injected at build time</li>
+  </ul>
+</div>
+
+<!-- Microbiome Design -->
+<div class="project">
+  <div class="project-header">
+    <span class="project-title">Microbiome Design: Science Consultancy Platform</span>
+    <span class="project-meta">Jul 2025</span>
+  </div>
+  <div class="project-role">Developer · <a href="https://microbiomedesign.org">microbiomedesign.org</a></div>
+  <div class="project-tech">Next.js · React · Tailwind CSS</div>
+  <ul>
+    <li>Next.js marketing and e-commerce site for a microbiome data consultancy run by Dr Matthew Tarnowski</li>
+    <li>Includes service pages, a package shop with registration, team profiles, and a contact form</li>
+    <li>Single-page layout with smooth scroll navigation and Next.js image optimisation</li>
+  </ul>
+</div>
+
+<!-- The Life Lab HQ -->
+<div class="project">
+  <div class="project-header">
+    <span class="project-title">The Life Lab HQ: Personal Development Platform</span>
+    <span class="project-meta">Jun 2025</span>
+  </div>
+  <div class="project-role">Developer · <a href="https://thelifelabhq.com">thelifelabhq.com</a></div>
+  <div class="project-tech">React · Firebase Auth · Firestore · AI Chatbot</div>
+  <ul>
+    <li>Personal development platform covering five life areas (Family, Freedom, Finances, Fitness, Faith) with progress dashboard and AI chatbot</li>
+    <li>Firebase Auth login and Firestore profiles, all data scoped per user</li>
+  </ul>
+</div>
+
+<!-- The Designer Box -->
+<div class="project">
+  <div class="project-header">
+    <span class="project-title">The Designer Box: E-Commerce Enhancement</span>
+    <span class="project-meta">Aug 2024</span>
+  </div>
+  <div class="project-role">Developer · <a href="https://thedesignerboxuk.com">thedesignerboxuk.com</a></div>
+  <ul>
+    <li>Interactive star rating and review system with real-time UI updates, added to boost user engagement</li>
+  </ul>
+</div>
+
+<!-- Smaller projects -->
+<div class="project">
+  <div class="project-header">
+    <span class="project-title">Crypto Owl Tracker</span>
+    <span class="project-meta"><a href="https://crypto-owl.netlify.app">crypto-owl.netlify.app</a></span>
+  </div>
+  <ul>
+    <li>Crypto price tracker pulling live data from CoinGecko API, fully responsive. React, Netlify</li>
+  </ul>
+</div>
+
+<div class="project" style="margin-bottom: 4pt;">
+  <div class="project-header">
+    <span class="project-title">TaskTide</span>
+    <span class="project-meta"><a href="https://tasktide-reactjs.netlify.app">tasktide-reactjs.netlify.app</a></span>
+  </div>
+  <ul>
+    <li>Task manager with create/edit/delete, filtering, and localStorage so data persists between sessions. React, Vite, Netlify</li>
+  </ul>
+</div>
+
+<!-- ════════════════════════════ EDUCATION ════════════════════════════ -->
+<div class="section-title">Education</div>
+<div class="edu-item"><strong>Software Engineering Bootcamp</strong> — Iungo Solutions <span class="edu-meta">· Jan 2024 – Present</span></div>
+<div class="edu-item"><strong>IBM TechXchange Dev Day: Virtual Agents</strong> <span class="edu-meta">· Jan 2025</span></div>
+<div class="edu-item mt-4"><strong>St Edward's C of E School &amp; Sixth Form College</strong></div>
+<div class="edu-sub">A Levels (3 subjects) · Jun 2016</div>
+<div class="edu-sub">GCSEs (5 A-C grades) · Nov 2014</div>
+
+<!-- ════════════════════════════ REFERENCES ════════════════════════════ -->
+<div class="section-title">References</div>
+<p class="references">Available upon request</p>
+
+</body>
+</html>
