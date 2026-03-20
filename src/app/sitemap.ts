@@ -1,4 +1,5 @@
 import type { MetadataRoute } from 'next';
+import { getAllPosts } from '@/lib/blog/posts';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://www.crftdweb.com';
@@ -11,6 +12,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${baseUrl}/services`, lastModified: now, changeFrequency: 'monthly', priority: 0.9 },
     { url: `${baseUrl}/work`, lastModified: now, changeFrequency: 'weekly', priority: 0.9 },
     { url: `${baseUrl}/contact`, lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${baseUrl}/blog`, lastModified: now, changeFrequency: 'weekly', priority: 0.8 },
   ];
 
   // Niche service pages — high SEO value
@@ -27,11 +29,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${baseUrl}/services/website-cost`, lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
   ];
 
+  // Blog posts
+  const blogRoutes: MetadataRoute.Sitemap = getAllPosts().map((post) => ({
+    url: `${baseUrl}/blog/${post.slug}`,
+    lastModified: post.date,
+    changeFrequency: 'monthly' as const,
+    priority: 0.7,
+  }));
+
   // Product pages
   const productRoutes: MetadataRoute.Sitemap = [
     { url: `${baseUrl}/playbook`, lastModified: now, changeFrequency: 'monthly', priority: 0.7 },
     { url: `${baseUrl}/engine`, lastModified: now, changeFrequency: 'monthly', priority: 0.7 },
   ];
 
-  return [...coreRoutes, ...nicheRoutes, ...contentRoutes, ...productRoutes];
+  return [...coreRoutes, ...nicheRoutes, ...contentRoutes, ...blogRoutes, ...productRoutes];
 }
