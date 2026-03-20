@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { sendMessage, sendPhoto, sendDocument, type TelegramUpdate } from '@/lib/telegram/bot';
+import { sendMessage, sendMessageWithButtons, answerCallbackQuery, editMessageText, sendPhoto, sendDocument, type TelegramUpdate } from '@/lib/telegram/bot';
 import { generatePost, type PostType } from '@/lib/telegram/generate-post';
 import { type TemplateType } from '@/lib/telegram/templates';
 
@@ -26,6 +26,46 @@ export async function POST(req: NextRequest) {
     }
 
     const update: TelegramUpdate = await req.json();
+
+    // ─── Handle inline button callbacks ───
+    if (update.callback_query) {
+      const cb = update.callback_query;
+      const cbChatId = cb.message?.chat.id;
+      const cbMessageId = cb.message?.message_id;
+      const cbUserId = cb.from.id;
+      const cbData = cb.data || '';
+
+      if (!cbChatId || !isAllowed(cbUserId)) {
+        await answerCallbackQuery(cb.id, 'Not authorized.');
+        return NextResponse.json({ ok: true });
+      }
+
+      if (cbData.startsWith('delete_preview:')) {
+        const previewId = cbData.replace('delete_preview:', '');
+        const { getPreview, deletePreview } = await import('@/lib/hunter/store');
+        const preview = await getPreview(previewId);
+
+        if (!preview) {
+          await answerCallbackQuery(cb.id, 'Preview not found.');
+        } else {
+          await deletePreview(previewId);
+          await answerCallbackQuery(cb.id, 'Deleted!');
+          if (cbMessageId) {
+            await editMessageText(
+              cbChatId,
+              cbMessageId,
+              `🗑️ <s>${preview.headline || preview.slug}</s>\n<i>Deleted</i>`,
+            );
+          }
+        }
+      } else {
+        await answerCallbackQuery(cb.id);
+      }
+
+      return NextResponse.json({ ok: true });
+    }
+
+    // ─── Handle text messages / commands ───
     const message = update.message;
 
     if (!message?.text || !message.from) {
@@ -451,14 +491,18 @@ ${post.content}
           break;
         }
 
-        const lines = previews.map((p, i) => {
+        const header = huntId ? `<b>🏗️ Previews for hunt ${huntId}</b>` : `<b>🏗️ Recent Previews (${previews.length})</b>`;
+        await sendMessage(chatId, header);
+
+        for (const p of previews) {
           const status = p.status === 'approved' ? '✅' : p.status === 'sent' ? '📧' : '🏗️';
           const name = p.headline || p.slug || 'Unknown';
-          return `${i + 1}. ${status} <b>${name}</b>\n   ${p.previewUrl || 'No URL'}\n   ID: <code>${p.id}</code>`;
-        });
+          const text = `${status} <b>${name}</b>\n${p.previewUrl || 'No URL'}`;
 
-        const header = huntId ? `<b>🏗️ Previews for hunt ${huntId}</b>` : '<b>🏗️ Recent Previews</b>';
-        await sendMessage(chatId, `${header}\n\n${lines.join('\n\n')}`);
+          await sendMessageWithButtons(chatId, text, [
+            [{ text: '🗑 Delete', callback_data: `delete_preview:${p.id}` }],
+          ]);
+        }
         break;
       }
 

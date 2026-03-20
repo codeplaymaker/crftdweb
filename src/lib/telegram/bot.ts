@@ -16,6 +16,56 @@ export async function sendMessage(chatId: string | number, text: string, parseMo
   return res.json();
 }
 
+export async function sendMessageWithButtons(
+  chatId: string | number,
+  text: string,
+  buttons: { text: string; callback_data: string }[][],
+  parseMode: 'HTML' | 'Markdown' = 'HTML',
+) {
+  const res = await fetch(`${TELEGRAM_API}/sendMessage`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      chat_id: chatId,
+      text,
+      parse_mode: parseMode,
+      reply_markup: { inline_keyboard: buttons },
+    }),
+  });
+  return res.json();
+}
+
+export async function answerCallbackQuery(callbackQueryId: string, text?: string) {
+  const res = await fetch(`${TELEGRAM_API}/answerCallbackQuery`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      callback_query_id: callbackQueryId,
+      text,
+    }),
+  });
+  return res.json();
+}
+
+export async function editMessageText(
+  chatId: string | number,
+  messageId: number,
+  text: string,
+  parseMode: 'HTML' | 'Markdown' = 'HTML',
+) {
+  const res = await fetch(`${TELEGRAM_API}/editMessageText`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      chat_id: chatId,
+      message_id: messageId,
+      text,
+      parse_mode: parseMode,
+    }),
+  });
+  return res.json();
+}
+
 export async function sendPhoto(chatId: string | number, photoBuffer: Buffer, caption?: string) {
   const formData = new FormData();
   formData.append('chat_id', String(chatId));
@@ -86,5 +136,21 @@ export interface TelegramUpdate {
     };
     text?: string;
     date: number;
+  };
+  callback_query?: {
+    id: string;
+    from: {
+      id: number;
+      first_name: string;
+      username?: string;
+    };
+    message?: {
+      message_id: number;
+      chat: {
+        id: number;
+        type: string;
+      };
+    };
+    data?: string;
   };
 }
