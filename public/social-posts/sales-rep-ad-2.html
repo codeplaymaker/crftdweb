@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CrftdWeb — Sales Rep Ad 2</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family:'Inter',sans-serif;
+            background:#111;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            min-height:100vh;
+            overflow:auto;
+        }
+
+        .frame-wrapper {
+            transform:scale(0.45);
+            transform-origin:top center;
+            margin:20px auto;
+        }
+
+        .frame {
+            width:1080px;
+            height:1920px;
+            background:#0a0a0a;
+            position:relative;
+            overflow:hidden;
+            font-family:'Inter',sans-serif;
+        }
+
+        /* Green tint glow — money angle */
+        .frame::before {
+            content:'';
+            position:absolute;
+            top:20%;
+            left:50%;
+            transform:translateX(-50%);
+            width:1000px;
+            height:1000px;
+            background:radial-gradient(circle, rgba(16,185,129,.05) 0%, transparent 70%);
+            pointer-events:none;
+        }
+
+        .safe-overlay {
+            display:none;
+            position:absolute;
+            inset:0;
+            z-index:100;
+            pointer-events:none;
+        }
+        #showSafe:checked ~ .frame-wrapper .safe-overlay { display:block; }
+        .safe-overlay .safe-top    { position:absolute; top:0; left:0; right:0; height:150px; background:rgba(255,0,0,.12); border-bottom:2px dashed rgba(255,0,0,.4); }
+        .safe-overlay .safe-bottom { position:absolute; bottom:0; left:0; right:0; height:480px; background:rgba(255,0,0,.12); border-top:2px dashed rgba(255,0,0,.4); }
+        .safe-overlay .safe-right  { position:absolute; top:150px; right:0; width:150px; bottom:480px; background:rgba(255,0,0,.08); border-left:2px dashed rgba(255,0,0,.3); }
+        .safe-overlay .safe-left   { position:absolute; top:150px; left:0; width:60px; bottom:480px; background:rgba(255,0,0,.05); border-right:1px dashed rgba(255,0,0,.2); }
+
+        .content {
+            position:absolute;
+            top:150px;
+            left:0;
+            right:0;
+            bottom:480px;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:center;
+            z-index:10;
+            padding:0 80px;
+        }
+
+        /* Top tag */
+        .tag {
+            display:inline-flex;
+            align-items:center;
+            gap:10px;
+            padding:12px 32px;
+            border-radius:100px;
+            background:rgba(16,185,129,.08);
+            border:1px solid rgba(16,185,129,.2);
+            color:#10b981;
+            font-size:17px;
+            font-weight:700;
+            letter-spacing:0.08em;
+            text-transform:uppercase;
+            margin-bottom:56px;
+        }
+
+        /* Headline */
+        .headline {
+            font-size:100px;
+            font-weight:900;
+            line-height:.88;
+            letter-spacing:-0.045em;
+            color:white;
+            text-align:center;
+            margin-bottom:0;
+        }
+
+        .headline-accent {
+            font-size:100px;
+            font-weight:300;
+            font-style:italic;
+            color:rgba(255,255,255,.15);
+            text-align:center;
+            line-height:.95;
+            margin-bottom:60px;
+        }
+
+        /* Earnings cards */
+        .earnings {
+            width:100%;
+            display:flex;
+            flex-direction:column;
+            gap:16px;
+            margin-bottom:60px;
+        }
+
+        .earn-card {
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            padding:32px 40px;
+            border-radius:20px;
+            background:rgba(255,255,255,.03);
+            border:1px solid rgba(255,255,255,.06);
+        }
+
+        .earn-project {
+            display:flex;
+            flex-direction:column;
+            gap:6px;
+        }
+
+        .earn-type {
+            font-size:16px;
+            font-weight:600;
+            letter-spacing:0.05em;
+            text-transform:uppercase;
+            color:rgba(255,255,255,.3);
+        }
+
+        .earn-name {
+            font-size:26px;
+            font-weight:700;
+            color:rgba(255,255,255,.8);
+        }
+
+        .earn-right {
+            display:flex;
+            flex-direction:column;
+            align-items:flex-end;
+            gap:4px;
+        }
+
+        .earn-project-val {
+            font-size:18px;
+            color:rgba(255,255,255,.25);
+            font-weight:500;
+        }
+
+        .earn-you {
+            font-size:40px;
+            font-weight:900;
+            color:#10b981;
+            letter-spacing:-0.02em;
+        }
+
+        /* Divider line */
+        .divider {
+            width:100%;
+            height:1px;
+            background:rgba(255,255,255,.05);
+            margin-bottom:60px;
+        }
+
+        /* Bottom copy */
+        .bottom-copy {
+            text-align:center;
+            margin-bottom:48px;
+        }
+
+        .bottom-copy p {
+            font-size:22px;
+            color:rgba(255,255,255,.35);
+            line-height:1.6;
+            font-weight:400;
+        }
+
+        .bottom-copy strong {
+            color:rgba(255,255,255,.75);
+            font-weight:600;
+        }
+
+        /* CTA */
+        .cta-area {
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+        }
+
+        .cta-btn {
+            background:white;
+            color:#0a0a0a;
+            font-size:26px;
+            font-weight:800;
+            padding:24px 72px;
+            border-radius:100px;
+            border:none;
+            cursor:pointer;
+            margin-bottom:16px;
+            font-family:'Inter',sans-serif;
+            letter-spacing:-0.02em;
+        }
+
+        .cta-sub {
+            font-size:17px;
+            color:rgba(255,255,255,.2);
+        }
+
+        /* Logo */
+        .logo-mark {
+            position:absolute;
+            bottom:500px;
+            left:50%;
+            transform:translateX(-50%);
+            font-size:22px;
+            font-weight:800;
+            color:rgba(255,255,255,.1);
+            letter-spacing:0.05em;
+            z-index:10;
+            white-space:nowrap;
+        }
+
+        .controls {
+            position:fixed;
+            top:0; left:0; right:0;
+            z-index:9999;
+            background:rgba(0,0,0,.85);
+            backdrop-filter:blur(10px);
+            padding:12px 24px;
+            display:flex;
+            align-items:center;
+            gap:20px;
+            font-size:13px;
+            color:white;
+        }
+        .controls label { display:flex; align-items:center; gap:6px; cursor:pointer; font-weight:500; }
+        .controls button {
+            background:white; color:#0a0a0a; border:none; padding:8px 24px;
+            border-radius:100px; font-family:'Inter',sans-serif; font-size:13px; font-weight:700; cursor:pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="controls">
+    <label><input type="checkbox" id="showSafeToggle"> Show TikTok Safe Zones</label>
+    <button id="dl">⬇ Download PNG (1080×1920)</button>
+</div>
+
+<input type="checkbox" id="showSafe" style="display:none;">
+
+<div class="frame-wrapper">
+    <div class="frame" id="frame">
+
+        <div class="safe-overlay">
+            <div class="safe-top"></div>
+            <div class="safe-bottom"></div>
+            <div class="safe-right"></div>
+            <div class="safe-left"></div>
+        </div>
+
+        <div class="content">
+
+            <div class="tag">💸 Side income · No experience needed</div>
+
+            <div class="headline">What you could</div>
+            <div class="headline-accent">be earning.</div>
+
+            <div class="earnings">
+                <div class="earn-card">
+                    <div class="earn-project">
+                        <div class="earn-type">Project type</div>
+                        <div class="earn-name">Landing Page</div>
+                    </div>
+                    <div class="earn-right">
+                        <div class="earn-project-val">£850 project</div>
+                        <div class="earn-you">£127</div>
+                    </div>
+                </div>
+                <div class="earn-card">
+                    <div class="earn-project">
+                        <div class="earn-type">Project type</div>
+                        <div class="earn-name">Business Site</div>
+                    </div>
+                    <div class="earn-right">
+                        <div class="earn-project-val">£3,000 project</div>
+                        <div class="earn-you">£450</div>
+                    </div>
+                </div>
+                <div class="earn-card">
+                    <div class="earn-project">
+                        <div class="earn-type">Project type</div>
+                        <div class="earn-name">Web App</div>
+                    </div>
+                    <div class="earn-right">
+                        <div class="earn-project-val">£10,000 project</div>
+                        <div class="earn-you">£1,500</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="bottom-copy">
+                <p>You find the client. <strong>We do the work.</strong><br>You earn <strong>15% of every project</strong> — no cap,<br>no salary, no office. Just results.</p>
+            </div>
+
+            <div class="cta-area">
+                <button class="cta-btn">Apply Now ›</button>
+                <div class="cta-sub">crftdweb.com · Remote · Flexible hours</div>
+            </div>
+
+        </div>
+
+        <div class="logo-mark">CRFTDWEB.COM</div>
+
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+document.getElementById('showSafeToggle').addEventListener('change', function() {
+    document.getElementById('showSafe').checked = this.checked;
+});
+document.getElementById('dl').addEventListener('click', async () => {
+    const btn = document.getElementById('dl');
+    btn.textContent = 'Generating...';
+    const frame = document.getElementById('frame');
+    const wrapper = frame.parentElement;
+    const origTransform = wrapper.style.transform;
+    wrapper.style.transform = 'none';
+    const safeOverlay = frame.querySelector('.safe-overlay');
+    safeOverlay.style.display = 'none';
+    try {
+        const canvas = await html2canvas(frame, {
+            width:1080, height:1920, scale:1, useCORS:true,
+            backgroundColor:'#0a0a0a', scrollX:0, scrollY:-window.scrollY,
+            windowWidth:1080, windowHeight:1920,
+        });
+        const link = document.createElement('a');
+        link.download = 'crftdweb-sales-rep-ad-2-1080x1920.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+    } finally {
+        wrapper.style.transform = origTransform;
+        safeOverlay.style.display = '';
+        btn.textContent = '⬇ Download PNG (1080×1920)';
+    }
+});
+</script>
+</body>
+</html>

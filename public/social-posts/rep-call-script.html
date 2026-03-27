@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CrftdWeb — Rep Call Script</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f9f9f9;
+      color: #111;
+      padding: 40px;
+      min-height: 100vh;
+    }
+
+    .page {
+      max-width: 780px;
+      margin: 0 auto;
+      background: #fff;
+      border: 1px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 48px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px solid #111;
+      padding-bottom: 20px;
+      margin-bottom: 28px;
+    }
+
+    .logo {
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+    }
+
+    .logo span {
+      color: #fff;
+      background: #111;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .badge {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #666;
+      border: 1px solid #ddd;
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    h1 {
+      font-size: 26px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      margin-bottom: 4px;
+    }
+
+    .subtitle {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 32px;
+    }
+
+    .section {
+      margin-bottom: 24px;
+    }
+
+    .section-label {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #999;
+      margin-bottom: 10px;
+    }
+
+    .script-block {
+      background: #f4f4f4;
+      border-left: 3px solid #111;
+      border-radius: 0 8px 8px 0;
+      padding: 14px 18px;
+      font-size: 14px;
+      line-height: 1.7;
+      color: #222;
+      margin-bottom: 10px;
+    }
+
+    .script-block em {
+      color: #888;
+      font-style: italic;
+    }
+
+    .script-block strong {
+      font-weight: 700;
+      color: #111;
+    }
+
+    .branch {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .branch-box {
+      border-radius: 8px;
+      padding: 14px 16px;
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .branch-box.yes {
+      background: #f0fdf4;
+      border: 1px solid #86efac;
+    }
+
+    .branch-box.no {
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+    }
+
+    .branch-box .branch-label {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .branch-box.yes .branch-label { color: #16a34a; }
+    .branch-box.no .branch-label { color: #ea580c; }
+
+    .rules {
+      background: #111;
+      color: #fff;
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin-top: 28px;
+    }
+
+    .rules h3 {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #aaa;
+      margin-bottom: 14px;
+    }
+
+    .rules ol {
+      padding-left: 20px;
+    }
+
+    .rules ol li {
+      font-size: 13px;
+      line-height: 1.7;
+      color: #e0e0e0;
+      margin-bottom: 6px;
+    }
+
+    .rules ol li strong {
+      color: #fff;
+    }
+
+    .goal-bar {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .goal-pill {
+      flex: 1;
+      background: #f4f4f4;
+      border-radius: 8px;
+      padding: 14px 16px;
+      text-align: center;
+    }
+
+    .goal-pill .num {
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      display: block;
+    }
+
+    .goal-pill .label {
+      font-size: 11px;
+      color: #888;
+      font-weight: 500;
+      margin-top: 2px;
+    }
+
+    .footer {
+      margin-top: 32px;
+      padding-top: 16px;
+      border-top: 1px solid #eee;
+      font-size: 11px;
+      color: #bbb;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    @media print {
+      body { background: #fff; padding: 0; }
+      .page { box-shadow: none; border: none; border-radius: 0; padding: 32px; }
+      .print-btn { display: none; }
+    }
+
+    .print-btn {
+      display: block;
+      text-align: center;
+      margin: 24px auto 0;
+      max-width: 780px;
+    }
+
+    .print-btn button {
+      background: #111;
+      color: #fff;
+      border: none;
+      padding: 12px 32px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      border-radius: 8px;
+      cursor: pointer;
+      letter-spacing: 0.5px;
+    }
+
+    .print-btn button:hover {
+      background: #333;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page">
+
+    <div class="header">
+      <div class="logo"><span>crftd</span>web</div>
+      <div class="badge">Sales Rep — Call Script</div>
+    </div>
+
+    <h1>Cold Call Script</h1>
+    <p class="subtitle">Keep this beside you during every call. Know it, don't read it.</p>
+
+    <!-- Opening -->
+    <div class="section">
+      <div class="section-label">Step 1 — Opening (first 10 seconds)</div>
+      <div class="script-block">
+        "Hi, can I speak to the owner? … Hi <strong>[Name]</strong>, my name is <strong>[Your Name]</strong>, I'm calling from a web design studio called CrftdWeb. I'll be really quick — I'm not trying to sell you anything today, I just had a quick question."
+        <br><br>
+        <em>Pause. Let them respond.</em>
+      </div>
+    </div>
+
+    <!-- Hook -->
+    <div class="section">
+      <div class="section-label">Step 2 — The Hook</div>
+      <div class="script-block">
+        "I came across your business online and noticed your website — honestly it looks like it could be doing a lot more for you. Is that something you've thought about at all?"
+        <br><br>
+        <em>Wait for their response — don't fill the silence.</em>
+      </div>
+    </div>
+
+    <!-- Branch -->
+    <div class="section">
+      <div class="section-label">Step 3 — Their Response</div>
+      <div class="branch">
+        <div class="branch-box yes">
+          <div class="branch-label">✓ If Yes / "Yeah actually"</div>
+          "Perfect. I work with a developer who specialises in building clean, fast websites for businesses like yours — usually starting from £500. Would you be open to a quick 15-minute call with him to see if it's a fit?"
+        </div>
+        <div class="branch-box no">
+          <div class="branch-label">✗ If No / "We're fine"</div>
+          "Totally get that. Out of curiosity, are you getting enquiries through the site regularly, or do most people find you another way?"
+          <br><br>
+          <em>Gets them talking. If the site isn't converting, you're back in.</em>
+        </div>
+      </div>
+    </div>
+
+    <!-- Booking -->
+    <div class="section">
+      <div class="section-label">Step 4 — Book the Call</div>
+      <div class="script-block">
+        "Great — he's pretty flexible. I can get you a slot as early as <strong>[day]</strong>. What works better for you, mornings or afternoons?"
+        <br><br>
+        <em>Always give a choice. Never ask "when are you free?" — too open ended.</em>
+      </div>
+    </div>
+
+    <!-- Objection -->
+    <div class="section">
+      <div class="section-label">Step 5 — If Not Interested</div>
+      <div class="script-block">
+        "No problem at all. Can I just send over a quick email with some examples of his work — just so you have it if things change?"
+        <br><br>
+        <em>Gets the email. Turns a dead call into a warm lead for follow-up.</em>
+      </div>
+    </div>
+
+    <!-- Goal bar -->
+    <div class="goal-bar">
+      <div class="goal-pill">
+        <span class="num">10</span>
+        <div class="label">Calls per day</div>
+      </div>
+      <div class="goal-pill">
+        <span class="num">2–3</span>
+        <div class="label">Booked calls / week</div>
+      </div>
+      <div class="goal-pill">
+        <span class="num">1</span>
+        <div class="label">Closed client / week</div>
+      </div>
+      <div class="goal-pill">
+        <span class="num">15%</span>
+        <div class="label">Your commission</div>
+      </div>
+    </div>
+
+    <!-- Rules -->
+    <div class="rules">
+      <h3>The Rules</h3>
+      <ol>
+        <li><strong>Never read it word for word</strong> — know it, then make it natural</li>
+        <li><strong>Your only goal is to book a call</strong> — not sell the website, that's his job</li>
+        <li><strong>Keep calls under 3 minutes</strong> — don't pitch, don't ramble</li>
+        <li><strong>Log every call</strong> — name, outcome, callback date in the Google Sheet</li>
+        <li><strong>Follow up everything</strong> — most closes happen on the 2nd or 3rd contact</li>
+      </ol>
+    </div>
+
+    <div class="footer">
+      <span>crftdweb.com · admin@crftdweb.com</span>
+      <span>Internal use only — not for distribution</span>
+    </div>
+
+  </div>
+
+  <div class="print-btn">
+    <button onclick="window.print()">Print One-Pager</button>
+  </div>
+
+</body>
+</html>
