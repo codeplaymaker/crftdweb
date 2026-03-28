@@ -1,6 +1,7 @@
 'use server';
 
 import { Resend } from 'resend';
+import { adminDb } from '@/lib/firebase/admin';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -132,13 +133,25 @@ Looking forward to seeing what you come back with.
 CrftdWeb
 crftdweb.com`;
 
-export async function sendTrialTask(name: string, email: string): Promise<{ success: boolean; error?: string }> {
+export async function sendTrialTask(name: string, email: string): Promise<{ success: boolean; error?: string; alreadySent?: boolean }> {
   if (!process.env.RESEND_API_KEY) {
     return { success: false, error: 'Email configuration error' };
   }
 
   if (!name || !email || !email.includes('@')) {
     return { success: false, error: 'Valid name and email required' };
+  }
+
+  // Deduplication check — block if already sent to this email
+  const normalised = email.trim().toLowerCase();
+  const existing = await adminDb
+    .collection('trial_tasks_sent')
+    .where('email', '==', normalised)
+    .limit(1)
+    .get();
+
+  if (!existing.empty) {
+    return { success: false, alreadySent: true, error: 'Trial task already sent to this email' };
   }
 
   try {
@@ -148,6 +161,13 @@ export async function sendTrialTask(name: string, email: string): Promise<{ succ
       subject: 'CrftdWeb - Quick task before we chat',
       html: buildHtml(name),
       text: plainText(name),
+    });
+
+    // Log to Firestore so future attempts are blocked
+    await adminDb.collection('trial_tasks_sent').add({
+      email: normalised,
+      name,
+      sentAt: new Date(),
     });
 
     return { success: true };

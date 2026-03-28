@@ -43,12 +43,13 @@ function ScoreBar({ score }: { score: number }) {
   );
 }
 
-function ResultCard({ result, onSendTask }: { result: CVResult; onSendTask: (email: string, name: string) => Promise<boolean> }) {
+function ResultCard({ result, onSendTask }: { result: CVResult; onSendTask: (email: string, name: string) => Promise<{ success: boolean; alreadySent?: boolean }> }) {
   const [expanded, setExpanded] = useState(true);
   const cfg = verdictConfig[result.verdict];
   const storageKey = `cv-task-sent-v2-${result.name.replace(/\s+/g, '-').toLowerCase()}`;
-  const alreadySent = typeof window !== 'undefined' && localStorage.getItem(storageKey) === 'sent';
-  const [taskSent, setTaskSent] = useState(alreadySent);
+  const wasSent = typeof window !== 'undefined' && localStorage.getItem(storageKey) === 'sent';
+  const [taskSent, setTaskSent] = useState(wasSent);
+  const [alreadySentWarning, setAlreadySentWarning] = useState(false);
   const [manualEmail, setManualEmail] = useState('');
   const [enteringEmail, setEnteringEmail] = useState(false);
   const [sending, setSending] = useState(false);
@@ -57,12 +58,16 @@ function ResultCard({ result, onSendTask }: { result: CVResult; onSendTask: (ema
     const email = result.email || manualEmail;
     if (!email) { setEnteringEmail(true); return; }
     setSending(true);
-    const success = await onSendTask(email, result.name);
+    const res = await onSendTask(email, result.name);
     setSending(false);
-    if (success) {
+    if (res.success) {
       localStorage.setItem(storageKey, 'sent');
       setTaskSent(true);
       setEnteringEmail(false);
+    } else if (res.alreadySent) {
+      localStorage.setItem(storageKey, 'sent');
+      setTaskSent(true);
+      setAlreadySentWarning(true);
     }
   };
 
@@ -82,8 +87,10 @@ function ResultCard({ result, onSendTask }: { result: CVResult; onSendTask: (ema
         <div className="flex items-center gap-2 shrink-0 ml-3">
           {result.verdict !== 'Pass' && (
             taskSent ? (
-              <span className="flex items-center gap-1.5 text-xs text-emerald-400 font-semibold">
-                <CheckCircle className="w-3.5 h-3.5" /> Task Sent
+              <span className="flex items-center gap-1.5 text-xs font-semibold" title={alreadySentWarning ? 'Already sent previously' : undefined}>
+                {alreadySentWarning
+                  ? <span className="flex items-center gap-1.5 text-amber-400"><AlertCircle className="w-3.5 h-3.5" /> Already Sent</span>
+                  : <span className="flex items-center gap-1.5 text-emerald-400"><CheckCircle className="w-3.5 h-3.5" /> Task Sent</span>}
               </span>
             ) : enteringEmail ? (
               <div className="flex items-center gap-1.5">
@@ -227,8 +234,8 @@ export default function CVReviewPage() {
     await analyseFromApi(formData);
   };
 
-  const handleSendTask = async (email: string, name: string): Promise<boolean> => {
-    if (!email) return false;
+  const handleSendTask = async (email: string, name: string): Promise<{ success: boolean; alreadySent?: boolean }> => {
+    if (!email) return { success: false };
     setSendingFor(name);
     try {
       const res = await fetch('/api/admin/send-trial-task', {
@@ -237,9 +244,9 @@ export default function CVReviewPage() {
         body: JSON.stringify({ email, name: name.split(' ')[0] }),
       });
       const data = await res.json();
-      return res.ok && data.success;
+      return { success: res.ok && data.success, alreadySent: data.alreadySent };
     } catch {
-      return false;
+      return { success: false };
     } finally {
       setSendingFor(null);
     }

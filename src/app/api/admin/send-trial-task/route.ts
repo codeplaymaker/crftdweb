@@ -8,6 +8,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Missing email or name' }, { status: 400 });
     }
     const result = await sendTrialTask(name, email);
+    if (result.alreadySent) {
+      return NextResponse.json({ success: false, alreadySent: true, error: result.error }, { status: 409 });
+    }
     return NextResponse.json(result);
   } catch (err) {
     return NextResponse.json({ error: 'Failed to send' }, { status: 500 });
