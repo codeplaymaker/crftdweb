@@ -1,7 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
+import { adminDb } from '@/lib/firebase/admin';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+export async function GET() {
+  try {
+    const snap = await adminDb.collection('cv_reviews').get();
+    const docs = snap.docs.map(d => d.data());
+    return NextResponse.json({
+      total: docs.length,
+      bookCall: docs.filter(d => d.verdict === 'Book Screening Call').length,
+      sendTask: docs.filter(d => d.verdict === 'Send Trial Task').length,
+      pass: docs.filter(d => d.verdict === 'Pass').length,
+    });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -67,6 +84,15 @@ Return ONLY valid JSON, no markdown.`;
 
     const text = res.choices[0]?.message?.content || '';
     const result = JSON.parse(text);
+
+    // Log to Firestore (fire-and-forget, don't block response)
+    adminDb.collection('cv_reviews').add({
+      name: result.name || '',
+      email: result.email || '',
+      verdict: result.verdict || '',
+      score: result.score || 0,
+      reviewedAt: new Date(),
+    }).catch((e: unknown) => console.error('Firestore log error:', e));
 
     return NextResponse.json(result);
   } catch (err) {

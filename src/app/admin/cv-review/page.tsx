@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Upload, FileText, Loader2, CheckCircle, XCircle, AlertCircle, Send, ChevronDown, ChevronUp } from 'lucide-react';
 
 interface CVResult {
@@ -187,6 +187,14 @@ export default function CVReviewPage() {
   const [dragOver, setDragOver] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [lifetimeStats, setLifetimeStats] = useState<{ total: number; bookCall: number; sendTask: number; pass: number } | null>(null);
+
+  useEffect(() => {
+    fetch('/api/admin/review-cv')
+      .then(r => r.json())
+      .then(setLifetimeStats)
+      .catch(() => {});
+  }, [results]); // refetch after each new review
 
   const analyseFromApi = async (body: BodyInit, headers?: Record<string, string>) => {
     setLoading(true);
@@ -253,6 +261,23 @@ export default function CVReviewPage() {
           <h1 className="text-2xl font-bold text-white mb-1">CV Review</h1>
           <p className="text-sm text-white/40">Paste a CV below — get an instant verdict on whether to book, task, or pass.</p>
         </div>
+
+        {/* Lifetime stats */}
+        {lifetimeStats && lifetimeStats.total > 0 && (
+          <div className="flex gap-4 mb-6">
+            {[
+              { label: 'All-time Reviewed', count: lifetimeStats.total, color: 'text-white/70' },
+              { label: 'Book Call', count: lifetimeStats.bookCall, color: 'text-emerald-400' },
+              { label: 'Send Task', count: lifetimeStats.sendTask, color: 'text-amber-400' },
+              { label: 'Pass', count: lifetimeStats.pass, color: 'text-red-400' },
+            ].map(s => (
+              <div key={s.label} className="bg-white/[0.02] border border-white/5 rounded-xl px-4 py-3 flex-1 text-center">
+                <p className={`text-xl font-bold ${s.color}`}>{s.count}</p>
+                <p className="text-xs text-white/25 mt-0.5">{s.label}</p>
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Stats bar */}
         {results.length > 0 && (
