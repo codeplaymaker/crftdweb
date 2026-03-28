@@ -262,7 +262,7 @@ const shortlist: Applicant[] = [
   { name: 'Brittany Parker', email: 'brittany.parker24@gmail.com', status: 'Trial task sent', color: 'text-sky-400 bg-sky-500/10 border-sky-500/20', canSend: false },
   { name: 'Thlia Xavier', email: 'thlia.xavier@gmail.com', status: 'Trial task sent', color: 'text-sky-400 bg-sky-500/10 border-sky-500/20', canSend: false },
   { name: 'Mia Msembe', email: 'miamesembe@gmail.com', status: 'Trial task sent', color: 'text-sky-400 bg-sky-500/10 border-sky-500/20', canSend: false },
-  { name: 'Trisha', email: 'trisha160702@gmail.com', status: 'Trial task sent', color: 'text-sky-400 bg-sky-500/10 border-sky-500/20', canSend: false },
+  { name: 'Trisha', email: 'trisha160702@gmail.com', status: 'Book Screening Call', color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20', canSend: false },
   { name: 'James Owain', email: 'Jamesowain234@gmail.com', status: 'Trial task sent', color: 'text-sky-400 bg-sky-500/10 border-sky-500/20', canSend: false },
   { name: 'Subby', email: 'subby487@gmail.com', status: 'Trial task sent', color: 'text-sky-400 bg-sky-500/10 border-sky-500/20', canSend: false },
   { name: 'Ebalo Shabani', email: 'ebaloshabani010@gmail.com', status: 'Trial task sent', color: 'text-sky-400 bg-sky-500/10 border-sky-500/20', canSend: false },
