@@ -258,6 +258,15 @@ interface Applicant {
 }
 
 const shortlist: Applicant[] = [
+  { name: 'Nicol', email: 'nicol1@live.co.uk', status: 'Trial task sent', color: 'text-sky-400 bg-sky-500/10 border-sky-500/20', canSend: false },
+  { name: 'Brittany Parker', email: 'brittany.parker24@gmail.com', status: 'Trial task sent', color: 'text-sky-400 bg-sky-500/10 border-sky-500/20', canSend: false },
+  { name: 'Thlia Xavier', email: 'thlia.xavier@gmail.com', status: 'Trial task sent', color: 'text-sky-400 bg-sky-500/10 border-sky-500/20', canSend: false },
+  { name: 'Mia Msembe', email: 'miamesembe@gmail.com', status: 'Trial task sent', color: 'text-sky-400 bg-sky-500/10 border-sky-500/20', canSend: false },
+  { name: 'Trisha', email: 'trisha160702@gmail.com', status: 'Trial task sent', color: 'text-sky-400 bg-sky-500/10 border-sky-500/20', canSend: false },
+  { name: 'James Owain', email: 'Jamesowain234@gmail.com', status: 'Trial task sent', color: 'text-sky-400 bg-sky-500/10 border-sky-500/20', canSend: false },
+  { name: 'Subby', email: 'subby487@gmail.com', status: 'Trial task sent', color: 'text-sky-400 bg-sky-500/10 border-sky-500/20', canSend: false },
+  { name: 'Ebalo Shabani', email: 'ebaloshabani010@gmail.com', status: 'Trial task sent', color: 'text-sky-400 bg-sky-500/10 border-sky-500/20', canSend: false },
+  { name: 'Obinna Eze Elijah', email: 'obiezeelijah@gmail.com', status: 'Trial task sent', color: 'text-sky-400 bg-sky-500/10 border-sky-500/20', canSend: false },
   { name: 'Gracie Tamplin', email: 'gracie.tamplin@icloud.com', status: 'Trial task sent', color: 'text-sky-400 bg-sky-500/10 border-sky-500/20', canSend: false },
   { name: 'Kujembola Mathew', email: 'kujemath97@gmail.com', status: 'Trial task sent', color: 'text-sky-400 bg-sky-500/10 border-sky-500/20', canSend: false },
   { name: 'Nieah Mundle', email: 'Rita98_2020@yahoo.com', status: 'Trial task sent', color: 'text-sky-400 bg-sky-500/10 border-sky-500/20', canSend: false },
