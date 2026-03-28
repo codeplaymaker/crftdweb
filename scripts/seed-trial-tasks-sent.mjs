@@ -32,6 +32,7 @@ const app = initializeApp({
 const db = getFirestore(app);
 
 const sent = [
+  { email: 'shrutiboodhun12@outlook.com', name: 'Shruti Boodhun' },
   { email: 'nicol1@live.co.uk', name: 'Nicol' },
   { email: 'brittany.parker24@gmail.com', name: 'Brittany Parker' },
   { email: 'thlia.xavier@gmail.com', name: 'Thlia Xavier' },

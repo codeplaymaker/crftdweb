@@ -260,6 +260,7 @@ interface Applicant {
 }
 
 const shortlist: Applicant[] = [
+  { name: 'Shruti Boodhun', email: 'shrutiboodhun12@outlook.com', status: 'Trial task sent', color: 'text-sky-400 bg-sky-500/10 border-sky-500/20', canSend: false },
   { name: 'Nicol', email: 'nicol1@live.co.uk', status: 'Trial task sent', color: 'text-sky-400 bg-sky-500/10 border-sky-500/20', canSend: false },
   { name: 'Brittany Parker', email: 'brittany.parker24@gmail.com', status: 'Trial task sent', color: 'text-sky-400 bg-sky-500/10 border-sky-500/20', canSend: false },
   { name: 'Thlia Xavier', email: 'thlia.xavier@gmail.com', status: 'Trial task sent', color: 'text-sky-400 bg-sky-500/10 border-sky-500/20', canSend: false },
