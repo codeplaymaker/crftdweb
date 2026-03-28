@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, ChevronUp, Users, ClipboardList, Phone, UserCheck, AlertTriangle, CheckCircle2, ArrowLeft, Send, Loader2, Check, X } from 'lucide-react';
 import Link from 'next/link';
 import { sendTrialTask } from '@/app/actions/sendTrialTask';
+import { sendScreeningInvite } from '@/app/actions/sendScreeningInvite';
 
 // ─── Types ───
 interface Step {
@@ -255,6 +256,7 @@ interface Applicant {
   status: string;
   color: string;
   canSend: boolean;
+  canBookCall?: boolean;
 }
 
 const shortlist: Applicant[] = [
@@ -262,7 +264,7 @@ const shortlist: Applicant[] = [
   { name: 'Brittany Parker', email: 'brittany.parker24@gmail.com', status: 'Trial task sent', color: 'text-sky-400 bg-sky-500/10 border-sky-500/20', canSend: false },
   { name: 'Thlia Xavier', email: 'thlia.xavier@gmail.com', status: 'Trial task sent', color: 'text-sky-400 bg-sky-500/10 border-sky-500/20', canSend: false },
   { name: 'Mia Msembe', email: 'miamesembe@gmail.com', status: 'Trial task sent', color: 'text-sky-400 bg-sky-500/10 border-sky-500/20', canSend: false },
-  { name: 'Trisha', email: 'trisha160702@gmail.com', status: 'Book Screening Call', color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20', canSend: false },
+  { name: 'Trisha', email: 'trisha160702@gmail.com', status: 'Book Screening Call', color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20', canSend: false, canBookCall: true },
   { name: 'James Owain', email: 'Jamesowain234@gmail.com', status: 'Trial task sent', color: 'text-sky-400 bg-sky-500/10 border-sky-500/20', canSend: false },
   { name: 'Subby', email: 'subby487@gmail.com', status: 'Trial task sent', color: 'text-sky-400 bg-sky-500/10 border-sky-500/20', canSend: false },
   { name: 'Ebalo Shabani', email: 'ebaloshabani010@gmail.com', status: 'Trial task sent', color: 'text-sky-400 bg-sky-500/10 border-sky-500/20', canSend: false },
@@ -277,27 +279,44 @@ const shortlist: Applicant[] = [
   { name: 'Sam McLoughlin', email: 'Sam.mcloughlin16@gmail.com', status: 'Pass', color: 'text-red-400 bg-red-500/10 border-red-500/20', canSend: false },
 ];
 
-// ─── Send Trial Task Row ───
+// ─── Applicant Row ───
 function ApplicantRow({ applicant }: { applicant: Applicant }) {
-  const storageKey = `trial-sent-${applicant.name.replace(/\s+/g, '-').toLowerCase()}`;
-  const [open, setOpen] = useState(false);
+  const taskKey = `trial-sent-${applicant.name.replace(/\s+/g, '-').toLowerCase()}`;
+  const callKey = `screening-sent-${applicant.name.replace(/\s+/g, '-').toLowerCase()}`;
+  const [openPanel, setOpenPanel] = useState<'task' | 'call' | null>(null);
   const [email, setEmail] = useState(applicant.email);
-  const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>(() => {
-    if (typeof window !== 'undefined' && localStorage.getItem(storageKey) === 'sent') return 'sent';
-    return 'idle';
-  });
+  const [taskStatus, setTaskStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>(() =>
+    typeof window !== 'undefined' && localStorage.getItem(taskKey) === 'sent' ? 'sent' : 'idle'
+  );
+  const [callStatus, setCallStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>(() =>
+    typeof window !== 'undefined' && localStorage.getItem(callKey) === 'sent' ? 'sent' : 'idle'
+  );
   const [errorMsg, setErrorMsg] = useState('');
 
-  const handleSend = async () => {
-    setStatus('sending');
+  const handleSendTask = async () => {
+    setTaskStatus('sending');
     setErrorMsg('');
     const result = await sendTrialTask(applicant.name.split(' ')[0], email);
     if (result.success) {
-      setStatus('sent');
-      localStorage.setItem(storageKey, 'sent');
-      setOpen(false);
+      setTaskStatus('sent');
+      localStorage.setItem(taskKey, 'sent');
+      setOpenPanel(null);
     } else {
-      setStatus('error');
+      setTaskStatus('error');
+      setErrorMsg(result.error || 'Failed to send');
+    }
+  };
+
+  const handleBookCall = async () => {
+    setCallStatus('sending');
+    setErrorMsg('');
+    const result = await sendScreeningInvite(applicant.name.split(' ')[0], email);
+    if (result.success) {
+      setCallStatus('sent');
+      localStorage.setItem(callKey, 'sent');
+      setOpenPanel(null);
+    } else {
+      setCallStatus('error');
       setErrorMsg(result.error || 'Failed to send');
     }
   };
@@ -310,24 +329,39 @@ function ApplicantRow({ applicant }: { applicant: Applicant }) {
           <span className={`text-xs font-semibold px-3 py-1 rounded-full border shrink-0 ${applicant.color}`}>{applicant.status}</span>
         </div>
         <div className="flex items-center gap-2 shrink-0 ml-3">
-          {status === 'sent' ? (
-            <span className="flex items-center gap-1.5 text-xs text-emerald-400 font-semibold">
-              <Check className="w-3.5 h-3.5" /> Sent
-            </span>
-          ) : applicant.canSend ? (
-            <button
-              onClick={() => setOpen(!open)}
-              className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/30 text-purple-300 transition-all"
-            >
-              <Send className="w-3 h-3" />
-              Send Trial Task
-            </button>
-          ) : null}
+          {applicant.canSend && (
+            taskStatus === 'sent' ? (
+              <span className="flex items-center gap-1.5 text-xs text-emerald-400 font-semibold">
+                <Check className="w-3.5 h-3.5" /> Task Sent
+              </span>
+            ) : (
+              <button
+                onClick={() => setOpenPanel(openPanel === 'task' ? null : 'task')}
+                className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/30 text-purple-300 transition-all"
+              >
+                <Send className="w-3 h-3" /> Send Trial Task
+              </button>
+            )
+          )}
+          {applicant.canBookCall && (
+            callStatus === 'sent' ? (
+              <span className="flex items-center gap-1.5 text-xs text-emerald-400 font-semibold">
+                <Check className="w-3.5 h-3.5" /> Invite Sent
+              </span>
+            ) : (
+              <button
+                onClick={() => setOpenPanel(openPanel === 'call' ? null : 'call')}
+                className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/30 text-emerald-300 transition-all"
+              >
+                <Phone className="w-3 h-3" /> Book Screening Call
+              </button>
+            )
+          )}
         </div>
       </div>
 
       <AnimatePresence>
-        {open && (
+        {openPanel && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
@@ -336,7 +370,10 @@ function ApplicantRow({ applicant }: { applicant: Applicant }) {
             className="overflow-hidden"
           >
             <div className="px-4 pb-4 border-t border-white/5 pt-3">
-              <p className="text-xs text-white/40 mb-2">Confirm email address for <span className="text-white/60">{applicant.name.split(' ')[0]}</span>:</p>
+              <p className="text-xs text-white/40 mb-2">
+                {openPanel === 'task' ? 'Send trial task to' : 'Send screening invite to'}{' '}
+                <span className="text-white/60">{applicant.name.split(' ')[0]}</span>:
+              </p>
               <div className="flex gap-2">
                 <input
                   type="email"
@@ -346,24 +383,32 @@ function ApplicantRow({ applicant }: { applicant: Applicant }) {
                   className="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/25 focus:outline-none focus:border-purple-500/50"
                 />
                 <button
-                  onClick={handleSend}
-                  disabled={status === 'sending' || !email}
-                  className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold transition-all"
+                  onClick={openPanel === 'task' ? handleSendTask : handleBookCall}
+                  disabled={(openPanel === 'task' ? taskStatus : callStatus) === 'sending' || !email}
+                  className={`flex items-center gap-1.5 px-4 py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold transition-all ${
+                    openPanel === 'call' ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-purple-600 hover:bg-purple-700'
+                  }`}
                 >
-                  {status === 'sending' ? (
+                  {(openPanel === 'task' ? taskStatus : callStatus) === 'sending' ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : openPanel === 'call' ? (
+                    <Phone className="w-3.5 h-3.5" />
                   ) : (
                     <Send className="w-3.5 h-3.5" />
                   )}
-                  {status === 'sending' ? 'Sending…' : 'Send'}
+                  {(openPanel === 'task' ? taskStatus : callStatus) === 'sending' ? 'Sending…' : 'Send'}
                 </button>
               </div>
-              {status === 'error' && (
+              {(openPanel === 'task' ? taskStatus : callStatus) === 'error' && (
                 <p className="text-xs text-red-400 mt-2 flex items-center gap-1">
                   <X className="w-3 h-3" /> {errorMsg}
                 </p>
               )}
-              <p className="text-xs text-white/25 mt-2">Sends from admin@crftdweb.com · Subject: "CrftdWeb — Quick task before we chat"</p>
+              <p className="text-xs text-white/25 mt-2">
+                {openPanel === 'task'
+                  ? 'Subject: "CrftdWeb — Quick task before we chat"'
+                  : 'Subject: "CrftdWeb — Let\'s book a call"'}
+              </p>
             </div>
           </motion.div>
         )}
