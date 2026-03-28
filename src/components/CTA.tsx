@@ -6,7 +6,7 @@ import Link from "next/link";
 
 export default function CTA() {
   return (
-    <section className="py-24 sm:py-28 md:py-32 relative overflow-hidden bg-background">
+    <section className="py-16 sm:py-20 md:py-24 relative overflow-hidden bg-background">
       {/* Background Gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-secondary via-accent to-background" />
       
@@ -18,17 +18,11 @@ export default function CTA() {
           transition={{ duration: 0.8 }}
           className="max-w-3xl mx-auto text-center"
         >
-          <span className="text-xs font-semibold tracking-[0.2em] uppercase text-muted-foreground mb-8 block">
-            LET&apos;S TALK
-          </span>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-5 text-black leading-tight tracking-tight">
-            Still wondering why your
-            <br className="hidden sm:block" />
-            site isn&apos;t making you money?
+          <h2 className="text-xl sm:text-2xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 md:mb-6 text-black leading-snug">
+            Ready to Transform Your Digital Presence?
           </h2>
-          <p className="text-sm sm:text-base md:text-lg text-muted-foreground mb-10 px-3 sm:px-0 leading-relaxed max-w-xl mx-auto">
-            Your competitors are investing in sites that convert.
-            The longer you wait, the more you lose. Let&apos;s fix that.
+          <p className="text-sm sm:text-base md:text-lg lg:text-xl text-muted-foreground mb-6 sm:mb-8 px-3 sm:px-0">
+            Let&apos;s collaborate to create something extraordinary. Your vision, our expertise.
           </p>
           <motion.div
             whileHover={{ scale: 1.05 }}
@@ -36,15 +30,12 @@ export default function CTA() {
           >
             <Link 
               href="/contact"
-              className="px-8 py-4 bg-black text-white rounded-full text-sm font-medium inline-flex items-center gap-2 group hover:bg-gray-900 transition-colors"
+              className="px-8 py-4 bg-black text-white rounded-lg text-lg font-medium inline-flex items-center gap-2 group hover:bg-gray-900 transition-colors"
             >
               Start Your Project
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Link>
           </motion.div>
-          <p className="mt-6 text-xs text-muted-foreground/50">
-            Free consultation · No commitment · Response within 24 hours
-          </p>
         </motion.div>
       </div>
 

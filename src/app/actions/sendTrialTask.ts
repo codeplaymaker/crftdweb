@@ -143,7 +143,7 @@ export async function sendTrialTask(name: string, email: string): Promise<{ succ
 
   try {
     await resend.emails.send({
-      from: 'admin@crftdweb.com',
+      from: 'CrftdWeb <admin@crftdweb.com>',
       to: [email],
       subject: 'CrftdWeb - Quick task before we chat',
       html: buildHtml(name),

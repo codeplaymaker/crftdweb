@@ -258,20 +258,25 @@ interface Applicant {
 }
 
 const shortlist: Applicant[] = [
-  { name: 'Gracie Tamplin', email: 'gracie.tamplin@icloud.com', status: 'Book screening call', color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20', canSend: true },
-  { name: 'Kujembola Mathew', email: '', status: 'Book screening call', color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20', canSend: true },
-  { name: 'Nieah Mundle', email: 'Rita98_2020@yahoo.com', status: 'Book screening call', color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20', canSend: true },
-  { name: 'John Williams', email: 'jvw0503007_qwt@indeedemail.com', status: 'Book screening call', color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20', canSend: true },
-  { name: 'Tapi Mandaza', email: 'Tapiwa.mandaza@outlook.com', status: 'Send trial task only', color: 'text-amber-400 bg-amber-500/10 border-amber-500/20', canSend: true },
+  { name: 'Gracie Tamplin', email: 'gracie.tamplin@icloud.com', status: 'Trial task sent', color: 'text-sky-400 bg-sky-500/10 border-sky-500/20', canSend: false },
+  { name: 'Kujembola Mathew', email: 'kujemath97@gmail.com', status: 'Trial task sent', color: 'text-sky-400 bg-sky-500/10 border-sky-500/20', canSend: false },
+  { name: 'Nieah Mundle', email: 'Rita98_2020@yahoo.com', status: 'Trial task sent', color: 'text-sky-400 bg-sky-500/10 border-sky-500/20', canSend: false },
+  { name: 'John Williams', email: 'jvw0503007_qwt@indeedemail.com', status: 'Trial task sent', color: 'text-sky-400 bg-sky-500/10 border-sky-500/20', canSend: false },
+  { name: 'Tapi Mandaza', email: 'Tapiwa.mandaza@outlook.com', status: 'Trial task sent', color: 'text-sky-400 bg-sky-500/10 border-sky-500/20', canSend: false },
+  { name: 'Chris Cox', email: 'chief2002@outlook.com', status: 'Trial task sent', color: 'text-sky-400 bg-sky-500/10 border-sky-500/20', canSend: false },
   { name: 'Joane Cabrera', email: 'joanecabrera10@gmail.com', status: 'Pass', color: 'text-red-400 bg-red-500/10 border-red-500/20', canSend: false },
   { name: 'Sam McLoughlin', email: 'Sam.mcloughlin16@gmail.com', status: 'Pass', color: 'text-red-400 bg-red-500/10 border-red-500/20', canSend: false },
 ];
 
 // ─── Send Trial Task Row ───
 function ApplicantRow({ applicant }: { applicant: Applicant }) {
+  const storageKey = `trial-sent-${applicant.name.replace(/\s+/g, '-').toLowerCase()}`;
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState(applicant.email);
-  const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+  const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>(() => {
+    if (typeof window !== 'undefined' && localStorage.getItem(storageKey) === 'sent') return 'sent';
+    return 'idle';
+  });
   const [errorMsg, setErrorMsg] = useState('');
 
   const handleSend = async () => {
@@ -280,6 +285,7 @@ function ApplicantRow({ applicant }: { applicant: Applicant }) {
     const result = await sendTrialTask(applicant.name.split(' ')[0], email);
     if (result.success) {
       setStatus('sent');
+      localStorage.setItem(storageKey, 'sent');
       setOpen(false);
     } else {
       setStatus('error');
@@ -444,7 +450,7 @@ export default function RepsPage() {
               <ApplicantRow key={applicant.name} applicant={applicant} />
             ))}
           </div>
-          <p className="text-xs text-white/20 mt-4">Kujembola&apos;s email not on file — check your Indeed inbox and add it before sending.</p>
+
         </div>
 
         {/* Footer */}
