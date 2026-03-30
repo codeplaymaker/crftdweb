@@ -733,15 +733,20 @@ export async function deleteWorkspace(workspaceId: string): Promise<void> {
   await deleteDoc(doc(db, 'workspaces', workspaceId));
 }
 
-export async function getDeliverables(workspaceId: string, limitCount = 30): Promise<Deliverable[]> {
+export async function getDeliverables(workspaceId: string, userId: string, limitCount = 30): Promise<Deliverable[]> {
+  // Query by userId only — satisfies the security rule and uses the auto-indexed
+  // single-field index (no composite index creation needed). Filter and sort client-side.
   const q = query(
     collection(db, 'deliverables'),
-    where('workspaceId', '==', workspaceId),
-    orderBy('createdAt', 'desc'),
-    limit(limitCount)
+    where('userId', '==', userId),
+    limit(100)
   );
   const snap = await getDocs(q);
-  return snap.docs.map(d => d.data() as Deliverable);
+  return snap.docs
+    .map(d => d.data() as Deliverable)
+    .filter(d => d.workspaceId === workspaceId)
+    .sort((a, b) => (b.createdAt?.toMillis?.() ?? 0) - (a.createdAt?.toMillis?.() ?? 0))
+    .slice(0, limitCount);
 }
 
 export async function getDeliverable(deliverableId: string): Promise<Deliverable | null> {

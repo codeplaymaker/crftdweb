@@ -104,7 +104,7 @@ export default function WorkspaceDetailPage() {
     try {
       const [ws, dels] = await Promise.all([
         getWorkspace(workspaceId),
-        getDeliverables(workspaceId),
+        getDeliverables(workspaceId, user.uid),
       ]);
       if (!ws || ws.userId !== user.uid) {
         router.push('/engine/dashboard/workspaces');
