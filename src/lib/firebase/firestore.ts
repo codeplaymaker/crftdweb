@@ -655,3 +655,83 @@ export async function getProspectMemory(userId: string, prospect: string): Promi
   const snap = await getDoc(docRef);
   return snap.exists() ? (snap.data() as ProspectMemory) : null;
 }
+
+// ─── Workspaces ────────────────────────────────────────────────────────────
+
+export interface Workspace {
+  id: string;
+  userId: string;
+  clientName: string;
+  niche: string;
+  offer: string;
+  audience: string;
+  goals: string;
+  notes: string;
+  deliverableCount: number;
+  lastActivityAt: Timestamp;
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
+}
+
+export interface Deliverable {
+  id: string;
+  userId: string;
+  workspaceId: string;
+  type: string;
+  title: string;
+  content: string;
+  agentId: string;
+  task: string;
+  createdAt: Timestamp;
+}
+
+export async function saveWorkspace(
+  userId: string,
+  data: Omit<Workspace, 'id' | 'userId' | 'deliverableCount' | 'lastActivityAt' | 'createdAt' | 'updatedAt'>
+): Promise<string> {
+  const docRef = doc(collection(db, 'workspaces'));
+  await setDoc(docRef, {
+    ...data,
+    id: docRef.id,
+    userId,
+    deliverableCount: 0,
+    lastActivityAt: serverTimestamp(),
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  });
+  return docRef.id;
+}
+
+export async function getWorkspaces(userId: string): Promise<Workspace[]> {
+  const q = query(
+    collection(db, 'workspaces'),
+    where('userId', '==', userId),
+    orderBy('lastActivityAt', 'desc')
+  );
+  const snap = await getDocs(q);
+  return snap.docs.map(d => d.data() as Workspace);
+}
+
+export async function getWorkspace(workspaceId: string): Promise<Workspace | null> {
+  const snap = await getDoc(doc(db, 'workspaces', workspaceId));
+  return snap.exists() ? (snap.data() as Workspace) : null;
+}
+
+export async function updateWorkspace(workspaceId: string, data: Partial<Workspace>): Promise<void> {
+  await updateDoc(doc(db, 'workspaces', workspaceId), { ...data, updatedAt: serverTimestamp() });
+}
+
+export async function deleteWorkspace(workspaceId: string): Promise<void> {
+  await deleteDoc(doc(db, 'workspaces', workspaceId));
+}
+
+export async function getDeliverables(workspaceId: string, limitCount = 30): Promise<Deliverable[]> {
+  const q = query(
+    collection(db, 'deliverables'),
+    where('workspaceId', '==', workspaceId),
+    orderBy('createdAt', 'desc'),
+    limit(limitCount)
+  );
+  const snap = await getDocs(q);
+  return snap.docs.map(d => d.data() as Deliverable);
+}
