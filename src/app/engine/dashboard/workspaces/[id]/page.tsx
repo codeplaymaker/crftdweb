@@ -85,6 +85,12 @@ export default function WorkspaceDetailPage() {
   const [copied, setCopied] = useState<string | null>(null);
   const [newDeliverableId, setNewDeliverableId] = useState<string | null>(null);
 
+  // Refinement state
+  const [refiningId, setRefiningId] = useState<string | null>(null);
+  const [refineTask, setRefineTask] = useState('');
+  const [refining, setRefining] = useState(false);
+  const [refineError, setRefineError] = useState<string | null>(null);
+
   const load = useCallback(async () => {
     if (!user) return;
     setLoading(true);
@@ -176,6 +182,53 @@ export default function WorkspaceDetailPage() {
     navigator.clipboard.writeText(content);
     setCopied(id);
     setTimeout(() => setCopied(null), 2000);
+  };
+
+  const handleDownload = (title: string, content: string) => {
+    const filename = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') + '.md';
+    const blob = new Blob([content], { type: 'text/markdown' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleRefine = async (d: Deliverable) => {
+    if (!refineTask.trim() || refining || !user) return;
+    setRefining(true);
+    setRefineError(null);
+    try {
+      const token = await user.getIdToken();
+      const res = await fetch('/api/engine/workspace-mission', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          workspaceId,
+          agentId: d.agentId,
+          task: refineTask,
+          refinementOf: { title: d.title, content: d.content },
+        }),
+      });
+      if (!res.ok) throw new Error('Refinement failed');
+      const { deliverable } = await res.json();
+      const newItem = { ...deliverable, createdAt: Timestamp.fromDate(new Date()) } as Deliverable;
+      setDeliverables(prev => [newItem, ...prev]);
+      setNewDeliverableId(deliverable.id);
+      setExpanded(deliverable.id);
+      setRefiningId(null);
+      setRefineTask('');
+      setWorkspace(prev => prev ? { ...prev, deliverableCount: (prev.deliverableCount || 0) + 1 } : prev);
+      setTimeout(() => setNewDeliverableId(null), 4000);
+    } catch {
+      setRefineError('Refinement failed. Please try again.');
+    } finally {
+      setRefining(false);
+    }
   };
 
   if (loading) {
@@ -454,6 +507,15 @@ export default function WorkspaceDetailPage() {
                       </div>
                       <div className="flex items-center gap-2 flex-shrink-0 ml-3">
                         <button
+                          onClick={e => { e.stopPropagation(); handleDownload(d.title, d.content); }}
+                          className="p-1.5 text-white/30 hover:text-white transition-colors rounded-lg hover:bg-white/10"
+                          title="Download as .md"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                          </svg>
+                        </button>
+                        <button
                           onClick={e => { e.stopPropagation(); handleCopy(d.id, d.content); }}
                           className="p-1.5 text-white/30 hover:text-white transition-colors rounded-lg hover:bg-white/10"
                           title="Copy to clipboard"
@@ -492,6 +554,50 @@ export default function WorkspaceDetailPage() {
                               <div className="prose prose-sm prose-invert max-w-none text-white/80 text-sm leading-relaxed">
                                 <ReactMarkdown>{d.content}</ReactMarkdown>
                               </div>
+                            </div>
+                            {/* Refine section */}
+                            <div className="mt-4 pt-4 border-t border-white/5">
+                              {refiningId === d.id ? (
+                                <div className="space-y-2">
+                                  <textarea
+                                    value={refineTask}
+                                    onChange={e => setRefineTask(e.target.value)}
+                                    onKeyDown={e => e.key === 'Enter' && e.metaKey && handleRefine(d)}
+                                    placeholder="What should the agent change or improve?"
+                                    rows={2}
+                                    autoFocus
+                                    className="w-full bg-white/5 border border-purple-500/30 rounded-lg px-3 py-2 text-white text-sm placeholder-white/25 resize-none focus:outline-none focus:border-purple-500/60 transition-colors"
+                                  />
+                                  {refineError && <p className="text-red-400 text-xs">{refineError}</p>}
+                                  <div className="flex gap-2">
+                                    <button
+                                      onClick={() => handleRefine(d)}
+                                      disabled={!refineTask.trim() || refining}
+                                      className="px-4 py-1.5 bg-purple-600 text-white text-xs rounded-lg font-medium hover:bg-purple-500 disabled:opacity-40 transition-colors flex items-center gap-1.5"
+                                    >
+                                      {refining ? (
+                                        <><svg className="animate-spin w-3 h-3" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Refining…</>
+                                      ) : 'Refine'}
+                                    </button>
+                                    <button
+                                      onClick={() => { setRefiningId(null); setRefineTask(''); setRefineError(null); }}
+                                      className="px-4 py-1.5 bg-white/5 text-white/50 text-xs rounded-lg hover:text-white transition-colors"
+                                    >
+                                      Cancel
+                                    </button>
+                                  </div>
+                                </div>
+                              ) : (
+                                <button
+                                  onClick={() => { setRefiningId(d.id); setRefineTask(''); setRefineError(null); }}
+                                  className="flex items-center gap-1.5 text-xs text-purple-400/70 hover:text-purple-400 transition-colors"
+                                >
+                                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                  </svg>
+                                  Refine this deliverable
+                                </button>
+                              )}
                             </div>
                           </div>
                         </motion.div>

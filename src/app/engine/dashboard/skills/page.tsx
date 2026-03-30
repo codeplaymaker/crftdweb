@@ -27,6 +27,18 @@ interface GeneratedSkill {
   tools: string[];
 }
 
+const REAL_TOOL_KEYWORDS = [
+  'api', 'fetch(', 'http', 'browse', 'scrape', 'execute', 'download', 'upload',
+  'send email', 'webhook', 'youtube', 'twitter', 'instagram', 'database', 'query',
+  'read file', 'write file', 'deploy', 'slack', 'notion', 'zapier', 'airtable',
+  'search the web', 'browse the web', 'open url', 'navigate to', 'click', 'screenshot',
+];
+
+function detectCapabilityWarning(prompt: string, description: string): boolean {
+  const text = (prompt + ' ' + description).toLowerCase();
+  return REAL_TOOL_KEYWORDS.some(kw => text.includes(kw));
+}
+
 export default function SkillsPage() {
   const { user } = useAuth();
   const [skills, setSkills] = useState<Skill[]>([]);
@@ -40,6 +52,7 @@ export default function SkillsPage() {
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const [capabilityWarning, setCapabilityWarning] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -79,6 +92,7 @@ export default function SkillsPage() {
       if (!res.ok) throw new Error('Generation failed');
       const data = await res.json();
       setGenerated(data.skill);
+      setCapabilityWarning(detectCapabilityWarning(data.skill.prompt, description));
     } catch {
       setError('Failed to generate skill. Please try again.');
     } finally {
@@ -233,6 +247,18 @@ export default function SkillsPage() {
                   <h3 className="text-yellow-400 font-semibold">Generated Skill Preview</h3>
                   <span className="text-xs text-white/40">Review before saving</span>
                 </div>
+
+                {capabilityWarning && (
+                  <div className="flex items-start gap-2.5 bg-amber-500/10 border border-amber-500/30 rounded-xl px-4 py-3">
+                    <svg className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                    <div>
+                      <p className="text-amber-400 text-xs font-semibold">Heads up: this skill claims a real capability</p>
+                      <p className="text-amber-400/70 text-xs mt-0.5 leading-relaxed">Skills are prompt injections — the agent will know how to do this but cannot actually call APIs, browse the web, send emails, or execute code. Save it anyway if the framing still adds value.</p>
+                    </div>
+                  </div>
+                )}
 
                 <div className="space-y-3">
                   <div>

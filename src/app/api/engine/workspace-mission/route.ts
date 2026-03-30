@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
   if (!auth) return unauthorizedResponse();
 
   try {
-    const { workspaceId, agentId, task } = await request.json();
+    const { workspaceId, agentId, task, refinementOf } = await request.json();
 
     if (!workspaceId || !task?.trim()) {
       return NextResponse.json({ error: 'Workspace ID and task are required' }, { status: 400 });
@@ -64,6 +64,10 @@ Notes: ${workspace.notes || 'None'}
 --- END CONTEXT ---
 
 MISSION MODE: Produce the complete deliverable. No preamble, no "here's what I'll do", no asking for more information. Just execute. Use markdown formatting for structure. Make it specific to ${workspace.clientName}, not generic.`;
+
+    if (refinementOf?.title && refinementOf?.content) {
+      systemPrompt += `\n\n--- REFINEMENT MODE ---\nYou are NOT creating a new deliverable — you are improving an existing one.\n\nEXISTING DELIVERABLE: "${refinementOf.title}"\n\nCURRENT VERSION:\n${refinementOf.content}\n\nREFINEMENT REQUEST: ${task}\n\nProduce the complete improved version in full. Not a list of changes. Not a diff. The entire deliverable, rewritten and improved based on the request.\n--- END REFINEMENT MODE ---`;
+    }
 
     // ── Load matching skills ────────────────────────────────────────────────
     try {
