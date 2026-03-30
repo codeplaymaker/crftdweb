@@ -91,6 +91,13 @@ export default function WorkspaceDetailPage() {
   const [refining, setRefining] = useState(false);
   const [refineError, setRefineError] = useState<string | null>(null);
 
+  // Share state
+  const [sharingId, setSharingId] = useState<string | null>(null);
+  const [sharedIds, setSharedIds] = useState<Set<string>>(new Set());
+
+  // Rating state
+  const [ratings, setRatings] = useState<Record<string, 1 | -1 | null>>({});
+
   const load = useCallback(async () => {
     if (!user) return;
     setLoading(true);
@@ -113,6 +120,9 @@ export default function WorkspaceDetailPage() {
         notes: ws.notes,
       });
       setDeliverables(dels);
+      // Hydrate share + rating state from loaded deliverables
+      setSharedIds(new Set(dels.filter(d => d.isPublic).map(d => d.id)));
+      setRatings(Object.fromEntries(dels.filter(d => d.rating != null).map(d => [d.id, d.rating!])));
     } catch (e) {
       console.error(e);
     } finally {
@@ -228,6 +238,51 @@ export default function WorkspaceDetailPage() {
       setRefineError('Refinement failed. Please try again.');
     } finally {
       setRefining(false);
+    }
+  };
+
+  const handleShare = async (d: Deliverable) => {
+    if (!user || sharingId === d.id) return;
+    setSharingId(d.id);
+    try {
+      const token = await user.getIdToken();
+      const res = await fetch(`/api/engine/deliverables/${d.id}/share`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error();
+      const { isPublic } = await res.json();
+      setSharedIds(prev => {
+        const next = new Set(prev);
+        isPublic ? next.add(d.id) : next.delete(d.id);
+        return next;
+      });
+      if (isPublic) {
+        const url = `${window.location.origin}/engine/share/${d.id}`;
+        navigator.clipboard.writeText(url);
+        alert(`Share link copied!\n\n${url}`);
+      }
+    } catch {
+      // silent
+    } finally {
+      setSharingId(null);
+    }
+  };
+
+  const handleRate = async (d: Deliverable, rating: 1 | -1) => {
+    if (!user) return;
+    const current = ratings[d.id];
+    const next = current === rating ? null : rating;
+    setRatings(prev => ({ ...prev, [d.id]: next }));
+    try {
+      const token = await user.getIdToken();
+      await fetch(`/api/engine/deliverables/${d.id}/rate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ rating: next }),
+      });
+    } catch {
+      setRatings(prev => ({ ...prev, [d.id]: current })); // revert
     }
   };
 
@@ -499,7 +554,14 @@ export default function WorkspaceDetailPage() {
                           </svg>
                         </div>
                         <div className="min-w-0">
-                          <p className="text-white text-sm font-medium truncate">{d.title}</p>
+                          <div className="flex items-center gap-2 min-w-0">
+                            <p className="text-white text-sm font-medium truncate">{d.title}</p>
+                            {d.refinementOfTitle && (
+                              <span className="flex-shrink-0 text-[10px] px-1.5 py-0.5 bg-purple-500/20 text-purple-400 rounded-full border border-purple-500/20">
+                                refined
+                              </span>
+                            )}
+                          </div>
                           <p className="text-white/40 text-xs">
                             {AGENTS.find(a => a.id === d.agentId)?.name || d.agentId} · {formatTime(d.createdAt)}
                           </p>
@@ -513,6 +575,16 @@ export default function WorkspaceDetailPage() {
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                          </svg>
+                        </button>
+                        <button
+                          onClick={e => { e.stopPropagation(); handleShare(d); }}
+                          disabled={sharingId === d.id}
+                          className={`p-1.5 transition-colors rounded-lg hover:bg-white/10 ${sharedIds.has(d.id) ? 'text-green-400 hover:text-green-300' : 'text-white/30 hover:text-white'}`}
+                          title={sharedIds.has(d.id) ? 'Shared — click to unshare' : 'Share (copies link)'}
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
                           </svg>
                         </button>
                         <button
@@ -557,8 +629,42 @@ export default function WorkspaceDetailPage() {
                             </div>
                             {/* Refine section */}
                             <div className="mt-4 pt-4 border-t border-white/5">
-                              {refiningId === d.id ? (
-                                <div className="space-y-2">
+                              <div className="flex items-center justify-between flex-wrap gap-3">
+                                {/* Rating */}
+                                <div className="flex items-center gap-1.5">
+                                  <span className="text-white/30 text-xs mr-1">Rate:</span>
+                                  <button
+                                    onClick={() => handleRate(d, 1)}
+                                    className={`p-1.5 rounded-lg transition-colors text-sm ${ratings[d.id] === 1 ? 'bg-green-500/20 text-green-400' : 'text-white/30 hover:text-green-400 hover:bg-green-500/10'}`}
+                                    title="Good deliverable"
+                                  >
+                                    👍
+                                  </button>
+                                  <button
+                                    onClick={() => handleRate(d, -1)}
+                                    className={`p-1.5 rounded-lg transition-colors text-sm ${ratings[d.id] === -1 ? 'bg-red-500/20 text-red-400' : 'text-white/30 hover:text-red-400 hover:bg-red-500/10'}`}
+                                    title="Needs improvement"
+                                  >
+                                    👎
+                                  </button>
+                                </div>
+                                {/* Refine trigger */}
+                                {refiningId !== d.id && (
+                                  <button
+                                    onClick={() => { setRefiningId(d.id); setRefineTask(''); setRefineError(null); }}
+                                    className="flex items-center gap-1.5 text-xs text-purple-400/70 hover:text-purple-400 transition-colors"
+                                  >
+                                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                    </svg>
+                                    Refine this deliverable
+                                  </button>
+                                )}
+                              </div>
+
+                              {/* Refine textarea */}
+                              {refiningId === d.id && (
+                                <div className="space-y-2 mt-3">
                                   <textarea
                                     value={refineTask}
                                     onChange={e => setRefineTask(e.target.value)}
@@ -587,16 +693,31 @@ export default function WorkspaceDetailPage() {
                                     </button>
                                   </div>
                                 </div>
-                              ) : (
-                                <button
-                                  onClick={() => { setRefiningId(d.id); setRefineTask(''); setRefineError(null); }}
-                                  className="flex items-center gap-1.5 text-xs text-purple-400/70 hover:text-purple-400 transition-colors"
-                                >
-                                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                              )}
+
+                              {/* Version lineage */}
+                              {d.refinementOfTitle && (
+                                <p className="mt-3 text-white/30 text-xs">
+                                  ↻ Refined from: <span className="text-white/50 italic">{d.refinementOfTitle}</span>
+                                </p>
+                              )}
+
+                              {/* Share link if active */}
+                              {sharedIds.has(d.id) && (
+                                <div className="mt-3 flex items-center gap-2 bg-green-500/5 border border-green-500/15 rounded-lg px-3 py-2">
+                                  <svg className="w-3.5 h-3.5 text-green-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
                                   </svg>
-                                  Refine this deliverable
-                                </button>
+                                  <span className="text-green-400 text-xs flex-1 truncate">
+                                    {typeof window !== 'undefined' ? `${window.location.origin}/engine/share/${d.id}` : `/engine/share/${d.id}`}
+                                  </span>
+                                  <button
+                                    onClick={() => navigator.clipboard.writeText(`${window.location.origin}/engine/share/${d.id}`)}
+                                    className="text-green-400/70 hover:text-green-400 text-xs transition-colors flex-shrink-0"
+                                  >
+                                    Copy
+                                  </button>
+                                </div>
                               )}
                             </div>
                           </div>

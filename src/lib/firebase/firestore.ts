@@ -683,6 +683,13 @@ export interface Deliverable {
   agentId: string;
   task: string;
   createdAt: Timestamp;
+  // Share
+  isPublic?: boolean;
+  // Feedback
+  rating?: 1 | -1 | null;
+  // Version chain
+  refinementOfId?: string;
+  refinementOfTitle?: string;
 }
 
 export async function saveWorkspace(
@@ -734,4 +741,9 @@ export async function getDeliverables(workspaceId: string, limitCount = 30): Pro
   );
   const snap = await getDocs(q);
   return snap.docs.map(d => d.data() as Deliverable);
+}
+
+export async function getDeliverable(deliverableId: string): Promise<Deliverable | null> {
+  const snap = await getDoc(doc(db, 'deliverables', deliverableId));
+  return snap.exists() ? (snap.data() as Deliverable) : null;
 }

@@ -134,6 +134,7 @@ MISSION MODE: Produce the complete deliverable. No preamble, no "here's what I'l
       content,
       agentId,
       task,
+      ...(refinementOf?.title && { refinementOfTitle: refinementOf.title }),
       createdAt: new Date(),
     };
     await deliverableRef.set(deliverable);
