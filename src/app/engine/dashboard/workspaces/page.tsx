@@ -21,11 +21,18 @@ function formatTime(ts: Timestamp | null | undefined): string {
   return date.toLocaleDateString();
 }
 
-const FORM_FIELDS: { label: string; key: 'clientName' | 'niche' | 'offer' | 'audience'; placeholder: string; required?: boolean }[] = [
+const FORM_FIELDS_CLIENT: { label: string; key: 'clientName' | 'niche' | 'offer' | 'audience'; placeholder: string; required?: boolean }[] = [
   { label: 'Client Name *', key: 'clientName', placeholder: 'e.g. Acme Corp or John Smith', required: true },
   { label: 'Niche / Industry', key: 'niche', placeholder: 'e.g. SaaS for accountants' },
   { label: 'Their Offer', key: 'offer', placeholder: 'e.g. Lead generation retainer $3K/mo' },
   { label: 'Target Audience', key: 'audience', placeholder: 'e.g. Series A SaaS founders' },
+];
+
+const FORM_FIELDS_OWN: { label: string; key: 'clientName' | 'niche' | 'offer' | 'audience'; placeholder: string; required?: boolean }[] = [
+  { label: 'Business Name *', key: 'clientName', placeholder: 'e.g. crftd. web', required: true },
+  { label: 'Your Niche', key: 'niche', placeholder: 'e.g. Web design for service businesses' },
+  { label: 'Your Offer', key: 'offer', placeholder: 'e.g. Done-for-you websites from £1,500' },
+  { label: 'Your Ideal Client', key: 'audience', placeholder: 'e.g. UK trades & service businesses' },
 ];
 
 export default function WorkspacesPage() {
@@ -35,6 +42,7 @@ export default function WorkspacesPage() {
   const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
+  const [mode, setMode] = useState<'own' | 'client' | null>(null);
   const [creating, setCreating] = useState(false);
   const [form, setForm] = useState({ clientName: '', niche: '', offer: '', audience: '', goals: '' });
 
@@ -45,7 +53,7 @@ export default function WorkspacesPage() {
       try {
         const ws = await getWorkspaces(user.uid);
         setWorkspaces(ws);
-        if (ws.length === 0) setShowCreate(true);
+        // Don't auto-open form — let onboarding choice screen show instead
       } catch (e) {
         console.error(e);
       } finally {
@@ -54,6 +62,15 @@ export default function WorkspacesPage() {
     }
     load();
   }, [user]);
+
+  const handleStartMode = (m: 'own' | 'client') => {
+    setMode(m);
+    setForm(m === 'own'
+      ? { clientName: '', niche: '', offer: '', audience: '', goals: '' }
+      : { clientName: '', niche: '', offer: '', audience: '', goals: '' }
+    );
+    setShowCreate(true);
+  };
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -100,7 +117,7 @@ export default function WorkspacesPage() {
           <motion.button
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            onClick={() => setShowCreate(!showCreate)}
+            onClick={() => { setMode('client'); setShowCreate(!showCreate); }}
             className="flex-shrink-0 flex items-center gap-2 px-4 py-2.5 bg-purple-600 text-white font-medium rounded-xl hover:bg-purple-500 transition-colors text-sm"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -130,11 +147,18 @@ export default function WorkspacesPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                   </svg>
                 </div>
-                <h2 className="text-white font-semibold">New Client Workspace</h2>
+                <div>
+                  <h2 className="text-white font-semibold">
+                    {mode === 'own' ? 'Set up your business workspace' : 'New Client Workspace'}
+                  </h2>
+                  {mode === 'own' && (
+                    <p className="text-white/40 text-xs mt-0.5">Agents will use this context to produce content for your own business</p>
+                  )}
+                </div>
               </div>
 
               <div className="grid sm:grid-cols-2 gap-4">
-                {FORM_FIELDS.map(({ label, key, placeholder, required }) => (
+                {(mode === 'own' ? FORM_FIELDS_OWN : FORM_FIELDS_CLIENT).map(({ label, key, placeholder, required }) => (
                   <div key={key}>
                     <label className="text-white/50 text-xs mb-1.5 block">{label}</label>
                     <input
@@ -149,7 +173,7 @@ export default function WorkspacesPage() {
               </div>
 
               <div>
-                <label className="text-white/50 text-xs mb-1.5 block">Goals / KPIs</label>
+                <label className="text-white/50 text-xs mb-1.5 block">{mode === 'own' ? 'Your Goals / KPIs' : 'Goals / KPIs'}</label>
                 <input
                   value={form.goals}
                   onChange={e => setForm(prev => ({ ...prev, goals: e.target.value }))}
@@ -239,24 +263,81 @@ export default function WorkspacesPage() {
         </div>
       ) : null}
 
-      {/* How it works — shown when empty */}
+      {/* Onboarding — shown when no workspaces yet */}
       {!loading && workspaces.length === 0 && !showCreate && (
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="grid sm:grid-cols-3 gap-4 mt-4"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="max-w-2xl mx-auto py-8 space-y-8"
         >
-          {[
-            { step: '1', title: 'Create a workspace', desc: 'Name your client and add their offer, audience, and goals.', color: 'text-purple-400' },
-            { step: '2', title: 'Give the agent a task', desc: 'Type what you need — VSL, email sequence, ad copy, landing page copy.', color: 'text-yellow-400' },
-            { step: '3', title: 'Get the deliverable', desc: 'Agent produces the complete output using your client\'s context automatically.', color: 'text-green-400' },
-          ].map(({ step, title, desc, color }) => (
-            <div key={step} className="bg-white/3 border border-white/5 rounded-xl p-5">
-              <span className={`text-3xl font-bold ${color} opacity-60`}>{step}</span>
-              <h3 className="text-white font-medium mt-2 mb-1">{title}</h3>
-              <p className="text-white/40 text-sm">{desc}</p>
+          {/* Hero */}
+          <div className="text-center">
+            <div className="inline-flex items-center justify-center w-14 h-14 bg-gradient-to-br from-purple-500/30 to-violet-600/30 border border-purple-500/30 rounded-2xl mb-5">
+              <svg className="w-7 h-7 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
             </div>
-          ))}
+            <h2 className="text-2xl font-bold text-white mb-2">Where do you want to start?</h2>
+            <p className="text-white/50">Agents use workspace context to produce specific, ready-to-use deliverables — not generic content.</p>
+          </div>
+
+          {/* Choice cards */}
+          <div className="grid sm:grid-cols-2 gap-4">
+            {/* Own business */}
+            <button
+              onClick={() => handleStartMode('own')}
+              className="group text-left bg-white/5 hover:bg-purple-500/10 border border-white/10 hover:border-purple-500/40 rounded-2xl p-6 transition-all"
+            >
+              <div className="p-2.5 bg-purple-500/20 rounded-xl w-fit mb-4">
+                <svg className="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                </svg>
+              </div>
+              <h3 className="text-white font-semibold mb-1.5 group-hover:text-purple-300 transition-colors">My Business</h3>
+              <p className="text-white/50 text-sm leading-relaxed">Produce your own marketing — ads, VSLs, emails, landing pages — with context about your own offer and audience.</p>
+              <div className="mt-4 flex items-center gap-1.5 text-purple-400 text-xs font-medium">
+                Start here
+                <svg className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+            </button>
+
+            {/* Client */}
+            <button
+              onClick={() => handleStartMode('client')}
+              className="group text-left bg-white/5 hover:bg-blue-500/10 border border-white/10 hover:border-blue-500/30 rounded-2xl p-6 transition-all"
+            >
+              <div className="p-2.5 bg-blue-500/20 rounded-xl w-fit mb-4">
+                <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                </svg>
+              </div>
+              <h3 className="text-white font-semibold mb-1.5 group-hover:text-blue-300 transition-colors">A Client</h3>
+              <p className="text-white/50 text-sm leading-relaxed">Create deliverables for one of your clients — VSL scripts, ad copy, email sequences — all loaded with their context.</p>
+              <div className="mt-4 flex items-center gap-1.5 text-blue-400 text-xs font-medium">
+                Add client workspace
+                <svg className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+            </button>
+          </div>
+
+          {/* How it works */}
+          <div className="grid sm:grid-cols-3 gap-4 pt-4">
+            {[
+              { step: '1', title: 'Set the context', desc: 'Name, niche, offer, audience — agents use this in every response.', color: 'text-purple-400' },
+              { step: '2', title: 'Give it a mission', desc: 'Type what you need — VSL, ad copy, emails, landing page — and run it.', color: 'text-yellow-400' },
+              { step: '3', title: 'Get the deliverable', desc: 'Complete, specific, ready to use. Refine, export, or share with one click.', color: 'text-green-400' },
+            ].map(({ step, title, desc, color }) => (
+              <div key={step} className="bg-white/3 border border-white/5 rounded-xl p-5">
+                <span className={`text-3xl font-bold ${color} opacity-60`}>{step}</span>
+                <h3 className="text-white font-medium mt-2 mb-1">{title}</h3>
+                <p className="text-white/40 text-sm">{desc}</p>
+              </div>
+            ))}
+          </div>
         </motion.div>
       )}
     </div>
