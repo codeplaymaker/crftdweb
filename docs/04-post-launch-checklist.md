@@ -94,3 +94,35 @@
 - [ ] Compare against the TRAIN principles one more time
 - [ ] Read all copy out loud (catches awkward phrasing)
 - [ ] Have someone who hasn't seen it browse for 30 seconds and tell you what the site does
+
+---
+
+## crftdweb.com — Remaining TODO (to reach 10/10)
+
+These are the last gaps holding the site back. Code is done. These require real client input.
+
+### 1. Get testimonials from your 3 clients
+Email each one. Ask: *"What was the problem before, and what changed after we launched?"*
+One sentence is enough. Get their name, role, and company.
+
+- [ ] Microbiome Design — contact client for quote
+- [ ] The Life Lab HQ — contact client for quote
+- [ ] MPM Trading — contact client for quote
+
+Once you have the quotes, fill them into `src/components/Testimonials.tsx` (placeholder structure is already built).
+
+Then add `<Testimonials />` to `src/app/page.tsx` between `<Work />` and `<Industries />`.
+
+### 2. Add one real metric to at least one case study
+In `src/components/Work.tsx`, update the `result` field for whichever client can give you a number.
+Even one stat changes everything — sign-ups, inquiries, load time improvement, anything measurable.
+
+### 3. Add Testimonials to the homepage
+```tsx
+// src/app/page.tsx — add this import
+import Testimonials from "@/components/Testimonials";
+
+// Add between <Work /> and <Industries />
+<Testimonials />
+```
+

@@ -52,6 +52,53 @@ export default function ServicesPage() {
           </div>
 
           {/* What's included */}
+          {/* Pricing Tiers */}
+          <div className="max-w-4xl mx-auto mb-20">
+            <div className="text-center mb-12">
+              <h2 className="text-sm font-semibold tracking-[0.15em] uppercase text-muted-foreground mb-4">INVESTMENT</h2>
+              <p className="text-2xl md:text-3xl font-bold tracking-tight mb-3">Fixed scope. Fixed price.</p>
+              <p className="text-muted-foreground max-w-xl mx-auto leading-relaxed">
+                No surprises. No scope creep. You know exactly what you&apos;re getting before we write a line of code.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {pricingTiers.map((tier, index) => (
+                <motion.div
+                  key={tier.name}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: index * 0.1 }}
+                  className={`p-6 rounded-xl border transition-colors ${
+                    tier.featured ? 'bg-black text-white' : 'bg-background hover:border-black/20'
+                  }`}
+                >
+                  <p className={`text-xs font-semibold tracking-[0.15em] uppercase mb-3 ${
+                    tier.featured ? 'text-white/50' : 'text-muted-foreground'
+                  }`}>{tier.timeline}</p>
+                  <h3 className="text-lg font-bold tracking-tight mb-1">{tier.name}</h3>
+                  <p className={`text-2xl font-bold mb-4 ${tier.featured ? 'text-white' : ''}`}>{tier.price}</p>
+                  <p className={`text-sm leading-relaxed mb-5 ${
+                    tier.featured ? 'text-white/70' : 'text-muted-foreground'
+                  }`}>{tier.description}</p>
+                  <ul className="space-y-2">
+                    {tier.includes.map((item) => (
+                      <li key={item} className={`text-xs flex items-center gap-2 ${
+                        tier.featured ? 'text-white/70' : 'text-muted-foreground'
+                      }`}>
+                        <div className={`w-1 h-1 rounded-full flex-shrink-0 ${
+                          tier.featured ? 'bg-white/50' : 'bg-black/30'
+                        }`} />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </motion.div>
+              ))}
+            </div>
+            <p className="text-center text-xs text-muted-foreground/50 mt-6">All prices in GBP &middot; Add-ons available below</p>
+          </div>
+
           <div className="max-w-4xl mx-auto mb-20">
             <div className="p-8 md:p-12 rounded-2xl bg-accent border">
               <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-3 text-center">What&apos;s included</h2>
@@ -67,6 +114,35 @@ export default function ServicesPage() {
                   </div>
                 ))}
               </div>
+            </div>
+          </div>
+
+          {/* Add-ons */}
+          <div className="max-w-4xl mx-auto mb-20">
+            <div className="text-center mb-12">
+              <h2 className="text-sm font-semibold tracking-[0.15em] uppercase text-muted-foreground mb-4">POWER-UPS</h2>
+              <p className="text-2xl md:text-3xl font-bold tracking-tight mb-3">Add-ons & upgrades</p>
+              <p className="text-muted-foreground max-w-xl mx-auto leading-relaxed">
+                Every project starts with the core build. These bolt on when you need more.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {addOns.map((addon, index) => (
+                <motion.div
+                  key={addon.title}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: index * 0.07 }}
+                  className="p-6 rounded-xl border bg-background hover:border-black/20 transition-colors"
+                >
+                  <div className="flex items-start justify-between gap-4 mb-2">
+                    <h3 className="font-semibold text-sm tracking-tight">{addon.title}</h3>
+                    <span className="text-xs font-medium text-muted-foreground whitespace-nowrap">{addon.price}</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground leading-relaxed">{addon.description}</p>
+                </motion.div>
+              ))}
             </div>
           </div>
 
@@ -254,6 +330,66 @@ const visualDevices = [
   { name: "Plot", description: "Two-axis relationships", icon: "⊞" },
   { name: "Loops", description: "Cyclical feedback processes", icon: "↻" },
   { name: "Spectrum", description: "Range between extremes", icon: "≡" },
+];
+
+const pricingTiers = [
+  {
+    name: "Landing Page",
+    price: "from £1,200",
+    timeline: "1–2 weeks",
+    description: "One page. One goal. One CTA. For product launches, lead magnets, and waitlists.",
+    includes: ["Hero + up to 4 sections", "Mobile-responsive", "SEO foundations", "Contact form or email capture", "Vercel deployment"],
+    featured: false,
+  },
+  {
+    name: "Business Website",
+    price: "from £3,200",
+    timeline: "3–5 weeks",
+    description: "Full conversion-focused site for service businesses, startups, and agencies.",
+    includes: ["5–7 custom pages", "TRAIN design system", "Case studies layout", "Analytics + full SEO setup", "2 weeks post-launch support"],
+    featured: true,
+  },
+  {
+    name: "Web Application",
+    price: "from £8,000",
+    timeline: "6–12 weeks",
+    description: "Custom web app with auth, database, and dashboard. For SaaS products and client portals.",
+    includes: ["Everything in Business", "User authentication", "Database integration", "Custom dashboard UI", "4 weeks post-launch support"],
+    featured: false,
+  },
+];
+
+const addOns = [
+  {
+    title: "AI Integration & Chatbots",
+    description: "Add a custom AI chatbot that answers questions, qualifies leads, and books calls — 24/7, without you. Beyond chat: smart search, content generation, GPT-powered tools, and workflow automation. Built to your business, not a copy-paste widget.",
+    price: "from £800",
+  },
+  {
+    title: "Copywriting",
+    description: "We write every word. Problem-first headlines, conversion copy, and SEO-optimised page content in your brand voice.",
+    price: "£400–£1,200 / page",
+  },
+  {
+    title: "Brand Identity",
+    description: "Logo, colour palette, typography system, and brand guidelines. The visual foundation everything else is built on.",
+    price: "from £1,500",
+  },
+  {
+    title: "Monthly Maintenance",
+    description: "Updates, performance monitoring, content changes, and priority support. We stay on, so you don't have to worry about it.",
+    price: "£250–£650 / mo",
+  },
+  {
+    title: "SEO Optimisation",
+    description: "Technical SEO audit, keyword mapping, on-page optimisation, and structured data. Built to rank, not just to look good.",
+    price: "from £400",
+  },
+  {
+    title: "Site Audit",
+    description: "TRAIN design check, conversion audit, performance report, and a prioritised fix list. Useful before a rebuild — or to validate an existing site.",
+    price: "£400–£800",
+  },
 ];
 
 const audiences = [

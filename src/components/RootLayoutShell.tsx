@@ -10,7 +10,9 @@ export default function RootLayoutShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const isPlaybook = pathname?.startsWith('/playbook');
   const isEngine = pathname?.startsWith('/engine');
-  const hasOwnLayout = isPlaybook || isEngine;
+  const isRep = pathname?.startsWith('/rep');
+  const isAdmin = pathname?.startsWith('/admin');
+  const hasOwnLayout = isPlaybook || isEngine || isRep || isAdmin;
 
   return (
     <>

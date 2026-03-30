@@ -67,11 +67,53 @@ service cloud.firestore {
       allow read, write: if request.auth != null && request.auth.uid == uid;
     }
 
+    // Rep profiles — reps can read their own profile; writes only via Admin SDK
+    match /reps/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow write: if false;
+    }
+
+    // Rep leads — reps can fully manage their own leads
+    match /repLeads/{docId} {
+      allow create: if request.auth != null && request.resource.data.repId == request.auth.uid;
+      allow read, update, delete: if request.auth != null && resource.data.repId == request.auth.uid;
+    }
+
+    // Rep commissions — reps can read their own; writes only via Admin SDK
+    match /repCommissions/{docId} {
+      allow read: if request.auth != null && resource.data.repId == request.auth.uid;
+      allow write: if false;
+    }
+
     match /deliverables/{docId} {
       allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
       allow read: if (request.auth != null && resource.data.userId == request.auth.uid)
                   || resource.data.get('isPublic', false) == true;
       allow update, delete: if request.auth != null && resource.data.userId == request.auth.uid;
+    }
+
+    // ── Rep Training Collections ──────────────────────────
+
+    match /repTrainingSessions/{docId} {
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+      allow read, update: if request.auth != null && resource.data.userId == request.auth.uid;
+      allow delete: if false;
+    }
+
+    match /repDrillSessions/{docId} {
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+      allow read, update: if request.auth != null && resource.data.userId == request.auth.uid;
+      allow delete: if false;
+    }
+
+    match /repTrainingStats/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    match /repCallSessions/{docId} {
+      allow create: if request.auth != null && request.resource.data.repId == request.auth.uid;
+      allow read, update: if request.auth != null && resource.data.repId == request.auth.uid;
+      allow delete: if false;
     }
   }
 }

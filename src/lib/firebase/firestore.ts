@@ -358,6 +358,150 @@ export async function deductCredits(uid: string, amount: number): Promise<boolea
   return true;
 }
 
+// ─── Rep System Types ───────────────────────────────────────────────
+
+export interface RepProfile {
+  uid: string;
+  name: string;
+  email: string;
+  phone: string;
+  status: 'active' | 'trial' | 'inactive';
+  commissionRate: number; // percentage e.g. 15
+  joinedAt: Timestamp;
+  notes: string;
+}
+
+export type LeadStatus = 'contacted' | 'interested' | 'call_booked' | 'proposal_sent' | 'won' | 'lost';
+export type LeadSource = 'cold_call' | 'linkedin' | 'email' | 'referral' | 'other';
+
+export interface RepLead {
+  id: string;
+  repId: string;
+  repName: string;
+  businessName: string;
+  contactName: string;
+  contactEmail: string;
+  contactPhone: string;
+  status: LeadStatus;
+  dealValue: number; // 0 until won
+  notes: string;
+  source: LeadSource;
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
+}
+
+export interface RepCommission {
+  id: string;
+  repId: string;
+  repName: string;
+  leadId: string;
+  businessName: string;
+  dealValue: number;
+  commissionAmount: number; // dealValue * commissionRate / 100
+  status: 'pending' | 'paid';
+  createdAt: Timestamp;
+  paidAt: Timestamp | null;
+}
+
+// ─── Rep CRUD ───────────────────────────────────────────────────────
+
+export async function createRepProfile(uid: string, data: Omit<RepProfile, 'uid' | 'joinedAt'>) {
+  await setDoc(doc(db, 'reps', uid), {
+    ...data,
+    uid,
+    joinedAt: serverTimestamp(),
+  });
+}
+
+export async function getRepProfile(uid: string): Promise<RepProfile | null> {
+  const snap = await getDoc(doc(db, 'reps', uid));
+  return snap.exists() ? (snap.data() as RepProfile) : null;
+}
+
+export async function getAllReps(): Promise<RepProfile[]> {
+  const snap = await getDocs(collection(db, 'reps'));
+  return snap.docs.map(d => d.data() as RepProfile);
+}
+
+export async function updateRepProfile(uid: string, data: Partial<RepProfile>) {
+  await updateDoc(doc(db, 'reps', uid), data);
+}
+
+// ─── Lead CRUD ──────────────────────────────────────────────────────
+
+export async function addLead(lead: Omit<RepLead, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
+  const ref = doc(collection(db, 'repLeads'));
+  await setDoc(ref, {
+    ...lead,
+    id: ref.id,
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  });
+  return ref.id;
+}
+
+export async function getRepLeads(repId: string): Promise<RepLead[]> {
+  const q = query(
+    collection(db, 'repLeads'),
+    where('repId', '==', repId)
+  );
+  const snap = await getDocs(q);
+  return snap.docs.map(d => d.data() as RepLead);
+}
+
+export async function getAllLeads(): Promise<RepLead[]> {
+  const q = query(collection(db, 'repLeads'), orderBy('updatedAt', 'desc'));
+  const snap = await getDocs(q);
+  return snap.docs.map(d => d.data() as RepLead);
+}
+
+export async function updateLead(leadId: string, data: Partial<RepLead>) {
+  await updateDoc(doc(db, 'repLeads', leadId), {
+    ...data,
+    updatedAt: serverTimestamp(),
+  });
+}
+
+export async function deleteLead(leadId: string) {
+  await deleteDoc(doc(db, 'repLeads', leadId));
+}
+
+// ─── Commission CRUD ────────────────────────────────────────────────
+
+export async function addCommission(commission: Omit<RepCommission, 'id' | 'createdAt' | 'paidAt'>): Promise<string> {
+  const ref = doc(collection(db, 'repCommissions'));
+  await setDoc(ref, {
+    ...commission,
+    id: ref.id,
+    createdAt: serverTimestamp(),
+    paidAt: null,
+  });
+  return ref.id;
+}
+
+export async function getRepCommissions(repId: string): Promise<RepCommission[]> {
+  const q = query(
+    collection(db, 'repCommissions'),
+    where('repId', '==', repId)
+  );
+  const snap = await getDocs(q);
+  return snap.docs.map(d => d.data() as RepCommission);
+}
+
+export async function getAllCommissions(): Promise<RepCommission[]> {
+  const q = query(collection(db, 'repCommissions'), orderBy('createdAt', 'desc'));
+  const snap = await getDocs(q);
+  return snap.docs.map(d => d.data() as RepCommission);
+}
+
+export async function markCommissionPaid(commissionId: string) {
+  await updateDoc(doc(db, 'repCommissions', commissionId), {
+    status: 'paid',
+    paidAt: serverTimestamp(),
+  });
+}
+
+
 export async function addCredits(uid: string, amount: number) {
   const profile = await getUserProfile(uid);
   if (!profile) return;

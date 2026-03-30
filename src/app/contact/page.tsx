@@ -89,7 +89,8 @@ export default function ContactPage() {
                   id="message"
                   name="message"
                   rows={6}
-                  className="w-full px-4 py-2 rounded-lg border bg-background hover:border-black/20 transition-colors"
+                  placeholder="Tell us what's not working with your current site, what you're trying to achieve, and your rough timeline."
+                  className="w-full px-4 py-2 rounded-lg border bg-background hover:border-black/20 transition-colors placeholder:text-muted-foreground/40"
                   required
                 ></textarea>
               </div>

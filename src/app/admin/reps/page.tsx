@@ -1,11 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, ChevronUp, Users, ClipboardList, Phone, UserCheck, AlertTriangle, CheckCircle2, ArrowLeft, Send, Loader2, Check, X } from 'lucide-react';
+import { ChevronDown, ChevronUp, Users, ClipboardList, Phone, UserCheck, AlertTriangle, CheckCircle2, ArrowLeft, Send, Loader2, Check, X, Plus } from 'lucide-react';
 import Link from 'next/link';
 import { sendTrialTask } from '@/app/actions/sendTrialTask';
 import { sendScreeningInvite } from '@/app/actions/sendScreeningInvite';
+import { RepProfile, RepLead, RepCommission } from '@/lib/firebase/firestore';
 
 // ─── Types ───
 interface Step {
@@ -426,8 +427,247 @@ const stats = [
   { label: 'Commission', value: '15%' },
 ];
 
+// ─── Management Tab ───
+function ManagementTab() {
+  const [reps, setReps] = useState<RepProfile[]>([]);
+  const [leads, setLeads] = useState<RepLead[]>([]);
+  const [commissions, setCommissions] = useState<RepCommission[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showAddRep, setShowAddRep] = useState(false);
+  const [addRepForm, setAddRepForm] = useState({ name: '', email: '', phone: '' });
+  const [addRepStatus, setAddRepStatus] = useState<'idle' | 'saving' | 'done' | 'error'>('idle');
+  const [newRepResult, setNewRepResult] = useState<{ uid: string; tempPassword: string } | null>(null);
+  const [markingPaid, setMarkingPaid] = useState<string | null>(null);
+
+  useEffect(() => {
+    Promise.all([
+      fetch('/api/admin/reps').then(r => r.json()),
+      fetch('/api/admin/leads').then(r => r.json()),
+      fetch('/api/admin/commissions').then(r => r.json()),
+    ]).then(([r, l, c]) => {
+      setReps(r);
+      setLeads(l);
+      setCommissions(c);
+      setLoading(false);
+    });
+  }, []);
+
+  async function handleAddRep(e: React.FormEvent) {
+    e.preventDefault();
+    setAddRepStatus('saving');
+    try {
+      const res = await fetch('/api/admin/create-rep', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(addRepForm),
+      });
+      if (!res.ok) { const d = await res.json(); throw new Error(d.error); }
+      const data = await res.json();
+      setNewRepResult(data);
+      setAddRepStatus('done');
+      // Refresh reps list
+      fetch('/api/admin/reps').then(r => r.json()).then(setReps);
+    } catch (err) {
+      console.error(err);
+      setAddRepStatus('error');
+    }
+  }
+
+  async function handleMarkPaid(commissionId: string) {
+    setMarkingPaid(commissionId);
+    await fetch('/api/admin/commissions', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: commissionId }),
+    });
+    setCommissions(prev => prev.map(c => c.id === commissionId ? { ...c, status: 'paid' as const } : c));
+    setMarkingPaid(null);
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-16">
+        <Loader2 className="w-5 h-5 animate-spin text-white/30" />
+      </div>
+    );
+  }
+
+  const activeReps = reps.filter(r => r.status === 'active');
+  const pendingCommissions = commissions.filter(c => c.status !== 'paid');
+  const totalOwed = pendingCommissions.reduce((sum, c) => sum + c.commissionAmount, 0);
+  const activeLeads = leads.filter(l => l.status !== 'lost');
+
+  return (
+    <div className="space-y-8">
+      {/* Overview stats */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {[
+          { label: 'Active Reps', value: activeReps.length },
+          { label: 'Total Reps', value: reps.length },
+          { label: 'Active Leads', value: activeLeads.length },
+          { label: 'Commission Owed', value: `£${totalOwed.toLocaleString()}` },
+        ].map(s => (
+          <div key={s.label} className="bg-white/[0.03] border border-white/8 rounded-xl px-4 py-4 text-center">
+            <p className="text-2xl font-black tracking-tight text-white">{s.value}</p>
+            <p className="text-xs text-white/35 mt-1">{s.label}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Add Rep */}
+      <div>
+        <div className="flex items-center justify-between mb-3">
+          <p className="text-sm font-semibold text-white/70">Reps</p>
+          <button
+            onClick={() => { setShowAddRep(!showAddRep); setAddRepStatus('idle'); setNewRepResult(null); setAddRepForm({ name: '', email: '', phone: '' }); }}
+            className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-white/50 hover:text-white/80 transition-all"
+          >
+            <Plus className="w-3.5 h-3.5" /> Add Rep
+          </button>
+        </div>
+
+        {showAddRep && addRepStatus !== 'done' && (
+          <form onSubmit={handleAddRep} className="bg-white/[0.03] border border-white/10 rounded-xl p-5 mb-3 space-y-3">
+            <p className="text-xs text-white/30 mb-1">Creates a Firebase Auth account + rep profile. A temp password will be shown once.</p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {[{ key: 'name', label: 'Full Name', req: true }, { key: 'email', label: 'Email', req: true }, { key: 'phone', label: 'Phone', req: false }].map(f => (
+                <div key={f.key}>
+                  <label className="block text-[10px] text-white/30 mb-1 uppercase tracking-widest">{f.label}</label>
+                  <input
+                    type={f.key === 'email' ? 'email' : 'text'}
+                    value={addRepForm[f.key as keyof typeof addRepForm]}
+                    onChange={e => setAddRepForm(prev => ({ ...prev, [f.key]: e.target.value }))}
+                    required={f.req}
+                    className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/30"
+                  />
+                </div>
+              ))}
+            </div>
+            <div className="flex gap-2">
+              <button type="submit" disabled={addRepStatus === 'saving'} className="px-4 py-2 bg-white text-black rounded-lg text-xs font-bold hover:bg-white/90 disabled:opacity-40 flex items-center gap-1.5">
+                {addRepStatus === 'saving' && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                {addRepStatus === 'saving' ? 'Creating...' : 'Create Rep'}
+              </button>
+              <button type="button" onClick={() => setShowAddRep(false)} className="px-4 py-2 bg-white/5 text-white/50 rounded-lg text-xs hover:bg-white/10">Cancel</button>
+            </div>
+            {addRepStatus === 'error' && <p className="text-xs text-red-400">Something went wrong. Check the console.</p>}
+          </form>
+        )}
+
+        {addRepStatus === 'done' && newRepResult && (
+          <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-5 mb-3">
+            <p className="text-sm font-semibold text-emerald-400 mb-1">Rep account created ✓</p>
+            <p className="text-xs text-white/50 mb-3">Share these credentials with the rep — the password cannot be recovered after you close this.</p>
+            <div className="space-y-1.5 font-mono text-sm">
+              <p className="text-white/70">Login: <span className="text-white">{addRepForm.email}</span></p>
+              <p className="text-white/70">Password: <span className="text-white bg-white/10 px-2 py-0.5 rounded">{newRepResult.tempPassword}</span></p>
+              <p className="text-white/70">Portal: <span className="text-white">crftdweb.com/rep/signin</span></p>
+            </div>
+            <button onClick={() => { setShowAddRep(false); setAddRepStatus('idle'); setNewRepResult(null); }} className="mt-3 text-xs text-white/30 hover:text-white/50">Done</button>
+          </div>
+        )}
+
+        {/* Reps table */}
+        <div className="space-y-2">
+          {reps.length === 0 && <p className="text-sm text-white/25 py-4 text-center">No reps yet. Add one above.</p>}
+          {reps.map(rep => {
+            const repLeads = leads.filter(l => l.repId === rep.uid);
+            const wonLeads = repLeads.filter(l => l.status === 'won');
+            const repCommissions = commissions.filter(c => c.repId === rep.uid && c.status !== 'paid');
+            const owed = repCommissions.reduce((s, c) => s + c.commissionAmount, 0);
+            return (
+              <div key={rep.uid} className="bg-white/[0.02] border border-white/8 rounded-xl px-4 py-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-white/80">{rep.name}</p>
+                    <p className="text-xs text-white/30">{rep.email}</p>
+                  </div>
+                  <div className="flex items-center gap-4 text-right text-xs">
+                    <div>
+                      <p className="text-white/60 font-semibold">{repLeads.length}</p>
+                      <p className="text-white/25">leads</p>
+                    </div>
+                    <div>
+                      <p className="text-emerald-400 font-semibold">{wonLeads.length}</p>
+                      <p className="text-white/25">won</p>
+                    </div>
+                    {owed > 0 && (
+                      <div>
+                        <p className="text-amber-400 font-semibold">£{owed.toLocaleString()}</p>
+                        <p className="text-white/25">owed</p>
+                      </div>
+                    )}
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
+                      rep.status === 'active' ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' :
+                      rep.status === 'trial' ? 'text-yellow-400 bg-yellow-500/10 border-yellow-500/20' :
+                      'text-white/30 bg-white/5 border-white/10'
+                    }`}>{rep.status}</span>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Commission log */}
+      <div>
+        <p className="text-sm font-semibold text-white/70 mb-3">Pending Commissions</p>
+        {pendingCommissions.length === 0 && (
+          <p className="text-sm text-white/25 py-4 text-center">No pending commissions.</p>
+        )}
+        <div className="space-y-2">
+          {pendingCommissions.map(c => (
+            <div key={c.id} className="bg-white/[0.02] border border-white/8 rounded-xl px-4 py-3 flex items-center justify-between">
+              <div>
+                <p className="text-sm text-white/70 font-medium">{c.repName}</p>
+                <p className="text-xs text-white/30">{c.businessName} · £{c.dealValue.toLocaleString()} deal</p>
+              </div>
+              <div className="flex items-center gap-3">
+                <p className="text-sm font-bold text-amber-400">£{c.commissionAmount.toLocaleString()}</p>
+                <button
+                  onClick={() => handleMarkPaid(c.id)}
+                  disabled={markingPaid === c.id}
+                  className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 text-emerald-400 transition-all disabled:opacity-40"
+                >
+                  {markingPaid === c.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}
+                  Mark Paid
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* All leads overview */}
+      <div>
+        <p className="text-sm font-semibold text-white/70 mb-3">All Leads</p>
+        {leads.length === 0 && <p className="text-sm text-white/25 py-4 text-center">No leads logged yet.</p>}
+        <div className="space-y-1.5">
+          {leads.map(lead => (
+            <div key={lead.id} className="flex items-center justify-between bg-white/[0.02] border border-white/5 rounded-xl px-4 py-2.5">
+              <div className="flex items-center gap-3 min-w-0">
+                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full flex-shrink-0 ${
+                  lead.status === 'won' ? 'bg-emerald-500/20 text-emerald-400' :
+                  lead.status === 'lost' ? 'bg-red-500/10 text-red-400/60' :
+                  lead.status === 'call_booked' ? 'bg-yellow-500/20 text-yellow-400' :
+                  'bg-white/10 text-white/40'
+                }`}>{lead.status.replace('_', ' ')}</span>
+                <p className="text-sm text-white/60 truncate">{lead.businessName}</p>
+              </div>
+              <p className="text-xs text-white/30 flex-shrink-0 ml-2">{lead.repName}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── Page ───
 export default function RepsPage() {
+  const [tab, setTab] = useState<'recruitment' | 'management'>('recruitment');
+
   return (
     <div className="min-h-screen bg-[#0a0a0f] text-white px-6 py-12">
       <div className="max-w-3xl mx-auto">
@@ -442,13 +682,32 @@ export default function RepsPage() {
         </Link>
 
         {/* Header */}
-        <div className="mb-10">
-          <p className="text-xs uppercase tracking-widest text-rose-400/70 mb-2">Admin / Recruitment</p>
-          <h1 className="text-3xl font-bold tracking-tight">Rep Recruitment Process</h1>
+        <div className="mb-8">
+          <p className="text-xs uppercase tracking-widest text-rose-400/70 mb-2">Admin / Reps</p>
+          <h1 className="text-3xl font-bold tracking-tight">Rep Management</h1>
           <p className="text-white/40 mt-2 text-sm max-w-lg">
-            End-to-end process for hiring commission-only sales reps. From CV to first call in under 45 minutes of your time.
+            Recruit, onboard, and manage your commission-only sales reps.
           </p>
         </div>
+
+        {/* Tabs */}
+        <div className="flex gap-1 p-1 bg-white/[0.03] border border-white/8 rounded-xl w-fit mb-8">
+          {([['recruitment', 'Recruitment'], ['management', 'Active Reps']] as const).map(([key, label]) => (
+            <button
+              key={key}
+              onClick={() => setTab(key)}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                tab === key ? 'bg-white/10 text-white' : 'text-white/30 hover:text-white/60'
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+
+        {tab === 'management' && <ManagementTab />}
+
+        {tab === 'recruitment' && (<>
 
         {/* Stats */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-10">
@@ -514,6 +773,7 @@ export default function RepsPage() {
             Commission is 15% of project value · Paid within 7 days of client payment · No retainer
           </p>
         </div>
+        </>)}
 
       </div>
     </div>

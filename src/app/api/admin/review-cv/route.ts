@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { adminDb } from '@/lib/firebase/admin';
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
@@ -74,6 +74,7 @@ ${cvText.slice(0, 3000)}
 
 Return ONLY valid JSON, no markdown.`;
 
+    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
     const res = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [{ role: 'user', content: prompt }],

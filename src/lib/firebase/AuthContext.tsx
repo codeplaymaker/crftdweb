@@ -34,20 +34,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
+    // Safety net: if Firebase Auth hangs (e.g. IndexedDB blocked by browser extension),
+    // unblock after 4 seconds rather than spinning forever.
+    const timeout = setTimeout(() => setLoading(false), 4000);
+
     const unsubscribe = onAuthChange(async (firebaseUser) => {
+      clearTimeout(timeout);
       setUser(firebaseUser);
-      
+      setLoading(false); // unblock consumers immediately — profile loads in background
+
       if (firebaseUser) {
-        const userProfile = await getUserProfile(firebaseUser.uid);
-        setProfile(userProfile);
+        getUserProfile(firebaseUser.uid).then(setProfile);
       } else {
         setProfile(null);
       }
-      
-      setLoading(false);
     });
 
-    return () => unsubscribe();
+    return () => {
+      clearTimeout(timeout);
+      unsubscribe();
+    };
   }, []);
 
   const handleSignOut = async () => {

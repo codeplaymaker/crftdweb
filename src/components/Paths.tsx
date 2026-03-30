@@ -26,7 +26,7 @@ const paths = [
   {
     tag: 'NEED A WEBSITE?',
     title: 'Hire Our Studio',
-    description: 'Premium web design and development for brands that demand excellence.',
+    description: 'You need a site that brings in clients, not just looks good on a business card.',
     href: '/contact',
     cta: 'Start a Project',
     gradient: 'from-black/5 to-black/5',

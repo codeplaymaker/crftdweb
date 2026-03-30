@@ -1,5 +1,5 @@
 import { initializeApp, getApps } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
+import { getAuth, browserSessionPersistence, setPersistence } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
@@ -21,5 +21,7 @@ if (!firebaseConfig.apiKey || !firebaseConfig.projectId) {
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 
 export const auth = getAuth(app);
+// Use sessionStorage instead of IndexedDB — avoids MetaMask/SES extension blocking
+setPersistence(auth, browserSessionPersistence).catch(() => {});
 export const db = getFirestore(app);
 export default app;

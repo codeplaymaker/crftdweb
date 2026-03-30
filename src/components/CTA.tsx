@@ -19,10 +19,10 @@ export default function CTA() {
           className="max-w-3xl mx-auto text-center"
         >
           <h2 className="text-xl sm:text-2xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 md:mb-6 text-black leading-snug">
-            Ready to Transform Your Digital Presence?
+            Still sending people to a site you&apos;re embarrassed to share?
           </h2>
           <p className="text-sm sm:text-base md:text-lg lg:text-xl text-muted-foreground mb-6 sm:mb-8 px-3 sm:px-0">
-            Let&apos;s collaborate to create something extraordinary. Your vision, our expertise.
+            Tell us what&apos;s broken. We&apos;ll tell you honestly if we can fix it — and what it&apos;ll cost.
           </p>
           <motion.div
             whileHover={{ scale: 1.05 }}

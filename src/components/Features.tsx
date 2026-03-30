@@ -58,7 +58,7 @@ export default function Features() {
           className="text-center mb-20"
         >
           <span className="text-xs font-semibold tracking-[0.2em] uppercase text-muted-foreground mb-6 block">
-            HOW WE&apos;RE DIFFERENT
+            WHAT MOST WEBSITES GET WRONG
           </span>
           <h2 className="text-3xl md:text-5xl font-bold tracking-tight leading-tight mb-5">
             A pretty site is worthless<br className="hidden md:block" />
