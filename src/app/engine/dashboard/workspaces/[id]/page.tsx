@@ -71,7 +71,7 @@ export default function WorkspaceDetailPage() {
 
   // Edit state
   const [editing, setEditing] = useState(false);
-  const [editData, setEditData] = useState({ clientName: '', niche: '', offer: '', audience: '', goals: '', notes: '' });
+  const [editData, setEditData] = useState({ clientName: '', niche: '', offer: '', audience: '', goals: '', notes: '', webhookUrl: '' });
   const [saving, setSaving] = useState(false);
 
   // Mission state
@@ -118,6 +118,7 @@ export default function WorkspaceDetailPage() {
         audience: ws.audience,
         goals: ws.goals,
         notes: ws.notes,
+        webhookUrl: ws.webhookUrl || '',
       });
       setDeliverables(dels);
       // Hydrate share + rating state from loaded deliverables
@@ -365,6 +366,17 @@ export default function WorkspaceDetailPage() {
                     className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm placeholder-white/20 resize-none focus:outline-none focus:border-purple-500/50 transition-colors"
                   />
                 </div>
+                <div>
+                  <label className="text-white/30 text-xs mb-1 block">WEBHOOK URL</label>
+                  <input
+                    value={editData.webhookUrl}
+                    onChange={e => setEditData(prev => ({ ...prev, webhookUrl: e.target.value }))}
+                    placeholder="https://hooks.zapier.com/hooks/catch/..."
+                    type="url"
+                    className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm placeholder-white/20 focus:outline-none focus:border-orange-500/50 transition-colors"
+                  />
+                  <p className="text-white/25 text-xs mt-1">POSTed every time a deliverable is created. Works with Zapier, Make.com, n8n, or any webhook URL.</p>
+                </div>
                 <button
                   onClick={handleSaveEdit}
                   disabled={saving}
@@ -395,6 +407,15 @@ export default function WorkspaceDetailPage() {
                   >
                     + Add client details so the agent can be more specific
                   </button>
+                )}
+                {workspace.webhookUrl && (
+                  <div className="flex items-center gap-2 mt-1 pt-3 border-t border-white/5">
+                    <div className="w-1.5 h-1.5 rounded-full bg-orange-400 flex-shrink-0" />
+                    <div className="min-w-0">
+                      <p className="text-orange-400 text-xs font-medium">Webhook active</p>
+                      <p className="text-white/30 text-xs truncate">{workspace.webhookUrl}</p>
+                    </div>
+                  </div>
                 )}
               </div>
             )}

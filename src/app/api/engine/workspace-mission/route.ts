@@ -146,6 +146,38 @@ MISSION MODE: Produce the complete deliverable. No preamble, no "here's what I'l
       updatedAt: new Date(),
     });
 
+    // ── Fire webhook (non-blocking) ─────────────────────────────────────────
+    if (workspace.webhookUrl) {
+      const webhookUrl = workspace.webhookUrl as string;
+      // Validate it's an https URL before dispatching
+      if (/^https:\/\/.+/.test(webhookUrl)) {
+        fetch(webhookUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            event: 'deliverable.created',
+            workspace: {
+              id: workspaceId,
+              clientName: workspace.clientName,
+              niche: workspace.niche || null,
+            },
+            deliverable: {
+              id: deliverable.id,
+              title: deliverable.title,
+              content: deliverable.content,
+              agentId: deliverable.agentId,
+              task: deliverable.task,
+              refinementOfTitle: deliverable.refinementOfTitle || null,
+              createdAt: new Date().toISOString(),
+            },
+          }),
+          signal: AbortSignal.timeout(8000),
+        }).catch(err => console.error('Webhook dispatch failed (non-fatal):', err));
+      } else {
+        console.warn('Webhook URL skipped — must be https:', webhookUrl);
+      }
+    }
+
     return NextResponse.json({ deliverable });
   } catch (error) {
     console.error('Workspace mission error:', error);

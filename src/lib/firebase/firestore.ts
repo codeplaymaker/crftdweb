@@ -667,6 +667,7 @@ export interface Workspace {
   audience: string;
   goals: string;
   notes: string;
+  webhookUrl?: string;
   deliverableCount: number;
   lastActivityAt: Timestamp;
   createdAt: Timestamp;
