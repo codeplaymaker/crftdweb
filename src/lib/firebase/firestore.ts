@@ -578,3 +578,80 @@ export async function trackPlaybookModuleVisit(userId: string, moduleName: strin
     await savePlaybookProgress(userId, { modulesVisited: visited });
   }
 }
+
+// ─── Skills ────────────────────────────────────────────────────────────────
+
+export interface Skill {
+  id: string;
+  userId: string;
+  name: string;
+  description: string;
+  trigger: string; // comma-separated keywords that activate this skill
+  prompt: string;  // system-prompt injection text
+  tools: string[]; // tool names this skill enables
+  createdAt: Timestamp;
+  usageCount: number;
+}
+
+export async function saveSkill(
+  userId: string,
+  skill: Omit<Skill, 'id' | 'userId' | 'createdAt' | 'usageCount'>
+): Promise<string> {
+  const docRef = doc(collection(db, 'skills'));
+  await setDoc(docRef, {
+    ...skill,
+    id: docRef.id,
+    userId,
+    usageCount: 0,
+    createdAt: serverTimestamp(),
+  });
+  return docRef.id;
+}
+
+export async function getSkills(userId: string): Promise<Skill[]> {
+  const q = query(
+    collection(db, 'skills'),
+    where('userId', '==', userId),
+    orderBy('createdAt', 'desc')
+  );
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map(d => d.data() as Skill);
+}
+
+export async function deleteSkill(skillId: string): Promise<void> {
+  await deleteDoc(doc(db, 'skills', skillId));
+}
+
+// ─── Prospect Memory ───────────────────────────────────────────────────────
+
+export interface MemoryFact {
+  key: string;
+  value: string;
+  savedAt: Timestamp;
+}
+
+export interface ProspectMemory {
+  id: string;
+  userId: string;
+  prospect: string;
+  facts: MemoryFact[];
+  updatedAt: Timestamp;
+  createdAt: Timestamp;
+}
+
+export async function getProspectMemories(userId: string): Promise<ProspectMemory[]> {
+  const q = query(
+    collection(db, 'prospect_memory'),
+    where('userId', '==', userId),
+    orderBy('updatedAt', 'desc')
+  );
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map(d => d.data() as ProspectMemory);
+}
+
+export async function getProspectMemory(userId: string, prospect: string): Promise<ProspectMemory | null> {
+  const docId = `${userId}_${prospect.toLowerCase().replace(/\s+/g, '_')}`;
+  const docRef = doc(db, 'prospect_memory', docId);
+  const snap = await getDoc(docRef);
+  return snap.exists() ? (snap.data() as ProspectMemory) : null;
+}

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyAuthToken, unauthorizedResponse } from '@/lib/engine/auth-guard';
+import { adminDb } from '@/lib/firebase/admin';
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
@@ -151,15 +152,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Agent ID and message are required' }, { status: 400 });
     }
 
+    const uid = auth.uid;
+
     if (!OPENAI_API_KEY) {
       return NextResponse.json({ error: 'API key not configured' }, { status: 500 });
     }
 
     let systemPrompt = agentPrompts[agentId] || agentPrompts['research-agent'];
 
-    // If offer context is provided, add it to the system prompt
+    // ── Inject offer context ───────────────────────────────────────────────
     if (offerContext) {
-      const contextBlock = `
+      systemPrompt += `
 
 --- CURRENT OFFER CONTEXT ---
 The user is working on the following offer. Use this context to provide more relevant advice:
@@ -175,12 +178,220 @@ Guarantee: ${offerContext.guarantee || 'None specified'}
 --- END CONTEXT ---
 
 Use this context to give personalized, specific advice about THIS offer. Reference the actual niche, audience, and offer details in your responses.`;
-
-      systemPrompt += contextBlock;
     }
 
-    // Build messages array with history
-    const messages = [
+    // ── Load & inject matching skills ──────────────────────────────────────
+    try {
+      const skillsSnap = await adminDb
+        .collection('skills')
+        .where('userId', '==', uid)
+        .limit(20)
+        .get();
+
+      if (!skillsSnap.empty) {
+        const contextText = [message, ...history.slice(-4).map((m: { content: string }) => m.content)]
+          .join(' ')
+          .toLowerCase();
+
+        const matchedSkills: string[] = [];
+
+        skillsSnap.docs.forEach(doc => {
+          const skill = doc.data();
+          const keywords = (skill.trigger as string).split(',').map((k: string) => k.trim().toLowerCase());
+          const isMatch = keywords.some(kw => kw.length > 2 && contextText.includes(kw));
+          if (isMatch) {
+            matchedSkills.push(skill.prompt as string);
+          }
+        });
+
+        if (matchedSkills.length > 0) {
+          systemPrompt += `
+
+--- ACTIVE SKILLS ---
+You have the following additional capabilities active for this conversation:
+
+${matchedSkills.map((p, i) => `${i + 1}. ${p}`).join('\n\n')}
+--- END SKILLS ---`;
+        }
+      }
+    } catch (skillErr) {
+      console.error('Skill loading error (non-fatal):', skillErr);
+    }
+
+    // ── Tool definitions ────────────────────────────────────────────────────
+    const tools = [
+      {
+        type: 'function' as const,
+        function: {
+          name: 'read_saved_offer',
+          description: "Read the user's most recent active offer from their saved offers. Use this when the user asks about their offer, wants offer-specific advice, or references 'my offer'.",
+          parameters: { type: 'object', properties: {}, required: [] },
+        },
+      },
+      {
+        type: 'function' as const,
+        function: {
+          name: 'get_truth_report',
+          description: "Retrieve the user's most recent Truth Engine market research report. Use this when the user asks about their niche, market data, competition, or wants data-backed advice.",
+          parameters: {
+            type: 'object',
+            properties: {
+              niche: {
+                type: 'string',
+                description: 'Optional niche to filter by. Leave empty to get the most recent report.',
+              },
+            },
+            required: [],
+          },
+        },
+      },
+      {
+        type: 'function' as const,
+        function: {
+          name: 'save_to_memory',
+          description: "Save an important fact about a prospect, lead, or client so it can be recalled later. Use this proactively when the user shares contact details, preferences, or key information about someone.",
+          parameters: {
+            type: 'object',
+            properties: {
+              prospect: { type: 'string', description: 'Name or identifier of the prospect or client' },
+              key: { type: 'string', description: 'Short label for this fact (e.g. "budget", "pain_point", "email")' },
+              value: { type: 'string', description: 'The fact to remember' },
+            },
+            required: ['prospect', 'key', 'value'],
+          },
+        },
+      },
+      {
+        type: 'function' as const,
+        function: {
+          name: 'read_from_memory',
+          description: "Read saved facts about a specific prospect or client. Use this when the user mentions a person's name or asks what you know about someone.",
+          parameters: {
+            type: 'object',
+            properties: {
+              prospect: { type: 'string', description: 'Name or identifier of the prospect or client' },
+            },
+            required: ['prospect'],
+          },
+        },
+      },
+    ];
+
+    // ── Tool execution helper ───────────────────────────────────────────────
+    async function executeTool(name: string, args: Record<string, string>): Promise<string> {
+      try {
+        if (name === 'read_saved_offer') {
+          const snap = await adminDb
+            .collection('offers')
+            .where('userId', '==', uid)
+            .where('status', '==', 'active')
+            .orderBy('createdAt', 'desc')
+            .limit(1)
+            .get();
+
+          if (snap.empty) {
+            // Fall back to any offer
+            const anySnap = await adminDb
+              .collection('offers')
+              .where('userId', '==', uid)
+              .orderBy('createdAt', 'desc')
+              .limit(1)
+              .get();
+
+            if (anySnap.empty) return 'No saved offers found.';
+            const offer = anySnap.docs[0].data();
+            return JSON.stringify({ name: offer.name, niche: offer.niche, targetAudience: offer.targetAudience, transformation: offer.transformation, price: offer.price, deliverables: offer.deliverables, bonuses: offer.bonuses, guarantee: offer.guarantee });
+          }
+
+          const offer = snap.docs[0].data();
+          return JSON.stringify({ name: offer.name, niche: offer.niche, targetAudience: offer.targetAudience, transformation: offer.transformation, price: offer.price, deliverables: offer.deliverables, bonuses: offer.bonuses, guarantee: offer.guarantee });
+        }
+
+        if (name === 'get_truth_report') {
+          let q = adminDb
+            .collection('truthReports')
+            .where('userId', '==', uid)
+            .orderBy('createdAt', 'desc')
+            .limit(1);
+
+          if (args.niche) {
+            q = adminDb
+              .collection('truthReports')
+              .where('userId', '==', uid)
+              .where('niche', '==', args.niche)
+              .orderBy('createdAt', 'desc')
+              .limit(1);
+          }
+
+          const snap = await q.get();
+          if (snap.empty) return 'No Truth Engine reports found.';
+
+          const r = snap.docs[0].data();
+          return JSON.stringify({
+            niche: r.niche,
+            viabilityScore: r.viabilityScore,
+            marketSize: r.marketSize,
+            competition: r.competition,
+            painPoints: r.painPoints,
+            opportunities: r.opportunities,
+            recommendedOffer: r.recommendedOffer,
+            pricingRange: r.pricingRange,
+            targetAudience: r.targetAudience,
+          });
+        }
+
+        if (name === 'save_to_memory') {
+          const { prospect, key, value } = args;
+          const docId = `${uid}_${prospect.toLowerCase().replace(/\s+/g, '_')}`;
+          const docRef = adminDb.collection('prospect_memory').doc(docId);
+          const existing = await docRef.get();
+
+          const newFact = { key, value, savedAt: new Date().toISOString() };
+
+          if (existing.exists) {
+            const data = existing.data()!;
+            const facts = (data.facts as Array<{ key: string }>) || [];
+            const idx = facts.findIndex(f => f.key === key);
+            if (idx >= 0) facts[idx] = newFact;
+            else facts.push(newFact);
+            await docRef.update({ facts, updatedAt: new Date() });
+          } else {
+            await docRef.set({
+              id: docId,
+              userId: uid,
+              prospect,
+              facts: [newFact],
+              createdAt: new Date(),
+              updatedAt: new Date(),
+            });
+          }
+
+          return `Saved: ${key} = "${value}" for ${prospect}.`;
+        }
+
+        if (name === 'read_from_memory') {
+          const { prospect } = args;
+          const docId = `${uid}_${prospect.toLowerCase().replace(/\s+/g, '_')}`;
+          const snap = await adminDb.collection('prospect_memory').doc(docId).get();
+
+          if (!snap.exists) return `No saved information found for ${prospect}.`;
+
+          const data = snap.data()!;
+          const facts = (data.facts as Array<{ key: string; value: string }>) || [];
+          if (facts.length === 0) return `No saved information found for ${prospect}.`;
+
+          return `Known facts about ${prospect}:\n${facts.map(f => `- ${f.key}: ${f.value}`).join('\n')}`;
+        }
+
+        return 'Unknown tool.';
+      } catch (e) {
+        console.error(`Tool execution error (${name}):`, e);
+        return `Tool error: could not execute ${name}.`;
+      }
+    }
+
+    // ── Build initial messages ──────────────────────────────────────────────
+    const messages: Array<{ role: string; content: string; tool_call_id?: string; name?: string }> = [
       { role: 'system', content: systemPrompt },
       ...history.slice(-10).map((msg: { role: string; content: string }) => ({
         role: msg.role,
@@ -189,35 +400,90 @@ Use this context to give personalized, specific advice about THIS offer. Referen
       { role: 'user', content: message },
     ];
 
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    // ── First OpenAI call ───────────────────────────────────────────────────
+    const firstResponse = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${OPENAI_API_KEY}`,
+        Authorization: `Bearer ${OPENAI_API_KEY}`,
       },
       body: JSON.stringify({
         model: 'gpt-4o-mini',
         messages,
+        tools,
+        tool_choice: 'auto',
         temperature: 0.7,
         max_tokens: 2000,
       }),
     });
 
-    if (!response.ok) {
-      const error = await response.json();
+    if (!firstResponse.ok) {
+      const error = await firstResponse.json();
       console.error('OpenAI API Error:', error);
       return NextResponse.json({ error: 'AI service error' }, { status: 500 });
     }
 
-    const data = await response.json();
-    const content = data.choices[0].message.content;
+    const firstData = await firstResponse.json();
+    const firstChoice = firstData.choices[0];
+
+    // ── Handle tool calls ───────────────────────────────────────────────────
+    if (firstChoice.finish_reason === 'tool_calls' && firstChoice.message.tool_calls?.length) {
+      // Add assistant message with tool_calls
+      messages.push(firstChoice.message);
+
+      // Execute each tool and collect results
+      for (const toolCall of firstChoice.message.tool_calls) {
+        const toolArgs = JSON.parse(toolCall.function.arguments || '{}');
+        const toolResult = await executeTool(toolCall.function.name, toolArgs);
+
+        messages.push({
+          role: 'tool',
+          tool_call_id: toolCall.id,
+          content: toolResult,
+        });
+      }
+
+      // Second call with tool results
+      const secondResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${OPENAI_API_KEY}`,
+        },
+        body: JSON.stringify({
+          model: 'gpt-4o-mini',
+          messages,
+          temperature: 0.7,
+          max_tokens: 2000,
+        }),
+      });
+
+      if (!secondResponse.ok) {
+        return NextResponse.json({ error: 'AI service error' }, { status: 500 });
+      }
+
+      const secondData = await secondResponse.json();
+      const content = secondData.choices[0].message.content;
+
+      return NextResponse.json({
+        content,
+        usage: {
+          promptTokens: secondData.usage.prompt_tokens,
+          completionTokens: secondData.usage.completion_tokens,
+          totalTokens: secondData.usage.total_tokens,
+        },
+      });
+    }
+
+    // ── No tool calls — return direct response ──────────────────────────────
+    const content = firstChoice.message.content;
 
     return NextResponse.json({
       content,
       usage: {
-        promptTokens: data.usage.prompt_tokens,
-        completionTokens: data.usage.completion_tokens,
-        totalTokens: data.usage.total_tokens,
+        promptTokens: firstData.usage.prompt_tokens,
+        completionTokens: firstData.usage.completion_tokens,
+        totalTokens: firstData.usage.total_tokens,
       },
     });
   } catch (error) {
