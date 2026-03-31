@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { useAuth } from '@/lib/firebase/AuthContext';
+import { AuthProvider, useAuth } from '@/lib/firebase/AuthContext';
 import { LayoutDashboard, Users, BookOpen, GraduationCap, Phone, LogOut, Menu, X } from 'lucide-react';
 
 const navItems = [
@@ -15,6 +15,14 @@ const navItems = [
 ];
 
 export default function RepLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <AuthProvider>
+      <RepLayoutInner>{children}</RepLayoutInner>
+    </AuthProvider>
+  );
+}
+
+function RepLayoutInner({ children }: { children: React.ReactNode }) {
   const { user, loading, signOut } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const router = useRouter();

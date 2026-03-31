@@ -10,11 +10,13 @@ import { Phone, PhoneOff, Loader2, Send, Plus, Mic, MicOff, Clipboard, ArrowLeft
 
 type CallStage = 'prep' | 'active' | 'summary';
 
+interface TalkingPoint { topic: string; question: string; why: string; }
+interface Objection { objection: string; response: string; }
 interface PrepNotes {
   opener: string;
   keyObjective: string;
-  talkingPoints: string[];
-  potentialObjections: string[];
+  talkingPoints: TalkingPoint[];
+  potentialObjections: Objection[];
   closingStrategy: string;
   warningsOrTips: string[];
 }
@@ -174,7 +176,7 @@ export default function AdminCallPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          transcript: transcript.map((t) => `${t.speaker.toUpperCase()}: ${t.text}`).join('\n'),
+          transcript: transcript.map((t) => ({ speaker: t.speaker, text: t.text })),
           leadName, businessType,
           lastProspectMessage: lastProspect?.text || '',
           userQuestion: askText,
@@ -198,7 +200,7 @@ export default function AdminCallPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          transcript: transcript.map((t) => `${t.speaker.toUpperCase()}: ${t.text}`).join('\n'),
+          transcript: transcript.map((t) => ({ speaker: t.speaker, text: t.text, timestamp: t.timestamp })),
           leadName, businessType, callGoal, duration: callDuration,
         }),
       });
@@ -237,24 +239,24 @@ export default function AdminCallPage() {
               <div>
                 <label className="text-xs text-white/40 mb-1 block">Lead Name *</label>
                 <input value={leadName} onChange={(e) => setLeadName(e.target.value)} placeholder="e.g. Dave at DK Plumbing"
-                  className="w-full bg-white/8 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-white/20 outline-none focus:border-white/20" />
+                  className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-white/20 outline-none focus:border-white/20" />
               </div>
               <div>
                 <label className="text-xs text-white/40 mb-1 block">Business Type</label>
                 <input value={businessType} onChange={(e) => setBusinessType(e.target.value)} placeholder="e.g. Plumber"
-                  className="w-full bg-white/8 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-white/20 outline-none focus:border-white/20" />
+                  className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-white/20 outline-none focus:border-white/20" />
               </div>
             </div>
             <div>
               <label className="text-xs text-white/40 mb-1 block">Call Goal</label>
               <input value={callGoal} onChange={(e) => setCallGoal(e.target.value)}
-                className="w-full bg-white/8 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-white/20 outline-none focus:border-white/20" />
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-white/20 outline-none focus:border-white/20" />
             </div>
             <div>
               <label className="text-xs text-white/40 mb-1 block">Additional Context</label>
               <textarea value={additionalContext} onChange={(e) => setAdditionalContext(e.target.value)} rows={2}
                 placeholder="Any notes about this lead..."
-                className="w-full bg-white/8 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-white/20 outline-none focus:border-white/20 resize-none" />
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-white/20 outline-none focus:border-white/20 resize-none" />
             </div>
             <button onClick={getPrepNotes} disabled={!leadName.trim() || isPrepping}
               className="w-full border border-white/20 text-white/70 font-semibold py-2.5 rounded-xl hover:bg-white/5 transition-colors disabled:opacity-30 flex items-center justify-center gap-2">
@@ -275,11 +277,21 @@ export default function AdminCallPage() {
               </div>
               <div>
                 <p className="text-xs text-white/30 mb-2">Talking Points</p>
-                {prepNotes.talkingPoints.map((p, i) => <p key={i} className="text-xs text-white/60 mb-1">→ {p}</p>)}
+                {prepNotes.talkingPoints.map((p, i) => (
+                  <div key={i} className="mb-2">
+                    <p className="text-xs text-white/70">→ {p.question}</p>
+                    <p className="text-xs text-white/30">{p.why}</p>
+                  </div>
+                ))}
               </div>
               <div>
                 <p className="text-xs text-white/30 mb-2">Predicted Objections</p>
-                {prepNotes.potentialObjections.map((o, i) => <p key={i} className="text-xs text-amber-400/70 mb-1">⚠ {o}</p>)}
+                {prepNotes.potentialObjections.map((o, i) => (
+                  <div key={i} className="mb-2">
+                    <p className="text-xs text-amber-400/70">⚠ {o.objection}</p>
+                    <p className="text-xs text-white/40">↳ {o.response}</p>
+                  </div>
+                ))}
               </div>
               {prepNotes.warningsOrTips.length > 0 && (
                 <div>
@@ -324,13 +336,13 @@ export default function AdminCallPage() {
                 </div>
                 <p className="text-sm text-white/70">{callSummary.summary}</p>
               </div>
-              {callSummary.keyPoints.length > 0 && (
+              {(callSummary.keyPoints?.length ?? 0) > 0 && (
                 <div className="bg-white/5 border border-white/8 rounded-xl p-4">
                   <p className="text-xs text-white/30 uppercase tracking-widest mb-2">Key Points</p>
                   {callSummary.keyPoints.map((p, i) => <p key={i} className="text-sm text-white/60">→ {p}</p>)}
                 </div>
               )}
-              {callSummary.nextSteps.length > 0 && (
+              {(callSummary.nextSteps?.length ?? 0) > 0 && (
                 <div className="bg-white/5 border border-white/8 rounded-xl p-4">
                   <p className="text-xs text-white/30 uppercase tracking-widest mb-2">Next Steps</p>
                   {callSummary.nextSteps.map((s, i) => <p key={i} className="text-sm text-white/60">✓ {s}</p>)}
@@ -390,14 +402,14 @@ export default function AdminCallPage() {
             </div>
             <div className="flex gap-2">
               <select value={manualSpeaker} onChange={(e) => setManualSpeaker(e.target.value as 'rep' | 'prospect')}
-                className="bg-white/8 border border-white/10 rounded-lg px-2 py-2 text-xs text-white/70 outline-none">
+                className="bg-white/5 border border-white/10 rounded-lg px-2 py-2 text-xs text-white/70 outline-none">
                 <option value="rep">Rep</option>
                 <option value="prospect">Prospect</option>
               </select>
               <input value={manualEntry} onChange={(e) => setManualEntry(e.target.value)}
                 onKeyDown={(e) => { if (e.key === 'Enter') addManualEntry(); }}
                 placeholder="Type what was said..."
-                className="flex-1 bg-white/8 border border-white/10 rounded-lg px-3 py-2 text-xs text-white placeholder-white/20 outline-none focus:border-white/20" />
+                className="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-xs text-white placeholder-white/20 outline-none focus:border-white/20" />
               <button onClick={addManualEntry} disabled={!manualEntry.trim()} className="bg-white/10 hover:bg-white/15 text-white rounded-lg px-3 disabled:opacity-30">
                 <Plus className="w-4 h-4" />
               </button>
@@ -414,7 +426,7 @@ export default function AdminCallPage() {
                 <p className="text-xs text-white/30 uppercase tracking-widest">Prep</p>
                 <p className="text-xs text-white/50">Opening: <span className="text-white/70">"{prepNotes.opener.slice(0, 60)}..."</span></p>
                 {prepNotes.potentialObjections.slice(0, 2).map((o, i) => (
-                  <p key={i} className="text-xs text-amber-400/60">⚠ {o.slice(0, 50)}...</p>
+                  <p key={i} className="text-xs text-amber-400/60">⚠ {o.objection.slice(0, 50)}...</p>
                 ))}
               </div>
             )}
@@ -422,7 +434,7 @@ export default function AdminCallPage() {
               <p className="text-xs text-white/30 uppercase tracking-widest">Ask AI</p>
               <textarea value={askText} onChange={(e) => setAskText(e.target.value)} rows={2}
                 placeholder="What should I say now?"
-                className="w-full bg-white/8 border border-white/10 rounded-lg px-2.5 py-2 text-xs text-white placeholder-white/20 outline-none resize-none focus:border-white/20" />
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-2.5 py-2 text-xs text-white placeholder-white/20 outline-none resize-none focus:border-white/20" />
               <button onClick={askAI} disabled={isGettingSuggestion}
                 className="w-full bg-white text-black text-xs font-bold py-2 rounded-lg disabled:opacity-30 hover:bg-white/90 transition-colors flex items-center justify-center gap-1.5">
                 {isGettingSuggestion ? <><Loader2 className="w-3 h-3 animate-spin" /> Thinking...</> : <><Send className="w-3 h-3" /> Get Suggestion</>}

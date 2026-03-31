@@ -2,10 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, ChevronUp, Users, ClipboardList, Phone, UserCheck, AlertTriangle, CheckCircle2, ArrowLeft, Send, Loader2, Check, X, Plus } from 'lucide-react';
+import { ChevronDown, ChevronUp, Users, ClipboardList, Phone, UserCheck, AlertTriangle, CheckCircle2, ArrowLeft, Send, Loader2, Check, X, Plus, CalendarPlus, Trash2, Clock } from 'lucide-react';
 import Link from 'next/link';
 import { sendTrialTask } from '@/app/actions/sendTrialTask';
-import { sendScreeningInvite } from '@/app/actions/sendScreeningInvite';
+import { sendBookingLink } from '@/app/actions/sendBookingLink';
+import { getBookingStatuses, BookingStatus } from '@/app/actions/getBookingStatuses';
+import { ScreeningSlot, createScreeningSlot } from '@/app/actions/createScreeningSlot';
+import { deleteScreeningSlot } from '@/app/actions/deleteScreeningSlot';
+import { getScreeningSlots } from '@/app/actions/getScreeningSlots';
 import { RepProfile, RepLead, RepCommission } from '@/lib/firebase/firestore';
 
 // ─── Types ───
@@ -181,17 +185,39 @@ const steps: Step[] = [
     id: 'onboard',
     number: '4',
     title: 'Onboard — if yes',
-    time: '10 mins',
+    time: '15 mins',
     color: 'bg-emerald-600/20 text-emerald-400',
     icon: <UserCheck className="w-5 h-5" />,
     content: (
       <div className="space-y-4 text-sm text-white/70 leading-relaxed">
-        <p>Three things to send them immediately after saying yes:</p>
+        <p>Do these five things immediately after you say yes on the call:</p>
         <div className="space-y-2">
           {[
-            { title: 'Onboarding welcome email', desc: 'Use the "Rep onboarding — welcome email" template in Admin → Emails → Rep Templates', accent: 'text-purple-400' },
-            { title: 'Google Sheet access', desc: 'Share the leads tracking sheet — columns: Business Name, Contact, Phone/Email, Date Called, Outcome, Next Action', accent: 'text-sky-400' },
-            { title: 'Call script PDF', desc: 'Print or send rep-call-script.html from /public/social-posts/', accent: 'text-amber-400' },
+            {
+              title: 'Create their rep account',
+              desc: 'Go to Admin → Active Reps → Add Rep. Enter their name, email, phone. Copy the temp password — it only shows once.',
+              accent: 'text-purple-400',
+            },
+            {
+              title: 'Send the welcome email',
+              desc: 'Go to Admin → Email → Send Email → select "Booking Link" tab isn\'t for this — use Admin → Emails → Copy Templates → Rep Templates → "Rep onboarding — welcome email". Paste their login URL: crftdweb.com/rep/signin',
+              accent: 'text-sky-400',
+            },
+            {
+              title: 'Walk them through the portal',
+              desc: 'They log in at crftdweb.com/rep/signin. The portal has their dashboard, lead tracker, AI roleplay trainer, and call resources — everything they need. Tell them to complete the training modules before their first call.',
+              accent: 'text-emerald-400',
+            },
+            {
+              title: 'Share the call script',
+              desc: 'Send them crftdweb.com/public/social-posts/rep-call-script.html or print it. They should have it open or in front of them on every call until it\'s second nature.',
+              accent: 'text-amber-400',
+            },
+            {
+              title: 'Set expectations — out loud',
+              desc: 'Commission is 15% of project value, paid within 7 days of client payment clearing. No retainer, no salary, no expenses. They log every prospect in the portal. If they miss a week without contact, they\'re off the team.',
+              accent: 'text-rose-400',
+            },
           ].map((item, i) => (
             <div key={i} className="flex items-start gap-3 bg-white/[0.03] rounded-lg px-4 py-3 border border-white/5">
               <CheckCircle2 className={`w-4 h-4 mt-0.5 shrink-0 ${item.accent}`} />
@@ -202,9 +228,15 @@ const steps: Step[] = [
             </div>
           ))}
         </div>
-        <div className="bg-white/[0.03] border border-white/8 rounded-xl px-4 py-3 mt-1">
-          <p className="text-xs font-bold text-white/40 uppercase tracking-wider mb-1">Set expectations clearly</p>
-          <p className="text-white/55 text-xs">Commission is 15%, paid within 7 days of client payment clearing. No retainer, no salary. Make sure they understand this before they start.</p>
+        <div className="grid grid-cols-2 gap-3 mt-1">
+          <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-4 py-3">
+            <p className="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-1">Rep portal</p>
+            <p className="text-white/60 text-xs">crftdweb.com/rep/signin — dashboard, leads, AI roleplay trainer, resources. Everything in one place.</p>
+          </div>
+          <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl px-4 py-3">
+            <p className="text-xs font-bold text-amber-400 uppercase tracking-wider mb-1">First target</p>
+            <p className="text-white/60 text-xs">Complete all training modules, then 10 calls on day one. Don&apos;t let them start calling without doing the AI roleplay first.</p>
+          </div>
         </div>
       </div>
     ),
@@ -250,8 +282,137 @@ const steps: Step[] = [
   },
 ];
 
+// ─── Slot Manager ───
+function SlotManager() {
+  const [slots, setSlots] = useState<ScreeningSlot[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [dateInput, setDateInput] = useState('');
+  const [timeInput, setTimeInput] = useState('');
+  const [adding, setAdding] = useState(false);
+  const [addError, setAddError] = useState('');
+  const [deleting, setDeleting] = useState<string | null>(null);
+
+  function formatLabel(dateTime: string): string {
+    const d = new Date(dateTime);
+    const day = d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+    const time = d.toLocaleTimeString('en-GB', { hour: 'numeric', minute: '2-digit', hour12: true });
+    return `${day} · ${time}`;
+  }
+
+  useEffect(() => {
+    getScreeningSlots().then((s) => { setSlots(s); setLoading(false); });
+  }, []);
+
+  const handleAdd = async () => {
+    if (!dateInput || !timeInput) return;
+    setAdding(true);
+    setAddError('');
+    try {
+      const dateTime = `${dateInput}T${timeInput}`;
+      const label = formatLabel(dateTime);
+      const result = await createScreeningSlot(dateTime, label);
+      if (result.success && result.slot) {
+        setSlots((prev) => [...prev, result.slot!].sort((a, b) => a.dateTime.localeCompare(b.dateTime)));
+        setDateInput('');
+        setTimeInput('');
+      } else {
+        setAddError(result.error ?? 'Failed to add slot');
+      }
+    } catch (err) {
+      setAddError('Network error — please try again');
+    } finally {
+      setAdding(false);
+    }
+  };
+
+  const handleDelete = async (slotId: string) => {
+    setDeleting(slotId);
+    await deleteScreeningSlot(slotId);
+    setSlots((prev) => prev.filter((s) => s.id !== slotId));
+    setDeleting(null);
+  };
+
+  return (
+    <div className="mt-10 p-5 rounded-2xl bg-white/[0.02] border border-white/8">
+      <h3 className="text-sm font-semibold text-white/70 mb-1 flex items-center gap-2">
+        <CalendarPlus className="w-4 h-4 text-sky-400" />
+        Available Slots
+      </h3>
+      <p className="text-xs text-white/30 mb-4">Add times you&apos;re available — applicants pick from these when they click their booking link.</p>
+
+      <div className="flex gap-2 mb-4 flex-wrap">
+        <input
+          type="date"
+          value={dateInput}
+          onChange={(e) => setDateInput(e.target.value)}
+          className="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-white/30"
+        />
+        <input
+          type="time"
+          value={timeInput}
+          onChange={(e) => setTimeInput(e.target.value)}
+          className="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-white/30"
+        />
+        <button
+          onClick={handleAdd}
+          disabled={!dateInput || !timeInput || adding}
+          className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-sky-600/20 hover:bg-sky-600/30 border border-sky-500/30 text-sky-300 text-xs font-semibold disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+        >
+          {adding ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Plus className="w-3.5 h-3.5" />}
+          Add
+        </button>
+      </div>
+
+      {addError && (
+        <p className="text-xs text-red-400 mb-3">{addError}</p>
+      )}
+
+      {loading ? (
+        <div className="flex items-center justify-center py-4">
+          <Loader2 className="w-4 h-4 animate-spin text-white/30" />
+        </div>
+      ) : slots.length === 0 ? (
+        <p className="text-xs text-white/25 text-center py-3">No slots added yet.</p>
+      ) : (
+        <div className="space-y-1.5">
+          {slots.map((slot) => (
+            <div
+              key={slot.id}
+              className={`flex items-center justify-between px-3 py-2.5 rounded-lg border ${
+                slot.available
+                  ? 'bg-white/[0.02] border-white/8 text-white/60'
+                  : 'bg-white/[0.01] border-white/5 text-white/25'
+              }`}
+            >
+              <div className="flex items-center gap-2 min-w-0">
+                <Clock className="w-3.5 h-3.5 flex-shrink-0" />
+                <span className="text-xs font-medium">{slot.label}</span>
+                {!slot.available && slot.bookedByName && (
+                  <span className="text-[10px] text-emerald-400/70 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full flex-shrink-0">
+                    Booked · {slot.bookedByName.split(' ')[0]}
+                  </span>
+                )}
+              </div>
+              {slot.available && (
+                <button
+                  onClick={() => handleDelete(slot.id)}
+                  disabled={deleting === slot.id}
+                  className="flex items-center gap-1 text-[10px] text-red-400/50 hover:text-red-400 transition-colors disabled:opacity-40 ml-2 flex-shrink-0"
+                >
+                  {deleting === slot.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Trash2 className="w-3 h-3" />}
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Shortlist Data ───
 interface Applicant {
+  id: string;
   name: string;
   email: string;
   status: string;
@@ -260,29 +421,42 @@ interface Applicant {
   canBookCall?: boolean;
 }
 
-const shortlist: Applicant[] = [
-  { name: 'Shruti Boodhun', email: 'shrutiboodhun12@outlook.com', status: 'Trial task sent', color: 'text-sky-400 bg-sky-500/10 border-sky-500/20', canSend: false },
-  { name: 'Nicol', email: 'nicol1@live.co.uk', status: 'Trial task sent', color: 'text-sky-400 bg-sky-500/10 border-sky-500/20', canSend: false },
-  { name: 'Brittany Parker', email: 'brittany.parker24@gmail.com', status: 'Trial task sent', color: 'text-sky-400 bg-sky-500/10 border-sky-500/20', canSend: false },
-  { name: 'Thlia Xavier', email: 'thlia.xavier@gmail.com', status: 'Trial task sent', color: 'text-sky-400 bg-sky-500/10 border-sky-500/20', canSend: false },
-  { name: 'Mia Msembe', email: 'miamesembe@gmail.com', status: 'Trial task sent', color: 'text-sky-400 bg-sky-500/10 border-sky-500/20', canSend: false },
-  { name: 'Trisha', email: 'trisha160702@gmail.com', status: 'Book Screening Call', color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20', canSend: false, canBookCall: true },
-  { name: 'James Owain', email: 'Jamesowain234@gmail.com', status: 'Trial task sent', color: 'text-sky-400 bg-sky-500/10 border-sky-500/20', canSend: false },
-  { name: 'Subby', email: 'subby487@gmail.com', status: 'Trial task sent', color: 'text-sky-400 bg-sky-500/10 border-sky-500/20', canSend: false },
-  { name: 'Ebalo Shabani', email: 'ebaloshabani010@gmail.com', status: 'Trial task sent', color: 'text-sky-400 bg-sky-500/10 border-sky-500/20', canSend: false },
-  { name: 'Obinna Eze Elijah', email: 'obiezeelijah@gmail.com', status: 'Trial task sent', color: 'text-sky-400 bg-sky-500/10 border-sky-500/20', canSend: false },
-  { name: 'Gracie Tamplin', email: 'gracie.tamplin@icloud.com', status: 'Trial task sent', color: 'text-sky-400 bg-sky-500/10 border-sky-500/20', canSend: false },
-  { name: 'Kujembola Mathew', email: 'kujemath97@gmail.com', status: 'Trial task sent', color: 'text-sky-400 bg-sky-500/10 border-sky-500/20', canSend: false },
-  { name: 'Nieah Mundle', email: 'Rita98_2020@yahoo.com', status: 'Trial task sent', color: 'text-sky-400 bg-sky-500/10 border-sky-500/20', canSend: false },
-  { name: 'John Williams', email: 'jvw0503007_qwt@indeedemail.com', status: 'Trial task sent', color: 'text-sky-400 bg-sky-500/10 border-sky-500/20', canSend: false },
-  { name: 'Tapi Mandaza', email: 'Tapiwa.mandaza@outlook.com', status: 'Trial task sent', color: 'text-sky-400 bg-sky-500/10 border-sky-500/20', canSend: false },
-  { name: 'Chris Cox', email: 'chief2002@outlook.com', status: 'Trial task sent', color: 'text-sky-400 bg-sky-500/10 border-sky-500/20', canSend: false },
-  { name: 'Joane Cabrera', email: 'joanecabrera10@gmail.com', status: 'Pass', color: 'text-red-400 bg-red-500/10 border-red-500/20', canSend: false },
-  { name: 'Sam McLoughlin', email: 'Sam.mcloughlin16@gmail.com', status: 'Pass', color: 'text-red-400 bg-red-500/10 border-red-500/20', canSend: false },
+const STATUS_CONFIG: Record<string, { color: string; canSend: boolean; canBookCall: boolean }> = {
+  'New':                  { color: 'text-yellow-400 bg-yellow-500/10 border-yellow-500/20', canSend: true,  canBookCall: false },
+  'Trial task sent':      { color: 'text-sky-400 bg-sky-500/10 border-sky-500/20',           canSend: false, canBookCall: false },
+  'Book Screening Call':  { color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20', canSend: false, canBookCall: true },
+  'Pass':                 { color: 'text-red-400 bg-red-500/10 border-red-500/20',            canSend: false, canBookCall: false },
+};
+const STATUS_LABELS = Object.keys(STATUS_CONFIG);
+
+const SEED_SHORTLIST: Applicant[] = [
+  { id: 'shruti-boodhun',    name: 'Shruti Boodhun',    email: 'shrutiboodhun12@outlook.com',      status: 'Trial task sent',     color: 'text-sky-400 bg-sky-500/10 border-sky-500/20',           canSend: false },
+  { id: 'nicol',             name: 'Nicol',             email: 'nicol1@live.co.uk',                status: 'Trial task sent',     color: 'text-sky-400 bg-sky-500/10 border-sky-500/20',           canSend: false },
+  { id: 'brittany-parker',   name: 'Brittany Parker',   email: 'brittany.parker24@gmail.com',      status: 'Trial task sent',     color: 'text-sky-400 bg-sky-500/10 border-sky-500/20',           canSend: false },
+  { id: 'thlia-xavier',      name: 'Thlia Xavier',      email: 'thlia.xavier@gmail.com',           status: 'Trial task sent',     color: 'text-sky-400 bg-sky-500/10 border-sky-500/20',           canSend: false },
+  { id: 'mia-msembe',        name: 'Mia Msembe',        email: 'miamesembe@gmail.com',             status: 'Trial task sent',     color: 'text-sky-400 bg-sky-500/10 border-sky-500/20',           canSend: false },
+  { id: 'trisha',            name: 'Trisha',            email: 'trisha160702@gmail.com',           status: 'Book Screening Call', color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20', canSend: false, canBookCall: true },
+  { id: 'james-owain',       name: 'James Owain',       email: 'Jamesowain234@gmail.com',          status: 'Trial task sent',     color: 'text-sky-400 bg-sky-500/10 border-sky-500/20',           canSend: false },
+  { id: 'subby',             name: 'Subby',             email: 'subby487@gmail.com',               status: 'Trial task sent',     color: 'text-sky-400 bg-sky-500/10 border-sky-500/20',           canSend: false },
+  { id: 'ebalo-shabani',     name: 'Ebalo Shabani',     email: 'ebaloshabani010@gmail.com',        status: 'Trial task sent',     color: 'text-sky-400 bg-sky-500/10 border-sky-500/20',           canSend: false },
+  { id: 'obinna-eze-elijah', name: 'Obinna Eze Elijah', email: 'obiezeelijah@gmail.com',           status: 'Trial task sent',     color: 'text-sky-400 bg-sky-500/10 border-sky-500/20',           canSend: false },
+  { id: 'gracie-tamplin',    name: 'Gracie Tamplin',    email: 'gracie.tamplin@icloud.com',        status: 'Trial task sent',     color: 'text-sky-400 bg-sky-500/10 border-sky-500/20',           canSend: false },
+  { id: 'kujembola-mathew',  name: 'Kujembola Mathew',  email: 'kujemath97@gmail.com',             status: 'Trial task sent',     color: 'text-sky-400 bg-sky-500/10 border-sky-500/20',           canSend: false },
+  { id: 'nieah-mundle',      name: 'Nieah Mundle',      email: 'Rita98_2020@yahoo.com',            status: 'Trial task sent',     color: 'text-sky-400 bg-sky-500/10 border-sky-500/20',           canSend: false },
+  { id: 'john-williams',     name: 'John Williams',     email: 'jvw0503007_qwt@indeedemail.com',   status: 'Trial task sent',     color: 'text-sky-400 bg-sky-500/10 border-sky-500/20',           canSend: false },
+  { id: 'tapi-mandaza',      name: 'Tapi Mandaza',      email: 'Tapiwa.mandaza@outlook.com',       status: 'Trial task sent',     color: 'text-sky-400 bg-sky-500/10 border-sky-500/20',           canSend: false },
+  { id: 'chris-cox',         name: 'Chris Cox',         email: 'chief2002@outlook.com',            status: 'Trial task sent',     color: 'text-sky-400 bg-sky-500/10 border-sky-500/20',           canSend: false },
+  { id: 'joane-cabrera',     name: 'Joane Cabrera',     email: 'joanecabrera10@gmail.com',         status: 'Pass',                color: 'text-red-400 bg-red-500/10 border-red-500/20',           canSend: false },
+  { id: 'sam-mcloughlin',    name: 'Sam McLoughlin',    email: 'Sam.mcloughlin16@gmail.com',       status: 'Pass',                color: 'text-red-400 bg-red-500/10 border-red-500/20',           canSend: false },
 ];
 
 // ─── Applicant Row ───
-function ApplicantRow({ applicant }: { applicant: Applicant }) {
+function ApplicantRow({ applicant, bookingStatus, onDelete, onStatusChange }: {
+  applicant: Applicant;
+  bookingStatus?: BookingStatus | null;
+  onDelete?: () => void;
+  onStatusChange?: (status: string) => void;
+}) {
   const taskKey = `trial-sent-${applicant.name.replace(/\s+/g, '-').toLowerCase()}`;
   const callKey = `screening-sent-${applicant.name.replace(/\s+/g, '-').toLowerCase()}`;
   const [openPanel, setOpenPanel] = useState<'task' | 'call' | null>(null);
@@ -312,7 +486,7 @@ function ApplicantRow({ applicant }: { applicant: Applicant }) {
   const handleBookCall = async () => {
     setCallStatus('sending');
     setErrorMsg('');
-    const result = await sendScreeningInvite(applicant.name.split(' ')[0], email);
+    const result = await sendBookingLink(applicant.name.split(' ')[0], email);
     if (result.success) {
       setCallStatus('sent');
       localStorage.setItem(callKey, 'sent');
@@ -326,9 +500,19 @@ function ApplicantRow({ applicant }: { applicant: Applicant }) {
   return (
     <div className="bg-white/[0.02] border border-white/5 rounded-xl overflow-hidden">
       <div className="flex items-center justify-between px-4 py-3">
-        <div className="flex items-center gap-3 min-w-0">
+        <div className="flex items-center gap-3 min-w-0 flex-1">
           <span className="text-white/70 font-medium truncate">{applicant.name}</span>
-          <span className={`text-xs font-semibold px-3 py-1 rounded-full border shrink-0 ${applicant.color}`}>{applicant.status}</span>
+          {onStatusChange ? (
+            <select
+              value={applicant.status}
+              onChange={(e) => onStatusChange(e.target.value)}
+              className={`text-xs font-semibold px-2 py-1 rounded-full border shrink-0 bg-transparent cursor-pointer focus:outline-none ${applicant.color}`}
+            >
+              {STATUS_LABELS.map((s) => <option key={s} value={s} className="bg-[#0a0a0f] text-white">{s}</option>)}
+            </select>
+          ) : (
+            <span className={`text-xs font-semibold px-3 py-1 rounded-full border shrink-0 ${applicant.color}`}>{applicant.status}</span>
+          )}
         </div>
         <div className="flex items-center gap-2 shrink-0 ml-3">
           {applicant.canSend && (
@@ -346,9 +530,13 @@ function ApplicantRow({ applicant }: { applicant: Applicant }) {
             )
           )}
           {applicant.canBookCall && (
-            callStatus === 'sent' ? (
+            bookingStatus?.booked ? (
               <span className="flex items-center gap-1.5 text-xs text-emerald-400 font-semibold">
-                <Check className="w-3.5 h-3.5" /> Invite Sent
+                <CheckCircle2 className="w-3.5 h-3.5" /> Call Booked · {bookingStatus.slotLabel}
+              </span>
+            ) : callStatus === 'sent' ? (
+              <span className="flex items-center gap-1.5 text-xs text-emerald-400 font-semibold">
+                <Check className="w-3.5 h-3.5" /> Link Sent
               </span>
             ) : (
               <button
@@ -358,6 +546,15 @@ function ApplicantRow({ applicant }: { applicant: Applicant }) {
                 <Phone className="w-3 h-3" /> Book Screening Call
               </button>
             )
+          )}
+          {onDelete && (
+            <button
+              onClick={onDelete}
+              title="Remove from shortlist"
+              className="ml-1 text-white/15 hover:text-red-400 transition-colors flex-shrink-0"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
           )}
         </div>
       </div>
@@ -373,7 +570,7 @@ function ApplicantRow({ applicant }: { applicant: Applicant }) {
           >
             <div className="px-4 pb-4 border-t border-white/5 pt-3">
               <p className="text-xs text-white/40 mb-2">
-                {openPanel === 'task' ? 'Send trial task to' : 'Send screening invite to'}{' '}
+                {openPanel === 'task' ? 'Send trial task to' : 'Send booking link to'}{' '}
                 <span className="text-white/60">{applicant.name.split(' ')[0]}</span>:
               </p>
               <div className="flex gap-2">
@@ -409,7 +606,7 @@ function ApplicantRow({ applicant }: { applicant: Applicant }) {
               <p className="text-xs text-white/25 mt-2">
                 {openPanel === 'task'
                   ? 'Subject: "CrftdWeb — Quick task before we chat"'
-                  : 'Subject: "CrftdWeb — Let\'s book a call"'}
+                  : 'Subject: "CrftdWeb — Book your screening call"'}
               </p>
             </div>
           </motion.div>
@@ -667,19 +864,66 @@ function ManagementTab() {
 // ─── Page ───
 export default function RepsPage() {
   const [tab, setTab] = useState<'recruitment' | 'management'>('recruitment');
+  const [shortlist, setShortlist] = useState<Applicant[]>(() => {
+    if (typeof window === 'undefined') return SEED_SHORTLIST;
+    try {
+      const saved = localStorage.getItem('crftd-shortlist');
+      return saved ? (JSON.parse(saved) as Applicant[]) : SEED_SHORTLIST;
+    } catch { return SEED_SHORTLIST; }
+  });
+  const [bookingStatuses, setBookingStatuses] = useState<Record<string, BookingStatus>>({});
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [addForm, setAddForm] = useState({ name: '', email: '', status: 'New' });
+
+  useEffect(() => {
+    localStorage.setItem('crftd-shortlist', JSON.stringify(shortlist));
+  }, [shortlist]);
+
+  useEffect(() => {
+    if (shortlist.length > 0) {
+      getBookingStatuses(shortlist.map((a) => a.email)).then(setBookingStatuses);
+    }
+  }, [shortlist]);
+
+  function handleAddApplicant() {
+    if (!addForm.name.trim() || !addForm.email.trim()) return;
+    const cfg = STATUS_CONFIG[addForm.status] ?? STATUS_CONFIG['New'];
+    const id = `${addForm.name.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}`;
+    setShortlist((prev) => [...prev, { id, name: addForm.name.trim(), email: addForm.email.trim(), status: addForm.status, ...cfg }]);
+    setAddForm({ name: '', email: '', status: 'New' });
+    setShowAddForm(false);
+  }
+
+  function handleDeleteApplicant(id: string) {
+    setShortlist((prev) => prev.filter((a) => a.id !== id));
+  }
+
+  function handleStatusChange(id: string, status: string) {
+    const cfg = STATUS_CONFIG[status] ?? STATUS_CONFIG['New'];
+    setShortlist((prev) => prev.map((a) => a.id === id ? { ...a, status, ...cfg } : a));
+  }
 
   return (
     <div className="min-h-screen bg-[#0a0a0f] text-white px-6 py-12">
       <div className="max-w-3xl mx-auto">
 
         {/* Back link */}
-        <Link
-          href="/admin"
-          className="inline-flex items-center gap-2 text-xs text-white/30 hover:text-white/60 transition-colors mb-8"
-        >
-          <ArrowLeft className="w-3.5 h-3.5" />
-          Back to Admin
-        </Link>
+        <div className="flex items-center gap-4 mb-8">
+          <Link
+            href="/admin"
+            className="inline-flex items-center gap-2 text-xs text-white/30 hover:text-white/60 transition-colors"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            Back to Admin
+          </Link>
+          <Link
+            href="/admin/calendar"
+            className="inline-flex items-center gap-2 text-xs text-sky-400/60 hover:text-sky-300 transition-colors"
+          >
+            <CalendarPlus className="w-3.5 h-3.5" />
+            Calendar view
+          </Link>
+        </div>
 
         {/* Header */}
         <div className="mb-8">
@@ -752,19 +996,98 @@ export default function RepsPage() {
           ))}
         </div>
 
+        {/* Slot manager */}
+        <SlotManager />
+
         {/* Shortlist tracker */}
-        <div className="mt-10 p-5 rounded-2xl bg-white/[0.02] border border-white/8">
-          <h3 className="text-sm font-semibold text-white/70 mb-1 flex items-center gap-2">
-            <UserCheck className="w-4 h-4 text-purple-400" />
-            Current Shortlist
-          </h3>
-          <p className="text-xs text-white/30 mb-4">Click "Send Trial Task" to fire the email directly from here.</p>
+        <div className="mt-6 p-5 rounded-2xl bg-white/[0.02] border border-white/8">
+          <div className="flex items-center justify-between mb-1">
+            <h3 className="text-sm font-semibold text-white/70 flex items-center gap-2">
+              <UserCheck className="w-4 h-4 text-purple-400" />
+              Current Shortlist
+            </h3>
+            <button
+              onClick={() => setShowAddForm(!showAddForm)}
+              className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-white/50 hover:text-white/80 transition-all"
+            >
+              <Plus className="w-3.5 h-3.5" /> Add Applicant
+            </button>
+          </div>
+          <p className="text-xs text-white/30 mb-4">Edit status inline, send emails, or remove applicants. Persists in your browser.</p>
+
+          <AnimatePresence>
+            {showAddForm && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="overflow-hidden mb-4"
+              >
+                <div className="bg-white/[0.03] border border-white/10 rounded-xl p-4 space-y-3">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-[10px] text-white/30 mb-1 uppercase tracking-widest">Name</label>
+                      <input
+                        type="text"
+                        value={addForm.name}
+                        onChange={(e) => setAddForm((p) => ({ ...p, name: e.target.value }))}
+                        placeholder="Full name"
+                        className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/30"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] text-white/30 mb-1 uppercase tracking-widest">Email</label>
+                      <input
+                        type="email"
+                        value={addForm.email}
+                        onChange={(e) => setAddForm((p) => ({ ...p, email: e.target.value }))}
+                        placeholder="applicant@email.com"
+                        className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/30"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-[10px] text-white/30 mb-1 uppercase tracking-widest">Status</label>
+                    <select
+                      value={addForm.status}
+                      onChange={(e) => setAddForm((p) => ({ ...p, status: e.target.value }))}
+                      className="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-white/30"
+                    >
+                      {STATUS_LABELS.map((s) => <option key={s} value={s} className="bg-[#0a0a0f]">{s}</option>)}
+                    </select>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={handleAddApplicant}
+                      disabled={!addForm.name.trim() || !addForm.email.trim()}
+                      className="px-4 py-2 bg-white text-black rounded-lg text-xs font-bold hover:bg-white/90 disabled:opacity-40 disabled:cursor-not-allowed"
+                    >
+                      Add to shortlist
+                    </button>
+                    <button onClick={() => setShowAddForm(false)} className="px-4 py-2 bg-white/5 text-white/40 rounded-lg text-xs hover:bg-white/10">
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           <div className="space-y-2 text-sm">
+            {shortlist.length === 0 && (
+              <p className="text-xs text-white/25 text-center py-4">No applicants yet. Add one above.</p>
+            )}
             {shortlist.map((applicant) => (
-              <ApplicantRow key={applicant.name} applicant={applicant} />
+              <ApplicantRow
+                key={applicant.id}
+                applicant={applicant}
+                bookingStatus={bookingStatuses[applicant.email]}
+                onDelete={() => handleDeleteApplicant(applicant.id)}
+                onStatusChange={(status) => handleStatusChange(applicant.id, status)}
+              />
             ))}
           </div>
-
         </div>
 
         {/* Footer */}

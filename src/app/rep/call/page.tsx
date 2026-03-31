@@ -8,11 +8,13 @@ import { Phone, PhoneOff, Loader2, Send, Plus, Mic, MicOff, Clipboard } from 'lu
 
 type CallStage = 'prep' | 'active' | 'summary';
 
+interface TalkingPoint { topic: string; question: string; why: string; }
+interface Objection { objection: string; response: string; }
 interface PrepNotes {
   opener: string;
   keyObjective: string;
-  talkingPoints: string[];
-  potentialObjections: string[];
+  talkingPoints: TalkingPoint[];
+  potentialObjections: Objection[];
   closingStrategy: string;
   warningsOrTips: string[];
 }
@@ -181,7 +183,7 @@ export default function LiveCallPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          transcript: transcript.map((t) => `${t.speaker.toUpperCase()}: ${t.text}`).join('\n'),
+          transcript: transcript.map((t) => ({ speaker: t.speaker, text: t.text })),
           leadName,
           businessType,
           lastProspectMessage: lastProspect?.text || '',
@@ -208,7 +210,7 @@ export default function LiveCallPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          transcript: transcript.map((t) => `${t.speaker.toUpperCase()}: ${t.text}`).join('\n'),
+          transcript: transcript.map((t) => ({ speaker: t.speaker, text: t.text, timestamp: t.timestamp })),
           leadName,
           businessType,
           callGoal,
@@ -246,7 +248,7 @@ export default function LiveCallPage() {
                 value={leadName}
                 onChange={(e) => setLeadName(e.target.value)}
                 placeholder="e.g. Dave at DK Plumbing"
-                className="w-full bg-white/8 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-white/20 outline-none focus:border-white/20"
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-white/20 outline-none focus:border-white/20"
               />
             </div>
             <div>
@@ -255,7 +257,7 @@ export default function LiveCallPage() {
                 value={businessType}
                 onChange={(e) => setBusinessType(e.target.value)}
                 placeholder="e.g. Plumber"
-                className="w-full bg-white/8 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-white/20 outline-none focus:border-white/20"
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-white/20 outline-none focus:border-white/20"
               />
             </div>
           </div>
@@ -264,7 +266,7 @@ export default function LiveCallPage() {
             <input
               value={callGoal}
               onChange={(e) => setCallGoal(e.target.value)}
-              className="w-full bg-white/8 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-white/20 outline-none focus:border-white/20"
+              className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-white/20 outline-none focus:border-white/20"
             />
           </div>
           <div>
@@ -274,7 +276,7 @@ export default function LiveCallPage() {
               onChange={(e) => setAdditionalContext(e.target.value)}
               placeholder="Any notes about this lead, their website, industry situation..."
               rows={2}
-              className="w-full bg-white/8 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-white/20 outline-none focus:border-white/20 resize-none"
+              className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-white/20 outline-none focus:border-white/20 resize-none"
             />
           </div>
           <button
@@ -301,13 +303,19 @@ export default function LiveCallPage() {
             <div>
               <p className="text-xs text-white/30 mb-2">Talking Points</p>
               {prepNotes.talkingPoints.map((p, i) => (
-                <p key={i} className="text-xs text-white/60 mb-1">→ {p}</p>
+                <div key={i} className="mb-2">
+                  <p className="text-xs text-white/70">→ {p.question}</p>
+                  <p className="text-xs text-white/30">{p.why}</p>
+                </div>
               ))}
             </div>
             <div>
               <p className="text-xs text-white/30 mb-2">Predicted Objections</p>
               {prepNotes.potentialObjections.map((o, i) => (
-                <p key={i} className="text-xs text-amber-400/70 mb-1">⚠ {o}</p>
+                <div key={i} className="mb-2">
+                  <p className="text-xs text-amber-400/70">⚠ {o.objection}</p>
+                  <p className="text-xs text-white/40">↳ {o.response}</p>
+                </div>
               ))}
             </div>
             <div>
@@ -368,14 +376,14 @@ export default function LiveCallPage() {
               <p className="text-sm text-white/70">{callSummary.summary}</p>
             </div>
 
-            {callSummary.keyPoints.length > 0 && (
+            {(callSummary.keyPoints?.length ?? 0) > 0 && (
               <div className="bg-white/5 border border-white/8 rounded-xl p-4 space-y-1">
                 <p className="text-xs text-white/30 uppercase tracking-widest mb-2">Key Points</p>
                 {callSummary.keyPoints.map((p, i) => <p key={i} className="text-sm text-white/60">→ {p}</p>)}
               </div>
             )}
 
-            {callSummary.nextSteps.length > 0 && (
+            {(callSummary.nextSteps?.length ?? 0) > 0 && (
               <div className="bg-white/5 border border-white/8 rounded-xl p-4 space-y-1">
                 <p className="text-xs text-white/30 uppercase tracking-widest mb-2">Next Steps</p>
                 {callSummary.nextSteps.map((s, i) => <p key={i} className="text-sm text-white/60">✓ {s}</p>)}
@@ -461,7 +469,7 @@ export default function LiveCallPage() {
             <select
               value={manualSpeaker}
               onChange={(e) => setManualSpeaker(e.target.value as 'rep' | 'prospect')}
-              className="bg-white/8 border border-white/10 rounded-lg px-2 py-2 text-xs text-white/70 outline-none"
+              className="bg-white/5 border border-white/10 rounded-lg px-2 py-2 text-xs text-white/70 outline-none"
             >
               <option value="rep">Rep</option>
               <option value="prospect">Prospect</option>
@@ -471,7 +479,7 @@ export default function LiveCallPage() {
               onChange={(e) => setManualEntry(e.target.value)}
               onKeyDown={(e) => { if (e.key === 'Enter') addManualEntry(); }}
               placeholder="Type what was said..."
-              className="flex-1 bg-white/8 border border-white/10 rounded-lg px-3 py-2 text-xs text-white placeholder-white/20 outline-none focus:border-white/20"
+              className="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-xs text-white placeholder-white/20 outline-none focus:border-white/20"
             />
             <button onClick={addManualEntry} disabled={!manualEntry.trim()} className="bg-white/10 hover:bg-white/15 text-white rounded-lg px-3 disabled:opacity-30">
               <Plus className="w-4 h-4" />
@@ -493,7 +501,7 @@ export default function LiveCallPage() {
               <p className="text-xs text-white/30 uppercase tracking-widest">Prep</p>
               <p className="text-xs text-white/50">Opening: <span className="text-white/70">"{prepNotes.opener.slice(0, 60)}..."</span></p>
               {prepNotes.potentialObjections.slice(0, 2).map((o, i) => (
-                <p key={i} className="text-xs text-amber-400/60">⚠ {o.slice(0, 50)}...</p>
+                <p key={i} className="text-xs text-amber-400/60">⚠ {o.objection.slice(0, 50)}...</p>
               ))}
             </div>
           )}
@@ -506,7 +514,7 @@ export default function LiveCallPage() {
               onChange={(e) => setAskText(e.target.value)}
               placeholder="What should I say now? How do I handle this?"
               rows={2}
-              className="w-full bg-white/8 border border-white/10 rounded-lg px-2.5 py-2 text-xs text-white placeholder-white/20 outline-none resize-none focus:border-white/20"
+              className="w-full bg-white/5 border border-white/10 rounded-lg px-2.5 py-2 text-xs text-white placeholder-white/20 outline-none resize-none focus:border-white/20"
             />
             <button
               onClick={askAI}

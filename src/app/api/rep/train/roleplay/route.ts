@@ -25,6 +25,11 @@ export async function POST(request: NextRequest) {
       { role: 'system', content: systemPrompt },
     ];
 
+    // When no messages yet, seed with a trigger so the AI answers the phone
+    if (messages.length === 0) {
+      openaiMessages.push({ role: 'user', content: '[phone ringing — you pick up]' });
+    }
+
     for (const msg of messages) {
       openaiMessages.push({
         role: msg.role === 'rep' ? 'user' : 'assistant',
@@ -56,7 +61,8 @@ export async function POST(request: NextRequest) {
     return new Response(readable, {
       headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Transfer-Encoding': 'chunked' },
     });
-  } catch {
+  } catch (err) {
+    console.error('[roleplay] Error:', err);
     return NextResponse.json({ error: 'Roleplay failed' }, { status: 500 });
   }
 }

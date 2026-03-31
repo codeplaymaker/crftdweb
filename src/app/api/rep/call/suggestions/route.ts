@@ -8,16 +8,22 @@ import OpenAI from 'openai';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
+interface SuggestionRequest {
+  transcript: { speaker: 'rep' | 'prospect' | 'unknown'; text: string }[];
+  leadName: string;
+  businessType?: string;
+  lastProspectMessage?: string;
+  userQuestion?: string;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { transcript, leadName, businessType, lastProspectMessage, userQuestion } = body as {
-      transcript: { speaker: 'rep' | 'prospect' | 'unknown'; text: string }[];
-      leadName: string;
-      businessType?: string;
-      lastProspectMessage?: string;
-      userQuestion?: string;
-    };
+    const { transcript, leadName, businessType, lastProspectMessage, userQuestion } = body as SuggestionRequest;
+
+    if (!transcript || !Array.isArray(transcript) || !leadName) {
+      return NextResponse.json({ error: 'transcript (array) and leadName are required' }, { status: 400 });
+    }
 
     const systemPrompt = `You are a real-time cold call coach for CrftdWeb, a UK web design studio.
 The rep's ONLY goal: book a 15-minute discovery call with Obi (founder/developer).
@@ -56,12 +62,12 @@ ${userQuestion ? `REP'S QUESTION: "${userQuestion}"` : `LAST PROSPECT MESSAGE: "
 What should the rep say or do right now?`;
 
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
+      model: 'gpt-4o',
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt },
       ],
-      max_tokens: 250,
+      max_tokens: 400,
       temperature: 0.5,
       response_format: { type: 'json_object' },
     });

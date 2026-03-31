@@ -844,6 +844,7 @@ export const TRAINING_SCENARIOS: TrainingScenario[] = [
     difficulty: 'beginner',
     prospectProfile: {
       name: 'Dave Nwosu',
+      gender: 'male',
       businessType: 'Local plumber',
       industry: 'Trades',
       background: 'Been plumbing for 12 years. Site was built by a mate in 2019. Gets most work from word of mouth.',
@@ -872,6 +873,7 @@ export const TRAINING_SCENARIOS: TrainingScenario[] = [
     difficulty: 'beginner',
     prospectProfile: {
       name: 'Priya Shah',
+      gender: 'female',
       businessType: 'Beauty salon',
       industry: 'Health & Beauty',
       background: 'Runs a salon in Manchester. Has a Wix site her daughter built. Gets bookings mostly via Instagram.',
@@ -900,6 +902,7 @@ export const TRAINING_SCENARIOS: TrainingScenario[] = [
     difficulty: 'intermediate',
     prospectProfile: {
       name: 'Mark Ellis',
+      gender: 'male',
       businessType: 'Accountancy firm',
       industry: 'Finance',
       background: 'Small accountancy firm in Leeds. Paid £2k for a new site 8 months ago from a local agency.',
@@ -928,6 +931,7 @@ export const TRAINING_SCENARIOS: TrainingScenario[] = [
     difficulty: 'intermediate',
     prospectProfile: {
       name: 'Reception at Hartley & Sons Solicitors',
+      gender: 'female',
       businessType: 'Law firm',
       industry: 'Legal',
       background: 'The receptionist Sofia handles all inbound calls. She\'s polite but firm. The partner is Robert Hartley.',
@@ -955,6 +959,7 @@ export const TRAINING_SCENARIOS: TrainingScenario[] = [
     difficulty: 'intermediate',
     prospectProfile: {
       name: 'Tom Hardy',
+      gender: 'male',
       businessType: 'Personal trainer / gym owner',
       industry: 'Fitness',
       background: 'Runs a small gym. Very budget-conscious. Has been burned by expensive projects that didn\'t deliver.',
@@ -983,6 +988,7 @@ export const TRAINING_SCENARIOS: TrainingScenario[] = [
     difficulty: 'advanced',
     prospectProfile: {
       name: 'Claire Whitmore',
+      gender: 'female',
       businessType: 'Recruitment agency',
       industry: 'Recruitment',
       background: 'MD of a 20-person firm. Dismisses salespeople instantly. Gets 10 cold calls a week.',
@@ -1011,6 +1017,7 @@ export const TRAINING_SCENARIOS: TrainingScenario[] = [
     difficulty: 'beginner',
     prospectProfile: {
       name: 'James Okafor',
+      gender: 'male',
       businessType: 'Electrician / sole trader',
       industry: 'Trades',
       background: 'Sole trader. Was mildly interested on the first call. Said he\'d think about it. Hasn\'t replied to the email.',
@@ -1039,6 +1046,7 @@ export const TRAINING_SCENARIOS: TrainingScenario[] = [
     difficulty: 'elite',
     prospectProfile: {
       name: 'Gary Stubbs',
+      gender: 'male',
       businessType: 'Car dealership',
       industry: 'Automotive',
       background: 'Owner of a used car lot. Has been scammed by a "web agency" before — paid £3k, got nothing. Now distrusts all cold callers.',
@@ -1248,13 +1256,14 @@ THE REP'S GOAL: ${scenario.objectives.join(', ')}
 
 RULES FOR YOUR ROLEPLAY:
 1. Stay in character at all times. You are ${scenario.prospectProfile.name}, not an AI assistant.
-2. Respond realistically — short, natural UK business owner language. No corporate speak.
-3. If the rep uses good technique (labeling, implication questions, etc.) — reward it by opening up slightly.
-4. If the rep uses bad technique (pitching too early, ignoring what you said) — shut down or object.
-5. You do NOT volunteer information — only share if asked the right questions.
-6. Keep responses short (1–4 sentences). Real calls are quick.
-7. The rep is calling from CrftdWeb, a web design studio. Obi is the founder/developer. The rep's job is only to book a 15-minute discovery call — NOT to close a deal.
-8. Do NOT break character to give coaching. That happens after the session.`;
+2. YOU are the one being called. The rep is calling YOU. When the session starts, answer the phone as yourself — say something like "Yeah?" or "Hello?" or "${scenario.prospectProfile.name} speaking." — NOT "is this Dave Nwosu?" or anything that sounds like the caller.
+3. Respond realistically — short, natural UK business owner language. No corporate speak.
+4. If the rep uses good technique (labeling, implication questions, etc.) — reward it by opening up slightly.
+5. If the rep uses bad technique (pitching too early, ignoring what you said) — shut down or object.
+6. You do NOT volunteer information — only share if asked the right questions.
+7. Keep responses short (1–4 sentences). Real calls are quick.
+8. The rep is calling from CrftdWeb, a web design studio. Obi is the founder/developer. The rep's job is only to book a 15-minute discovery call — NOT to close a deal.
+9. Do NOT break character to give coaching. That happens after the session.`;
 }
 
 export function buildDrillSystemPrompt(): string {

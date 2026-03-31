@@ -71,7 +71,7 @@ function DrillContent() {
   }, [user?.uid, drillType]);
 
   useEffect(() => {
-    startSession();
+    startSession().catch(console.error);
   }, [startSession]);
 
   const handleSubmit = useCallback(async () => {

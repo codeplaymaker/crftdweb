@@ -2,7 +2,248 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Copy, Check, ChevronDown, ChevronUp, Mail, RefreshCw, UserCheck, Handshake, Users } from 'lucide-react';
+import { Copy, Check, ChevronDown, ChevronUp, Mail, RefreshCw, UserCheck, Handshake, Users, Send, Eye, Loader2, CheckCircle2 } from 'lucide-react';
+import { sendTrialTask } from '@/app/actions/sendTrialTask';
+import { sendBookingLink } from '@/app/actions/sendBookingLink';
+
+// ─── Email preview HTML builders (client-side mirrors of server actions) ───
+function buildTrialTaskHtml(name: string): string {
+  return `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>CrftdWeb — Trial Task</title></head>
+<body style="margin:0;padding:0;background:#f4f4f4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:40px 20px;"><tr><td align="center">
+    <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+      <tr><td align="center" style="background:#0a0a0a;border-radius:12px 12px 0 0;padding:24px 40px;">
+        <img src="https://crftdweb.com/CW-logo-white.png" alt="CrftdWeb" width="120" style="display:block;border:0;" />
+      </td></tr>
+      <tr><td style="background:#ffffff;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 12px 12px;padding:40px;">
+        <p style="margin:0 0 20px;font-size:16px;color:#111;font-weight:600;">Hi ${name},</p>
+        <p style="margin:0 0 16px;font-size:15px;color:#444;line-height:1.7;">Thanks for applying — your background looks interesting.</p>
+        <p style="margin:0 0 24px;font-size:15px;color:#444;line-height:1.7;">Before we book a call, I’d like to see how you think.</p>
+        <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px;">
+          <tr><td style="background:#0a0a0a;border-radius:10px;padding:20px 24px;">
+            <p style="margin:0 0 10px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);">Your Task</p>
+            <p style="margin:0;font-size:15px;color:#fff;line-height:1.7;">Find <strong>5 UK businesses</strong> with a bad website and write <strong>one specific sentence</strong> for each explaining why it needs a redesign.</p>
+          </td></tr>
+        </table>
+        <p style="margin:0 0 12px;font-size:14px;color:#888;line-height:1.7;">Not just <em>“it looks old”</em> — something specific like: <em>“No mobile version — the site breaks on any phone”</em></p>
+        <p style="margin:0 0 28px;font-size:15px;color:#444;line-height:1.7;">No formatting required — just reply to this email with your list within <strong style="color:#111;">48 hours</strong>.</p>
+        <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;"><tr><td style="border-top:1px solid #e8e8e8;"></td></tr></table>
+        <p style="margin:0;font-size:15px;color:#111;font-weight:700;">Obi</p>
+        <p style="margin:3px 0 0;font-size:13px;color:#999;">CrftdWeb &middot; crftdweb.com &middot; admin@crftdweb.com</p>
+      </td></tr>
+    </table>
+  </td></tr></table>
+</body></html>`;
+}
+
+function buildBookingLinkHtml(name: string): string {
+  const fakeUrl = 'https://crftdweb.com/book/preview-link';
+  return `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>CrftdWeb — Book your screening call</title></head>
+<body style="margin:0;padding:0;background:#f4f4f4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:40px 20px;"><tr><td align="center">
+    <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+      <tr><td align="center" style="background:#0a0a0a;border-radius:12px 12px 0 0;padding:24px 40px;">
+        <img src="https://crftdweb.com/CW-logo-white.png" alt="CrftdWeb" width="120" style="display:block;border:0;" />
+      </td></tr>
+      <tr><td style="background:#ffffff;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 12px 12px;padding:40px;">
+        <p style="margin:0 0 20px;font-size:16px;color:#111;font-weight:600;">Hi ${name},</p>
+        <p style="margin:0 0 16px;font-size:15px;color:#444;line-height:1.7;">Really good work on the task — exactly the kind of thinking I’m looking for.</p>
+        <p style="margin:0 0 24px;font-size:15px;color:#444;line-height:1.7;">I’d like to book a quick <strong style="color:#111;">15-minute call</strong> to have a chat. Use the link below to pick a time that works for you:</p>
+        <table cellpadding="0" cellspacing="0" style="margin:0 0 28px;">
+          <tr><td style="background:#111;border-radius:8px;">
+            <a href="${fakeUrl}" style="display:inline-block;padding:14px 28px;font-size:15px;font-weight:700;color:#ffffff;text-decoration:none;">Pick a time &rarr;</a>
+          </td></tr>
+        </table>
+        <p style="margin:0 0 24px;font-size:13px;color:#999;line-height:1.6;">The link shows my available slots — takes a few seconds to book. If none of the times work, just reply and we’ll sort something.</p>
+        <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;"><tr><td style="border-top:1px solid #e8e8e8;"></td></tr></table>
+        <p style="margin:0;font-size:15px;color:#111;font-weight:700;">Obi</p>
+        <p style="margin:3px 0 0;font-size:13px;color:#999;">CrftdWeb &middot; crftdweb.com &middot; admin@crftdweb.com</p>
+      </td></tr>
+    </table>
+  </td></tr></table>
+</body></html>`;
+}
+
+const EMAIL_SEND_TEMPLATES = [
+  {
+    id: 'trial-task',
+    label: 'Trial Task',
+    subject: 'CrftdWeb — Quick task before we chat',
+    description: 'Sent after a promising application — asks them to find 5 bad UK websites.',
+    color: 'border-purple-500/30 bg-purple-500/5',
+    activeColor: 'border-purple-500 bg-purple-500/15',
+    labelColor: 'text-purple-400',
+  },
+  {
+    id: 'booking-link',
+    label: 'Booking Link',
+    subject: 'CrftdWeb — Book your screening call',
+    description: 'Sent after a good trial task response — includes a unique booking link.',
+    color: 'border-emerald-500/30 bg-emerald-500/5',
+    activeColor: 'border-emerald-500 bg-emerald-500/15',
+    labelColor: 'text-emerald-400',
+  },
+] as const;
+
+type SendTemplateId = typeof EMAIL_SEND_TEMPLATES[number]['id'];
+
+// ─── Send Panel ───
+function SendPanel() {
+  const [templateId, setTemplateId] = useState<SendTemplateId>('trial-task');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [showPreview, setShowPreview] = useState(false);
+  const [sendStatus, setSendStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+  const [errorMsg, setErrorMsg] = useState('');
+
+  const firstName = name.split(' ')[0] || 'there';
+  const previewHtml = templateId === 'trial-task'
+    ? buildTrialTaskHtml(firstName || 'Hi')
+    : buildBookingLinkHtml(firstName || 'Hi');
+
+  const selectedTemplate = EMAIL_SEND_TEMPLATES.find((t) => t.id === templateId)!;
+
+  async function handleSend() {
+    if (!name.trim() || !email.trim()) return;
+    setSendStatus('sending');
+    setErrorMsg('');
+    try {
+      let result: { success: boolean; error?: string };
+      if (templateId === 'trial-task') {
+        result = await sendTrialTask(firstName, email.trim());
+      } else {
+        result = await sendBookingLink(firstName, email.trim());
+      }
+      if (result.success) {
+        setSendStatus('sent');
+        setTimeout(() => { setSendStatus('idle'); setName(''); setEmail(''); }, 3000);
+      } else {
+        setSendStatus('error');
+        setErrorMsg(result.error ?? 'Failed to send');
+      }
+    } catch {
+      setSendStatus('error');
+      setErrorMsg('Network error — please try again');
+    }
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Template picker */}
+      <div>
+        <p className="text-xs text-white/40 uppercase tracking-widest mb-3">Select Template</p>
+        <div className="grid grid-cols-2 gap-3">
+          {EMAIL_SEND_TEMPLATES.map((t) => (
+            <button
+              key={t.id}
+              onClick={() => { setTemplateId(t.id); setSendStatus('idle'); }}
+              className={`text-left p-4 rounded-xl border transition-all ${
+                templateId === t.id ? t.activeColor : t.color + ' opacity-60 hover:opacity-100'
+              }`}
+            >
+              <p className={`text-xs font-bold uppercase tracking-wider mb-1 ${t.labelColor}`}>{t.label}</p>
+              <p className="text-xs text-white/50 leading-relaxed">{t.description}</p>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Recipient */}
+      <div>
+        <p className="text-xs text-white/40 uppercase tracking-widest mb-3">Recipient</p>
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="block text-[10px] text-white/30 mb-1 uppercase tracking-widest">Name</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="e.g. Shruti"
+              className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/30"
+            />
+          </div>
+          <div>
+            <label className="block text-[10px] text-white/30 mb-1 uppercase tracking-widest">Email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="applicant@email.com"
+              className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/30"
+            />
+          </div>
+        </div>
+        <p className="text-xs text-white/25 mt-2">Subject: <span className="text-white/40 italic">{selectedTemplate.subject}</span></p>
+      </div>
+
+      {/* Preview toggle */}
+      <div>
+        <button
+          onClick={() => setShowPreview(!showPreview)}
+          className="flex items-center gap-2 text-xs text-white/40 hover:text-white/70 transition-colors"
+        >
+          <Eye className="w-3.5 h-3.5" />
+          {showPreview ? 'Hide preview' : 'Preview email'}
+        </button>
+
+        <AnimatePresence>
+          {showPreview && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.25 }}
+              className="overflow-hidden"
+            >
+              <div className="mt-3 rounded-xl overflow-hidden border border-white/10">
+                <div className="bg-white/[0.04] border-b border-white/8 px-4 py-2 flex items-center gap-2">
+                  <div className="flex gap-1.5">
+                    <div className="w-2.5 h-2.5 rounded-full bg-red-500/60" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/60" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-green-500/60" />
+                  </div>
+                  <span className="text-[10px] text-white/25 font-mono ml-2">email preview — {selectedTemplate.subject}</span>
+                </div>
+                <iframe
+                  srcDoc={previewHtml}
+                  className="w-full bg-white"
+                  style={{ height: '540px', border: 'none' }}
+                  title="Email preview"
+                  sandbox="allow-same-origin"
+                />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* Send button */}
+      {sendStatus === 'sent' ? (
+        <div className="flex items-center gap-2 text-sm text-emerald-400 font-semibold">
+          <CheckCircle2 className="w-4 h-4" /> Email sent successfully!
+        </div>
+      ) : (
+        <div className="space-y-2">
+          <button
+            onClick={handleSend}
+            disabled={!name.trim() || !email.trim() || sendStatus === 'sending'}
+            className="flex items-center gap-2 px-6 py-2.5 bg-white text-black rounded-xl text-sm font-bold hover:bg-white/90 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+          >
+            {sendStatus === 'sending' ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+            {sendStatus === 'sending' ? 'Sending…' : `Send ${selectedTemplate.label} Email`}
+          </button>
+          {sendStatus === 'error' && (
+            <p className="text-xs text-red-400">{errorMsg}</p>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
 
 // ─── Types ───
 interface Template {
@@ -493,6 +734,7 @@ function CategorySection({ category }: { category: Category }) {
 
 // ─── Page ───
 export default function EmailTemplatesPage() {
+  const [pageTab, setPageTab] = useState<'templates' | 'send'>('send');
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
   const displayed = activeCategory
@@ -504,17 +746,38 @@ export default function EmailTemplatesPage() {
       <div className="max-w-3xl mx-auto">
 
         {/* Header */}
-        <div className="mb-10">
+        <div className="mb-8">
           <p className="text-xs uppercase tracking-widest text-purple-400/70 mb-2">Admin / Outreach</p>
-          <h1 className="text-3xl font-bold tracking-tight">Email Templates</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Email</h1>
           <p className="text-white/40 mt-2 text-sm max-w-lg">
-            Ready-to-send scripts for cold outreach, follow-ups, proposals, and referrals.
-            Personalise the bracketed sections — never send a template cold.
+            Preview and send branded emails, or browse copy templates for manual outreach.
           </p>
         </div>
 
-        {/* Filter pills */}
-        <div className="flex flex-wrap gap-2 mb-8">
+        {/* Top tabs */}
+        <div className="flex gap-1 p-1 bg-white/[0.03] border border-white/8 rounded-xl w-fit mb-8">
+          {([['send', 'Send Email'], ['templates', 'Copy Templates']] as const).map(([key, label]) => (
+            <button
+              key={key}
+              onClick={() => setPageTab(key)}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                pageTab === key ? 'bg-white/10 text-white' : 'text-white/30 hover:text-white/60'
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+
+        {pageTab === 'send' && (
+          <div className="bg-white/[0.02] border border-white/8 rounded-2xl p-6">
+            <SendPanel />
+          </div>
+        )}
+
+        {pageTab === 'templates' && (<>
+          {/* Filter pills */}
+          <div className="flex flex-wrap gap-2 mb-8">
           <button
             onClick={() => setActiveCategory(null)}
             className={`text-xs px-4 py-1.5 rounded-full border transition-all ${
@@ -540,19 +803,21 @@ export default function EmailTemplatesPage() {
           ))}
         </div>
 
-        {/* Template sections */}
-        <div className="space-y-10">
-          {displayed.map((category) => (
-            <CategorySection key={category.id} category={category} />
-          ))}
-        </div>
+          {/* Template sections */}
+          <div className="space-y-10">
+            {displayed.map((category) => (
+              <CategorySection key={category.id} category={category} />
+            ))}
+          </div>
 
-        {/* Footer note */}
-        <div className="mt-16 pt-8 border-t border-white/8 text-center">
-          <p className="text-xs text-white/25">
-            These templates are a starting point. Personalisation is what gets replies.
-          </p>
-        </div>
+          {/* Footer note */}
+          <div className="mt-16 pt-8 border-t border-white/8 text-center">
+            <p className="text-xs text-white/25">
+              These templates are a starting point. Personalisation is what gets replies.
+            </p>
+          </div>
+        </>)}
+
       </div>
     </div>
   );

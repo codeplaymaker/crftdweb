@@ -40,6 +40,7 @@ function ReviewContent() {
     if (!sessionId) { setLoading(false); return; }
     RepTrainingService.getTrainingSession(sessionId)
       .then(setSession)
+      .catch((err) => console.error('Failed to load session:', err))
       .finally(() => setLoading(false));
   }, [sessionId]);
 

@@ -11,7 +11,8 @@ import {
   scoreToGrade,
 } from '@/lib/services/repKnowledgeBase';
 import { TrainingMessage, TrainingRating, TrainingRatingCategory } from '@/lib/types/repTraining';
-import { ArrowLeft, Phone, PhoneOff, Send, Loader2, Star } from 'lucide-react';
+import { useVoiceRecorder } from '@/lib/hooks/useVoiceRecorder';
+import { ArrowLeft, Phone, PhoneOff, Send, Loader2, Star, Volume2, VolumeX, Mic, MicOff } from 'lucide-react';
 
 const categoryLabels: Record<TrainingRatingCategory, string> = {
   discovery: 'Discovery', listening: 'Listening', objection_handling: 'Objection Handling',
@@ -36,9 +37,89 @@ function RoleplayContent() {
   const [rating, setRating] = useState<TrainingRating | null>(null);
   const [isRating, setIsRating] = useState(false);
 
+  const [isStarting, setIsStarting] = useState(false);
+  const [startError, setStartError] = useState<string | null>(null);
+  const [voiceEnabled, setVoiceEnabled] = useState(true);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [voiceError, setVoiceError] = useState<string | null>(null);
+
+  const voice = useVoiceRecorder({
+    onTranscription: (text) => {
+      setInputText((prev) => (prev ? prev + ' ' + text : text));
+    },
+    onError: (err) => {
+      setVoiceError(err);
+      setTimeout(() => setVoiceError(null), 4000);
+    },
+  });
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const startTimeRef = useRef<number>(0);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audioUnlockedRef = useRef(false);
+  const blobUrlRef = useRef<string | null>(null);
+
+  // Create persistent audio element on mount (mobile requires reuse)
+  useEffect(() => {
+    const audio = new Audio();
+    audio.setAttribute('playsinline', '');
+    audioRef.current = audio;
+    return () => {
+      audio.pause();
+      audio.src = '';
+      if (blobUrlRef.current) URL.revokeObjectURL(blobUrlRef.current);
+    };
+  }, []);
+
+  // Unlock audio on first user gesture
+  const unlockAudio = useCallback(() => {
+    if (audioUnlockedRef.current) return;
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.src = 'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAABhgC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAAYYoRBqkAAAAAAD/+1DEAAAHAAGf9AAAIgAANIAAAARMQU1FMy4xMDBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVQ==';
+    audio.volume = 0.01;
+    audio.play().then(() => {
+      audio.pause();
+      audio.volume = 1;
+      audio.currentTime = 0;
+      audioUnlockedRef.current = true;
+    }).catch(() => {});
+  }, []);
+
+  // Speak an AI prospect message via OpenAI TTS
+  const speakProspect = useCallback(async (text: string) => {
+    if (!voiceEnabled) return;
+    const audio = audioRef.current;
+    if (!audio) return;
+    try {
+      setIsSpeaking(true);
+      const gender = scenario?.prospectProfile.gender ?? 'male';
+      const difficulty = scenario?.difficulty;
+      const voiceKey =
+        gender === 'female'
+          ? (difficulty === 'advanced' || difficulty === 'elite' ? 'female_skeptical' : 'female_professional')
+          : (difficulty === 'elite' ? 'male_aggressive' : difficulty === 'advanced' ? 'male_aggressive' : 'male_professional');
+      const res = await fetch('/api/rep/train/tts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text, voice: voiceKey }),
+      });
+      if (!res.ok) throw new Error('TTS failed');
+      const blob = await res.blob();
+      if (blobUrlRef.current) URL.revokeObjectURL(blobUrlRef.current);
+      const url = URL.createObjectURL(blob);
+      blobUrlRef.current = url;
+      audio.pause();
+      audio.currentTime = 0;
+      audio.src = url;
+      audio.volume = 1;
+      audio.onended = () => setIsSpeaking(false);
+      audio.onerror = () => setIsSpeaking(false);
+      await audio.play();
+    } catch {
+      setIsSpeaking(false);
+    }
+  }, [voiceEnabled, scenario?.difficulty]);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -52,67 +133,85 @@ function RoleplayContent() {
     return () => { if (timerRef.current) clearInterval(timerRef.current); };
   }, [isCallActive]);
 
-  if (!scenario) {
-    return (
-      <div className="max-w-2xl mx-auto text-center py-20">
-        <p className="text-white/40">Scenario not found.</p>
-        <button onClick={() => router.push('/rep/train')} className="mt-4 text-sm text-white/60 underline">
-          Back to Training
-        </button>
-      </div>
-    );
-  }
-
   const startCall = useCallback(async () => {
-    if (!user?.uid) return;
-    const id = await RepTrainingService.createTrainingSession(user.uid, {
-      scenarioId: scenario.id,
-      scenario,
-    });
-    setSessionId(id);
-    setShowBriefing(false);
-    setIsCallActive(true);
-
-    // AI opens the call
-    setIsAiThinking(true);
-    try {
-      const systemPrompt = buildRoleplaySystemPrompt(scenario, scenario.difficulty);
-      const response = await fetch('/api/rep/train/roleplay', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          systemPrompt,
-          messages: [],
-          difficulty: scenario.difficulty,
-        }),
-      });
-
-      let aiText = '';
-      const reader = response.body?.getReader();
-      const decoder = new TextDecoder();
-      if (reader) {
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          aiText += decoder.decode(value);
-        }
-      }
-
-      const msg: TrainingMessage = {
-        id: Date.now().toString(),
-        role: 'prospect',
-        content: aiText.trim() || '*picks up the phone* Yeah?',
-        timestamp: 0,
-      };
-      setMessages([msg]);
-      await RepTrainingService.addMessage(id, msg);
-    } finally {
-      setIsAiThinking(false);
+    if (!scenario) return;
+    if (!user?.uid) {
+      setStartError('Not signed in — please refresh the page and try again.');
+      return;
     }
-  }, [user?.uid, scenario]);
+    setIsStarting(true);
+    setStartError(null);
+    try {
+      const id = await RepTrainingService.createTrainingSession(user.uid, {
+        scenarioId: scenario.id,
+        scenario,
+      });
+      setSessionId(id);
+      setShowBriefing(false);
+      setIsCallActive(true);
+
+      // AI opens the call
+      setIsAiThinking(true);
+      try {
+        const systemPrompt = buildRoleplaySystemPrompt(scenario, scenario.difficulty);
+        const response = await fetch('/api/rep/train/roleplay', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            systemPrompt,
+            messages: [],
+            difficulty: scenario.difficulty,
+          }),
+        });
+
+        if (!response.ok) {
+          const err = await response.json().catch(() => ({}));
+          throw new Error(err.error || 'Roleplay failed');
+        }
+
+        let aiText = '';
+        const reader = response.body?.getReader();
+        const decoder = new TextDecoder();
+        if (reader) {
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            aiText += decoder.decode(value);
+          }
+        }
+
+        const opening = aiText.trim() || '*picks up the phone* Yeah?';
+        const msg: TrainingMessage = {
+          id: Date.now().toString(),
+          role: 'prospect',
+          content: opening,
+          timestamp: 0,
+        };
+        setMessages([msg]);
+        await RepTrainingService.addMessage(id, msg);
+        speakProspect(opening);
+      } catch {
+        // AI opener failed — use a fallback so the session still works
+        const fallback: TrainingMessage = {
+          id: Date.now().toString(),
+          role: 'prospect',
+          content: 'Yeah?',
+          timestamp: 0,
+        };
+        setMessages([fallback]);
+        await RepTrainingService.addMessage(id, fallback).catch(() => {});
+      } finally {
+        setIsAiThinking(false);
+      }
+    } catch (err) {
+      setStartError(err instanceof Error ? err.message : 'Failed to start call. Check your connection.');
+    } finally {
+      setIsStarting(false);
+    }
+  }, [user?.uid, scenario, speakProspect]);
 
   const sendMessage = useCallback(async () => {
-    if (!inputText.trim() || !sessionId || isAiThinking) return;
+    if (!inputText.trim() || !sessionId || isAiThinking || !scenario) return;
     const text = inputText.trim();
     setInputText('');
 
@@ -140,6 +239,11 @@ function RoleplayContent() {
         }),
       });
 
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err.error || 'Roleplay failed');
+      }
+
       let aiText = '';
       const reader = response.body?.getReader();
       const decoder = new TextDecoder();
@@ -151,21 +255,33 @@ function RoleplayContent() {
         }
       }
 
+      const prospectContent = aiText.trim();
       const prospectMsg: TrainingMessage = {
         id: (Date.now() + 1).toString(),
         role: 'prospect',
-        content: aiText.trim(),
+        content: prospectContent,
         timestamp: Date.now() - startTimeRef.current,
       };
       setMessages((prev) => [...prev, prospectMsg]);
       await RepTrainingService.addMessage(sessionId, prospectMsg);
+      speakProspect(prospectContent);
+    } catch (err) {
+      console.error('Roleplay response error:', err);
+      // Show inline error as a system message so the user knows why AI didn't respond
+      const errMsg: TrainingMessage = {
+        id: (Date.now() + 2).toString(),
+        role: 'prospect',
+        content: '(AI unavailable — check your OpenAI quota or try again shortly)',
+        timestamp: Date.now() - startTimeRef.current,
+      };
+      setMessages((prev) => [...prev, errMsg]);
     } finally {
       setIsAiThinking(false);
     }
-  }, [inputText, sessionId, isAiThinking, messages, scenario]);
+  }, [inputText, sessionId, isAiThinking, messages, scenario, speakProspect]);
 
   const endCall = useCallback(async () => {
-    if (!sessionId) return;
+    if (!sessionId || !scenario) return;
     if (timerRef.current) clearInterval(timerRef.current);
     setIsCallActive(false);
     setIsRating(true);
@@ -204,6 +320,17 @@ function RoleplayContent() {
   const fmt = (s: number) => `${Math.floor(s / 60).toString().padStart(2, '0')}:${(s % 60).toString().padStart(2, '0')}`;
 
   // Briefing screen
+  if (!scenario) {
+    return (
+      <div className="max-w-2xl mx-auto text-center py-20">
+        <p className="text-white/40">Scenario not found.</p>
+        <button onClick={() => router.push('/rep/train')} className="mt-4 text-sm text-white/60 underline">
+          Back to Training
+        </button>
+      </div>
+    );
+  }
+
   if (showBriefing) {
     return (
       <div className="max-w-2xl mx-auto space-y-6">
@@ -240,12 +367,13 @@ function RoleplayContent() {
             <p className="text-xs text-white/40">{scenario.prospectProfile.businessType} · {scenario.prospectProfile.industry}</p>
           </div>
           <button
-            onClick={startCall}
-            className="w-full bg-green-500 hover:bg-green-400 text-black font-bold py-3 rounded-xl flex items-center justify-center gap-2 transition-colors"
+            onClick={() => { unlockAudio(); startCall(); }}
+            disabled={isStarting}
+            className="w-full bg-green-500 hover:bg-green-400 disabled:opacity-50 disabled:cursor-not-allowed text-black font-bold py-3 rounded-xl flex items-center justify-center gap-2 transition-colors"
           >
-            <Phone className="w-5 h-5" />
-            Start Call
+            {isStarting ? <><Loader2 className="w-5 h-5 animate-spin" /> Starting...</> : <><Phone className="w-5 h-5" /> Start Call</>}
           </button>
+          {startError && <p className="text-xs text-red-400 text-center">{startError}</p>}
         </div>
       </div>
     );
@@ -325,6 +453,17 @@ function RoleplayContent() {
         <div className="flex items-center gap-3">
           <span className="text-sm font-mono text-white/60">{fmt(callDuration)}</span>
           <button
+            onClick={() => setVoiceEnabled((v) => !v)}
+            className="p-2 rounded-lg text-white/50 hover:text-white/80 hover:bg-white/10 transition-colors"
+            title={voiceEnabled ? 'Mute prospect voice' : 'Unmute prospect voice'}
+          >
+            {isSpeaking
+              ? <Volume2 className="w-4 h-4 text-green-400 animate-pulse" />
+              : voiceEnabled
+              ? <Volume2 className="w-4 h-4" />
+              : <VolumeX className="w-4 h-4" />}
+          </button>
+          <button
             onClick={endCall}
             disabled={isRating}
             className="flex items-center gap-2 bg-red-500 hover:bg-red-400 disabled:opacity-50 text-white font-semibold text-sm px-4 py-2 rounded-xl transition-colors"
@@ -337,12 +476,15 @@ function RoleplayContent() {
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto space-y-3 pr-1 min-h-0">
+        {messages.length === 0 && !isAiThinking && (
+          <p className="text-xs text-white/20 italic text-center pt-8">Waiting for prospect to answer...</p>
+        )}
         {messages.map((msg) => (
           <div key={msg.id} className={`flex ${msg.role === 'rep' ? 'justify-end' : 'justify-start'}`}>
             <div className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm ${
               msg.role === 'rep'
                 ? 'bg-white text-black'
-                : 'bg-white/8 text-white/90'
+                : 'bg-white/5 text-white/90'
             }`}>
               {msg.content}
             </div>
@@ -350,7 +492,7 @@ function RoleplayContent() {
         ))}
         {isAiThinking && (
           <div className="flex justify-start">
-            <div className="bg-white/8 rounded-2xl px-4 py-3">
+            <div className="bg-white/5 rounded-2xl px-4 py-3">
               <div className="flex gap-1">
                 {[0, 1, 2].map((i) => (
                   <div key={i} className="w-1.5 h-1.5 bg-white/40 rounded-full animate-bounce" style={{ animationDelay: `${i * 0.15}s` }} />
@@ -362,19 +504,43 @@ function RoleplayContent() {
         <div ref={chatEndRef} />
       </div>
 
+      {/* Voice error */}
+      {voiceError && (
+        <p className="text-xs text-red-400 mt-2 flex-shrink-0">{voiceError}</p>
+      )}
+
       {/* Input */}
       <div className="flex gap-2 mt-4 flex-shrink-0">
         <textarea
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
           onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }}
-          placeholder="Type what you'd say on the call..."
+          placeholder={voice.isTranscribing ? 'Transcribing...' : voice.isRecording ? `Recording ${voice.recordingDuration}s — tap mic to stop` : "Type or use mic to speak..."}
           rows={2}
-          className="flex-1 bg-white/8 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/25 resize-none outline-none focus:border-white/20"
+          className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/25 resize-none outline-none focus:border-white/20"
         />
+        {/* Mic button */}
+        <button
+          onClick={() => voice.toggleRecording()}
+          disabled={voice.isTranscribing || isAiThinking}
+          title={voice.isRecording ? 'Stop recording' : 'Speak your response'}
+          className={`rounded-xl px-3 flex-shrink-0 transition-colors ${
+            voice.isRecording
+              ? 'bg-red-500 hover:bg-red-400 text-white animate-pulse'
+              : voice.isTranscribing
+              ? 'bg-white/10 text-white/40 cursor-wait'
+              : 'bg-white/10 hover:bg-white/20 text-white/70 hover:text-white'
+          }`}
+        >
+          {voice.isTranscribing
+            ? <Loader2 className="w-4 h-4 animate-spin" />
+            : voice.isRecording
+            ? <MicOff className="w-4 h-4" />
+            : <Mic className="w-4 h-4" />}
+        </button>
         <button
           onClick={sendMessage}
-          disabled={!inputText.trim() || isAiThinking}
+          disabled={!inputText.trim() || isAiThinking || voice.isRecording || voice.isTranscribing}
           className="bg-white text-black rounded-xl px-4 disabled:opacity-30 hover:bg-white/90 transition-colors flex-shrink-0"
         >
           <Send className="w-4 h-4" />

@@ -23,6 +23,7 @@ export interface TrainingScenario {
   difficulty: DifficultyLevel;
   prospectProfile: {
     name: string;
+    gender: 'male' | 'female';
     businessType: string;
     industry: string;
     background: string;

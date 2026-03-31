@@ -115,5 +115,18 @@ service cloud.firestore {
       allow read, update: if request.auth != null && resource.data.repId == request.auth.uid;
       allow delete: if false;
     }
+
+    // ── Screening / Booking Collections ──────────────────
+
+    // Slots are publicly readable so the booking page can show them
+    match /screeningSlots/{slotId} {
+      allow read: if true;
+      allow write: if false; // admin SDK only
+    }
+
+    // Tokens are fully server-side; no client reads
+    match /bookingTokens/{token} {
+      allow read, write: if false; // admin SDK only
+    }
   }
 }
