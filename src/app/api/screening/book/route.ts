@@ -15,7 +15,7 @@ function applicantConfirmHtml(name: string, label: string): string {
       <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
         <tr>
           <td align="center" style="background:#000000;border-radius:12px 12px 0 0;padding:32px 40px;">
-            <img src="https://crftdweb.com/CW-logo-white.png" alt="CrftdWeb" width="160" style="display:block;border:0;" />
+            <img src="https://crftdweb.com/CW-logo-white.png" alt="CrftdWeb" width="160" style="display:block;border:0;border-radius:8px;" />
           </td>
         </tr>
         <tr>
@@ -64,7 +64,7 @@ function adminNotifyHtml(applicantName: string, applicantEmail: string, label: s
       <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
         <tr>
           <td align="center" style="background:#000000;border-radius:12px 12px 0 0;padding:32px 40px;">
-            <img src="https://crftdweb.com/CW-logo-white.png" alt="CrftdWeb" width="160" style="display:block;border:0;" />
+            <img src="https://crftdweb.com/CW-logo-white.png" alt="CrftdWeb" width="160" style="display:block;border:0;border-radius:8px;" />
           </td>
         </tr>
         <tr><td style="background:#fff;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 12px 12px;padding:32px 40px;">
