@@ -33,6 +33,16 @@ export default function BookingPage() {
   useEffect(() => {
     if (!token) { setState('invalid'); return; }
 
+    // Preview mode — lets admin see the page without a real token
+    if (token === 'preview') {
+      fetch('/api/screening/slots').then((r) => r.json()).then((slotsData) => {
+        setApplicantName('Preview');
+        setSlots(Array.isArray(slotsData) ? slotsData : []);
+        setState('slots');
+      }).catch(() => { setState('slots'); });
+      return;
+    }
+
     Promise.all([
       fetch(`/api/screening/validate/${token}`).then((r) => r.json()),
       fetch('/api/screening/slots').then((r) => r.json()),
@@ -53,6 +63,7 @@ export default function BookingPage() {
 
   const handleBook = useCallback(async () => {
     if (!selectedSlot || !token) return;
+    if (token === 'preview') { setError('Preview mode — no real booking made.'); return; }
     setState('booking');
     setError('');
 
