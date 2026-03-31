@@ -22,10 +22,11 @@ export async function POST(req: NextRequest) {
     'Write only the email body. Plain text, no markdown.',
   ].filter(Boolean).join('\n');
 
-  const stream = openai.beta.chat.completions.stream({
+  const stream = await openai.chat.completions.create({
     model: 'gpt-4o-mini',
     messages: [{ role: 'user', content: prompt }],
     max_tokens: 400,
+    stream: true,
   });
 
   const encoder = new TextEncoder();
