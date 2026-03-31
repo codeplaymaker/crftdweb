@@ -170,8 +170,19 @@ export default function BookingPage() {
           <div className="bg-white/5 border border-white/10 rounded-xl px-6 py-4 mb-6 inline-block">
             <p className="text-white font-semibold text-lg">{confirmedSlot.label}</p>
           </div>
+          <div className="mb-6">
+            <p className="text-white/40 text-sm mb-3">Join via Google Meet at the time above:</p>
+            <a
+              href="https://meet.google.com/sht-kzhd-yxg"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/10 hover:bg-white/15 border border-white/20 rounded-xl text-white text-sm font-semibold transition-all"
+            >
+              Join Google Meet →
+            </a>
+          </div>
           <p className="text-white/25 text-xs">
-            We&apos;ll be in touch shortly before the call. If you need to reschedule, reply to the original email.
+            If you need to reschedule, reply to the original email.
           </p>
         </div>
       </div>

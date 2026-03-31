@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Copy, Check, ChevronDown, ChevronUp, Mail, RefreshCw, UserCheck, Handshake, Users, Send, Eye, Loader2, CheckCircle2 } from 'lucide-react';
 import { sendTrialTask } from '@/app/actions/sendTrialTask';
 import { sendBookingLink } from '@/app/actions/sendBookingLink';
+import { sendLoginDetails } from '@/app/actions/sendLoginDetails';
+import { sendOverqualified } from '@/app/actions/sendOverqualified';
 
 // ─── Email preview HTML builders (client-side mirrors of server actions) ───
 function buildTrialTaskHtml(name: string): string {
@@ -30,7 +32,7 @@ function buildTrialTaskHtml(name: string): string {
         <p style="margin:0 0 12px;font-size:14px;color:#888;line-height:1.7;">Not just <em>“it looks old”</em> — something specific like: <em>“No mobile version — the site breaks on any phone”</em></p>
         <p style="margin:0 0 28px;font-size:15px;color:#444;line-height:1.7;">No formatting required — just reply to this email with your list within <strong style="color:#111;">48 hours</strong>.</p>
         <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;"><tr><td style="border-top:1px solid #e8e8e8;"></td></tr></table>
-        <p style="margin:0;font-size:15px;color:#111;font-weight:700;">Obi</p>
+        <p style="margin:0;font-size:15px;color:#111;font-weight:700;">CrftdWeb</p>
         <p style="margin:3px 0 0;font-size:13px;color:#999;">CrftdWeb &middot; crftdweb.com &middot; admin@crftdweb.com</p>
       </td></tr>
     </table>
@@ -51,7 +53,7 @@ function buildBookingLinkHtml(name: string): string {
       </td></tr>
       <tr><td style="background:#ffffff;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 12px 12px;padding:40px;">
         <p style="margin:0 0 20px;font-size:16px;color:#111;font-weight:600;">Hi ${name},</p>
-        <p style="margin:0 0 16px;font-size:15px;color:#444;line-height:1.7;">Really good work on the task — exactly the kind of thinking I’m looking for.</p>
+
         <p style="margin:0 0 24px;font-size:15px;color:#444;line-height:1.7;">I’d like to book a quick <strong style="color:#111;">15-minute call</strong> to have a chat. Use the link below to pick a time that works for you:</p>
         <table cellpadding="0" cellspacing="0" style="margin:0 0 28px;">
           <tr><td style="background:#111;border-radius:8px;">
@@ -60,11 +62,78 @@ function buildBookingLinkHtml(name: string): string {
         </table>
         <p style="margin:0 0 24px;font-size:13px;color:#999;line-height:1.6;">The link shows my available slots — takes a few seconds to book. If none of the times work, just reply and we’ll sort something.</p>
         <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;"><tr><td style="border-top:1px solid #e8e8e8;"></td></tr></table>
-        <p style="margin:0;font-size:15px;color:#111;font-weight:700;">Obi</p>
+        <p style="margin:0;font-size:15px;color:#111;font-weight:700;">CrftdWeb</p>
         <p style="margin:3px 0 0;font-size:13px;color:#999;">CrftdWeb &middot; crftdweb.com &middot; admin@crftdweb.com</p>
       </td></tr>
     </table>
   </td></tr></table>
+</body></html>`;
+}
+
+function buildLoginDetailsHtml(name: string, repEmail: string, tempPassword: string): string {
+  const firstName = name.split(' ')[0];
+  const loginUrl = 'https://crftdweb.com/rep/signin';
+  return `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
+<body style="margin:0;padding:0;background:#f4f4f4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:40px 20px;">
+    <tr><td align="center">
+      <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+        <tr><td align="center" style="background:#000000;border-radius:12px 12px 0 0;padding:32px 40px;">
+          <img src="https://crftdweb.com/CW-logo-white.png" alt="CrftdWeb" width="160" style="display:block;border:0;" />
+        </td></tr>
+        <tr><td style="background:#ffffff;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 12px 12px;padding:40px;">
+          <p style="margin:0 0 16px;font-size:16px;color:#111;font-weight:600;">Hi ${firstName},</p>
+          <p style="margin:0 0 16px;font-size:15px;color:#444;line-height:1.7;">Great news — you've been approved as a CrftdWeb sales rep. Welcome to the team.</p>
+          <p style="margin:0 0 24px;font-size:15px;color:#444;line-height:1.7;">Your rep portal is ready. Log in with the credentials below, then complete the training modules before you start outreach.</p>
+          <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 28px;">
+            <tr><td style="background:#f9f9f9;border:1px solid #e8e8e8;border-radius:10px;padding:20px 24px;">
+              <p style="margin:0 0 10px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#999;">Your Login</p>
+              <p style="margin:0 0 6px;font-size:14px;color:#444;"><strong style="color:#111;">Email:</strong> ${repEmail}</p>
+              <p style="margin:0;font-size:14px;color:#444;"><strong style="color:#111;">Temp password:</strong> <span style="font-family:monospace;font-size:15px;letter-spacing:1px;color:#111;">${tempPassword}</span></p>
+            </td></tr>
+          </table>
+          <table cellpadding="0" cellspacing="0" style="margin:0 0 28px;">
+            <tr><td style="background:#111;border-radius:8px;">
+              <a href="${loginUrl}" style="display:inline-block;padding:14px 28px;font-size:15px;font-weight:700;color:#ffffff;text-decoration:none;">Log in to your portal &rarr;</a>
+            </td></tr>
+          </table>
+          <p style="margin:0 0 24px;font-size:13px;color:#999;line-height:1.6;">Change your password after your first login.</p>
+          <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;"><tr><td style="border-top:1px solid #e8e8e8;"></td></tr></table>
+          <p style="margin:0;font-size:15px;color:#111;font-weight:700;">CrftdWeb</p>
+          <p style="margin:3px 0 0;font-size:13px;color:#999;">crftdweb.com &middot; admin@crftdweb.com</p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body></html>`;
+}
+
+function buildOverqualifiedHtml(name: string): string {
+  const firstName = name.split(' ')[0];
+  return `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
+<body style="margin:0;padding:0;background:#f4f4f4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:40px 20px;">
+    <tr><td align="center">
+      <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+        <tr><td align="center" style="background:#000000;border-radius:12px 12px 0 0;padding:32px 40px;">
+          <img src="https://crftdweb.com/CW-logo-white.png" alt="CrftdWeb" width="160" style="display:block;border:0;" />
+        </td></tr>
+        <tr><td style="background:#ffffff;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 12px 12px;padding:40px;">
+          <p style="margin:0 0 20px;font-size:16px;color:#111;font-weight:600;">Hi ${firstName},</p>
+          <p style="margin:0 0 16px;font-size:15px;color:#444;line-height:1.7;">Thanks for applying — I appreciate you taking the time.</p>
+          <p style="margin:0 0 16px;font-size:15px;color:#444;line-height:1.7;">We had a high volume of applicants this round and unfortunately aren't able to move everyone forward. It's not a reflection of your ability — we just had some tough decisions to make.</p>
+          <p style="margin:0 0 28px;font-size:15px;color:#444;line-height:1.7;">Thanks again and best of luck with what's next.</p>
+          <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;"><tr><td style="border-top:1px solid #e8e8e8;"></td></tr></table>
+          <p style="margin:0;font-size:15px;color:#111;font-weight:700;">CrftdWeb</p>
+          <p style="margin:3px 0 0;font-size:13px;color:#999;">crftdweb.com &middot; admin@crftdweb.com</p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
 </body></html>`;
 }
 
@@ -87,6 +156,24 @@ const EMAIL_SEND_TEMPLATES = [
     activeColor: 'border-emerald-500 bg-emerald-500/15',
     labelColor: 'text-emerald-400',
   },
+  {
+    id: 'login-details',
+    label: 'Login Details',
+    subject: 'Welcome to CrftdWeb!',
+    description: 'Sends approved rep their portal login credentials and a link to sign in.',
+    color: 'border-sky-500/30 bg-sky-500/5',
+    activeColor: 'border-sky-500 bg-sky-500/15',
+    labelColor: 'text-sky-400',
+  },
+  {
+    id: 'overqualified',
+    label: 'Decline',
+    subject: 'Re: CrftdWeb rep application',
+    description: 'Polite no — for applicants you\'re not moving forward with at this stage.',
+    color: 'border-orange-500/30 bg-orange-500/5',
+    activeColor: 'border-orange-500 bg-orange-500/15',
+    labelColor: 'text-orange-400',
+  },
 ] as const;
 
 type SendTemplateId = typeof EMAIL_SEND_TEMPLATES[number]['id'];
@@ -96,6 +183,7 @@ function SendPanel() {
   const [templateId, setTemplateId] = useState<SendTemplateId>('trial-task');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [tempPassword, setTempPassword] = useState('');
   const [showPreview, setShowPreview] = useState(false);
   const [sendStatus, setSendStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
@@ -103,24 +191,33 @@ function SendPanel() {
   const firstName = name.split(' ')[0] || 'there';
   const previewHtml = templateId === 'trial-task'
     ? buildTrialTaskHtml(firstName || 'Hi')
-    : buildBookingLinkHtml(firstName || 'Hi');
+    : templateId === 'booking-link'
+    ? buildBookingLinkHtml(firstName || 'Hi')
+    : templateId === 'login-details'
+    ? buildLoginDetailsHtml(firstName || 'Hi', email || 'rep@email.com', tempPassword || 'TempPass!7')
+    : buildOverqualifiedHtml(firstName || 'Hi');
 
   const selectedTemplate = EMAIL_SEND_TEMPLATES.find((t) => t.id === templateId)!;
 
   async function handleSend() {
     if (!name.trim() || !email.trim()) return;
+    if (templateId === 'login-details' && !tempPassword.trim()) return;
     setSendStatus('sending');
     setErrorMsg('');
     try {
       let result: { success: boolean; error?: string };
       if (templateId === 'trial-task') {
         result = await sendTrialTask(firstName, email.trim());
-      } else {
+      } else if (templateId === 'booking-link') {
         result = await sendBookingLink(firstName, email.trim());
+      } else if (templateId === 'login-details') {
+        result = await sendLoginDetails(name.trim(), email.trim(), tempPassword.trim());
+      } else {
+        result = await sendOverqualified(name.trim(), email.trim());
       }
       if (result.success) {
         setSendStatus('sent');
-        setTimeout(() => { setSendStatus('idle'); setName(''); setEmail(''); }, 3000);
+        setTimeout(() => { setSendStatus('idle'); setName(''); setEmail(''); setTempPassword(''); }, 3000);
       } else {
         setSendStatus('error');
         setErrorMsg(result.error ?? 'Failed to send');
@@ -178,6 +275,19 @@ function SendPanel() {
           </div>
         </div>
         <p className="text-xs text-white/25 mt-2">Subject: <span className="text-white/40 italic">{selectedTemplate.subject}</span></p>
+        {templateId === 'login-details' && (
+          <div className="mt-3">
+            <label className="block text-[10px] text-white/30 mb-1 uppercase tracking-widest">Temp Password</label>
+            <input
+              type="text"
+              value={tempPassword}
+              onChange={(e) => setTempPassword(e.target.value)}
+              placeholder="e.g. Welcome123!7"
+              className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 font-mono"
+            />
+            <p className="text-[10px] text-white/20 mt-1">This will appear in the email exactly as typed.</p>
+          </div>
+        )}
       </div>
 
       {/* Preview toggle */}

@@ -35,9 +35,7 @@ export default function RepSignIn() {
     <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-10">
-          <p className="text-lg font-bold tracking-tight text-white mb-1">
-            crftd<span className="text-white/30">web</span>
-          </p>
+          <p className="text-2xl font-logo tracking-tight text-white mb-1">CW</p>
           <p className="text-[10px] text-white/30 uppercase tracking-widest">Rep Portal</p>
         </div>
 

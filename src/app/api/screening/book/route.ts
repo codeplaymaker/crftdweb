@@ -24,11 +24,21 @@ function applicantConfirmHtml(name: string, label: string): string {
             <p style="margin:0 0 16px;font-size:15px;color:#444;line-height:1.7;">
               You&apos;re confirmed. Your 15-minute screening call with CrftdWeb is booked for:
             </p>
-            <div style="margin:0 0 28px;background:#f9f9f9;border:1px solid #e8e8e8;border-radius:10px;padding:20px 24px;text-align:center;">
+            <div style="margin:0 0 24px;background:#f9f9f9;border:1px solid #e8e8e8;border-radius:10px;padding:20px 24px;text-align:center;">
               <p style="margin:0;font-size:18px;font-weight:700;color:#111;">${label}</p>
             </div>
+            <p style="margin:0 0 12px;font-size:15px;color:#444;line-height:1.7;">Join the call using Google Meet:</p>
+            <table cellpadding="0" cellspacing="0" style="margin:0 0 28px;">
+              <tr>
+                <td style="background:#111;border-radius:8px;">
+                  <a href="https://meet.google.com/sht-kzhd-yxg" style="display:inline-block;padding:12px 24px;font-size:14px;font-weight:700;color:#ffffff;text-decoration:none;">
+                    Join Google Meet &rarr;
+                  </a>
+                </td>
+              </tr>
+            </table>
             <p style="margin:0 0 16px;font-size:14px;color:#666;line-height:1.7;">
-              We'll be in touch shortly before the call. If you need to reschedule, just reply to this email.
+              If you need to reschedule, just reply to this email.
             </p>
             <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
               <tr><td style="border-top:1px solid #e8e8e8;"></td></tr>

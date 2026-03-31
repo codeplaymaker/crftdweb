@@ -51,7 +51,7 @@ function buildHtml(name: string): string {
               <table cellpadding="0" cellspacing="0">
                 <tr>
                   <td>
-                    <p style="margin:0;font-size:15px;color:#111;font-weight:700;">Obi</p>
+                    <p style="margin:0;font-size:15px;color:#111;font-weight:700;">CrftdWeb</p>
                     <p style="margin:3px 0 0;font-size:13px;color:#999;">CrftdWeb · crftdweb.com · admin@crftdweb.com</p>
                   </td>
                 </tr>

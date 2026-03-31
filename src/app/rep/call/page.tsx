@@ -49,7 +49,7 @@ export default function LiveCallPage() {
   // Prep form
   const [leadName, setLeadName] = useState('');
   const [businessType, setBusinessType] = useState('');
-  const [callGoal, setCallGoal] = useState('Book a 15-minute discovery call with Obi');
+  const [callGoal, setCallGoal] = useState('Book a 15-minute discovery call with CrftdWeb');
   const [additionalContext, setAdditionalContext] = useState('');
   const [isPrepping, setIsPrepping] = useState(false);
   const [prepNotes, setPrepNotes] = useState<PrepNotes | null>(null);

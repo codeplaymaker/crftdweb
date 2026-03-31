@@ -13,3 +13,17 @@ export async function GET(req: NextRequest) {
   const leads = snap.docs.map(d => ({ ...d.data(), id: d.id }));
   return NextResponse.json(leads);
 }
+
+export async function PATCH(req: NextRequest) {
+  if (!isAdmin(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+  const { id, status, dealValue } = await req.json();
+  if (!id) return NextResponse.json({ error: 'Lead ID required' }, { status: 400 });
+
+  const update: Record<string, unknown> = { updatedAt: new Date().toISOString() };
+  if (status !== undefined) update.status = status;
+  if (dealValue !== undefined) update.dealValue = dealValue;
+
+  await adminDb.collection('repLeads').doc(id).update(update);
+  return NextResponse.json({ success: true });
+}

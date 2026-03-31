@@ -42,12 +42,12 @@ const EMAIL_TEMPLATES = [
     subject: 'Your call with CrftdWeb — confirmed',
     body: `Hi [Name],
 
-Just confirming your 15-minute call with Obi (founder of CrftdWeb) on [day] at [time].
+Just confirming your 15-minute call with the founder of CrftdWeb on [day] at [time].
 
 What to expect:
-- He'll look at your current site before the call
-- He'll be straight with you about what's working and what isn't
-- If there's a fit, he'll tell you exactly what he'd build and what it would cost
+- The site will be reviewed before the call
+- You'll get straight feedback on what's working and what isn't
+- If there's a fit, you'll hear exactly what we'd build and what it would cost
 
 No pressure, no hard sell.
 
@@ -90,7 +90,7 @@ If anything looks relevant to what you're after, I can get you 15 minutes with t
 const FAQS = [
   {
     q: 'What exactly am I selling?',
-    a: 'Custom websites. Landing pages from £1,200 (1–2 weeks). Business sites from £3,200 (3–5 weeks). Web apps from £8,000 (6–12 weeks). Your job is to book the discovery call — not close the deal. Obi handles that.',
+    a: 'Custom websites. Landing pages from £1,200 (1–2 weeks). Business sites from £3,200 (3–5 weeks). Web apps from £8,000 (6–12 weeks). Your job is to book the discovery call — not close the deal. The founder handles that.',
   },
   {
     q: 'When do I get paid?',

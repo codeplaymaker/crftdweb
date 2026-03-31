@@ -50,7 +50,7 @@ function RepLayoutInner({ children }: { children: React.ReactNode }) {
       {/* Sidebar — desktop */}
       <aside className="hidden md:flex flex-col w-56 border-r border-white/8 px-4 py-6 gap-1 fixed h-full z-20">
         <div className="px-2 mb-8">
-          <span className="text-sm font-bold tracking-tight text-white">crftd<span className="text-white/40">web</span></span>
+          <span className="text-2xl font-logo tracking-tight text-white">CW</span>
           <p className="text-[10px] text-white/30 uppercase tracking-widest mt-0.5">Rep Portal</p>
         </div>
 
@@ -88,7 +88,7 @@ function RepLayoutInner({ children }: { children: React.ReactNode }) {
 
       {/* Mobile top bar */}
       <div className="md:hidden fixed top-0 left-0 right-0 z-30 bg-[#0a0a0a]/95 backdrop-blur border-b border-white/8 flex items-center justify-between px-4 h-14">
-        <span className="text-sm font-bold tracking-tight">crftd<span className="text-white/40">web</span></span>
+        <span className="text-2xl font-logo tracking-tight text-white">CW</span>
         <button onClick={() => setMobileOpen(!mobileOpen)} className="text-white/60">
           {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>

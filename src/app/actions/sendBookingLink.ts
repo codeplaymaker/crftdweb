@@ -28,9 +28,6 @@ function buildHtml(name: string, bookingUrl: string): string {
           <tr>
             <td style="background:#ffffff;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 12px 12px;padding:40px;">
               <p style="margin:0 0 20px;font-size:16px;color:#111;line-height:1.6;font-weight:600;">Hi ${name},</p>
-              <p style="margin:0 0 16px;font-size:15px;color:#444;line-height:1.7;">
-                Really good work on the task — exactly the kind of thinking I&apos;m looking for.
-              </p>
               <p style="margin:0 0 24px;font-size:15px;color:#444;line-height:1.7;">
                 I&apos;d like to book a quick <strong style="color:#111;">15-minute call</strong> to have a chat.
                 Use the link below to pick a time that works for you:
