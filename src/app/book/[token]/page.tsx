@@ -14,7 +14,7 @@ type PageState = 'loading' | 'invalid' | 'slots' | 'booking' | 'confirmed';
 
 const INVALID_MESSAGES: Record<string, string> = {
   already_used: "You've already booked a call. Check your email for the confirmed time.",
-  expired: "This booking link has expired. Reply to Obi's email to request a new one.",
+  expired: "This booking link has expired. Reply to the original email to request a new one.",
   error: "Something went wrong. Try refreshing the page.",
   invalid: "This booking link isn't valid or has already been used.",
 };
@@ -115,12 +115,12 @@ export default function BookingPage() {
         <div className="max-w-md w-full text-center">
           <CheckCircle2 className="w-10 h-10 text-emerald-400 mx-auto mb-4" />
           <h1 className="text-xl font-bold text-white mb-2">You&apos;re booked!</h1>
-          <p className="text-white/50 text-sm mb-4">Your 15-minute call with Obi is confirmed for:</p>
+          <p className="text-white/50 text-sm mb-4">Your 15-minute call is confirmed for:</p>
           <div className="bg-white/5 border border-white/10 rounded-xl px-6 py-4 mb-6 inline-block">
             <p className="text-white font-semibold text-lg">{confirmedSlot.label}</p>
           </div>
           <p className="text-white/25 text-xs">
-            You&apos;ll hear from Obi shortly with a call link. If you need to reschedule, reply to the original email.
+            We&apos;ll be in touch shortly before the call. If you need to reschedule, reply to the original email.
           </p>
         </div>
       </div>
@@ -139,7 +139,7 @@ export default function BookingPage() {
             Hi {firstName}, pick a time
           </h1>
           <p className="text-white/40 text-sm mt-2">
-            15-minute screening call with Obi — pick whichever works best.
+            15-minute screening call — pick whichever works best.
           </p>
         </div>
 
@@ -148,7 +148,7 @@ export default function BookingPage() {
             <Calendar className="w-8 h-8 text-white/15 mx-auto mb-3" />
             <p className="text-white/30 text-sm">No slots available right now.</p>
             <p className="text-white/20 text-xs mt-1">
-              Reply to Obi&apos;s email and he&apos;ll find a time with you directly.
+              Reply to the original email and we&apos;ll find a time directly.
             </p>
           </div>
         ) : (

@@ -22,19 +22,19 @@ function applicantConfirmHtml(name: string, label: string): string {
           <td style="background:#ffffff;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 12px 12px;padding:40px;">
             <p style="margin:0 0 16px;font-size:16px;color:#111;font-weight:600;">Hi ${firstName},</p>
             <p style="margin:0 0 16px;font-size:15px;color:#444;line-height:1.7;">
-              You&apos;re confirmed. Your 15-minute screening call with Obi is booked for:
+              You&apos;re confirmed. Your 15-minute screening call with CrftdWeb is booked for:
             </p>
             <div style="margin:0 0 28px;background:#f9f9f9;border:1px solid #e8e8e8;border-radius:10px;padding:20px 24px;text-align:center;">
               <p style="margin:0;font-size:18px;font-weight:700;color:#111;">${label}</p>
             </div>
             <p style="margin:0 0 16px;font-size:14px;color:#666;line-height:1.7;">
-              Obi will send you a call link shortly before the call. If you need to reschedule, just reply to this email.
+              Obi will be in touch shortly before the call. If you need to reschedule, just reply to this email.
             </p>
             <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
               <tr><td style="border-top:1px solid #e8e8e8;"></td></tr>
             </table>
-            <p style="margin:0;font-size:15px;color:#111;font-weight:700;">Obi</p>
-            <p style="margin:3px 0 0;font-size:13px;color:#999;">CrftdWeb &middot; crftdweb.com &middot; admin@crftdweb.com</p>
+            <p style="margin:0;font-size:15px;color:#111;font-weight:700;">CrftdWeb</p>
+            <p style="margin:3px 0 0;font-size:13px;color:#999;">crftdweb.com &middot; admin@crftdweb.com</p>
           </td>
         </tr>
       </table>
@@ -125,7 +125,7 @@ export async function POST(req: NextRequest) {
 
     await Promise.allSettled([
       resend.emails.send({
-        from: 'Obi at CrftdWeb <admin@crftdweb.com>',
+        from: 'CrftdWeb <admin@crftdweb.com>',
         to: [applicantEmail],
         subject: `CrftdWeb — Call confirmed for ${slotLabel}`,
         html: applicantConfirmHtml(applicantName, slotLabel),

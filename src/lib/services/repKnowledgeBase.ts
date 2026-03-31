@@ -274,7 +274,7 @@ export const SALES_FRAMEWORKS: SalesFramework[] = [
           'this week',
           'before the end of',
           'fills up quickly',
-          'obi only takes on',
+          'we only take on',
         ],
         antiPatterns: ['take your time', 'no rush', 'whenever you\'re ready', 'let me know'],
         exampleGood: 'He\'s got a couple of slots this week — after that it\'s a few weeks wait. Worth grabbing one now?',
@@ -452,7 +452,7 @@ export const SALES_FRAMEWORKS: SalesFramework[] = [
       {
         id: 'klaff_prize_frame',
         name: 'Prize Framing',
-        description: 'Position Obi/CrftdWeb as the thing to be chased, not the chaser. We vet clients too.',
+        description: 'Position CrftdWeb as the thing to be chased, not the chaser. We vet clients too.',
         detectPatterns: [
           'not every business is a fit',
           'he\'s selective about who he takes on',
@@ -799,7 +799,7 @@ export const CATEGORY_WEIGHTS: Record<
       'Kept conversation moving toward the booking',
       'Pushed back respectfully when appropriate',
       'Didn\'t over-apologise',
-      'Positioned Obi/CrftdWeb as the prize',
+      'Positioned CrftdWeb as the prize',
     ],
   },
 };
@@ -974,7 +974,7 @@ export const TRAINING_SCENARIOS: TrainingScenario[] = [
       'Book the call',
     ],
     bonusObjectives: [
-      'Reframe: "the call is free and Obi will give you a quote — that\'s the right time to discuss it"',
+      'Reframe: "the call is free and we\'ll give you a quote — that\'s the right time to discuss it"',
       'Anchor to ROI before mentioning any number',
     ],
     estimatedDuration: 6,
@@ -1262,14 +1262,14 @@ RULES FOR YOUR ROLEPLAY:
 5. If the rep uses bad technique (pitching too early, ignoring what you said) — shut down or object.
 6. You do NOT volunteer information — only share if asked the right questions.
 7. Keep responses short (1–4 sentences). Real calls are quick.
-8. The rep is calling from CrftdWeb, a web design studio. Obi is the founder/developer. The rep's job is only to book a 15-minute discovery call — NOT to close a deal.
+8. The rep is calling from CrftdWeb, a web design studio. The rep's job is only to book a 15-minute discovery call — NOT to close a deal.
 9. Do NOT break character to give coaching. That happens after the session.`;
 }
 
 export function buildDrillSystemPrompt(): string {
   return `You are a strict but fair sales coach evaluating cold call responses from a CrftdWeb sales rep.
 
-The rep's job is to cold call small UK business owners to book a 15-minute discovery call with Obi, a web designer.
+The rep's job is to cold call small UK business owners to book a 15-minute discovery call with CrftdWeb.
 They are NOT closing deals — their only goal is to book the call or keep the conversation alive.
 
 When given a drill prompt and the rep's response, you will:
