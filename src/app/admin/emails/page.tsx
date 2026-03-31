@@ -179,12 +179,35 @@ const EMAIL_SEND_TEMPLATES = [
 type SendTemplateId = typeof EMAIL_SEND_TEMPLATES[number]['id'];
 
 // ─── Compose Panel ─────────────────────────────────────────────────────────
+function buildComposePreviewHtml(body: string, subject: string): string {
+  const lines = body.split('\n').map((line) =>
+    line.trim() === '' ? '<br/>' : `<p style="margin:0 0 12px;font-size:15px;color:#444;line-height:1.7;">${line}</p>`
+  ).join('');
+  return `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>${subject || 'Email preview'}</title></head>
+<body style="margin:0;padding:0;background:#f4f4f4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:40px 20px;"><tr><td align="center">
+    <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+      <tr><td align="center" style="background:#000000;border-radius:12px 12px 0 0;padding:32px 40px;">
+        <img src="https://crftdweb.com/CW-logo-white.png" alt="CrftdWeb" width="160" style="display:block;border:0;border-radius:8px;" />
+      </td></tr>
+      <tr><td style="background:#ffffff;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 12px 12px;padding:40px;">
+        ${lines || '<p style="margin:0;font-size:15px;color:#aaa;font-style:italic;">Your message will appear here…</p>'}
+      </td></tr>
+    </table>
+  </td></tr></table>
+</body></html>`;
+}
+
 function ComposePanel() {
   const [to, setTo] = useState('');
   const [subject, setSubject] = useState('');
   const [body, setBody] = useState('');
   const [context, setContext] = useState('');
-  const [aiStatus, setAiStatus] = useState<'idle' | 'streaming' | 'done'>('idle');
+  const [showPreview, setShowPreview] = useState(false);
+  const [aiStatus, setAiStatus] = useState<'idle' | 'streaming' | 'done' | 'error'>('idle');
+  const [aiError, setAiError] = useState('');
   const [sendStatus, setSendStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
   const abortRef = useRef<AbortController | null>(null);
@@ -194,6 +217,7 @@ function ComposePanel() {
     if (abortRef.current) abortRef.current.abort();
     abortRef.current = new AbortController();
     setAiStatus('streaming');
+    setAiError('');
     setBody('');
 
     try {
@@ -204,7 +228,12 @@ function ComposePanel() {
         signal: abortRef.current.signal,
       });
 
-      if (!res.ok || !res.body) { setAiStatus('idle'); return; }
+      if (!res.ok || !res.body) {
+        const errText = await res.text().catch(() => '');
+        setAiError(errText || `Request failed (${res.status})`);
+        setAiStatus('error');
+        return;
+      }
 
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
@@ -219,7 +248,10 @@ function ComposePanel() {
 
       setAiStatus('done');
     } catch (e) {
-      if ((e as Error).name !== 'AbortError') setAiStatus('idle');
+      if ((e as Error).name !== 'AbortError') {
+        setAiError((e as Error).message || 'Unknown error');
+        setAiStatus('error');
+      }
     }
   }, [to, subject, context]);
 
@@ -247,7 +279,7 @@ function ComposePanel() {
     }
   }
 
-  const canSuggest = (subject.trim().length > 3 || context.trim().length > 3) && aiStatus !== 'streaming';
+  const canSuggest = (subject.trim().length > 0 || context.trim().length > 0) && aiStatus !== 'streaming';
   const canSend = to.trim() && subject.trim() && body.trim() && sendStatus !== 'sending';
 
   return (
@@ -299,8 +331,11 @@ function ComposePanel() {
         ) : (
           <Sparkles size={14} />
         )}
-        {aiStatus === 'streaming' ? 'Writing…' : aiStatus === 'done' ? 'Regenerate' : 'AI Suggest'}
+        {aiStatus === 'streaming' ? 'Writing…' : (aiStatus === 'done' || aiStatus === 'error') ? 'Regenerate' : 'AI Suggest'}
       </button>
+      {aiStatus === 'error' && aiError && (
+        <p className="text-xs text-red-400/80 mt-1">{aiError}</p>
+      )}
 
       {/* Body */}
       <div>
@@ -312,11 +347,51 @@ function ComposePanel() {
         </div>
         <textarea
           value={body}
-          onChange={(e) => { setBody(e.target.value); if (aiStatus === 'done') setAiStatus('idle'); }}
+          onChange={(e) => { setBody(e.target.value); if (aiStatus === 'done' || aiStatus === 'error') { setAiStatus('idle'); setAiError(''); } }}
           placeholder="Write your message here, or use AI Suggest above…"
           rows={10}
           className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 transition-colors resize-none leading-relaxed font-sans"
         />
+      </div>
+
+      {/* Preview toggle */}
+      <div>
+        <button
+          onClick={() => setShowPreview(!showPreview)}
+          className="flex items-center gap-2 text-xs text-white/40 hover:text-white/70 transition-colors"
+        >
+          <Eye className="w-3.5 h-3.5" />
+          {showPreview ? 'Hide preview' : 'Preview email'}
+        </button>
+        <AnimatePresence>
+          {showPreview && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.25 }}
+              className="overflow-hidden"
+            >
+              <div className="mt-3 rounded-xl overflow-hidden border border-white/10">
+                <div className="bg-white/[0.04] border-b border-white/8 px-4 py-2 flex items-center gap-2">
+                  <div className="flex gap-1.5">
+                    <div className="w-2.5 h-2.5 rounded-full bg-red-500/60" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/60" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-green-500/60" />
+                  </div>
+                  <span className="text-[10px] text-white/25 font-mono ml-2">email preview — {subject || 'no subject'}</span>
+                </div>
+                <iframe
+                  srcDoc={buildComposePreviewHtml(body, subject)}
+                  className="w-full bg-white"
+                  style={{ height: '540px', border: 'none' }}
+                  title="Email preview"
+                  sandbox="allow-same-origin"
+                />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Send */}
