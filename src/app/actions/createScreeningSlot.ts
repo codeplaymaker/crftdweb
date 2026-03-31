@@ -26,6 +26,7 @@ export async function createScreeningSlot(
       id, dateTime, label,
       available: true,
       bookedByEmail: null, bookedByName: null, bookedAt: null,
+      outcome: null,
       createdAt: new Date().toISOString(),
     };
     await adminDb.collection('screeningSlots').doc(id).set(slot);
