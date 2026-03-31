@@ -1370,6 +1370,32 @@ export default function AdminDashboard() {
                 </div>
               </motion.a>
 
+              {/* Emails */}
+              <motion.a
+                href="/admin/emails"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.09 }}
+                whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                className="group bg-white/[0.03] border border-white/[0.06] rounded-2xl p-8 text-left hover:border-violet-500/30 hover:bg-violet-500/[0.03] transition-colors block"
+              >
+                <div className="w-12 h-12 rounded-xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center mb-5 group-hover:bg-violet-500/15 transition-colors">
+                  <svg className="w-6 h-6 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-semibold text-white mb-2">Emails</h3>
+                <p className="text-sm text-white/35 leading-relaxed mb-4">
+                  Send booking links, view email previews, and manage outbound communications.
+                </p>
+                <div className="flex items-center gap-2 text-xs text-violet-400/60 font-medium">
+                  <span>Manage emails</span>
+                  <svg className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </motion.a>
+
               {/* Admin Live Call Tool */}
               <motion.a
                 href="/admin/call"
