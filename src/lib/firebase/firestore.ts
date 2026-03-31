@@ -501,6 +501,116 @@ export async function markCommissionPaid(commissionId: string) {
   });
 }
 
+// ─── Client Portal Types ────────────────────────────────────────────
+
+export type ClientStage = 'discovery' | 'design' | 'build' | 'review' | 'launch' | 'maintenance';
+export type ClientPackage = 'starter' | 'standard' | 'premium' | 'custom';
+
+export interface ClientProfile {
+  uid: string;
+  name: string;
+  businessName: string;
+  email: string;
+  phone?: string;
+  projectName: string;
+  package: ClientPackage;
+  stage: ClientStage;
+  startDate: string;
+  launchDate?: string;
+  status: 'active' | 'paused' | 'complete';
+  notes?: string;
+  joinedAt: Timestamp;
+}
+
+export interface ClientDeliverable {
+  id: string;
+  clientId: string;
+  label: string;
+  url: string;
+  type: 'mockup' | 'staging' | 'asset' | 'document' | 'other';
+  notes?: string;
+  addedAt: Timestamp;
+}
+
+export interface ClientFeedback {
+  id: string;
+  clientId: string;
+  subject: string;
+  message: string;
+  status: 'open' | 'acknowledged' | 'resolved';
+  reply?: string;
+  submittedAt: Timestamp;
+  repliedAt?: Timestamp | null;
+}
+
+export interface ClientInvoice {
+  id: string;
+  clientId: string;
+  invoiceNumber: string;
+  description: string;
+  amount: number;
+  dueDate: string;
+  status: 'unpaid' | 'paid' | 'overdue';
+  paymentLink?: string;
+  paidAt?: Timestamp | null;
+  createdAt: Timestamp;
+}
+
+// ─── Client CRUD (client SDK) ───────────────────────────────────────
+
+export async function getClientProfile(uid: string): Promise<ClientProfile | null> {
+  const snap = await getDoc(doc(db, 'clients', uid));
+  return snap.exists() ? (snap.data() as ClientProfile) : null;
+}
+
+export async function getClientDeliverables(clientId: string): Promise<ClientDeliverable[]> {
+  const q = query(
+    collection(db, 'clientDeliverables'),
+    where('clientId', '==', clientId),
+    orderBy('addedAt', 'desc')
+  );
+  const snap = await getDocs(q);
+  return snap.docs.map(d => d.data() as ClientDeliverable);
+}
+
+export async function getClientFeedback(clientId: string): Promise<ClientFeedback[]> {
+  const q = query(
+    collection(db, 'clientFeedback'),
+    where('clientId', '==', clientId),
+    orderBy('submittedAt', 'desc')
+  );
+  const snap = await getDocs(q);
+  return snap.docs.map(d => d.data() as ClientFeedback);
+}
+
+export async function submitClientFeedback(
+  clientId: string,
+  data: { subject: string; message: string }
+): Promise<string> {
+  const ref = doc(collection(db, 'clientFeedback'));
+  await setDoc(ref, {
+    id: ref.id,
+    clientId,
+    subject: data.subject,
+    message: data.message,
+    status: 'open',
+    reply: null,
+    submittedAt: serverTimestamp(),
+    repliedAt: null,
+  });
+  return ref.id;
+}
+
+export async function getClientInvoices(clientId: string): Promise<ClientInvoice[]> {
+  const q = query(
+    collection(db, 'clientInvoices'),
+    where('clientId', '==', clientId),
+    orderBy('createdAt', 'desc')
+  );
+  const snap = await getDocs(q);
+  return snap.docs.map(d => d.data() as ClientInvoice);
+}
+
 
 export async function addCredits(uid: string, amount: number) {
   const profile = await getUserProfile(uid);

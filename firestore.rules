@@ -139,5 +139,32 @@ service cloud.firestore {
       allow read: if false;
       allow write: if false;
     }
+
+    // ── Client Portal Collections ──────────────────────────
+
+    // Client profiles — clients read their own; writes via Admin SDK only
+    match /clients/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow write: if false;
+    }
+
+    // Client deliverables — clients read their own; writes via Admin SDK only
+    match /clientDeliverables/{docId} {
+      allow read: if request.auth != null && resource.data.clientId == request.auth.uid;
+      allow write: if false;
+    }
+
+    // Client feedback — clients create and read their own; updates/deletes via Admin SDK
+    match /clientFeedback/{docId} {
+      allow create: if request.auth != null && request.resource.data.clientId == request.auth.uid;
+      allow read: if request.auth != null && resource.data.clientId == request.auth.uid;
+      allow update, delete: if false;
+    }
+
+    // Client invoices — clients read their own; writes via Admin SDK only
+    match /clientInvoices/{docId} {
+      allow read: if request.auth != null && resource.data.clientId == request.auth.uid;
+      allow write: if false;
+    }
   }
 }
