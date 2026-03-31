@@ -163,9 +163,7 @@ export default function BookingPage() {
     return (
       <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center px-6">
         <div className="max-w-md w-full text-center">
-          <div className="w-16 h-16 bg-black rounded-2xl flex items-center justify-center mx-auto mb-8">
-            <Image src="/CW-logo-white.png" alt="CrftdWeb" width={40} height={40} className="w-9 h-9 object-contain" />
-          </div>
+          <Image src="/CW-logo-white.png" alt="CrftdWeb" width={120} height={85} className="mx-auto mb-8" style={{ mixBlendMode: 'screen' }} />
           <CheckCircle2 className="w-10 h-10 text-emerald-400 mx-auto mb-4" />
           <h1 className="text-xl font-bold text-white mb-2">You&apos;re booked!</h1>
           <p className="text-white/50 text-sm mb-4">Your 15-minute call is confirmed for:</p>
@@ -189,9 +187,7 @@ export default function BookingPage() {
 
         {/* Logo + header */}
         <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-black rounded-2xl flex items-center justify-center mx-auto mb-6">
-            <Image src="/CW-logo-white.png" alt="CrftdWeb" width={40} height={40} className="w-9 h-9 object-contain" />
-          </div>
+          <Image src="/CW-logo-white.png" alt="CrftdWeb" width={120} height={85} className="mx-auto mb-6" style={{ mixBlendMode: 'screen' }} />
           <h1 className="text-2xl font-bold text-white tracking-tight">Hi {firstName}, pick a time</h1>
           <p className="text-white/40 text-sm mt-2">15-minute screening call — pick a date then choose a time.</p>
         </div>
