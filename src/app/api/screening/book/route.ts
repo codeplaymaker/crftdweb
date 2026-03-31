@@ -28,7 +28,7 @@ function applicantConfirmHtml(name: string, label: string): string {
               <p style="margin:0;font-size:18px;font-weight:700;color:#111;">${label}</p>
             </div>
             <p style="margin:0 0 16px;font-size:14px;color:#666;line-height:1.7;">
-              Obi will be in touch shortly before the call. If you need to reschedule, just reply to this email.
+              We'll be in touch shortly before the call. If you need to reschedule, just reply to this email.
             </p>
             <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
               <tr><td style="border-top:1px solid #e8e8e8;"></td></tr>
@@ -51,8 +51,13 @@ function adminNotifyHtml(applicantName: string, applicantEmail: string, label: s
 <body style="margin:0;padding:0;background:#f4f4f4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;">
   <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:40px 20px;">
     <tr><td align="center">
-      <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#fff;border:1px solid #e0e0e0;border-radius:12px;padding:32px 40px;">
-        <tr><td>
+      <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+        <tr>
+          <td align="center" style="background:#0a0a0a;border-radius:12px 12px 0 0;padding:24px 40px;">
+            <img src="https://crftdweb.com/CW-logo-white.png" alt="CrftdWeb" width="120" style="display:block;border:0;" />
+          </td>
+        </tr>
+        <tr><td style="background:#fff;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 12px 12px;padding:32px 40px;">
           <p style="margin:0 0 8px;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#999;">CrftdWeb — New Booking</p>
           <p style="margin:0 0 24px;font-size:22px;font-weight:700;color:#111;">📅 ${applicantName} just booked a call</p>
           <table width="100%" cellpadding="0" cellspacing="0" style="background:#f9f9f9;border:1px solid #e8e8e8;border-radius:10px;padding:20px 24px;margin-bottom:24px;">
