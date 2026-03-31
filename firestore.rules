@@ -133,5 +133,11 @@ service cloud.firestore {
     match /applicants/{applicantId} {
       allow read, write: if false; // admin SDK only
     }
+
+    // Trial task submissions — public write (one per email), admin SDK read
+    match /trial_submissions/{docId} {
+      allow read: if false;
+      allow write: if false;
+    }
   }
 }

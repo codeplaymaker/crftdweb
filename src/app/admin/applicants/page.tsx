@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { Loader2, Mail, ArrowLeft, AlertTriangle, CheckCircle2, Star, MapPin, Phone } from 'lucide-react';
+import { Loader2, Mail, ArrowLeft, AlertTriangle, CheckCircle2, Star, MapPin, Phone, ExternalLink, ClipboardCheck } from 'lucide-react';
 import Link from 'next/link';
 import { sendBookingLink } from '@/app/actions/sendBookingLink';
 import { type Verdict, type ApplicantStatus, type ApplicantWithStatus } from '@/app/admin/applicants/data';
@@ -61,6 +61,21 @@ const TABS: { key: FilterTab; label: string }[] = [
   { key: 'decline', label: 'Decline' },
 ];
 
+// ─── Types ─────────────────────────────────────────────────────────────────
+
+interface TrialEntry {
+  business: string;
+  url: string;
+  diagnosis: string;
+}
+
+interface TrialSubmission {
+  id: string;
+  email: string;
+  entries: TrialEntry[];
+  submittedAt: string | null;
+}
+
 // ─── Page ──────────────────────────────────────────────────────────────────
 
 export default function AdminApplicantsPage() {
@@ -70,15 +85,17 @@ export default function AdminApplicantsPage() {
   const [sending, setSending] = useState<string | null>(null);
   const [sentIds, setSentIds] = useState<Set<string>>(new Set());
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submissions, setSubmissions] = useState<TrialSubmission[]>([]);
 
   useEffect(() => {
-    fetch('/api/admin/applicants')
-      .then((r) => r.json())
-      .then((data) => {
-        setApplicants(Array.isArray(data) ? data : []);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
+    Promise.all([
+      fetch('/api/admin/applicants').then(r => r.json()),
+      fetch('/api/admin/trial-submissions').then(r => r.json()),
+    ]).then(([applicantData, submissionData]) => {
+      setApplicants(Array.isArray(applicantData) ? applicantData : []);
+      setSubmissions(Array.isArray(submissionData) ? submissionData : []);
+      setLoading(false);
+    }).catch(() => setLoading(false));
   }, []);
 
   const filtered = useMemo(() => {
@@ -180,6 +197,7 @@ export default function AdminApplicantsPage() {
                 justSent={sentIds.has(applicant.id)}
                 error={errors[applicant.id]}
                 onSendBooking={handleSendBooking}
+                submission={submissions.find(s => s.email === applicant.email.toLowerCase()) ?? null}
               />
             ))}
             {filtered.length === 0 && (
@@ -200,9 +218,10 @@ interface RowProps {
   justSent: boolean;
   error?: string;
   onSendBooking: (a: ApplicantWithStatus) => void;
+  submission: TrialSubmission | null;
 }
 
-function ApplicantRow({ applicant, sending, justSent, error, onSendBooking }: RowProps) {
+function ApplicantRow({ applicant, sending, justSent, error, onSendBooking, submission }: RowProps) {
   const [expanded, setExpanded] = useState(false);
   const canSendBooking = applicant.verdict === 'booking' && applicant.status === 'pending';
   const alreadySent = applicant.status !== 'pending';
@@ -233,6 +252,12 @@ function ApplicantRow({ applicant, sending, justSent, error, onSendBooking }: Ro
               <span className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-orange-500/10 text-orange-400 border border-orange-500/20">
                 <AlertTriangle size={9} />
                 Indeed email
+              </span>
+            )}
+            {submission && (
+              <span className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-violet-500/10 text-violet-400 border border-violet-500/20">
+                <ClipboardCheck size={9} />
+                Task submitted
               </span>
             )}
           </div>
@@ -315,6 +340,41 @@ function ApplicantRow({ applicant, sending, justSent, error, onSendBooking }: Ro
             <p className="text-[11px] text-zinc-600">
               Email sent {new Date(applicant.emailSentAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
             </p>
+          )}
+          {submission && (
+            <div className="mt-3 border border-violet-500/20 rounded-xl overflow-hidden">
+              <div className="bg-violet-500/10 px-4 py-2.5 flex items-center justify-between">
+                <span className="text-[11px] font-semibold text-violet-400 flex items-center gap-1.5">
+                  <ClipboardCheck size={12} />
+                  Trial task submission
+                </span>
+                {submission.submittedAt && (
+                  <span className="text-[10px] text-zinc-500">
+                    {new Date(submission.submittedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                  </span>
+                )}
+              </div>
+              <div className="divide-y divide-zinc-800">
+                {submission.entries.map((entry, i) => (
+                  <div key={i} className="px-4 py-3 space-y-0.5">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] text-zinc-600 font-mono">{i + 1}</span>
+                      <span className="text-xs font-medium text-white/80">{entry.business}</span>
+                      <a
+                        href={entry.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={e => e.stopPropagation()}
+                        className="text-zinc-600 hover:text-zinc-400 transition-colors"
+                      >
+                        <ExternalLink size={10} />
+                      </a>
+                    </div>
+                    <p className="text-xs text-zinc-400 pl-5 italic">&ldquo;{entry.diagnosis}&rdquo;</p>
+                  </div>
+                ))}
+              </div>
+            </div>
           )}
         </div>
       )}

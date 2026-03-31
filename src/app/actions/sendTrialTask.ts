@@ -77,10 +77,20 @@ function buildHtml(name: string): string {
               </table>
 
               <p style="margin:0 0 16px;font-size:15px;color:#444;line-height:1.7;">
-                No formatting required - just reply to this email with your list within <strong style="color:#111;">48 hours</strong>.
+                No formatting required — just submit your list using the link below within <strong style="color:#111;">48 hours</strong>.
               </p>
-              <p style="margin:0 0 32px;font-size:15px;color:#444;line-height:1.7;">
-                Looking forward to seeing what you come back with.
+
+              <!-- CTA button -->
+              <table cellpadding="0" cellspacing="0" style="margin:0 0 32px;">
+                <tr>
+                  <td style="background:#111;border-radius:8px;">
+                    <a href="${BASE_URL}/apply/trial" style="display:inline-block;padding:14px 28px;font-size:15px;font-weight:700;color:#ffffff;text-decoration:none;">Submit your task &rarr;</a>
+                  </td>
+                </tr>
+              </table>
+
+              <p style="margin:0 0 32px;font-size:13px;color:#999;line-height:1.6;">
+                You&apos;ll need to enter this email address on the form so we can match it to your application: <strong style="color:#555;">${name}</strong>
               </p>
 
               <!-- Divider -->
@@ -126,8 +136,12 @@ Before we book a call, I'd like to see how you think.
 
 Your task: Find 5 UK businesses with a bad website and write one specific sentence for each explaining why it needs a redesign - not just "it looks old", but something like "no mobile version" or "no contact number visible above the fold" or "the site hasn't been updated since 2018".
 
-That's it. No formatting required - just reply to this email with your list within 48 hours.
+Submit your list here within 48 hours: ${BASE_URL}/apply/trial
 
+Use this email address on the form so we can match it to your application.
+
+CrftdWeb
+crftdweb.com`;
 Looking forward to seeing what you come back with.
 
 CrftdWeb
