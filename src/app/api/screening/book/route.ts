@@ -14,8 +14,10 @@ function applicantConfirmHtml(name: string, label: string): string {
     <tr><td align="center">
       <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
         <tr>
-          <td align="center" style="background:#0a0a0a;border-radius:12px 12px 0 0;padding:24px 40px;">
-            <img src="https://crftdweb.com/CW-logo-white.png" alt="CrftdWeb" width="120" style="display:block;border:0;" />
+          <td align="center" style="background:#000000;border-radius:12px 12px 0 0;padding:28px 40px;">
+            <div style="display:inline-block;background:#000000;border-radius:14px;padding:14px 20px;">
+              <span style="font-family:Georgia,'Times New Roman',serif;font-size:32px;font-weight:700;color:#ffffff;letter-spacing:-1px;">cw</span>
+            </div>
           </td>
         </tr>
         <tr>
@@ -53,8 +55,10 @@ function adminNotifyHtml(applicantName: string, applicantEmail: string, label: s
     <tr><td align="center">
       <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
         <tr>
-          <td align="center" style="background:#0a0a0a;border-radius:12px 12px 0 0;padding:24px 40px;">
-            <img src="https://crftdweb.com/CW-logo-white.png" alt="CrftdWeb" width="120" style="display:block;border:0;" />
+          <td align="center" style="background:#000000;border-radius:12px 12px 0 0;padding:28px 40px;">
+            <div style="display:inline-block;background:#000000;border-radius:14px;padding:14px 20px;">
+              <span style="font-family:Georgia,'Times New Roman',serif;font-size:32px;font-weight:700;color:#ffffff;letter-spacing:-1px;">cw</span>
+            </div>
           </td>
         </tr>
         <tr><td style="background:#fff;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 12px 12px;padding:32px 40px;">
