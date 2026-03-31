@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, ChevronUp, Users, ClipboardList, Phone, UserCheck, AlertTriangle, CheckCircle2, ArrowLeft, Send, Loader2, Check, X, Plus, CalendarPlus, Trash2, Clock } from 'lucide-react';
+import { ChevronDown, ChevronUp, Users, ClipboardList, Phone, UserCheck, AlertTriangle, CheckCircle2, ArrowLeft, Send, Loader2, Check, X, Plus, CalendarPlus, Trash2, Clock, Eye, Mail } from 'lucide-react';
 import Link from 'next/link';
+import { sendLoginDetails } from '@/app/actions/sendLoginDetails';
 import { sendTrialTask } from '@/app/actions/sendTrialTask';
 import { sendBookingLink } from '@/app/actions/sendBookingLink';
 import { getBookingStatuses, BookingStatus } from '@/app/actions/getBookingStatuses';
@@ -11,6 +12,39 @@ import { ScreeningSlot, createScreeningSlot } from '@/app/actions/createScreenin
 import { deleteScreeningSlot } from '@/app/actions/deleteScreeningSlot';
 import { getScreeningSlots } from '@/app/actions/getScreeningSlots';
 import { RepProfile, RepLead, RepCommission } from '@/lib/firebase/firestore';
+
+// ─── Login email preview HTML (mirrors sendLoginDetails.ts template) ───
+function buildLoginPreviewHtml(name: string, email: string, tempPassword: string): string {
+  const firstName = name.split(' ')[0] || name;
+  const loginUrl = 'https://crftdweb.com/rep/signin';
+  return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:0;background:#f4f4f4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:40px 20px;"><tr><td align="center">
+    <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+      <tr><td align="center" style="background:#000000;border-radius:12px 12px 0 0;padding:32px 40px;">
+        <img src="https://crftdweb.com/CW-logo-white.png" alt="CrftdWeb" width="160" style="display:block;border:0;border-radius:8px;" />
+      </td></tr>
+      <tr><td style="background:#ffffff;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 12px 12px;padding:40px;">
+        <p style="margin:0 0 16px;font-size:16px;color:#111;font-weight:600;">Hi ${firstName},</p>
+        <p style="margin:0 0 16px;font-size:15px;color:#444;line-height:1.7;">Great news — you've been approved as a CrftdWeb sales rep. Welcome to the team.</p>
+        <p style="margin:0 0 24px;font-size:15px;color:#444;line-height:1.7;">Your rep portal is ready. Log in with the credentials below, then complete the training modules before you start outreach.</p>
+        <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 28px;"><tr><td style="background:#f9f9f9;border:1px solid #e8e8e8;border-radius:10px;padding:20px 24px;">
+          <p style="margin:0 0 10px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#999;">Your Login</p>
+          <p style="margin:0 0 6px;font-size:14px;color:#444;"><strong style="color:#111;">Email:</strong> ${email}</p>
+          <p style="margin:0;font-size:14px;color:#444;"><strong style="color:#111;">Temp password:</strong> <span style="font-family:monospace;font-size:15px;letter-spacing:1px;color:#111;">${tempPassword}</span></p>
+        </td></tr></table>
+        <table cellpadding="0" cellspacing="0" style="margin:0 0 28px;"><tr><td style="background:#111;border-radius:8px;">
+          <a href="${loginUrl}" style="display:inline-block;padding:14px 28px;font-size:15px;font-weight:700;color:#ffffff;text-decoration:none;">Log in to your portal &rarr;</a>
+        </td></tr></table>
+        <p style="margin:0 0 24px;font-size:13px;color:#999;line-height:1.6;">Change your password after your first login. If you have any questions, reply to this email.</p>
+        <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;"><tr><td style="border-top:1px solid #e8e8e8;"></td></tr></table>
+        <p style="margin:0;font-size:15px;color:#111;font-weight:700;">CrftdWeb</p>
+        <p style="margin:3px 0 0;font-size:13px;color:#999;">crftdweb.com &middot; admin@crftdweb.com</p>
+      </td></tr>
+    </table>
+  </td></tr></table>
+</body></html>`;
+}
 
 // ─── Types ───
 interface Step {
@@ -635,6 +669,9 @@ function ManagementTab() {
   const [addRepStatus, setAddRepStatus] = useState<'idle' | 'saving' | 'done' | 'error'>('idle');
   const [newRepResult, setNewRepResult] = useState<{ uid: string; tempPassword: string } | null>(null);
   const [markingPaid, setMarkingPaid] = useState<string | null>(null);
+  const [loginEmailStatus, setLoginEmailStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+  const [loginEmailError, setLoginEmailError] = useState('');
+  const [showLoginPreview, setShowLoginPreview] = useState(false);
 
   useEffect(() => {
     Promise.all([
@@ -752,15 +789,96 @@ function ManagementTab() {
         )}
 
         {addRepStatus === 'done' && newRepResult && (
-          <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-5 mb-3">
-            <p className="text-sm font-semibold text-emerald-400 mb-1">Rep account created ✓</p>
-            <p className="text-xs text-white/50 mb-3">Share these credentials with the rep — the password cannot be recovered after you close this.</p>
-            <div className="space-y-1.5 font-mono text-sm">
-              <p className="text-white/70">Login: <span className="text-white">{addRepForm.email}</span></p>
-              <p className="text-white/70">Password: <span className="text-white bg-white/10 px-2 py-0.5 rounded">{newRepResult.tempPassword}</span></p>
-              <p className="text-white/70">Portal: <span className="text-white">crftdweb.com/rep/signin</span></p>
+          <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-5 mb-3 space-y-4">
+            <div>
+              <p className="text-sm font-semibold text-emerald-400 mb-1">Rep account created ✓</p>
+              <p className="text-xs text-white/50">Send the rep their login details below — the temp password cannot be recovered after you leave this screen.</p>
             </div>
-            <button onClick={() => { setShowAddRep(false); setAddRepStatus('idle'); setNewRepResult(null); }} className="mt-3 text-xs text-white/30 hover:text-white/50">Done</button>
+
+            {/* Credentials */}
+            <div className="space-y-1.5 font-mono text-sm bg-white/[0.04] rounded-lg px-4 py-3">
+              <p className="text-white/60">Name: <span className="text-white">{addRepForm.name}</span></p>
+              <p className="text-white/60">Login: <span className="text-white">{addRepForm.email}</span></p>
+              <p className="text-white/60">Password: <span className="text-white bg-white/10 px-2 py-0.5 rounded">{newRepResult.tempPassword}</span></p>
+              <p className="text-white/60">Portal: <span className="text-white">crftdweb.com/rep/signin</span></p>
+            </div>
+
+            {/* Preview toggle */}
+            <div>
+              <button
+                onClick={() => setShowLoginPreview(!showLoginPreview)}
+                className="flex items-center gap-2 text-xs text-white/40 hover:text-white/70 transition-colors"
+              >
+                <Eye className="w-3.5 h-3.5" />
+                {showLoginPreview ? 'Hide preview' : 'Preview email'}
+              </button>
+              <AnimatePresence>
+                {showLoginPreview && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.25 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="mt-3 rounded-xl overflow-hidden border border-white/10">
+                      <div className="bg-white/[0.04] border-b border-white/8 px-4 py-2 flex items-center gap-2">
+                        <div className="flex gap-1.5">
+                          <div className="w-2.5 h-2.5 rounded-full bg-red-500/60" />
+                          <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/60" />
+                          <div className="w-2.5 h-2.5 rounded-full bg-green-500/60" />
+                        </div>
+                        <span className="text-[10px] text-white/25 font-mono ml-2">welcome email — {addRepForm.email}</span>
+                      </div>
+                      <iframe
+                        srcDoc={buildLoginPreviewHtml(addRepForm.name, addRepForm.email, newRepResult.tempPassword)}
+                        className="w-full bg-white"
+                        style={{ height: '540px', border: 'none' }}
+                        title="Login email preview"
+                        sandbox="allow-same-origin"
+                      />
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            {/* Send button */}
+            <div className="flex items-center gap-3">
+              {loginEmailStatus !== 'sent' ? (
+                <button
+                  onClick={async () => {
+                    setLoginEmailStatus('sending');
+                    setLoginEmailError('');
+                    const result = await sendLoginDetails(addRepForm.name, addRepForm.email, newRepResult.tempPassword);
+                    if (result.success) {
+                      setLoginEmailStatus('sent');
+                    } else {
+                      setLoginEmailError(result.error ?? 'Failed to send');
+                      setLoginEmailStatus('error');
+                    }
+                  }}
+                  disabled={loginEmailStatus === 'sending'}
+                  className="flex items-center gap-2 px-4 py-2 bg-white text-black rounded-lg text-xs font-bold hover:bg-white/90 disabled:opacity-40 transition-all"
+                >
+                  {loginEmailStatus === 'sending' ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Mail className="w-3.5 h-3.5" />}
+                  {loginEmailStatus === 'sending' ? 'Sending…' : 'Send login details'}
+                </button>
+              ) : (
+                <div className="flex items-center gap-2 px-4 py-2 bg-emerald-500/20 border border-emerald-500/30 rounded-lg text-xs font-semibold text-emerald-400">
+                  <Check className="w-3.5 h-3.5" /> Email sent
+                </div>
+              )}
+              <button
+                onClick={() => { setShowAddRep(false); setAddRepStatus('idle'); setNewRepResult(null); setLoginEmailStatus('idle'); setLoginEmailError(''); setShowLoginPreview(false); }}
+                className="text-xs text-white/30 hover:text-white/50 transition-colors"
+              >
+                Done
+              </button>
+            </div>
+            {loginEmailStatus === 'error' && loginEmailError && (
+              <p className="text-xs text-red-400">{loginEmailError}</p>
+            )}
           </div>
         )}
 
