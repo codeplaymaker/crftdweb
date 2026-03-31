@@ -128,5 +128,10 @@ service cloud.firestore {
     match /bookingTokens/{token} {
       allow read, write: if false; // admin SDK only
     }
+
+    // Applicants — admin hiring pipeline, no client access
+    match /applicants/{applicantId} {
+      allow read, write: if false; // admin SDK only
+    }
   }
 }
