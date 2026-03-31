@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Copy, Check, ChevronDown, ChevronUp, Mail, RefreshCw, UserCheck, Handshake, Users, Send, Eye, Loader2, CheckCircle2 } from 'lucide-react';
+import { Copy, Check, ChevronDown, ChevronUp, Mail, RefreshCw, UserCheck, Handshake, Users, Send, Eye, Loader2, CheckCircle2, Sparkles, PenLine } from 'lucide-react';
 import { sendTrialTask } from '@/app/actions/sendTrialTask';
 import { sendBookingLink } from '@/app/actions/sendBookingLink';
 import { sendLoginDetails } from '@/app/actions/sendLoginDetails';
@@ -177,6 +177,169 @@ const EMAIL_SEND_TEMPLATES = [
 ] as const;
 
 type SendTemplateId = typeof EMAIL_SEND_TEMPLATES[number]['id'];
+
+// ─── Compose Panel ─────────────────────────────────────────────────────────
+function ComposePanel() {
+  const [to, setTo] = useState('');
+  const [subject, setSubject] = useState('');
+  const [body, setBody] = useState('');
+  const [context, setContext] = useState('');
+  const [aiStatus, setAiStatus] = useState<'idle' | 'streaming' | 'done'>('idle');
+  const [sendStatus, setSendStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+  const [errorMsg, setErrorMsg] = useState('');
+  const abortRef = useRef<AbortController | null>(null);
+
+  const handleAISuggest = useCallback(async () => {
+    if (!subject.trim() && !context.trim()) return;
+    if (abortRef.current) abortRef.current.abort();
+    abortRef.current = new AbortController();
+    setAiStatus('streaming');
+    setBody('');
+
+    try {
+      const res = await fetch('/api/admin/compose-ai', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ to, subject, context }),
+        signal: abortRef.current.signal,
+      });
+
+      if (!res.ok || !res.body) { setAiStatus('idle'); return; }
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let accumulated = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        accumulated += decoder.decode(value, { stream: true });
+        setBody(accumulated);
+      }
+
+      setAiStatus('done');
+    } catch (e) {
+      if ((e as Error).name !== 'AbortError') setAiStatus('idle');
+    }
+  }, [to, subject, context]);
+
+  async function handleSend() {
+    if (!to.trim() || !subject.trim() || !body.trim()) return;
+    setSendStatus('sending');
+    setErrorMsg('');
+    try {
+      const res = await fetch('/api/admin/send-custom', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ to: to.trim(), subject: subject.trim(), body: body.trim() }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSendStatus('sent');
+        setTimeout(() => { setSendStatus('idle'); setTo(''); setSubject(''); setBody(''); setContext(''); setAiStatus('idle'); }, 3000);
+      } else {
+        setSendStatus('error');
+        setErrorMsg(data.error ?? 'Failed to send');
+      }
+    } catch {
+      setSendStatus('error');
+      setErrorMsg('Network error — please try again');
+    }
+  }
+
+  const canSuggest = (subject.trim().length > 3 || context.trim().length > 3) && aiStatus !== 'streaming';
+  const canSend = to.trim() && subject.trim() && body.trim() && sendStatus !== 'sending';
+
+  return (
+    <div className="space-y-5">
+      {/* To */}
+      <div>
+        <label className="block text-[10px] text-white/30 mb-1.5 uppercase tracking-widest">To</label>
+        <input
+          type="email"
+          value={to}
+          onChange={(e) => setTo(e.target.value)}
+          placeholder="recipient@email.com"
+          className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 transition-colors"
+        />
+      </div>
+
+      {/* Subject */}
+      <div>
+        <label className="block text-[10px] text-white/30 mb-1.5 uppercase tracking-widest">Subject</label>
+        <input
+          type="text"
+          value={subject}
+          onChange={(e) => setSubject(e.target.value)}
+          placeholder="e.g. Following up — your website"
+          className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 transition-colors"
+        />
+      </div>
+
+      {/* AI context */}
+      <div>
+        <label className="block text-[10px] text-white/30 mb-1.5 uppercase tracking-widest">Context for AI <span className="text-white/20 normal-case tracking-normal">(optional — what's the email about?)</span></label>
+        <input
+          type="text"
+          value={context}
+          onChange={(e) => setContext(e.target.value)}
+          placeholder="e.g. follow-up after cold call, they seemed interested but went quiet"
+          className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 transition-colors"
+        />
+      </div>
+
+      {/* AI suggest button */}
+      <button
+        onClick={handleAISuggest}
+        disabled={!canSuggest}
+        className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-purple-600/20 border border-purple-500/30 text-purple-300 hover:bg-purple-600/30 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+      >
+        {aiStatus === 'streaming' ? (
+          <Loader2 size={14} className="animate-spin" />
+        ) : (
+          <Sparkles size={14} />
+        )}
+        {aiStatus === 'streaming' ? 'Writing…' : aiStatus === 'done' ? 'Regenerate' : 'AI Suggest'}
+      </button>
+
+      {/* Body */}
+      <div>
+        <div className="flex items-center justify-between mb-1.5">
+          <label className="block text-[10px] text-white/30 uppercase tracking-widest">Message</label>
+          {aiStatus === 'done' && (
+            <span className="text-[10px] text-purple-400/60 flex items-center gap-1"><Sparkles size={9} /> AI generated — edit freely</span>
+          )}
+        </div>
+        <textarea
+          value={body}
+          onChange={(e) => { setBody(e.target.value); if (aiStatus === 'done') setAiStatus('idle'); }}
+          placeholder="Write your message here, or use AI Suggest above…"
+          rows={10}
+          className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 transition-colors resize-none leading-relaxed font-sans"
+        />
+      </div>
+
+      {/* Send */}
+      {sendStatus === 'sent' ? (
+        <div className="flex items-center gap-2 text-sm text-emerald-400 font-semibold">
+          <CheckCircle2 size={16} /> Email sent!
+        </div>
+      ) : (
+        <div className="space-y-2">
+          <button
+            onClick={handleSend}
+            disabled={!canSend}
+            className="flex items-center gap-2 px-6 py-2.5 bg-white text-black rounded-xl text-sm font-bold hover:bg-white/90 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+          >
+            {sendStatus === 'sending' ? <Loader2 size={15} className="animate-spin" /> : <Send size={15} />}
+            {sendStatus === 'sending' ? 'Sending…' : 'Send Email'}
+          </button>
+          {sendStatus === 'error' && <p className="text-xs text-red-400">{errorMsg}</p>}
+        </div>
+      )}
+    </div>
+  );
+}
 
 // ─── Send Panel ───
 function SendPanel() {
@@ -844,7 +1007,7 @@ function CategorySection({ category }: { category: Category }) {
 
 // ─── Page ───
 export default function EmailTemplatesPage() {
-  const [pageTab, setPageTab] = useState<'templates' | 'send'>('send');
+  const [pageTab, setPageTab] = useState<'templates' | 'send' | 'compose'>('send');
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
   const displayed = activeCategory
@@ -866,7 +1029,7 @@ export default function EmailTemplatesPage() {
 
         {/* Top tabs */}
         <div className="flex gap-1 p-1 bg-white/[0.03] border border-white/8 rounded-xl w-fit mb-8">
-          {([['send', 'Send Email'], ['templates', 'Copy Templates']] as const).map(([key, label]) => (
+          {([['send', 'Send Email'], ['compose', 'Compose'], ['templates', 'Copy Templates']] as const).map(([key, label]) => (
             <button
               key={key}
               onClick={() => setPageTab(key)}
@@ -882,6 +1045,17 @@ export default function EmailTemplatesPage() {
         {pageTab === 'send' && (
           <div className="bg-white/[0.02] border border-white/8 rounded-2xl p-6">
             <SendPanel />
+          </div>
+        )}
+
+        {pageTab === 'compose' && (
+          <div className="bg-white/[0.02] border border-white/8 rounded-2xl p-6">
+            <div className="flex items-center gap-2 mb-6">
+              <PenLine size={16} className="text-purple-400" />
+              <p className="text-sm font-semibold text-white/80">Free Compose</p>
+              <span className="text-[10px] text-white/30 ml-1">Send any email with optional AI assist</span>
+            </div>
+            <ComposePanel />
           </div>
         )}
 
