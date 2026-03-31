@@ -4,6 +4,7 @@ import { Resend } from 'resend';
 import { adminDb } from '@/lib/firebase/admin';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://crftdweb.com';
 
 function buildHtml(name: string): string {
   return `<!DOCTYPE html>
@@ -139,10 +140,6 @@ Your task: Find 5 UK businesses with a bad website and write one specific senten
 Submit your list here within 48 hours: ${BASE_URL}/apply/trial
 
 Use this email address on the form so we can match it to your application.
-
-CrftdWeb
-crftdweb.com`;
-Looking forward to seeing what you come back with.
 
 CrftdWeb
 crftdweb.com`;
