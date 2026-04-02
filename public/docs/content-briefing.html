@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CrftdWeb — Content Briefing Document</title>
+  <style>
+    @font-face {
+      font-family: 'Classicismo';
+      src: url('../fonts/Classicismo.otf') format('opentype');
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, 'Inter', 'Helvetica Neue', Arial, sans-serif;
+      background: #fff;
+      color: #111;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .page { max-width: 800px; margin: 0 auto; padding: 60px 40px; }
+
+    /* ── Header ── */
+    .header {
+      border-bottom: 2px solid #111;
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+
+    .brand { font-size: 20px; font-weight: 900; letter-spacing: -0.5px; margin-bottom: 4px; }
+
+    .doc-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #888;
+    }
+
+    /* ── Intro box ── */
+    .intro-box {
+      background: #f5f5f5;
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin-bottom: 32px;
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    .for-row {
+      display: grid;
+      grid-template-columns: 100px 1fr;
+      gap: 8px;
+      margin-bottom: 6px;
+      font-size: 13px;
+    }
+
+    .for-label { font-weight: 700; color: #888; }
+
+    .fill {
+      display: inline-block;
+      min-width: 160px;
+      border-bottom: 1px solid #ccc;
+      color: #888;
+      font-style: italic;
+    }
+
+    /* ── Sections ── */
+    h2 {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #888;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 8px;
+      margin: 32px 0 16px;
+    }
+
+    p { margin-bottom: 12px; }
+
+    /* ── Item card ── */
+    .item {
+      border: 1px solid #e5e5e5;
+      border-radius: 8px;
+      padding: 18px 20px;
+      margin-bottom: 12px;
+    }
+
+    .item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+
+    .item-title { font-weight: 700; font-size: 14px; }
+
+    .badge {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+
+    .required { background: #fee2e2; color: #b91c1c; }
+    .optional { background: #e0f2fe; color: #0369a1; }
+    .if-applicable { background: #fef9c3; color: #854d0e; }
+
+    .item-desc { font-size: 13px; color: #555; margin-bottom: 10px; }
+
+    .item-hint {
+      background: #fafafa;
+      border-left: 3px solid #ddd;
+      border-radius: 0 4px 4px 0;
+      padding: 8px 12px;
+      font-size: 12px;
+      color: #888;
+    }
+
+    /* ── Tips ── */
+    .tip-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .tip-card {
+      background: #fafafa;
+      border-radius: 8px;
+      padding: 14px 16px;
+      font-size: 13px;
+    }
+
+    .tip-card strong { display: block; margin-bottom: 4px; }
+
+    /* ── Checklist ── */
+    .checklist { list-style: none; padding: 0; }
+
+    .checklist li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 10px;
+      font-size: 13px;
+    }
+
+    .cb {
+      width: 16px;
+      height: 16px;
+      border: 2px solid #ddd;
+      border-radius: 4px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    /* ── How to send ── */
+    .send-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    .send-card {
+      border: 1px solid #e5e5e5;
+      border-radius: 8px;
+      padding: 14px;
+      text-align: center;
+      font-size: 13px;
+    }
+
+    .send-icon { font-size: 22px; margin-bottom: 6px; }
+    .send-card strong { display: block; margin-bottom: 4px; }
+    .send-card span { font-size: 12px; color: #888; }
+
+    /* ── CTA ── */
+    .cta-box {
+      background: #111;
+      color: #fff;
+      border-radius: 10px;
+      padding: 24px;
+      text-align: center;
+      margin: 28px 0 0;
+    }
+
+    .cta-box p { color: #aaa; font-size: 13px; margin-bottom: 12px; }
+    .cta-box a {
+      display: inline-block;
+      background: #fff;
+      color: #111;
+      padding: 10px 24px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 13px;
+      text-decoration: none;
+    }
+
+    /* ── Footer ── */
+    .footer {
+      text-align: center;
+      padding-top: 28px;
+      margin-top: 32px;
+      border-top: 1px solid #eee;
+      font-size: 11px;
+      color: #bbb;
+    }
+
+    @media print {
+      body { font-size: 13px; }
+      .cta-box { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <div style="font-family: 'Classicismo', serif; font-size: 38px; font-weight: normal; letter-spacing: 0; line-height: 1; margin-bottom: 8px;">cw</div>
+    <div class="doc-title">Content Briefing Document</div>
+  </img>
+
+  <div class="intro-box">
+    <div class="for-row"><span class="for-label">Prepared for:</span> <span class="fill">[Client Name] — [Business Name]</span></div>
+    <div class="for-row"><span class="for-label">Project:</span> <span class="fill">[Project type, e.g. Business Website]</span></div>
+    <div class="for-row"><span class="for-label">Date:</span> <span class="fill">[Date]</span></div>
+    <p style="margin-top: 14px; color: #555;">
+      Now that the agreement is signed and deposit received — thank you! — we're ready to start building.<br><br>
+      To kick things off we need the content below from you. <strong>The sooner we have it, the sooner we can start and hit the timeline we agreed.</strong> Please aim to send everything within <strong>5 business days</strong>.
+    </p>
+  </div>
+
+  <!-- ── Brand & Identity ── -->
+  <h2>1. Brand &amp; Identity</h2>
+
+  <div class="item">
+    <div class="item-header">
+      <div class="item-title">Logo</div>
+      <span class="badge required">Required</span>
+    </div>
+    <div class="item-desc">Your logo in the best quality version you have.</div>
+    <div class="item-hint">SVG or PNG preferred. On a transparent background if possible. If you don't have this, let us know and we'll work with what you have.</div>
+  </div>
+
+  <div class="item">
+    <div class="item-header">
+      <div class="item-title">Brand colours</div>
+      <span class="badge if-applicable">If you have them</span>
+    </div>
+    <div class="item-desc">Your primary brand colour(s) as hex codes, or just tell us the colours and we'll match them.</div>
+    <div class="item-hint">e.g. "Our main colour is a dark navy, and our accent is gold." Or: #1B2A4A / #C9A84C</div>
+  </div>
+
+  <div class="item">
+    <div class="item-header">
+      <div class="item-title">Fonts / typography preferences</div>
+      <span class="badge optional">Optional</span>
+    </div>
+    <div class="item-desc">Any font preferences, or examples of sites whose typography you like.</div>
+    <div class="item-hint">If you don't have preferences here, we'll choose something that fits your brand and get your sign-off before building.</div>
+  </div>
+
+  <!-- ── Written Content ── -->
+  <h2>2. Written Content (Copy)</h2>
+
+  <p style="font-size: 13px; color: #555; margin-bottom: 16px;">You can provide copy in any format — a Word doc, Google Doc, notes app, even a voice note. We'll format and structure it for the site. If you'd like suggestions or edits, just let us know.</p>
+
+  <div class="item">
+    <div class="item-header">
+      <div class="item-title">Headline &amp; tagline</div>
+      <span class="badge required">Required</span>
+    </div>
+    <div class="item-desc">The main statement at the top of your homepage. What do you do and who do you do it for?</div>
+    <div class="item-hint">e.g. "Premium cleaning services for busy London homes." — Keep it punchy. 1–2 lines max.</div>
+  </div>
+
+  <div class="item">
+    <div class="item-header">
+      <div class="item-title">About your business</div>
+      <span class="badge required">Required</span>
+    </div>
+    <div class="item-desc">A short description of who you are, what you do, and why clients should choose you.</div>
+    <div class="item-hint">1–3 paragraphs is enough. Focus on the client — what problem do you solve for them?</div>
+  </div>
+
+  <div class="item">
+    <div class="item-header">
+      <div class="item-title">Services / offerings</div>
+      <span class="badge required">Required</span>
+    </div>
+    <div class="item-desc">List of your services with a short description of each. Include any pricing if you display it publicly.</div>
+    <div class="item-hint">A bullet list is fine. e.g. "1. Deep clean — full house top to bottom, 3–4 hours. From £199."</div>
+  </div>
+
+  <div class="item">
+    <div class="item-header">
+      <div class="item-title">Any additional page copy</div>
+      <span class="badge if-applicable">If applicable</span>
+    </div>
+    <div class="item-desc">Copy for any other pages included in scope — FAQ, team, pricing, etc.</div>
+    <div class="item-hint">Only what was agreed in the proposal. Let us know if you're unsure what's included.</div>
+  </div>
+
+  <!-- ── Images ── -->
+  <h2>3. Images &amp; Media</h2>
+
+  <div class="tip-grid">
+    <div class="tip-card">
+      <strong>Best formats</strong>
+      JPG or PNG for photos. SVG for logos and icons. WebP is also fine.
+    </div>
+    <div class="tip-card">
+      <strong>Quality</strong>
+      The larger the better — we'll compress for the web. Don't send tiny or watermarked images.
+    </div>
+  </div>
+
+  <div class="item">
+    <div class="item-header">
+      <div class="item-title">Photos of your work / team / premises</div>
+      <span class="badge required">Required</span>
+    </div>
+    <div class="item-desc">Real photos perform better than stock. Send any professional or high-quality phone photos you have.</div>
+    <div class="item-hint">Portfolio shots, team photos, your workspace, before/after shots — anything that shows what you do.</div>
+  </div>
+
+  <div class="item">
+    <div class="item-header">
+      <div class="item-title">Hero / banner image</div>
+      <span class="badge if-applicable">If you have one</span>
+    </div>
+    <div class="item-desc">A strong image for the top of the homepage. Landscape, high resolution.</div>
+    <div class="item-hint">If you don't have one, we'll source a suitable stock image — just let us know the vibe.</div>
+  </div>
+
+  <!-- ── Business Info ── -->
+  <h2>4. Business Information</h2>
+
+  <div class="item">
+    <div class="item-header">
+      <div class="item-title">Contact details to display publicly</div>
+      <span class="badge required">Required</span>
+    </div>
+    <div class="item-desc">Phone number, email address, and/or address — whatever you want visible on the site.</div>
+    <div class="item-hint">If you have a business email separate from personal, use that.</div>
+  </div>
+
+  <div class="item">
+    <div class="item-header">
+      <div class="item-title">Social media links</div>
+      <span class="badge if-applicable">If applicable</span>
+    </div>
+    <div class="item-desc">Full URLs to your Instagram, Facebook, LinkedIn, TikTok, etc.</div>
+    <div class="item-hint">e.g. instagram.com/yourbusiness — only include ones you actively use.</div>
+  </div>
+
+  <div class="item">
+    <div class="item-header">
+      <div class="item-title">Google Business / reviews</div>
+      <span class="badge optional">Optional</span>
+    </div>
+    <div class="item-desc">A link to your Google Business profile if you have one, and 2–3 testimonials you'd like to show.</div>
+    <div class="item-hint">Reviews from Google, Trustpilot, or anywhere else. Copy and paste the text with the reviewer's first name.</div>
+  </div>
+
+  <!-- ── Technical ── -->
+  <h2>5. Technical Access</h2>
+
+  <div class="item">
+    <div class="item-header">
+      <div class="item-title">Domain name</div>
+      <span class="badge required">Required</span>
+    </div>
+    <div class="item-desc">Your domain (e.g. yourbusiness.co.uk) and where it's registered (GoDaddy, Namecheap, 123-reg, etc.).</div>
+    <div class="item-hint">We'll need DNS access to point it to the new site. We'll walk you through this step — it's straightforward.</div>
+  </div>
+
+  <div class="item">
+    <div class="item-header">
+      <div class="item-title">Existing website access</div>
+      <span class="badge if-applicable">If applicable</span>
+    </div>
+    <div class="item-desc">If you have an existing site we need to pull content from or redirect traffic away from.</div>
+    <div class="item-hint">Only required if we agreed to migrate content. Send login details securely — don't include them in an email, we'll provide a secure way to share.</div>
+  </div>
+
+  <!-- ── Checklist ── -->
+  <h2>Your Checklist</h2>
+  <p style="font-size: 13px; color: #555; margin-bottom: 16px;">Use this to track what you've sent:</p>
+
+  <ul class="checklist">
+    <li><div class="cb"></div><span>Logo (SVG or PNG, transparent background)</span></li>
+    <li><div class="cb"></div><span>Brand colours (hex codes or description)</span></li>
+    <li><div class="cb"></div><span>Headline &amp; tagline</span></li>
+    <li><div class="cb"></div><span>About the business copy</span></li>
+    <li><div class="cb"></div><span>Services / offerings with descriptions</span></li>
+    <li><div class="cb"></div><span>Photos of your work / team</span></li>
+    <li><div class="cb"></div><span>Contact details for the site</span></li>
+    <li><div class="cb"></div><span>Domain name &amp; registrar</span></li>
+    <li><div class="cb"></div><span>Social media links (if applicable)</span></li>
+    <li><div class="cb"></div><span>Testimonials / reviews (if applicable)</span></li>
+    <li><div class="cb"></div><span>Any other page copy agreed in scope</span></li>
+  </ul>
+
+  <!-- ── How to send ── -->
+  <h2>How to Send Everything</h2>
+
+  <div class="send-options">
+    <div class="send-card">
+      <div class="send-icon">📧</div>
+      <strong>Email</strong>
+      <span>admin@crftdweb.com — attach files or paste copy directly</span>
+    </div>
+    <div class="send-card">
+      <div class="send-icon">📁</div>
+      <strong>Google Drive</strong>
+      <span>Share a folder with admin@crftdweb.com</span>
+    </div>
+    <div class="send-card">
+      <div class="send-icon">💬</div>
+      <strong>WhatsApp / iMessage</strong>
+      <span>If we've been speaking there — just send it through</span>
+    </div>
+  </div>
+
+  <p style="font-size: 12px; color: #888; margin-top: 12px;">Don't worry about making it perfect — rough notes, voice memos, and phone photos are all fine. We'll ask if we need anything clearer.</p>
+
+  <div class="cta-box">
+    <p>Questions about what to send? Just ask — we're here to make this easy.</p>
+    <a href="mailto:admin@crftdweb.com">admin@crftdweb.com</a>
+  </div>
+
+  <div class="footer">
+    CrftdWeb &middot; crftdweb.com &middot; admin@crftdweb.com
+  </div>
+
+</div>
+</body>
+</html>

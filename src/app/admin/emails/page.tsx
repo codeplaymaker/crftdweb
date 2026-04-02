@@ -32,8 +32,8 @@ function buildTrialTaskHtml(name: string): string {
         <p style="margin:0 0 12px;font-size:14px;color:#888;line-height:1.7;">Not just <em>“it looks old”</em> — something specific like: <em>“No mobile version — the site breaks on any phone”</em></p>
         <p style="margin:0 0 28px;font-size:15px;color:#444;line-height:1.7;">No formatting required — just reply to this email with your list within <strong style="color:#111;">48 hours</strong>.</p>
         <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;"><tr><td style="border-top:1px solid #e8e8e8;"></td></tr></table>
-        <p style="margin:0;font-size:15px;color:#111;font-weight:700;">CrftdWeb</p>
-        <p style="margin:3px 0 0;font-size:13px;color:#999;">CrftdWeb &middot; crftdweb.com &middot; admin@crftdweb.com</p>
+        <img src="https://crftdweb.com/CW-logo.png" alt="CrftdWeb" width="48" style="display:block;border:0;margin-bottom:8px;" />
+        <p style="margin:0;font-size:13px;color:#999;">crftdweb.com &middot; admin@crftdweb.com</p>
       </td></tr>
     </table>
   </td></tr></table>
@@ -62,8 +62,8 @@ function buildBookingLinkHtml(name: string): string {
         </table>
         <p style="margin:0 0 24px;font-size:13px;color:#999;line-height:1.6;">The link shows my available slots — takes a few seconds to book. If none of the times work, just reply and we’ll sort something.</p>
         <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;"><tr><td style="border-top:1px solid #e8e8e8;"></td></tr></table>
-        <p style="margin:0;font-size:15px;color:#111;font-weight:700;">CrftdWeb</p>
-        <p style="margin:3px 0 0;font-size:13px;color:#999;">CrftdWeb &middot; crftdweb.com &middot; admin@crftdweb.com</p>
+        <img src="https://crftdweb.com/CW-logo.png" alt="CrftdWeb" width="48" style="display:block;border:0;margin-bottom:8px;" />
+        <p style="margin:0;font-size:13px;color:#999;">crftdweb.com &middot; admin@crftdweb.com</p>
       </td></tr>
     </table>
   </td></tr></table>
@@ -101,8 +101,8 @@ function buildLoginDetailsHtml(name: string, repEmail: string, tempPassword: str
           </table>
           <p style="margin:0 0 24px;font-size:13px;color:#999;line-height:1.6;">Change your password after your first login.</p>
           <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;"><tr><td style="border-top:1px solid #e8e8e8;"></td></tr></table>
-          <p style="margin:0;font-size:15px;color:#111;font-weight:700;">CrftdWeb</p>
-          <p style="margin:3px 0 0;font-size:13px;color:#999;">crftdweb.com &middot; admin@crftdweb.com</p>
+          <img src="https://crftdweb.com/CW-logo.png" alt="CrftdWeb" width="48" style="display:block;border:0;margin-bottom:8px;" />
+          <p style="margin:0;font-size:13px;color:#999;">crftdweb.com &middot; admin@crftdweb.com</p>
         </td></tr>
       </table>
     </td></tr>
@@ -128,8 +128,8 @@ function buildOverqualifiedHtml(name: string): string {
           <p style="margin:0 0 16px;font-size:15px;color:#444;line-height:1.7;">We had a high volume of applicants this round and unfortunately aren't able to move everyone forward. It's not a reflection of your ability — we just had some tough decisions to make.</p>
           <p style="margin:0 0 28px;font-size:15px;color:#444;line-height:1.7;">Thanks again and best of luck with what's next.</p>
           <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;"><tr><td style="border-top:1px solid #e8e8e8;"></td></tr></table>
-          <p style="margin:0;font-size:15px;color:#111;font-weight:700;">CrftdWeb</p>
-          <p style="margin:3px 0 0;font-size:13px;color:#999;">crftdweb.com &middot; admin@crftdweb.com</p>
+          <img src="https://crftdweb.com/CW-logo.png" alt="CrftdWeb" width="48" style="display:block;border:0;margin-bottom:8px;" />
+          <p style="margin:0;font-size:13px;color:#999;">crftdweb.com &middot; admin@crftdweb.com</p>
         </td></tr>
       </table>
     </td></tr>
@@ -179,7 +179,10 @@ const EMAIL_SEND_TEMPLATES = [
 type SendTemplateId = typeof EMAIL_SEND_TEMPLATES[number]['id'];
 
 // ─── Compose Panel ─────────────────────────────────────────────────────────
-function buildComposePreviewHtml(body: string, subject: string): string {
+function buildComposePreviewHtml(body: string, subject: string, name: string): string {
+  const greeting = name.trim()
+    ? `<p style="margin:0 0 20px;font-size:16px;color:#111;font-weight:600;">Hi ${name.trim()},</p>`
+    : '';
   const lines = body.split('\n').map((line) =>
     line.trim() === '' ? '<br/>' : `<p style="margin:0 0 12px;font-size:15px;color:#444;line-height:1.7;">${line}</p>`
   ).join('');
@@ -193,7 +196,10 @@ function buildComposePreviewHtml(body: string, subject: string): string {
         <img src="https://crftdweb.com/CW-logo-white.png" alt="CrftdWeb" width="160" style="display:block;border:0;border-radius:8px;" />
       </td></tr>
       <tr><td style="background:#ffffff;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 12px 12px;padding:40px;">
-        ${lines || '<p style="margin:0;font-size:15px;color:#aaa;font-style:italic;">Your message will appear here…</p>'}
+        ${greeting}${lines || '<p style="margin:0;font-size:15px;color:#aaa;font-style:italic;">Your message will appear here…</p>'}
+        <table width="100%" cellpadding="0" cellspacing="0" style="margin:24px 0 24px;"><tr><td style="border-top:1px solid #e8e8e8;"></td></tr></table>
+        <img src="https://crftdweb.com/CW-logo.png" alt="CrftdWeb" width="48" style="display:block;border:0;margin-bottom:8px;" />
+        <p style="margin:0;font-size:13px;color:#999;">crftdweb.com &middot; admin@crftdweb.com</p>
       </td></tr>
     </table>
   </td></tr></table>
@@ -202,6 +208,7 @@ function buildComposePreviewHtml(body: string, subject: string): string {
 
 function ComposePanel() {
   const [to, setTo] = useState('');
+  const [name, setName] = useState('');
   const [subject, setSubject] = useState('');
   const [body, setBody] = useState('');
   const [context, setContext] = useState('');
@@ -263,12 +270,12 @@ function ComposePanel() {
       const res = await fetch('/api/admin/send-custom', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ to: to.trim(), subject: subject.trim(), body: body.trim() }),
+        body: JSON.stringify({ to: to.trim(), name: name.trim(), subject: subject.trim(), body: body.trim() }),
       });
       const data = await res.json();
       if (data.success) {
         setSendStatus('sent');
-        setTimeout(() => { setSendStatus('idle'); setTo(''); setSubject(''); setBody(''); setContext(''); setAiStatus('idle'); }, 3000);
+        setTimeout(() => { setSendStatus('idle'); setTo(''); setName(''); setSubject(''); setBody(''); setContext(''); setAiStatus('idle'); }, 3000);
       } else {
         setSendStatus('error');
         setErrorMsg(data.error ?? 'Failed to send');
@@ -292,6 +299,18 @@ function ComposePanel() {
           value={to}
           onChange={(e) => setTo(e.target.value)}
           placeholder="recipient@email.com"
+          className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 transition-colors"
+        />
+      </div>
+
+      {/* Name */}
+      <div>
+        <label className="block text-[10px] text-white/30 mb-1.5 uppercase tracking-widest">Recipient Name</label>
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="e.g. Claire"
           className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 transition-colors"
         />
       </div>
@@ -382,7 +401,7 @@ function ComposePanel() {
                   <span className="text-[10px] text-white/25 font-mono ml-2">email preview — {subject || 'no subject'}</span>
                 </div>
                 <iframe
-                  srcDoc={buildComposePreviewHtml(body, subject)}
+                  srcDoc={buildComposePreviewHtml(body, subject, name)}
                   className="w-full bg-white"
                   style={{ height: '540px', border: 'none' }}
                   title="Email preview"

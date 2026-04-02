@@ -1176,6 +1176,20 @@ function CTASlide({ data }: { data: typeof slides[10] }) {
 export default function AdminDashboard() {
   const [activeView, setActiveView] = useState<'home' | 'pitch' | 'script'>('home');
   const [scriptSection, setScriptSection] = useState(0);
+  const [stats, setStats] = useState<{
+    activeReps: number;
+    openLeads: number;
+    pendingCommissions: number;
+    pendingCommissionTotal: number;
+    totalApplicants: number;
+  } | null>(null);
+
+  useEffect(() => {
+    fetch('/api/admin/stats')
+      .then(r => r.ok ? r.json() : null)
+      .then(data => { if (data) setStats(data); })
+      .catch(() => {});
+  }, []);
   const [current, setCurrent] = useState(0);
   const [direction, setDirection] = useState(1);
   const total = slides.length;
@@ -1238,6 +1252,27 @@ export default function AdminDashboard() {
             <div className="text-xs text-white/15 font-mono" suppressHydrationWarning>
               {new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
             </div>
+          </div>
+        </div>
+
+        {/* Live stats bar */}
+        <div className="border-b border-white/[0.04] px-8 py-4">
+          <div className="max-w-6xl mx-auto grid grid-cols-2 sm:grid-cols-4 gap-4">
+            {[
+              { label: 'Active Reps', value: stats?.activeReps, href: '/admin/reps', color: 'text-sky-400' },
+              { label: 'Open Leads', value: stats?.openLeads, href: '/admin/leads', color: 'text-blue-400' },
+              { label: 'Pending Commission', value: stats ? `£${stats.pendingCommissionTotal.toLocaleString()}` : null, href: '/admin/reps', color: 'text-amber-400' },
+              { label: 'Applicants', value: stats?.totalApplicants, href: '/admin/applicants', color: 'text-purple-400' },
+            ].map(s => (
+              <a key={s.label} href={s.href} className="group flex items-center gap-3 bg-white/[0.02] hover:bg-white/[0.04] border border-white/[0.05] rounded-xl px-4 py-3 transition-colors">
+                <div>
+                  <div className={`text-xl font-bold tracking-tight ${s.color} ${stats === null ? 'opacity-20' : ''}`}>
+                    {stats === null ? '—' : s.value}
+                  </div>
+                  <div className="text-[10px] text-white/25 uppercase tracking-widest mt-0.5">{s.label}</div>
+                </div>
+              </a>
+            ))}
           </div>
         </div>
 
@@ -1305,15 +1340,115 @@ export default function AdminDashboard() {
                 </div>
               </motion.button>
 
-              {/* Placeholder cards for future tools */}
-              <div className="bg-white/[0.015] border border-white/[0.04] border-dashed rounded-2xl p-8 flex flex-col items-center justify-center text-center opacity-40">
-                <div className="w-12 h-12 rounded-xl bg-white/[0.04] flex items-center justify-center mb-4">
-                  <svg className="w-6 h-6 text-white/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6v12m6-6H6" />
+            </div>
+
+            {/* Business Documents */}
+            <h2 className="text-xs font-semibold tracking-[0.3em] text-white/20 uppercase mt-12 mb-8">Business Documents</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+
+              {/* Proposal Template */}
+              <motion.a
+                href="/docs/proposal-template.html"
+                target="_blank"
+                rel="noopener noreferrer"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                className="group bg-white/[0.03] border border-white/[0.06] rounded-2xl p-7 text-left hover:border-indigo-500/30 hover:bg-indigo-500/[0.03] transition-colors block"
+              >
+                <div className="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mb-4 group-hover:bg-indigo-500/15 transition-colors">
+                  <svg className="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
                   </svg>
                 </div>
-                <p className="text-sm text-white/20">More tools coming soon</p>
-              </div>
+                <h3 className="text-base font-semibold text-white mb-1">Proposal</h3>
+                <p className="text-xs text-white/35 leading-relaxed mb-3">Post-discovery call proposal to send to prospects.</p>
+                <div className="flex items-center gap-1.5 text-xs text-indigo-400/60 font-medium">
+                  <span>Open</span>
+                  <svg className="w-3 h-3 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </motion.a>
+
+              {/* Client Contract */}
+              <motion.a
+                href="/docs/client-contract.html"
+                target="_blank"
+                rel="noopener noreferrer"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.05 }}
+                whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                className="group bg-white/[0.03] border border-white/[0.06] rounded-2xl p-7 text-left hover:border-teal-500/30 hover:bg-teal-500/[0.03] transition-colors block"
+              >
+                <div className="w-10 h-10 rounded-xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-center mb-4 group-hover:bg-teal-500/15 transition-colors">
+                  <svg className="w-5 h-5 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+                  </svg>
+                </div>
+                <h3 className="text-base font-semibold text-white mb-1">Contract</h3>
+                <p className="text-xs text-white/35 leading-relaxed mb-3">Client agreement — scope, fees, IP, and payment terms.</p>
+                <div className="flex items-center gap-1.5 text-xs text-teal-400/60 font-medium">
+                  <span>Open</span>
+                  <svg className="w-3 h-3 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </motion.a>
+
+              {/* Invoice */}
+              <motion.a
+                href="/docs/invoice-template.html"
+                target="_blank"
+                rel="noopener noreferrer"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                className="group bg-white/[0.03] border border-white/[0.06] rounded-2xl p-7 text-left hover:border-emerald-500/30 hover:bg-emerald-500/[0.03] transition-colors block"
+              >
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-4 group-hover:bg-emerald-500/15 transition-colors">
+                  <svg className="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" />
+                  </svg>
+                </div>
+                <h3 className="text-base font-semibold text-white mb-1">Invoice</h3>
+                <p className="text-xs text-white/35 leading-relaxed mb-3">Invoice template — deposit and final payment.</p>
+                <div className="flex items-center gap-1.5 text-xs text-emerald-400/60 font-medium">
+                  <span>Open</span>
+                  <svg className="w-3 h-3 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </motion.a>
+
+              {/* Content Brief */}
+              <motion.a
+                href="/docs/content-briefing.html"
+                target="_blank"
+                rel="noopener noreferrer"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.15 }}
+                whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                className="group bg-white/[0.03] border border-white/[0.06] rounded-2xl p-7 text-left hover:border-orange-500/30 hover:bg-orange-500/[0.03] transition-colors block"
+              >
+                <div className="w-10 h-10 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center mb-4 group-hover:bg-orange-500/15 transition-colors">
+                  <svg className="w-5 h-5 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                  </svg>
+                </div>
+                <h3 className="text-base font-semibold text-white mb-1">Content Brief</h3>
+                <p className="text-xs text-white/35 leading-relaxed mb-3">Send to clients after deposit — everything needed to build.</p>
+                <div className="flex items-center gap-1.5 text-xs text-orange-400/60 font-medium">
+                  <span>Open</span>
+                  <svg className="w-3 h-3 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </motion.a>
+
             </div>
 
             {/* Rep tools section */}
@@ -1447,6 +1582,90 @@ export default function AdminDashboard() {
                   </svg>
                 </div>
               </motion.a>
+            </div>
+
+            {/* Operations */}
+            <h2 className="text-xs font-semibold tracking-[0.3em] text-white/20 uppercase mt-12 mb-8">Operations</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+
+              {/* Clients */}
+              <motion.a
+                href="/admin/clients"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.05 }}
+                whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                className="group bg-white/[0.03] border border-white/[0.06] rounded-2xl p-8 text-left hover:border-pink-500/30 hover:bg-pink-500/[0.03] transition-colors block"
+              >
+                <div className="w-12 h-12 rounded-xl bg-pink-500/10 border border-pink-500/20 flex items-center justify-center mb-5 group-hover:bg-pink-500/15 transition-colors">
+                  <svg className="w-6 h-6 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 01-.825-.242m9.345-8.334a2.126 2.126 0 00-.476-.095 48.64 48.64 0 00-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0011.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-semibold text-white mb-2">Clients</h3>
+                <p className="text-sm text-white/35 leading-relaxed mb-4">
+                  Active client accounts, invoices, deliverables, feedback, and portal access.
+                </p>
+                <div className="flex items-center gap-2 text-xs text-pink-400/60 font-medium">
+                  <span>Manage clients</span>
+                  <svg className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </motion.a>
+
+              {/* Calendar */}
+              <motion.a
+                href="/admin/calendar"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                className="group bg-white/[0.03] border border-white/[0.06] rounded-2xl p-8 text-left hover:border-cyan-500/30 hover:bg-cyan-500/[0.03] transition-colors block"
+              >
+                <div className="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center mb-5 group-hover:bg-cyan-500/15 transition-colors">
+                  <svg className="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5m-9-6h.008v.008H12v-.008zM12 15h.008v.008H12V15zm0 2.25h.008v.008H12v-.008zM9.75 15h.008v.008H9.75V15zm0 2.25h.008v.008H9.75v-.008zM7.5 15h.008v.008H7.5V15zm0 2.25h.008v.008H7.5v-.008zm6.75-4.5h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V15zm0 2.25h.008v.008h-.008v-.008zm2.25-4.5h.008v.008H18v-.008zm0 2.25h.008v.008H18V15z" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-semibold text-white mb-2">Calendar</h3>
+                <p className="text-sm text-white/35 leading-relaxed mb-4">
+                  Screening slots, bookings, and scheduling — create and manage availability.
+                </p>
+                <div className="flex items-center gap-2 text-xs text-cyan-400/60 font-medium">
+                  <span>View calendar</span>
+                  <svg className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </motion.a>
+
+              {/* CV Review */}
+              <motion.a
+                href="/admin/cv-review"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.15 }}
+                whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                className="group bg-white/[0.03] border border-white/[0.06] rounded-2xl p-8 text-left hover:border-rose-500/30 hover:bg-rose-500/[0.03] transition-colors block"
+              >
+                <div className="w-12 h-12 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center mb-5 group-hover:bg-rose-500/15 transition-colors">
+                  <svg className="w-6 h-6 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m5.231 13.481L15 17.25m-4.5-15H5.625c-.621 0-1.125.504-1.125 1.125v16.5c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9zm3.75 11.625a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-semibold text-white mb-2">CV Review</h3>
+                <p className="text-sm text-white/35 leading-relaxed mb-4">
+                  AI-powered CV analysis for rep applicants — score, feedback, and screening notes.
+                </p>
+                <div className="flex items-center gap-2 text-xs text-rose-400/60 font-medium">
+                  <span>Review CVs</span>
+                  <svg className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </motion.a>
+
             </div>
           </div>
         </div>

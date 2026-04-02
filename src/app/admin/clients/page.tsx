@@ -672,7 +672,7 @@ export default function AdminClientsPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-10 space-y-8">
+    <div className="min-h-screen bg-[#0a0a0a]"><div className="max-w-4xl mx-auto px-6 py-10 space-y-8">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -799,6 +799,6 @@ export default function AdminClientsPage() {
           ))}
         </div>
       )}
-    </div>
+    </div></div>
   );
 }

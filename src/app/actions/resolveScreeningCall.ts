@@ -54,8 +54,8 @@ function buildOnboardingEmail(name: string, email: string, tempPassword: string)
             <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
               <tr><td style="border-top:1px solid #e8e8e8;"></td></tr>
             </table>
-            <p style="margin:0;font-size:15px;color:#111;font-weight:700;">CrftdWeb</p>
-            <p style="margin:3px 0 0;font-size:13px;color:#999;">crftdweb.com &middot; admin@crftdweb.com</p>
+            <img src="https://crftdweb.com/CW-logo.png" alt="CrftdWeb" width="48" style="display:block;border:0;margin-bottom:8px;" />
+            <p style="margin:0;font-size:13px;color:#999;">crftdweb.com &middot; admin@crftdweb.com</p>
           </td>
         </tr>
         <tr><td align="center" style="padding-top:24px;">
@@ -93,8 +93,8 @@ function buildRejectionEmail(name: string): string {
             <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
               <tr><td style="border-top:1px solid #e8e8e8;"></td></tr>
             </table>
-            <p style="margin:0;font-size:15px;color:#111;font-weight:700;">CrftdWeb</p>
-            <p style="margin:3px 0 0;font-size:13px;color:#999;">crftdweb.com &middot; admin@crftdweb.com</p>
+            <img src="https://crftdweb.com/CW-logo.png" alt="CrftdWeb" width="48" style="display:block;border:0;margin-bottom:8px;" />
+            <p style="margin:0;font-size:13px;color:#999;">crftdweb.com &middot; admin@crftdweb.com</p>
           </td>
         </tr>
         <tr><td align="center" style="padding-top:24px;">

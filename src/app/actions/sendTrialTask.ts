@@ -103,8 +103,8 @@ function buildHtml(name: string): string {
               <table cellpadding="0" cellspacing="0">
                 <tr>
                   <td>
-                    <p style="margin:0;font-size:15px;color:#111;font-weight:700;">CrftdWeb</p>
-                    <p style="margin:3px 0 0;font-size:13px;color:#999;">crftdweb.com · admin@crftdweb.com</p>
+                    <img src="https://crftdweb.com/CW-logo.png" alt="CrftdWeb" width="48" style="display:block;border:0;margin-bottom:8px;" />
+                    <p style="margin:0;font-size:13px;color:#999;">crftdweb.com · admin@crftdweb.com</p>
                   </td>
                 </tr>
               </table>

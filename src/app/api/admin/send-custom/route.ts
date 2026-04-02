@@ -11,7 +11,7 @@ function isAdmin(req: NextRequest) {
 export async function POST(req: NextRequest) {
   if (!isAdmin(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const { to, subject, body } = await req.json() as { to?: string; subject?: string; body?: string };
+  const { to, name, subject, body } = await req.json() as { to?: string; name?: string; subject?: string; body?: string };
 
   if (!to || !subject || !body) {
     return NextResponse.json({ error: 'to, subject, and body are required' }, { status: 400 });
@@ -20,6 +20,10 @@ export async function POST(req: NextRequest) {
   if (!to.includes('@')) {
     return NextResponse.json({ error: 'Invalid email address' }, { status: 400 });
   }
+
+  const greeting = name?.trim()
+    ? `<p style="margin:0 0 20px;font-size:16px;color:#111;font-weight:600;">Hi ${name.trim()},</p>`
+    : '';
 
   const html = `<!DOCTYPE html>
 <html lang="en">
@@ -31,7 +35,10 @@ export async function POST(req: NextRequest) {
         <img src="https://crftdweb.com/CW-logo-white.png" alt="CrftdWeb" width="160" style="display:block;border:0;border-radius:8px;" />
       </td></tr>
       <tr><td style="background:#ffffff;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 12px 12px;padding:40px;">
-        ${body.split('\n').map((line) => line.trim() === '' ? '<br/>' : `<p style="margin:0 0 12px;font-size:15px;color:#444;line-height:1.7;">${line}</p>`).join('')}
+        ${greeting}${body.split('\n').map((line) => line.trim() === '' ? '<br/>' : `<p style="margin:0 0 12px;font-size:15px;color:#444;line-height:1.7;">${line}</p>`).join('')}
+        <table width="100%" cellpadding="0" cellspacing="0" style="margin:24px 0 24px;"><tr><td style="border-top:1px solid #e8e8e8;"></td></tr></table>
+        <img src="https://crftdweb.com/CW-logo.png" alt="CrftdWeb" width="48" style="display:block;border:0;margin-bottom:8px;" />
+        <p style="margin:0;font-size:13px;color:#999;">crftdweb.com &middot; admin@crftdweb.com</p>
       </td></tr>
     </table>
   </td></tr></table>
