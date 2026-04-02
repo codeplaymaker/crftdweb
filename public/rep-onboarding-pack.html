@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CrftdWeb — Sales Rep Onboarding Pack</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+  :root {
+    --black: #0a0a0a;
+    --gray-800: #1f1f1f;
+    --gray-600: #525252;
+    --gray-400: #a3a3a3;
+    --gray-200: #e5e5e5;
+    --gray-100: #f5f5f5;
+    --white: #ffffff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    color: var(--black);
+    line-height: 1.6;
+    font-size: 11pt;
+    background: var(--white);
+  }
+
+  @page {
+    size: A4;
+    margin: 2cm 2.5cm;
+  }
+
+  @media print {
+    body { font-size: 10pt; }
+    .cover-page { page-break-after: always; }
+    .doc-section { page-break-before: always; }
+    .no-break { page-break-inside: avoid; }
+  }
+
+  /* Cover */
+  .cover-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 4rem 2rem;
+  }
+  .cover-logo {
+    width: 80px;
+    height: 80px;
+    background: var(--black);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    margin-bottom: 3rem;
+  }
+  .cover-title {
+    font-size: 42pt;
+    font-weight: 800;
+    letter-spacing: -2px;
+    line-height: 1.05;
+    margin-bottom: 1rem;
+  }
+  .cover-subtitle {
+    font-size: 14pt;
+    color: var(--gray-600);
+    font-weight: 400;
+    margin-bottom: 3rem;
+    max-width: 480px;
+  }
+  .cover-meta {
+    font-size: 9pt;
+    color: var(--gray-400);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+  }
+  .cover-divider {
+    width: 40px;
+    height: 2px;
+    background: var(--black);
+    margin: 2rem auto;
+  }
+
+  /* Sections */
+  .doc-section { padding: 3rem 0 2rem; }
+  .section-number {
+    font-size: 9pt;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--gray-400);
+    margin-bottom: 0.5rem;
+  }
+  h1 {
+    font-size: 28pt;
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    line-height: 1.1;
+    margin-bottom: 0.5rem;
+  }
+  .section-intro {
+    font-size: 11pt;
+    color: var(--gray-600);
+    margin-bottom: 2rem;
+    font-style: italic;
+  }
+  h2 {
+    font-size: 13pt;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--black);
+  }
+  h3 {
+    font-size: 11pt;
+    font-weight: 700;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+  p { margin-bottom: 0.75rem; }
+  ul, ol { margin-bottom: 0.75rem; padding-left: 1.5rem; }
+  li { margin-bottom: 0.35rem; }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0 1.5rem;
+    font-size: 10pt;
+  }
+  th {
+    text-align: left;
+    font-weight: 700;
+    font-size: 9pt;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 0.6rem 0.75rem;
+    border-bottom: 2px solid var(--black);
+    color: var(--gray-600);
+  }
+  td {
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--gray-200);
+    vertical-align: top;
+  }
+  tr:last-child td { border-bottom: none; }
+
+  /* Callout */
+  .callout {
+    background: var(--gray-100);
+    border-left: 3px solid var(--black);
+    padding: 0.75rem 1rem;
+    margin: 1rem 0;
+    font-size: 10pt;
+  }
+  .callout strong { display: block; margin-bottom: 0.25rem; }
+
+  /* Cards */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+    margin: 1rem 0;
+  }
+  .card {
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    padding: 1rem;
+  }
+  .card-letter {
+    display: inline-flex;
+    width: 28px;
+    height: 28px;
+    background: var(--black);
+    color: var(--white);
+    border-radius: 6px;
+    align-items: center;
+    justify-content: center;
+    font-size: 11pt;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+  }
+  .card h4 { font-size: 10pt; font-weight: 700; margin-bottom: 0.25rem; }
+  .card p { font-size: 9pt; color: var(--gray-600); margin: 0; }
+
+  /* Process steps */
+  .process {
+    display: flex;
+    gap: 0;
+    margin: 1.5rem 0;
+    position: relative;
+  }
+  .process::before {
+    content: '';
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    right: 20px;
+    height: 1px;
+    background: var(--gray-200);
+    z-index: 0;
+  }
+  .step {
+    flex: 1;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    padding: 0 0.5rem;
+  }
+  .step-num {
+    width: 40px;
+    height: 40px;
+    background: var(--black);
+    color: var(--white);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11pt;
+    font-weight: 700;
+    margin: 0 auto 0.5rem;
+  }
+  .step h4 { font-size: 9pt; font-weight: 700; margin-bottom: 0.15rem; }
+  .step p { font-size: 8pt; color: var(--gray-600); margin: 0; }
+
+  /* Big stat */
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    margin: 1rem 0;
+  }
+  .stat-box {
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+  }
+  .stat-box .stat-num {
+    font-size: 24pt;
+    font-weight: 800;
+    letter-spacing: -1px;
+    line-height: 1;
+    margin-bottom: 0.25rem;
+  }
+  .stat-box .stat-label {
+    font-size: 8pt;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--gray-600);
+  }
+
+  hr {
+    border: none;
+    border-top: 1px solid var(--gray-200);
+    margin: 2rem 0;
+  }
+
+  .footer {
+    text-align: center;
+    padding: 2rem 0;
+    font-size: 9pt;
+    color: var(--gray-400);
+    border-top: 1px solid var(--gray-200);
+    margin-top: 3rem;
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="cover-page">
+  <div class="cover-logo">CW</div>
+  <div class="cover-title">Sales Rep<br>Onboarding Pack</div>
+  <div class="cover-divider"></div>
+  <div class="cover-subtitle">
+    Everything you need to know before your first week as a CrftdWeb sales representative.
+  </div>
+  <div class="cover-meta">CrftdWeb &middot; 2026 &middot; Confidential</div>
+</div>
+
+
+<!-- SECTION 1: WHAT WE DO -->
+<div class="doc-section">
+  <div class="section-number">Section 01</div>
+  <h1>What We Do</h1>
+  <p class="section-intro">Know the product before you sell it.</p>
+
+  <p>CrftdWeb is a boutique web design agency. We build premium, hand-coded websites and web applications for businesses that understand the value of exceptional design.</p>
+
+  <p>We are not a template agency. We are not competing on price. Our work is positioned at the premium end of the market — purposeful, minimal, and built to convert.</p>
+
+  <div class="callout">
+    <strong>The one-line pitch:</strong>
+    "We build high-converting, Apple-inspired websites for businesses that are serious about their online presence."
+  </div>
+
+  <h2>What We Sell</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Package</th>
+        <th>What It Is</th>
+        <th>Price Range</th>
+        <th>Timeline</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Landing Page</strong></td>
+        <td>Single page, one goal, one CTA</td>
+        <td>£1,200 – £2,400</td>
+        <td>1–2 weeks</td>
+      </tr>
+      <tr>
+        <td><strong>Business Website</strong></td>
+        <td>5–7 pages, full SEO, conversion-focused</td>
+        <td>£3,200 – £6,400</td>
+        <td>3–5 weeks</td>
+      </tr>
+      <tr>
+        <td><strong>Web Application</strong></td>
+        <td>Custom app with auth, dashboard, database</td>
+        <td>£6,400+</td>
+        <td>6–10 weeks</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Who We Sell To</h2>
+  <p>Small to medium businesses across any industry that:</p>
+  <ul>
+    <li>Have no website, or have an outdated one that isn't converting</li>
+    <li>Are serious about growth and understand investment</li>
+    <li>Make decisions quickly — typically business owners, not procurement departments</li>
+    <li>Value quality over cheapness</li>
+  </ul>
+
+  <div class="callout">
+    <strong>Who to avoid:</strong>
+    Anyone who leads with "how cheap can you do it" or wants a website for under £500. They are not our client.
+  </div>
+</div>
+
+
+<!-- SECTION 2: YOUR ROLE -->
+<div class="doc-section">
+  <div class="section-number">Section 02</div>
+  <h1>Your Role</h1>
+  <p class="section-intro">Understand exactly what you are and are not responsible for.</p>
+
+  <p>You are a Business Development Representative. Your job is one thing: <strong>find businesses that need a website and book them on a discovery call with us.</strong></p>
+
+  <p>You do not close deals. You do not handle pricing negotiations. You do not make design decisions. You find the prospect, qualify them, and pass them over. We take it from there.</p>
+
+  <h2>The Process</h2>
+
+  <div class="process">
+    <div class="step">
+      <div class="step-num">1</div>
+      <h4>Find</h4>
+      <p>Identify a prospect via cold outreach</p>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <h4>Qualify</h4>
+      <p>Do they need a site? Do they have budget intent?</p>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <h4>Book</h4>
+      <p>Get them on a discovery call with CrftdWeb</p>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <h4>Close</h4>
+      <p>We handle the call and close the deal</p>
+    </div>
+    <div class="step">
+      <div class="step-num">5</div>
+      <h4>Get Paid</h4>
+      <p>Commission hits your portal within 14 days</p>
+    </div>
+  </div>
+
+  <h2>What This Role Is Not</h2>
+  <ul>
+    <li>Not a salaried position</li>
+    <li>Not a guaranteed income without effort</li>
+    <li>Not a role where we chase you — you own your output</li>
+    <li>Not a role where showing up is enough — results matter</li>
+  </ul>
+</div>
+
+
+<!-- SECTION 3: COMMISSION -->
+<div class="doc-section">
+  <div class="section-number">Section 03</div>
+  <h1>Commission Structure</h1>
+  <p class="section-intro">How you earn and when you get paid.</p>
+
+  <p>This role is <strong>commission-only.</strong> There is no base salary. Your income is entirely determined by your output.</p>
+
+  <h2>Your Rate</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Deal Value</th>
+        <th>Your Commission</th>
+        <th>Your Earnings</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>£1,200 (landing page)</td>
+        <td>15%</td>
+        <td><strong>£180</strong></td>
+      </tr>
+      <tr>
+        <td>£2,400 (landing page)</td>
+        <td>15%</td>
+        <td><strong>£360</strong></td>
+      </tr>
+      <tr>
+        <td>£3,200 (business site)</td>
+        <td>15%</td>
+        <td><strong>£480</strong></td>
+      </tr>
+      <tr>
+        <td>£6,400 (business site)</td>
+        <td>15%</td>
+        <td><strong>£960</strong></td>
+      </tr>
+      <tr>
+        <td>£8,000+ (web app)</td>
+        <td>15%</td>
+        <td><strong>£1,200+</strong></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>The Math</h2>
+  <div class="stat-row">
+    <div class="stat-box">
+      <div class="stat-num">2</div>
+      <div class="stat-label">deals/month (minimum)</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num">£960</div>
+      <div class="stat-label">avg monthly (low end)</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num">£2,880</div>
+      <div class="stat-label">avg monthly (3 deals)</div>
+    </div>
+  </div>
+
+  <h2>Payment Terms</h2>
+  <ul>
+    <li>Commission is calculated on the confirmed project value</li>
+    <li>Paid within <strong>14 days</strong> of client deposit clearing</li>
+    <li>Payment via bank transfer</li>
+    <li>All commissions logged in real time in your rep portal</li>
+    <li>Status shown as: <em>Pending</em> or <em>Paid</em></li>
+  </ul>
+
+  <div class="callout">
+    <strong>Important:</strong>
+    Commission is not earned on prospects who don't convert. A booked call that doesn't close = no commission. A closed deal = commission paid within 14 days.
+  </div>
+</div>
+
+
+<!-- SECTION 4: ACTIVITY EXPECTATIONS -->
+<div class="doc-section">
+  <div class="section-number">Section 04</div>
+  <h1>Activity Expectations</h1>
+  <p class="section-intro">Volume is the foundation. Refine as you go.</p>
+
+  <p>Your first 30 days are a numbers game. The reps who build a pipeline fast are the ones who commit to consistent daily volume from day one.</p>
+
+  <h2>Minimum Standards</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Metric</th>
+        <th>Daily Minimum</th>
+        <th>Weekly Target</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Outreach attempts (calls, DMs, emails)</td>
+        <td>20</td>
+        <td>100</td>
+      </tr>
+      <tr>
+        <td>Real conversations (someone actually responds)</td>
+        <td>5</td>
+        <td>25</td>
+      </tr>
+      <tr>
+        <td>Discovery calls booked</td>
+        <td>—</td>
+        <td>1–2</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>What High Performers Do</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Metric</th>
+        <th>Daily</th>
+        <th>Weekly</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Outreach attempts</td>
+        <td>50+</td>
+        <td>250+</td>
+      </tr>
+      <tr>
+        <td>Real conversations</td>
+        <td>15–20</td>
+        <td>75+</td>
+      </tr>
+      <tr>
+        <td>Discovery calls booked</td>
+        <td>—</td>
+        <td>3–5</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>The Funnel</h2>
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-letter">→</div>
+      <h4>100 outreach attempts</h4>
+      <p>~10% reply or engage = 10 real conversations</p>
+    </div>
+    <div class="card">
+      <div class="card-letter">→</div>
+      <h4>10 conversations</h4>
+      <p>~15% book a call = 1–2 discovery calls</p>
+    </div>
+    <div class="card">
+      <div class="card-letter">→</div>
+      <h4>1–2 discovery calls</h4>
+      <p>~40% close = 1 deal per week at scale</p>
+    </div>
+    <div class="card">
+      <div class="card-letter">£</div>
+      <h4>1 deal/week</h4>
+      <p>£480 – £960 commission. Every week.</p>
+    </div>
+  </div>
+
+  <div class="callout">
+    <strong>Review trigger:</strong>
+    If you have not booked at least 1 discovery call in your first 2 weeks, we will review your pitch and activity together. No improvement after that = end of arrangement.
+  </div>
+</div>
+
+
+<!-- SECTION 5: WHAT WE PROVIDE -->
+<div class="doc-section">
+  <div class="section-number">Section 05</div>
+  <h1>What We Provide</h1>
+  <p class="section-intro">The tools are built. Use them.</p>
+
+  <p>We have built a full rep portal to give you everything you need to succeed. There is no excuse for being unprepared.</p>
+
+  <h2>Your Portal — crftdweb.com/rep</h2>
+  <table>
+    <thead>
+      <tr><th>Tool</th><th>What It Does</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Dashboard</strong></td>
+        <td>Your key stats, pipeline overview, and training status at a glance</td>
+      </tr>
+      <tr>
+        <td><strong>My Leads</strong></td>
+        <td>Log every prospect, update their status, track follow-ups through the pipeline</td>
+      </tr>
+      <tr>
+        <td><strong>Training</strong></td>
+        <td>AI-powered roleplay scenarios with scoring across 6 sales categories</td>
+      </tr>
+      <tr>
+        <td><strong>Live Call Tool</strong></td>
+        <td>Real-time AI coaching during prospect conversations — run it quietly while you're on a call</td>
+      </tr>
+      <tr>
+        <td><strong>Resources</strong></td>
+        <td>Scripts, objection handling guides, and outreach templates</td>
+      </tr>
+      <tr>
+        <td><strong>Commissions</strong></td>
+        <td>Live view of every commission — pending and paid</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Training Unlock</h2>
+  <p>Your rep status is <strong>locked</strong> until you complete training sessions and hit an average score of <strong>60 or above</strong> across the 6 scoring categories:</p>
+  <div class="card-grid">
+    <div class="card"><h4>Discovery</h4><p>Opening the conversation and uncovering the real need</p></div>
+    <div class="card"><h4>Listening</h4><p>Active listening and responding to what was actually said</p></div>
+    <div class="card"><h4>Objection Handling</h4><p>Turning hesitation into conversation</p></div>
+    <div class="card"><h4>Closing</h4><p>Asking for the next step with confidence</p></div>
+    <div class="card"><h4>Rapport</h4><p>Building trust quickly with a stranger</p></div>
+    <div class="card"><h4>Control</h4><p>Keeping the conversation on track without being pushy</p></div>
+  </div>
+</div>
+
+
+<!-- SECTION 6: CONDUCT -->
+<div class="doc-section">
+  <div class="section-number">Section 06</div>
+  <h1>Conduct</h1>
+  <p class="section-intro">You represent this brand. Act accordingly.</p>
+
+  <h2>Required</h2>
+  <ul>
+    <li>Represent CrftdWeb professionally in all outreach and conversations</li>
+    <li>Be honest about what you know — escalate pricing questions to us</li>
+    <li>Log all leads and activity in the portal in real time</li>
+    <li>Respond to messages from CrftdWeb within 24 hours</li>
+    <li>Personalise your outreach — no copy-paste spam</li>
+  </ul>
+
+  <h2>Not Permitted</h2>
+  <ul>
+    <li>Making pricing commitments without confirmation from us</li>
+    <li>Misrepresenting our services, timeline, or capabilities</li>
+    <li>Mass-spamming prospect lists</li>
+    <li>Engaging prospects you cannot qualify</li>
+    <li>Sharing internal materials, pricing documents, or portal access</li>
+  </ul>
+
+  <div class="callout">
+    <strong>Zero tolerance:</strong>
+    Reps who misrepresent the company or conduct themselves unprofessionally are removed immediately with no commission on outstanding deals.
+  </div>
+</div>
+
+
+<!-- SECTION 7: TRIAL PERIOD -->
+<div class="doc-section">
+  <div class="section-number">Section 07</div>
+  <h1>Trial Period</h1>
+  <p class="section-intro">The first 30 days are an evaluation — from both sides.</p>
+
+  <p>Your first <strong>30 days</strong> are a trial. During this period we are assessing:</p>
+
+  <table>
+    <thead>
+      <tr><th>What We're Looking At</th><th>Minimum Bar</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Outreach consistency</td>
+        <td>20+ contacts per day, tracked in portal</td>
+      </tr>
+      <tr>
+        <td>Lead quality</td>
+        <td>At least 1 qualified discovery call booked</td>
+      </tr>
+      <tr>
+        <td>Training completion</td>
+        <td>Unlocked status (avg score 60+)</td>
+      </tr>
+      <tr>
+        <td>Communication</td>
+        <td>Responsive, professional, no chasing</td>
+      </tr>
+      <tr>
+        <td>Portal usage</td>
+        <td>Leads logged, pipeline updated</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>We also encourage you to evaluate us during this period. If the product, support, or process does not work for you, raise it early.</p>
+
+  <div class="callout">
+    <strong>Mutual intent:</strong>
+    We want long-term reps who grow with the business. If your first three months go well, commission rates and incentives increase. Show us what you can do.
+  </div>
+</div>
+
+
+<!-- SECTION 8: GETTING PAID -->
+<div class="doc-section">
+  <div class="section-number">Section 08</div>
+  <h1>Getting Paid</h1>
+  <p class="section-intro">Simple, transparent, trackable.</p>
+
+  <ul>
+    <li>Commission is calculated on the client's confirmed project value at point of signed agreement</li>
+    <li>Payment is made within <strong>14 days</strong> of client deposit received</li>
+    <li>Payment via bank transfer — details collected at confirmation</li>
+    <li>All commissions visible in your rep portal with status: <em>Pending</em> or <em>Paid</em></li>
+    <li>Disputes or questions resolved within 48 hours of raising</li>
+  </ul>
+
+  <h2>Commission is Not Paid On</h2>
+  <ul>
+    <li>Prospects who attend a call but do not sign</li>
+    <li>Leads who request a quote but go cold</li>
+    <li>Deals where commission arrangement was not agreed before the call</li>
+    <li>Leads submitted without prior qualification</li>
+  </ul>
+</div>
+
+
+<!-- SECTION 9: NEXT STEPS -->
+<div class="doc-section">
+  <div class="section-number">Section 09</div>
+  <h1>Next Steps</h1>
+  <p class="section-intro">Do these before your first outreach call.</p>
+
+  <ol>
+    <li style="margin-bottom:0.6rem;"><strong>Log in to your rep portal</strong> — crftdweb.com/rep/signin</li>
+    <li style="margin-bottom:0.6rem;"><strong>Complete at least 3 training sessions</strong> — hit unlock status before you go live</li>
+    <li style="margin-bottom:0.6rem;"><strong>Read the resources section</strong> — scripts and objection handles are there</li>
+    <li style="margin-bottom:0.6rem;"><strong>Set up your outreach method</strong> — decide whether you're leading with phone, LinkedIn, or email</li>
+    <li style="margin-bottom:0.6rem;"><strong>Log your first lead</strong> — even if it's day one, add someone to your pipeline</li>
+    <li style="margin-bottom:0.6rem;"><strong>Reply to confirm you've read this document</strong></li>
+  </ol>
+
+  <div class="callout">
+    <strong>Questions?</strong>
+    Reply to your login email or contact us directly. We respond same day.
+  </div>
+</div>
+
+<div class="footer">
+  CrftdWeb &middot; crftdweb.com &middot; admin@crftdweb.com &middot; 2026 &middot; Confidential — not for distribution
+</div>
+
+</body>
+</html>
