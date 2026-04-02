@@ -443,7 +443,8 @@ export async function addLead(lead: Omit<RepLead, 'id' | 'createdAt' | 'updatedA
 export async function getRepLeads(repId: string): Promise<RepLead[]> {
   const q = query(
     collection(db, 'repLeads'),
-    where('repId', '==', repId)
+    where('repId', '==', repId),
+    orderBy('createdAt', 'desc')
   );
   const snap = await getDocs(q);
   return snap.docs.map(d => d.data() as RepLead);
@@ -482,7 +483,8 @@ export async function addCommission(commission: Omit<RepCommission, 'id' | 'crea
 export async function getRepCommissions(repId: string): Promise<RepCommission[]> {
   const q = query(
     collection(db, 'repCommissions'),
-    where('repId', '==', repId)
+    where('repId', '==', repId),
+    orderBy('createdAt', 'desc')
   );
   const snap = await getDocs(q);
   return snap.docs.map(d => d.data() as RepCommission);

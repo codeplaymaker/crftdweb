@@ -85,7 +85,7 @@ export default function RepDashboard() {
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold tracking-tight text-white">
-          Welcome back, {profile?.name?.split(' ')[0]}.
+          Welcome back, {profile?.name?.split(' ')[0] ?? user?.displayName ?? 'Rep'}.
         </h1>
         <p className="text-sm text-white/40 mt-1">
           {new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' })}

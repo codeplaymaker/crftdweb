@@ -153,6 +153,19 @@ export class RepTrainingService {
     await updateDoc(ref, updates);
   }
 
+  static async getDrillSession(sessionId: string): Promise<DrillSession | null> {
+    const snap = await getDoc(doc(db, 'repDrillSessions', sessionId));
+    if (!snap.exists()) return null;
+    const data = snap.data();
+    return {
+      ...data,
+      id: snap.id,
+      startedAt: data.startedAt?.toDate?.() || new Date(),
+      endedAt: data.endedAt?.toDate?.() || undefined,
+      createdAt: data.createdAt?.toDate?.() || new Date(),
+    } as DrillSession;
+  }
+
   static async getUserDrillSessions(userId: string, max = 20): Promise<DrillSession[]> {
     const q = query(
       collection(db, 'repDrillSessions'),

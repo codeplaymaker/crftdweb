@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { adminDb } from '@/lib/firebase/admin';
+import { FieldValue } from 'firebase-admin/firestore';
 
 function isAdmin(req: NextRequest) {
   const token = req.cookies.get('admin_token')?.value;
@@ -20,7 +21,7 @@ export async function PATCH(req: NextRequest) {
   const { id, status, dealValue } = await req.json();
   if (!id) return NextResponse.json({ error: 'Lead ID required' }, { status: 400 });
 
-  const update: Record<string, unknown> = { updatedAt: new Date().toISOString() };
+  const update: Record<string, unknown> = { updatedAt: FieldValue.serverTimestamp() };
   if (status !== undefined) update.status = status;
   if (dealValue !== undefined) update.dealValue = dealValue;
 

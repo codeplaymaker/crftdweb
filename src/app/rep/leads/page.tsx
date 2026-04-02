@@ -6,7 +6,8 @@ import {
   getRepLeads, addLead, updateLead, deleteLead,
   getRepProfile, RepLead, LeadStatus, LeadSource, RepProfile
 } from '@/lib/firebase/firestore';
-import { Plus, ChevronDown, ChevronUp, Trash2, Edit2, Check, X } from 'lucide-react';
+import { getAuth } from 'firebase/auth';
+import { Plus, ChevronDown, ChevronUp, Trash2, Edit2, Check, X, PoundSterling } from 'lucide-react';
 
 const PIPELINE: { key: LeadStatus; label: string; color: string }[] = [
   { key: 'contacted', label: 'Contacted', color: 'border-t-white/20' },
@@ -50,6 +51,10 @@ export default function RepLeadsPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [view, setView] = useState<'pipeline' | 'list'>('list');
+  const [wonLead, setWonLead] = useState<RepLead | null>(null);
+  const [wonDealValue, setWonDealValue] = useState('');
+  const [wonSaving, setWonSaving] = useState(false);
+  const [wonError, setWonError] = useState('');
 
   useEffect(() => {
     if (!user) return;
@@ -111,8 +116,38 @@ export default function RepLeadsPage() {
   }
 
   async function handleStatusChange(lead: RepLead, status: LeadStatus) {
+    if (status === 'won' && lead.status !== 'won') {
+      setWonLead(lead);
+      setWonDealValue(lead.dealValue ? String(lead.dealValue) : '');
+      setWonError('');
+      return;
+    }
     await updateLead(lead.id, { status });
     setLeads(prev => prev.map(l => l.id === lead.id ? { ...l, status } : l));
+  }
+
+  async function handleWonConfirm() {
+    if (!wonLead || !user) return;
+    const dv = Number(wonDealValue);
+    if (!dv || dv <= 0) { setWonError('Enter a deal value greater than £0'); return; }
+    setWonSaving(true);
+    setWonError('');
+    try {
+      const token = await getAuth().currentUser?.getIdToken();
+      const res = await fetch('/api/rep/leads/won', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ leadId: wonLead.id, dealValue: dv }),
+      });
+      if (!res.ok) { const e = await res.json(); setWonError(e.error || 'Something went wrong'); return; }
+      setLeads(prev => prev.map(l => l.id === wonLead.id ? { ...l, status: 'won', dealValue: dv } : l));
+      setWonLead(null);
+      setWonDealValue('');
+    } catch {
+      setWonError('Network error — please try again');
+    } finally {
+      setWonSaving(false);
+    }
   }
 
   async function handleDelete(id: string) {
@@ -150,6 +185,51 @@ export default function RepLeadsPage() {
 
   return (
     <div className="max-w-4xl space-y-6">
+      {/* Won — deal value modal */}
+      {wonLead && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+          <div className="w-full max-w-sm bg-[#111] border border-white/10 rounded-2xl p-6 space-y-4">
+            <div className="flex items-center gap-3">
+              <PoundSterling className="w-5 h-5 text-emerald-400" />
+              <p className="text-base font-semibold text-white">Mark as Won — {wonLead.businessName}</p>
+            </div>
+            <p className="text-sm text-white/40">Enter the confirmed deal value so your commission can be calculated (15%).</p>
+            <div>
+              <label className="block text-[10px] text-white/30 mb-1.5 uppercase tracking-widest">Deal Value (£)</label>
+              <input
+                type="number"
+                value={wonDealValue}
+                onChange={e => setWonDealValue(e.target.value)}
+                placeholder="e.g. 3200"
+                autoFocus
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/30"
+              />
+              {wonDealValue && Number(wonDealValue) > 0 && (
+                <p className="text-xs text-emerald-400 mt-1.5">
+                  Commission: £{Math.round(Number(wonDealValue) * 0.15).toLocaleString()}
+                </p>
+              )}
+            </div>
+            {wonError && <p className="text-xs text-red-400">{wonError}</p>}
+            <div className="flex gap-3">
+              <button
+                onClick={handleWonConfirm}
+                disabled={wonSaving}
+                className="flex-1 py-2.5 bg-emerald-500 hover:bg-emerald-400 disabled:opacity-40 text-black font-semibold rounded-xl text-sm transition-colors"
+              >
+                {wonSaving ? 'Saving...' : 'Confirm Win'}
+              </button>
+              <button
+                onClick={() => { setWonLead(null); setWonDealValue(''); setWonError(''); }}
+                className="px-4 py-2.5 bg-white/5 text-white/60 rounded-xl text-sm hover:bg-white/10"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>

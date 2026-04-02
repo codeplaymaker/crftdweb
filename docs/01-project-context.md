@@ -10,26 +10,43 @@ CrftdWeb is a web design studio. We hand-code conversion-first websites for star
 
 ## Tech Stack
 
-- **Framework:** Next.js 15 (App Router), React 19, TypeScript 5
-- **Styling:** Tailwind CSS 3.4+, CSS variables for theming
+- **Framework:** Next.js 14+ (App Router), React, TypeScript
+- **Styling:** Tailwind CSS, CSS variables for theming
 - **Animation:** Framer Motion
 - **Icons:** Lucide React
-- **Fonts:** Inter (body), custom local fonts for branding
+- **Fonts:** Inter (body), Classicismo (brand logo/display)
+- **Auth:** Firebase Authentication (email/password)
+- **Database:** Firestore
+- **AI:** OpenAI API (GPT-4, Whisper speech-to-text, TTS)
+- **Email:** Resend API
 - **Deployment:** Vercel
+- **Testing:** Vitest
 - **Performance target:** 90+ PageSpeed, sub-2s load time
 
 ## Folder Structure
 
 ```
 src/
-  app/           → Pages (App Router, file-based routing)
+  app/
+    page.tsx, about/, work/, services/, blog/, contact/  → Marketing site
+    rep/          → Rep portal (dashboard, leads, training, call, resources)
+    admin/        → Admin portal (reps, leads, commissions, applicants)
+    engine/       → Truth Engine product (separate)
+    client/       → Client portal (planned)
+    api/          → API routes (rep/*, admin/*)
+    actions/      → Server actions (email sending, etc.)
   components/    → Reusable UI components
-  lib/           → Utilities, hooks, constants, services
+  lib/
+    firebase/     → config, auth, admin SDK, firestore CRUD, AuthContext
+    types/        → TypeScript type definitions
+    repTrainingService.ts, repKnowledgeBase.ts
   fonts/         → Local font files
   styles/        → Global styles
-  types/         → TypeScript type definitions
-public/          → Static assets (images, favicons, manifests)
+  __tests__/     → Vitest test suites
+public/          → Static assets
 docs/            → Project documentation
+scripts/         → Seed/admin scripts
+.github/agents/  → Custom Copilot agents
 ```
 
 ## The TRAIN Design System

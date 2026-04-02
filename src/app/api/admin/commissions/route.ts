@@ -22,6 +22,12 @@ export async function POST(req: NextRequest) {
   const { repId, repName, leadId, businessName, dealValue, commissionAmount } = body;
   if (!repId || !leadId) return NextResponse.json({ error: 'repId and leadId required' }, { status: 400 });
 
+  // Guard: don't create a duplicate commission if one already exists for this lead
+  const existing = await adminDb.collection('repCommissions').where('leadId', '==', leadId).limit(1).get();
+  if (!existing.empty) {
+    return NextResponse.json({ success: true, id: existing.docs[0].id, alreadyExisted: true });
+  }
+
   const ref = adminDb.collection('repCommissions').doc();
   await ref.set({
     id: ref.id,

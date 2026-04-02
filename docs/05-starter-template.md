@@ -66,14 +66,17 @@ docs/
 
 ### Pre-Configured
 
-- **Next.js 15** with App Router
-- **TypeScript 5** strict mode
+- **Next.js 14+** with App Router
+- **TypeScript** strict mode
 - **Tailwind CSS** with CSS variables for theming
 - **Framer Motion** for animations
 - **Lucide React** for icons
-- **Inter font** via next/font
+- **Inter font** via next/font, Classicismo for brand display
+- **Resend** for contact form email
+- **Firebase Auth** (optional — enable if project needs auth)
+- **Firestore** (optional — enable if project needs database)
 - **ESLint** configured
-- **Vercel** deploy-ready (vercel.json if needed)
+- **Vercel** deploy-ready
 
 ### CSS Variables (globals.css)
 

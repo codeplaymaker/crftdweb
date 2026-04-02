@@ -282,6 +282,10 @@ function RoleplayContent() {
 
   const endCall = useCallback(async () => {
     if (!sessionId || !scenario) return;
+    if (messages.filter((m) => m.role === 'rep').length === 0) {
+      setStartError('Say something first — there\u2019s nothing to rate yet.');
+      return;
+    }
     if (timerRef.current) clearInterval(timerRef.current);
     setIsCallActive(false);
     setIsRating(true);

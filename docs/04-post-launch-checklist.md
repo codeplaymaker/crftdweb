@@ -83,8 +83,13 @@
 ## 9. Security & Hosting
 
 - [ ] HTTPS enabled (SSL certificate active)
-- [ ] Environment variables secured (not in client-side code)
-- [ ] No API keys exposed in source
+- [ ] Environment variables secured (not in client-side code, not in git)
+- [ ] Firebase API keys restricted to allowed domains in Firebase Console
+- [ ] No API keys (OpenAI, Resend, Firebase Admin) exposed in client-side bundles
+- [ ] Firebase Admin SDK credentials in server-only env vars
+- [ ] Admin routes protected (middleware checks `admin_token` cookie)
+- [ ] Rep routes protected (Firebase Auth redirect in place)
+- [ ] Firestore security rules deployed and tested
 - [ ] Domain configured correctly (www redirect, etc.)
 - [ ] Favicon and app icons present
 
@@ -97,7 +102,47 @@
 
 ---
 
-## crftdweb.com — Remaining TODO (to reach 10/10)
+## Rep Portal — Production Readiness Checklist
+
+Run through this before releasing the rep portal to reps.
+
+### Auth & Access
+- [ ] Rep can sign in with email/password at `/rep/signin`
+- [ ] Unauthenticated users redirected to signin from all `/rep/*` routes
+- [ ] Admin can log in at `/admin/login` with token cookie
+- [ ] Unauthenticated users redirected from all `/admin/*` routes
+- [ ] Sign out works and clears session
+
+### Rep Portal Features
+- [ ] Dashboard loads with real Firestore data (leads count, commissions, weekly additions)
+- [ ] Rep can add a new lead
+- [ ] Rep can edit an existing lead
+- [ ] Rep can delete a lead
+- [ ] Rep can move leads through all pipeline stages (contacted → interested → call_booked → proposal_sent → won/lost)
+- [ ] Commissions page shows pending and paid commissions accurately
+- [ ] Training drill completes and returns a score
+- [ ] Training roleplay completes and scores all 6 categories (discovery, listening, objection_handling, closing, rapport, control)
+- [ ] Rep rank updates correctly based on scores (rookie → canvasser → booker → hunter → ace)
+- [ ] Unlock threshold (avg 60+) enforces rep status correctly
+- [ ] Live call assistant generates prep notes
+- [ ] Live call transcription works
+- [ ] Live call AI suggestions generate correctly
+- [ ] Resources page shows commission calculator and daily targets
+
+### Admin Features
+- [ ] Admin can view all reps
+- [ ] Admin can create a new rep (Firebase Auth + Firestore profile)
+- [ ] Admin can send login email to rep (Resend)
+- [ ] Admin can view all leads from all reps
+- [ ] Admin can view all commissions
+- [ ] Admin can mark a commission as paid
+- [ ] Applicant pipeline works (view applicants, update status, send booking links)
+
+### Tests & Quality
+- [ ] `npx vitest run` — all tests pass
+- [ ] `npx tsc --noEmit` — no TypeScript errors
+- [ ] No console errors on any rep or admin page
+- [ ] No broken loading states or unhandled error states
 
 These are the last gaps holding the site back. Code is done. These require real client input.
 

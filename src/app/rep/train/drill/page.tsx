@@ -130,12 +130,8 @@ function DrillContent() {
   const nextRound = useCallback(async () => {
     if (currentRound + 1 >= ROUNDS_PER_SESSION) {
       if (sessionId && user?.uid) {
-        const session = await RepTrainingService.getTrainingSession(sessionId).catch(() => null);
-        if (!session) {
-          // Try fetching the drill session for stats update
-          const drillSnap = await RepTrainingService.getUserDrillSessions(user.uid, 1);
-          if (drillSnap[0]) await RepTrainingService.updateDrillStats(user.uid, drillSnap[0]);
-        }
+        const drillSession = await RepTrainingService.getDrillSession(sessionId).catch(() => null);
+        if (drillSession) await RepTrainingService.updateDrillStats(user.uid, drillSession);
       }
       setShowDone(true);
     } else {

@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
     }
 
     const systemPrompt = `You are an expert cold call coach for CrftdWeb, a UK web design studio.
-The rep's ONLY goal is to book a 15-minute discovery call with Obi (the founder/developer).
+The rep's ONLY goal is to book a 15-minute discovery call with one of our developers.
 They are NOT closing a deal. They are NOT quoting prices. They are ONLY booking a call.
 
 Generate pre-call prep notes in this exact JSON format:

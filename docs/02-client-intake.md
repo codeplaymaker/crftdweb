@@ -51,14 +51,19 @@
 
 - **Pages needed:** (list them)
 - **Special functionality:** (forms, auth, dashboard, e-commerce, integrations)
+- **Auth required?** (Firebase Auth — signup/signin/reset)
+- **Database required?** (Firestore or Supabase)
+- **Email integration?** (Resend API for contact forms, transactional emails)
+- **AI features?** (OpenAI integration — adds to scope and cost)
 - **Content:** (client provides copy, or we write it, or we guide and they write)
 - **Ongoing needs:** (maintenance, updates, content changes after launch)
 
 ## Budget & Pricing
 
 - **Client's budget range:**
-- **Our quote:**
-- **Payment structure:** (50/50, milestone-based, monthly retainer)
+- **Our quote:** (£1,200–£2,400 landing page / £3,200–£6,400 business site / £6,400+ web app)
+- **Payment structure:** 50% upfront, 50% on launch
+- **Rep who referred (if any):** (name — 15% commission applies)
 
 ---
 
