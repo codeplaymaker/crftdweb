@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
     const systemPrompt = `You are a cold call analyst for CrftdWeb, a UK web design studio.
 Analyse this cold call and return a structured JSON summary.
 
-The rep's goal was to book a 15-minute discovery call with the founder.
+The rep's goal was to book a 15-minute discovery call with one of our developers.
 
 Respond in this exact JSON format:
 {

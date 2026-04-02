@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CrftdWeb — Invoice</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Georgia', serif;
+      background: #fff;
+      color: #111;
+      padding: 60px 40px;
+      max-width: 800px;
+      margin: 0 auto;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    /* ── Header ── */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 2px solid #111;
+      padding-bottom: 24px;
+      margin-bottom: 36px;
+    }
+
+    .brand { font-family: 'Arial', sans-serif; font-size: 22px; font-weight: 900; letter-spacing: -0.5px; }
+    .brand-sub { font-size: 12px; color: #888; margin-top: 4px; font-family: 'Arial', sans-serif; }
+
+    .invoice-meta { text-align: right; }
+    .invoice-label {
+      font-family: 'Arial', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #888;
+      margin-bottom: 6px;
+    }
+    .invoice-number { font-size: 22px; font-weight: bold; font-family: 'Arial', sans-serif; }
+    .invoice-date { font-size: 12px; color: #888; margin-top: 4px; }
+
+    /* ── Parties ── */
+    .parties {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      margin-bottom: 36px;
+    }
+
+    .party-block h3 {
+      font-family: 'Arial', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #888;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 6px;
+      margin-bottom: 10px;
+    }
+
+    .party-block p { font-size: 13px; margin-bottom: 3px; }
+
+    .fill {
+      display: inline-block;
+      min-width: 140px;
+      border-bottom: 1px solid #ccc;
+      color: #888;
+      font-style: italic;
+    }
+
+    /* ── Status badge ── */
+    .status-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin-bottom: 32px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-family: 'Arial', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .badge-due    { background: #fff3cd; color: #856404; border: 1px solid #ffc107; }
+    .badge-paid   { background: #d1e7dd; color: #0a3622; border: 1px solid #86c99a; }
+
+    .status-text { font-size: 13px; color: #555; font-family: 'Arial', sans-serif; }
+
+    /* ── Line items ── */
+    .items-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 24px;
+      font-size: 13px;
+    }
+
+    .items-table th {
+      font-family: 'Arial', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #888;
+      padding: 8px 10px;
+      border-bottom: 2px solid #111;
+      text-align: left;
+    }
+
+    .items-table th.right,
+    .items-table td.right { text-align: right; }
+
+    .items-table td {
+      padding: 12px 10px;
+      border-bottom: 1px solid #eee;
+      vertical-align: top;
+    }
+
+    .items-table td strong { display: block; margin-bottom: 2px; }
+    .items-table td span { font-size: 12px; color: #888; }
+
+    .subtotal-row td {
+      border-bottom: none;
+      padding-top: 16px;
+      font-family: 'Arial', sans-serif;
+      font-size: 13px;
+      color: #555;
+    }
+
+    .total-row td {
+      border-top: 2px solid #111;
+      border-bottom: none;
+      padding-top: 12px;
+      font-family: 'Arial', sans-serif;
+      font-weight: 700;
+      font-size: 18px;
+    }
+
+    .due-row td {
+      border-top: none;
+      border-bottom: none;
+      padding-top: 4px;
+      font-family: 'Arial', sans-serif;
+      font-size: 13px;
+      color: #888;
+    }
+
+    /* ── Payment details ── */
+    .payment-box {
+      background: #111;
+      color: #fff;
+      border-radius: 8px;
+      padding: 24px;
+      margin: 28px 0;
+    }
+
+    .payment-box h3 {
+      font-family: 'Arial', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #aaa;
+      margin-bottom: 16px;
+    }
+
+    .payment-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .payment-field label {
+      display: block;
+      font-family: 'Arial', sans-serif;
+      font-size: 11px;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 4px;
+    }
+
+    .payment-field span {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .payment-ref {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid #333;
+      font-size: 12px;
+      color: #aaa;
+    }
+
+    .payment-ref strong { color: #fff; }
+
+    /* ── Notes ── */
+    .notes {
+      font-size: 12px;
+      color: #888;
+      background: #fafafa;
+      border-radius: 6px;
+      padding: 14px 16px;
+      margin-bottom: 28px;
+    }
+
+    .notes p { margin-bottom: 6px; }
+    .notes p:last-child { margin-bottom: 0; }
+
+    /* ── Footer ── */
+    .footer {
+      text-align: center;
+      padding-top: 28px;
+      border-top: 1px solid #eee;
+      font-size: 11px;
+      color: #bbb;
+      font-family: 'Arial', sans-serif;
+    }
+
+    @media print {
+      body { padding: 40px 30px; }
+      .payment-box { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="brand">CrftdWeb</div>
+    <div class="brand-sub">crftdweb.com &middot; admin@crftdweb.com</div>
+  </div>
+  <div class="invoice-meta">
+    <div class="invoice-label">Invoice</div>
+    <div class="invoice-number">#<span class="fill">[001]</span></div>
+    <div class="invoice-date">
+      Issued: <span class="fill">[Date]</span><br>
+      Due: <span class="fill">[Due Date — typically 7 days]</span>
+    </div>
+  </div>
+</div>
+
+<div class="parties">
+  <div class="party-block">
+    <h3>From</h3>
+    <p><strong>CrftdWeb</strong></p>
+    <p>admin@crftdweb.com</p>
+    <p>crftdweb.com</p>
+  </div>
+  <div class="party-block">
+    <h3>Billed To</h3>
+    <p><strong><span class="fill">[Client Name]</span></strong></p>
+    <p><span class="fill">[Business Name]</span></p>
+    <p><span class="fill">[Client Email]</span></p>
+  </div>
+</div>
+
+<!-- Change badge class: badge-due or badge-paid -->
+<div class="status-row">
+  <span class="badge badge-due">Payment Due</span>
+  <span class="status-text">Please pay by the due date above. Bank transfer only.</span>
+</div>
+
+<table class="items-table">
+  <thead>
+    <tr>
+      <th>Description</th>
+      <th class="right">Amount</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <strong><span class="fill">[e.g. Business Website — Deposit (50%)]</span></strong>
+        <span><span class="fill">[Brief description — e.g. Design and development of 5-page business website per agreed proposal dated DD/MM/YYYY]</span></span>
+      </td>
+      <td class="right">£<span class="fill">[Amount]</span></td>
+    </tr>
+    <!-- Add more rows if needed
+    <tr>
+      <td>
+        <strong>[Additional item]</strong>
+        <span>[Description]</span>
+      </td>
+      <td class="right">£[Amount]</td>
+    </tr>
+    -->
+  </tbody>
+  <tfoot>
+    <tr class="subtotal-row">
+      <td class="right" colspan="1">Subtotal</td>
+      <td class="right">£<span class="fill">[Amount]</span></td>
+    </tr>
+    <tr class="total-row">
+      <td class="right"><strong>Total Due</strong></td>
+      <td class="right"><strong>£<span class="fill">[Amount]</span></strong></td>
+    </tr>
+    <tr class="due-row">
+      <td class="right" colspan="2">Due by <span class="fill">[Due Date]</span></td>
+    </tr>
+  </tfoot>
+</table>
+
+<div class="payment-box">
+  <h3>Payment Details — Bank Transfer</h3>
+  <div class="payment-grid">
+    <div class="payment-field">
+      <label>Account Name</label>
+      <span>[Your Full Name]</span>
+    </div>
+    <div class="payment-field">
+      <label>Sort Code</label>
+      <span>[XX-XX-XX]</span>
+    </div>
+    <div class="payment-field">
+      <label>Account Number</label>
+      <span>[XXXXXXXX]</span>
+    </div>
+    <div class="payment-field">
+      <label>Bank</label>
+      <span>[Bank Name]</span>
+    </div>
+  </div>
+  <div class="payment-ref">
+    Please use reference: <strong>INV-<span class="fill">[Invoice Number]</span>-<span class="fill">[Client Surname]</span></strong>
+  </div>
+</div>
+
+<div class="notes">
+  <p><strong>Project:</strong> <span class="fill">[Project name]</span> &mdash; per proposal agreed <span class="fill">[Date]</span></p>
+  <p><strong>Payment terms:</strong> 50% deposit before work begins, 50% before launch. Work will commence upon receipt of cleared funds.</p>
+  <p>All amounts in GBP. Thank you for your business.</p>
+</div>
+
+<div class="footer">
+  CrftdWeb &middot; crftdweb.com &middot; admin@crftdweb.com &middot; Invoice #<span class="fill">[Number]</span>
+</div>
+
+</body>
+</html>

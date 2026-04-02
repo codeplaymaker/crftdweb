@@ -4,7 +4,8 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { useAuth } from '@/lib/firebase/AuthContext';
 import { RepTrainingService } from '@/lib/services/repTrainingService';
 import { CallTranscriptEntry, CallSummary } from '@/lib/types/repTraining';
-import { Phone, PhoneOff, Loader2, Send, Plus, Mic, MicOff, Clipboard } from 'lucide-react';
+import Link from 'next/link';
+import { Phone, PhoneOff, Loader2, Send, Plus, Mic, MicOff, Clipboard, History } from 'lucide-react';
 
 type CallStage = 'prep' | 'active' | 'summary';
 
@@ -75,10 +76,36 @@ export default function LiveCallPage() {
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const recognitionRef = useRef<ISpeechRecognition | null>(null);
   const transcriptEndRef = useRef<HTMLDivElement>(null);
+  const lastAutoSuggestLength = useRef(0);
 
   useEffect(() => {
     transcriptEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [transcript]);
+
+  // Auto-suggest whenever a prospect message is added
+  useEffect(() => {
+    if (callStage !== 'active') return;
+    if (transcript.length <= lastAutoSuggestLength.current) return;
+    const last = transcript[transcript.length - 1];
+    if (last?.speaker !== 'prospect') return;
+    lastAutoSuggestLength.current = transcript.length;
+    setIsGettingSuggestion(true);
+    fetch('/api/rep/call/suggestions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        transcript: transcript.map((t) => ({ speaker: t.speaker, text: t.text })),
+        leadName,
+        businessType,
+        lastProspectMessage: last.text,
+        userQuestion: '',
+      }),
+    })
+      .then((r) => r.json())
+      .then((data) => setSuggestion(data))
+      .catch(() => null)
+      .finally(() => setIsGettingSuggestion(false));
+  }, [transcript, callStage, leadName, businessType]);
 
   useEffect(() => {
     if (callStage === 'active') {
@@ -233,9 +260,15 @@ export default function LiveCallPage() {
   if (callStage === 'prep') {
     return (
       <div className="max-w-2xl mx-auto space-y-5">
-        <div>
-          <h2 className="text-lg font-bold text-white">Live Call Assistant</h2>
-          <p className="text-sm text-white/40">Pre-call intelligence + real-time AI suggestions</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-lg font-bold text-white">Live Call Assistant</h2>
+            <p className="text-sm text-white/40">Pre-call intelligence + real-time AI suggestions</p>
+          </div>
+          <Link href="/rep/call/history" className="flex items-center gap-1.5 text-xs text-white/30 hover:text-white/60 transition-colors">
+            <History className="w-3.5 h-3.5" />
+            Past Calls
+          </Link>
         </div>
 
         {/* Context form */}
