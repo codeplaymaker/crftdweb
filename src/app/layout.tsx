@@ -35,13 +35,13 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     siteName: "CrftdWeb",
-    title: "CrftdWeb — Premium Web Development Agency",
-    description: "High-performance websites, brands, and digital products for ambitious businesses.",
+    title: "CrftdWeb",
+    description: "We build websites that sell. Custom-coded, delivered in 14 days.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "CrftdWeb — Premium Web Development Agency",
-    description: "High-performance websites, brands, and digital products for ambitious businesses.",
+    title: "CrftdWeb",
+    description: "We build websites that sell. Custom-coded, delivered in 14 days.",
   },
   robots: {
     index: true,
