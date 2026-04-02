@@ -15,6 +15,7 @@ export async function GET() {
     const data = d.data();
     return {
       ...data,
+      userId: d.id,
       updatedAt: data.updatedAt?.toDate?.()?.toISOString() || null,
       unlockedAt: data.unlockedAt?.toDate?.()?.toISOString() || null,
     };
