@@ -141,6 +141,7 @@ export interface TrainingStats {
   drillAccuracy: number;
   unlockedAt?: Date; // set when they hit unlock threshold
   updatedAt: Date;
+  authDisplayName?: string | null; // resolved from Firebase Auth when no reps doc exists
 }
 
 // ── Live Call Assistant ────────────────────────────────────

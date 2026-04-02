@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { adminDb } from '@/lib/firebase/admin';
+import { adminDb, adminAuth } from '@/lib/firebase/admin';
 import { cookies } from 'next/headers';
 
 export async function GET() {
@@ -20,5 +20,25 @@ export async function GET() {
     };
   });
 
-  return NextResponse.json(stats);
+  // Resolve display names from Firebase Auth for any userId not covered by the reps collection
+  const userIds = stats.map((s) => s.userId).filter(Boolean);
+  const authNames: Record<string, string> = {};
+  await Promise.all(
+    userIds.map(async (uid: string) => {
+      try {
+        const user = await adminAuth.getUser(uid);
+        if (user.displayName) authNames[uid] = user.displayName;
+        else if (user.email) authNames[uid] = user.email;
+      } catch {
+        // user may have been deleted — ignore
+      }
+    })
+  );
+
+  const statsWithNames = stats.map((s) => ({
+    ...s,
+    authDisplayName: authNames[s.userId] ?? null,
+  }));
+
+  return NextResponse.json(statsWithNames);
 }

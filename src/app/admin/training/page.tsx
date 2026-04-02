@@ -112,7 +112,7 @@ export default function AdminTrainingPage() {
             </div>
             {rows.map((row, i) => {
               const { stats, profile } = row;
-              const name = profile?.name || stats.userId.slice(0, 8) + '…';
+              const name = profile?.name || stats.authDisplayName || stats.userId.slice(0, 8) + '…';
               return (
                 <div
                   key={stats.userId}
@@ -188,7 +188,7 @@ export default function AdminTrainingPage() {
             </summary>
             <div className="px-5 pb-5 pt-2 space-y-4">
               {rows.map(({ stats, profile }) => {
-                const name = profile?.name || stats.userId.slice(0, 8);
+                const name = profile?.name || stats.authDisplayName || stats.userId.slice(0, 8);
                 return (
                   <div key={stats.userId} className="border border-white/8 rounded-xl p-4 space-y-3">
                     <div className="flex items-center justify-between">
