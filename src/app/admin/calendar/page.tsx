@@ -8,21 +8,21 @@ import { deleteScreeningSlot } from '@/app/actions/deleteScreeningSlot';
 import { createScreeningSlot, type ScreeningSlot } from '@/app/actions/createScreeningSlot';
 import { resolveScreeningCall } from '@/app/actions/resolveScreeningCall';
 
-// ─── To-Do items (static pipeline tasks) ──────────────────
+// ─── To-Do items (persisted to Firestore) ─────────────────
 interface Todo {
   id: string;
   text: string;
   done: boolean;
-  dueLabel?: string;
+  dueLabel?: string | null;
   priority: 'high' | 'normal' | 'low';
 }
 
-const INITIAL_TODOS: Todo[] = [
-  { id: 't1', text: 'Review new applicants from Indeed / Gumtree', done: false, dueLabel: 'Today', priority: 'high' },
-  { id: 't2', text: 'Chase trial task replies (sent 48h+ ago)', done: false, dueLabel: 'Today', priority: 'high' },
-  { id: 't3', text: 'Send booking links to screened applicants', done: false, priority: 'normal' },
-  { id: 't4', text: 'Check rep portal activity this week', done: false, priority: 'normal' },
-  { id: 't5', text: 'Post recruitment ad refresh', done: false, dueLabel: 'This week', priority: 'low' },
+const DEFAULT_TODOS: Omit<Todo, 'id'>[] = [
+  { text: 'Review new applicants from Indeed / Gumtree', done: false, dueLabel: 'Today', priority: 'high' },
+  { text: 'Chase trial task replies (sent 48h+ ago)', done: false, dueLabel: 'Today', priority: 'high' },
+  { text: 'Send booking links to screened applicants', done: false, priority: 'normal' },
+  { text: 'Check rep portal activity this week', done: false, priority: 'normal' },
+  { text: 'Post recruitment ad refresh', done: false, dueLabel: 'This week', priority: 'low' },
 ];
 
 // ─── Helpers ──────────────────────────────────────────────
@@ -78,7 +78,8 @@ export default function CalendarPage() {
   const [slots, setSlots] = useState<ScreeningSlot[]>([]);
   const [loadingSlots, setLoadingSlots] = useState(true);
   const [deleting, setDeleting] = useState<string | null>(null);
-  const [todos, setTodos] = useState<Todo[]>(INITIAL_TODOS);
+  const [todos, setTodos] = useState<Todo[]>([]);
+  const [loadingTodos, setLoadingTodos] = useState(true);
   const [newTodoText, setNewTodoText] = useState('');
   const [dateInput, setDateInput] = useState('');
   const [timeInput, setTimeInput] = useState('');
@@ -91,6 +92,33 @@ export default function CalendarPage() {
 
   useEffect(() => {
     getScreeningSlots().then((s) => { setSlots(s); setLoadingSlots(false); });
+  }, []);
+
+  // Load todos from Firestore, seed defaults on first load
+  useEffect(() => {
+    fetch('/api/admin/todos')
+      .then((r) => r.json())
+      .then(async (data: Todo[]) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setTodos(data);
+          setLoadingTodos(false);
+        } else {
+          // First time — seed default todos
+          const seeded: Todo[] = [];
+          for (const t of DEFAULT_TODOS) {
+            const res = await fetch('/api/admin/todos', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(t),
+            });
+            const d = await res.json();
+            if (d.success && d.todo) seeded.push(d.todo);
+          }
+          setTodos(seeded);
+          setLoadingTodos(false);
+        }
+      })
+      .catch(() => setLoadingTodos(false));
   }, []);
 
   // Sync date input when calendar selection changes
@@ -168,18 +196,37 @@ export default function CalendarPage() {
     }
   };
 
-  const toggleTodo = (id: string) => {
-    setTodos((prev) => prev.map((t) => t.id === id ? { ...t, done: !t.done } : t));
+  const toggleTodo = async (id: string) => {
+    const todo = todos.find((t) => t.id === id);
+    if (!todo) return;
+    const newDone = !todo.done;
+    setTodos((prev) => prev.map((t) => t.id === id ? { ...t, done: newDone } : t));
+    await fetch('/api/admin/todos', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, done: newDone }),
+    });
   };
 
-  const addTodo = () => {
+  const addTodo = async () => {
     const text = newTodoText.trim();
     if (!text) return;
-    setTodos((prev) => [...prev, { id: `t${Date.now()}`, text, done: false, priority: 'normal' }]);
     setNewTodoText('');
+    const res = await fetch('/api/admin/todos', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text, priority: 'normal' }),
+    });
+    const data = await res.json();
+    if (data.success && data.todo) {
+      setTodos((prev) => [...prev, data.todo]);
+    }
   };
 
-  const removeTodo = (id: string) => setTodos((prev) => prev.filter((t) => t.id !== id));
+  const removeTodo = async (id: string) => {
+    setTodos((prev) => prev.filter((t) => t.id !== id));
+    await fetch(`/api/admin/todos?id=${encodeURIComponent(id)}`, { method: 'DELETE' });
+  };
 
   const handleResolve = async (slot: ScreeningSlot, outcome: 'approved' | 'rejected') => {
     if (!slot.bookedByEmail) return;
