@@ -1533,7 +1533,7 @@ export default function AdminDashboard() {
 
               {/* Trial Submissions */}
               <motion.a
-                href="/admin/submissions"
+                href="/admin/trials"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
