@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ChevronDown, ChevronUp, Copy, Check, Search, MapPin, Instagram, MessageCircle, Globe, Phone, Mail, Zap } from 'lucide-react';
+import { ChevronDown, ChevronUp, Copy, Check, Search, MapPin, Instagram, MessageCircle, Globe, Phone, Mail, Zap, Linkedin } from 'lucide-react';
 
 const CALL_SCRIPT = [
   {
@@ -213,6 +213,22 @@ const SOURCING_CHANNELS = [
     ],
     proTip: 'This is one of the least competitive channels. No other agency reps are sourcing leads from job boards. You\'ll have zero competition.',
   },
+  {
+    id: 'linkedin',
+    name: 'LinkedIn',
+    icon: 'linkedin',
+    difficulty: 'Medium',
+    speed: 'Slow but highest value',
+    description: 'Direct access to business owners and decision-makers. Best for higher-value projects.',
+    steps: [
+      'Search for job titles: "Owner", "Founder", "Director" + industry + location. E.g. "Restaurant Owner Manchester" or "Salon Founder Bristol".',
+      'Filter by "People" and "2nd" or "3rd+" connections. Check their company page — look at their website link.',
+      'If their website is outdated, a template, or missing — send a connection request with a short note (under 300 chars).',
+      'Once connected, send a personalised message. Reference something from their profile or recent post. Never pitch in the connection request.',
+      'Engage with their posts first (like, comment something genuine) before messaging. Warm connections reply 5x more than cold ones.',
+    ],
+    proTip: 'LinkedIn is the only platform where business owners expect to be contacted about business. Use it for higher-ticket prospects — the average deal from LinkedIn outreach is larger than from Instagram or cold calls.',
+  },
 ];
 
 const DM_TEMPLATES = [
@@ -249,6 +265,20 @@ Just wanted to drop you a quick message so you've got my number. I'll get that c
 
 Any questions before then, just ping me here.`,
     note: 'Only use WhatsApp after phone/DM contact. Never cold message on WhatsApp.',
+  },
+  {
+    label: 'LinkedIn — Connection Request Note',
+    text: `Hey [Name] — saw you run [business name] in [city]. Impressive stuff. I work with a web designer who builds sites for [their industry]. Would love to connect.`,
+    note: 'Keep connection notes under 300 characters. Do NOT pitch here — just get accepted. Pitch in the follow-up message.',
+  },
+  {
+    label: 'LinkedIn — Follow-Up After Connecting',
+    text: `Thanks for connecting, [Name]. Saw [something specific — their latest post, a milestone, their Google reviews].
+
+Quick one — I noticed your website and thought it could be doing more for you. I work with a developer who builds custom sites for [industry] businesses. He does a free 15-minute audit to show you exactly what's costing you enquiries.
+
+Worth a quick chat? No pressure either way.`,
+    note: 'Send 1-2 days after connecting. Reference something real from their profile. If they don\'t reply after 5 days, like one of their posts and try once more.',
   },
 ];
 
@@ -394,6 +424,7 @@ export default function RepResourcesPage() {
               search: <Search className="w-4 h-4" />,
               globe: <Globe className="w-4 h-4" />,
               zap: <Zap className="w-4 h-4" />,
+              linkedin: <Linkedin className="w-4 h-4" />,
             };
             return (
               <ChannelCard
