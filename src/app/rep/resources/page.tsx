@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ChevronDown, ChevronUp, Copy, Check } from 'lucide-react';
+import { ChevronDown, ChevronUp, Copy, Check, Search, MapPin, Instagram, MessageCircle, Globe, Phone, Mail, Zap } from 'lucide-react';
 
 const CALL_SCRIPT = [
   {
@@ -114,6 +114,152 @@ const FAQS = [
   },
 ];
 
+// ─── Lead Sourcing Playbook ────────────────────────────────────────────────
+
+const SOURCING_CHANNELS = [
+  {
+    id: 'google-maps',
+    name: 'Google Maps',
+    icon: 'map',
+    difficulty: 'Easy',
+    speed: 'Fast',
+    description: 'The fastest way to build a daily prospect list. Unlimited free leads.',
+    steps: [
+      'Open Google Maps. Search "[industry] near [city]" — e.g. "restaurants near Bristol", "barbers near Leeds", "dentists near Manchester".',
+      'Click each result. Check their website link. If it\'s slow, ugly, not mobile-friendly, or missing entirely — they\'re a prospect.',
+      'Run their URL through Google PageSpeed Insights (pagespeed.web.dev). Screenshot the score — you\'ll use this in your outreach.',
+      'Note down: business name, phone number, website URL, owner name (check "About" page or Google listing).',
+      'Call them directly using the cold call script, or find their Instagram/Facebook for a DM approach.',
+    ],
+    proTip: 'Sort by "Newest" to find recently opened businesses — they\'re the most likely to need a website and the least likely to have been contacted by other agencies.',
+  },
+  {
+    id: 'instagram',
+    name: 'Instagram',
+    icon: 'instagram',
+    difficulty: 'Easy',
+    speed: 'Medium',
+    description: 'Best for beauty, fitness, food, and local service businesses. Warm DM outreach.',
+    steps: [
+      'Search location tags: tap the search icon, go to "Places", type a city. Browse businesses posting from that area.',
+      'Search industry hashtags: #bristolrestaurant, #londonbarber, #manchesterfitness, #leedssalon. Find businesses with 500-10K followers.',
+      'Check their bio link. If it\'s a Linktree, a dead link, or no link at all — they need a website.',
+      'Look at their content. If they\'re posting regularly but have no website, they\'re investing in marketing but missing the conversion piece.',
+      'Send a DM using the templates below. Voice notes convert 3x better than text.',
+    ],
+    proTip: 'Follow them and like 2-3 posts before DMing. Cold DMs from accounts with zero interaction get ignored. Spend 30 seconds warming them up.',
+  },
+  {
+    id: 'facebook',
+    name: 'Facebook Groups',
+    icon: 'message',
+    difficulty: 'Medium',
+    speed: 'Slow but high quality',
+    description: 'Owners hang out in local business groups. Build relationships first, pitch second.',
+    steps: [
+      'Join groups: "[City] Small Business Owners", "[City] Business Network", "[Industry] UK". Request to join 5-10 groups.',
+      'Don\'t pitch immediately. Spend 2-3 days commenting on posts, answering questions, being helpful.',
+      'When someone posts about their website, marketing, or getting more customers — that\'s your opening. Comment helpfully, then DM.',
+      'Post value: "3 things I noticed checking local business websites this week" — share genuine insights without selling. This positions you as knowledgeable.',
+      'DM people who engage with your comments. They already see you as helpful.',
+    ],
+    proTip: 'Never post "We build websites, DM me!" in a group. You\'ll get kicked. The play is: give value publicly, sell privately.',
+  },
+  {
+    id: 'google-search',
+    name: 'Google Search',
+    icon: 'search',
+    difficulty: 'Easy',
+    speed: 'Fast',
+    description: 'Page 2+ of Google = weak SEO = weak website = your prospect.',
+    steps: [
+      'Search "[Industry] [city]" — e.g. "plumber Bristol", "accountant Leeds", "gym Manchester".',
+      'Skip page 1 (they probably have good sites already). Go to pages 2-5.',
+      'Every business there has a website that isn\'t ranking — proof it\'s not working for them.',
+      'Also search "[Industry] near me" and check who has no website at all in the Google Business listings.',
+      'Cross-reference with their Google reviews. High reviews + bad website = business is good but online presence is letting them down. Strong pitch angle.',
+    ],
+    proTip: 'Use this search to verify any lead: "[Business name] website" — you\'ll instantly see what you\'re working with before you call.',
+  },
+  {
+    id: 'yell',
+    name: 'Yell.com / Yelp / Thomson Local',
+    icon: 'globe',
+    difficulty: 'Easy',
+    speed: 'Fast',
+    description: 'Business directories with phone numbers. Bulk source leads by area and industry.',
+    steps: [
+      'Go to yell.com. Enter an industry and location. Filter by category.',
+      'Each listing shows: name, phone, website, reviews. If their website is a Yell page or a basic template — they\'re a prospect.',
+      'Export 20 businesses per session. Call through the list using the cold call script.',
+      'Check who has "No Website" listed — these are the easiest sells. They already know they need one.',
+      'Cross-check with Google to find their social media if you prefer DM outreach over calling.',
+    ],
+    proTip: 'Businesses paying for a Yell listing already spend money on marketing. They understand the value of being found online — you just need to show them a better way.',
+  },
+  {
+    id: 'indeed',
+    name: 'Indeed / Gumtree',
+    icon: 'zap',
+    difficulty: 'Medium',
+    speed: 'Medium',
+    description: 'Businesses hiring = businesses growing = businesses that need a better online presence.',
+    steps: [
+      'Search Indeed for businesses hiring in your area — receptionists, sales staff, managers.',
+      'A business investing in staff is a business that\'s growing. Growth requires a better front door (website).',
+      'Note the company name. Google them. Check their website.',
+      'Call and say: "I saw you\'re hiring — congrats on the growth. I actually wanted to speak to you about something else. I noticed your website and..."',
+      'This opener works because it shows you did research. It\'s not a cold call from nowhere.',
+    ],
+    proTip: 'This is one of the least competitive channels. No other agency reps are sourcing leads from job boards. You\'ll have zero competition.',
+  },
+];
+
+const DM_TEMPLATES = [
+  {
+    label: 'Instagram DM — First Contact',
+    text: `Hey [Name]! Love what you're doing with [business name] — your [specific thing you noticed, e.g. "food photos", "client transformations"] are quality.
+
+Quick question — do you have a proper website for the business? I work with a web designer who builds sites specifically for [their industry] to bring in more bookings/enquiries. Might be worth a quick chat if you're open to it?`,
+    note: 'Personalise the compliment. Generic = ignored. Mention something specific from their feed.',
+  },
+  {
+    label: 'Instagram DM — Voice Note',
+    text: `[Record a 20-30 second voice note — DO NOT read a script. Hit these points naturally:]
+
+1. Hey [Name], saw your page — [genuine compliment].
+2. I work with a web designer who builds sites for businesses like yours.
+3. Noticed you don't have a website / your current site could do more for you.
+4. Would you be open to a quick 15-min call with him? Completely free, no pressure.
+5. Let me know!`,
+    note: 'Voice notes feel personal. 3x higher reply rate than text DMs. Keep it under 30 seconds.',
+  },
+  {
+    label: 'Facebook DM — After Group Interaction',
+    text: `Hey [Name], saw your post in [group name] about [topic]. Thought I'd reach out directly.
+
+I work with a developer who specialises in building websites for [their industry]. Not trying to sell you anything — but if you've been thinking about sorting out your online presence, he does free 15-minute audits. Might be useful?`,
+    note: 'Only send this after you\'ve interacted with them publicly first. Cold Facebook DMs go to "Message Requests" and get ignored.',
+  },
+  {
+    label: 'WhatsApp — After Getting Number',
+    text: `Hi [Name], it's [Your Name] from CrftdWeb. Thanks for chatting earlier.
+
+Just wanted to drop you a quick message so you've got my number. I'll get that call booked with the founder for [day/time].
+
+Any questions before then, just ping me here.`,
+    note: 'Only use WhatsApp after phone/DM contact. Never cold message on WhatsApp.',
+  },
+];
+
+const DAILY_ROUTINE = [
+  { time: '30 mins', task: 'Source 20 prospects', detail: 'Google Maps + Instagram. Build your list for the day. Name, phone/DM, website URL, notes.' },
+  { time: '60 mins', task: 'Outreach block 1 — Calls', detail: '10-15 cold calls from your list. Use the script. Log every call in the portal immediately.' },
+  { time: '45 mins', task: 'Outreach block 2 — DMs', detail: '10-15 Instagram/Facebook DMs. Personalise each one. No copy-paste blasts.' },
+  { time: '15 mins', task: 'Follow-ups', detail: 'Chase yesterday\'s warm leads. Second touch converts more than first. Send the follow-up email template.' },
+  { time: '10 mins', task: 'Log and review', detail: 'Update all leads in the portal. Check your numbers: 20 outreaches hit? Calls booked? Notes added?' },
+];
+
 function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
   return (
@@ -141,6 +287,45 @@ function Accordion({ q, a }: { q: string; a: string }) {
       </button>
       {open && (
         <p className="pb-4 text-sm text-white/40 leading-relaxed">{a}</p>
+      )}
+    </div>
+  );
+}
+
+function ChannelCard({ channel, icon }: { channel: typeof SOURCING_CHANNELS[number]; icon: React.ReactNode }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="bg-white/[0.02] border border-white/8 rounded-xl overflow-hidden">
+      <button onClick={() => setOpen(!open)} className="w-full flex items-center gap-4 px-5 py-4 text-left hover:bg-white/[0.02] transition-colors">
+        <div className="w-9 h-9 rounded-lg bg-sky-500/10 border border-sky-500/20 flex items-center justify-center flex-shrink-0 text-sky-400">
+          {icon}
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-semibold text-white/70">{channel.name}</span>
+            <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-white/[0.06] text-white/30 font-medium">{channel.difficulty}</span>
+            <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-white/[0.06] text-white/30 font-medium">{channel.speed}</span>
+          </div>
+          <p className="text-xs text-white/30 mt-0.5">{channel.description}</p>
+        </div>
+        {open ? <ChevronUp className="w-4 h-4 text-white/20 flex-shrink-0" /> : <ChevronDown className="w-4 h-4 text-white/20 flex-shrink-0" />}
+      </button>
+      {open && (
+        <div className="px-5 pb-5 pt-1 border-t border-white/6">
+          <ol className="space-y-2.5 mt-3">
+            {channel.steps.map((step, i) => (
+              <li key={i} className="flex items-start gap-3">
+                <span className="text-[10px] font-bold text-sky-400/60 bg-sky-500/10 rounded-full w-5 h-5 flex items-center justify-center flex-shrink-0 mt-0.5">{i + 1}</span>
+                <p className="text-xs text-white/50 leading-relaxed">{step}</p>
+              </li>
+            ))}
+          </ol>
+          <div className="mt-4 bg-amber-500/5 border border-amber-500/15 rounded-lg px-4 py-3">
+            <p className="text-[11px] text-amber-400/60 leading-relaxed">
+              <span className="font-bold text-amber-400/80">Pro tip:</span> {channel.proTip}
+            </p>
+          </div>
+        </div>
       )}
     </div>
   );
@@ -179,17 +364,88 @@ export default function RepResourcesPage() {
       </div>
 
       {/* Daily targets */}
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-4 gap-3">
         {[
-          { num: '10', label: 'Calls per day' },
-          { num: '2–3', label: 'Booked calls / week' },
-          { num: '1', label: 'Closed client / week' },
+          { num: '20', label: 'Outreaches / day' },
+          { num: '10', label: 'Calls / day' },
+          { num: '2–3', label: 'Booked calls / wk' },
+          { num: '1', label: 'Closed deal / wk' },
         ].map(t => (
           <div key={t.label} className="bg-white/[0.03] border border-white/8 rounded-xl p-4 text-center">
             <p className="text-2xl font-bold text-white tracking-tight">{t.num}</p>
             <p className="text-[10px] text-white/30 mt-1">{t.label}</p>
           </div>
         ))}
+      </div>
+
+      {/* ═══ LEAD SOURCING PLAYBOOK ═══ */}
+      <div>
+        <div className="mb-5">
+          <p className="text-xs font-bold text-white/30 uppercase tracking-widest mb-1">Where to Find Leads</p>
+          <p className="text-xs text-white/20 italic">Your job starts here. Before you can call or DM anyone, you need a list. These are your sourcing channels — aim for 20 fresh prospects every morning.</p>
+        </div>
+
+        <div className="space-y-3">
+          {SOURCING_CHANNELS.map((channel) => {
+            const icons: Record<string, React.ReactNode> = {
+              map: <MapPin className="w-4 h-4" />,
+              instagram: <Instagram className="w-4 h-4" />,
+              message: <MessageCircle className="w-4 h-4" />,
+              search: <Search className="w-4 h-4" />,
+              globe: <Globe className="w-4 h-4" />,
+              zap: <Zap className="w-4 h-4" />,
+            };
+            return (
+              <ChannelCard
+                key={channel.id}
+                channel={channel}
+                icon={icons[channel.icon] ?? <Globe className="w-4 h-4" />}
+              />
+            );
+          })}
+        </div>
+      </div>
+
+      {/* ═══ DAILY ROUTINE ═══ */}
+      <div>
+        <p className="text-xs font-bold text-white/30 uppercase tracking-widest mb-1">Your Daily Routine</p>
+        <p className="text-xs text-white/20 mb-5 italic">2.5 hours of focused work. Do this consistently and you&apos;ll close 1 deal/week minimum.</p>
+        <div className="space-y-2">
+          {DAILY_ROUTINE.map((item, i) => (
+            <div key={i} className="flex items-start gap-4 bg-white/[0.02] border border-white/8 rounded-xl p-4">
+              <div className="bg-white/[0.06] border border-white/10 rounded-lg px-2.5 py-1.5 text-center flex-shrink-0">
+                <p className="text-xs font-bold text-white/60">{item.time}</p>
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-white/70">{item.task}</p>
+                <p className="text-xs text-white/30 mt-0.5 leading-relaxed">{item.detail}</p>
+              </div>
+            </div>
+          ))}
+          <div className="bg-emerald-500/5 border border-emerald-500/15 rounded-xl p-4 mt-2">
+            <p className="text-xs text-emerald-400/70 leading-relaxed">
+              <span className="font-bold text-emerald-400">The maths:</span> 20 outreaches/day × 5 days = 100/week. At 2% conversion = 2 booked calls. 2 calls → 1 proposal → 1 close every 1-2 weeks. One £3,200 deal = £480 commission. Consistency beats intensity.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* ═══ DM TEMPLATES ═══ */}
+      <div>
+        <p className="text-xs font-bold text-white/30 uppercase tracking-widest mb-1">DM &amp; Social Outreach Templates</p>
+        <p className="text-xs text-white/20 mb-5 italic">For Instagram, Facebook, and WhatsApp. Personalise every message — copy-paste blasts get you blocked.</p>
+        <div className="space-y-3">
+          {DM_TEMPLATES.map((tpl, i) => (
+            <div key={i} className="bg-white/[0.02] border border-white/8 rounded-xl p-4">
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-xs font-semibold text-white/60">{tpl.label}</p>
+                <CopyButton text={tpl.text} />
+              </div>
+              <pre className="text-xs text-white/40 leading-relaxed whitespace-pre-wrap font-sans">{tpl.text}</pre>
+              {tpl.note && <p className="text-[10px] text-amber-400/50 mt-3 italic">{tpl.note}</p>}
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Call script */}
