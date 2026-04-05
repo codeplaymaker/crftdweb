@@ -84,6 +84,7 @@ interface TrialSubmission {
   email: string;
   entries: TrialEntry[];
   submittedAt: string | null;
+  reviewed: boolean;
 }
 
 // ─── Page ──────────────────────────────────────────────────────────────────
@@ -98,6 +99,7 @@ export default function AdminApplicantsPage() {
   const [submissions, setSubmissions] = useState<TrialSubmission[]>([]);
   const [showAddForm, setShowAddForm] = useState(false);
   const [addingApplicant, setAddingApplicant] = useState(false);
+  const [togglingReview, setTogglingReview] = useState<string | null>(null);
 
   useEffect(() => {
     Promise.all([
@@ -201,6 +203,26 @@ export default function AdminApplicantsPage() {
     }
   }
 
+  async function handleToggleReviewed(submissionId: string, reviewed: boolean) {
+    setTogglingReview(submissionId);
+    try {
+      const res = await fetch('/api/admin/trial-submissions', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: submissionId, reviewed }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSubmissions((prev) =>
+          prev.map((s) => s.id === submissionId ? { ...s, reviewed } : s)
+        );
+      }
+    } catch {
+      // silent
+    }
+    setTogglingReview(null);
+  }
+
   return (
     <div className="min-h-screen bg-zinc-950 text-white">
       <div className="max-w-6xl mx-auto px-6 py-10">
@@ -272,6 +294,8 @@ export default function AdminApplicantsPage() {
                 error={errors[applicant.id]}
                 onSendBooking={handleSendBooking}
                 onAddActivity={handleAddActivity}
+                onToggleReviewed={handleToggleReviewed}
+                togglingReview={togglingReview === applicant.id}
                 submission={submissions.find(s => s.email === applicant.email.toLowerCase()) ?? null}
               />
             ))}
@@ -294,10 +318,12 @@ interface RowProps {
   error?: string;
   onSendBooking: (a: ApplicantWithActivity) => void;
   onAddActivity: (applicantId: string, text: string) => void;
+  onToggleReviewed: (submissionId: string, reviewed: boolean) => void;
+  togglingReview: boolean;
   submission: TrialSubmission | null;
 }
 
-function ApplicantRow({ applicant, sending, justSent, error, onSendBooking, onAddActivity, submission }: RowProps) {
+function ApplicantRow({ applicant, sending, justSent, error, onSendBooking, onAddActivity, onToggleReviewed, togglingReview, submission }: RowProps) {
   const [expanded, setExpanded] = useState(false);
   const [noteText, setNoteText] = useState('');
   const [addingNote, setAddingNote] = useState(false);
@@ -341,9 +367,9 @@ function ApplicantRow({ applicant, sending, justSent, error, onSendBooking, onAd
               </span>
             )}
             {submission && (
-              <span className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-violet-500/10 text-violet-400 border border-violet-500/20">
+              <span className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium ${submission.reviewed ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-violet-500/10 text-violet-400 border border-violet-500/20'}`}>
                 <ClipboardCheck size={9} />
-                Task submitted
+                {submission.reviewed ? 'Reviewed' : 'Task submitted'}
               </span>
             )}
           </div>
@@ -434,11 +460,25 @@ function ApplicantRow({ applicant, sending, justSent, error, onSendBooking, onAd
                   <ClipboardCheck size={12} />
                   Trial task submission
                 </span>
-                {submission.submittedAt && (
-                  <span className="text-[10px] text-zinc-500">
-                    {new Date(submission.submittedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
-                  </span>
-                )}
+                <div className="flex items-center gap-3" onClick={(e) => e.stopPropagation()}>
+                  {submission.submittedAt && (
+                    <span className="text-[10px] text-zinc-500">
+                      {new Date(submission.submittedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                  )}
+                  <button
+                    onClick={() => onToggleReviewed(submission.id, !submission.reviewed)}
+                    disabled={togglingReview}
+                    className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-medium transition-colors disabled:opacity-50 ${
+                      submission.reviewed
+                        ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20'
+                        : 'bg-zinc-800 text-zinc-400 border border-zinc-700 hover:bg-zinc-700'
+                    }`}
+                  >
+                    {togglingReview ? <Loader2 size={10} className="animate-spin" /> : <CheckCircle2 size={10} />}
+                    {submission.reviewed ? 'Reviewed' : 'Mark reviewed'}
+                  </button>
+                </div>
               </div>
               <div className="divide-y divide-zinc-800">
                 {submission.entries.map((entry, i) => (

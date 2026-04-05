@@ -22,3 +22,15 @@ export async function GET(req: NextRequest) {
 
   return NextResponse.json(submissions);
 }
+
+export async function PATCH(req: NextRequest) {
+  if (!isAdmin(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+  const { id, reviewed } = await req.json();
+  if (!id || typeof reviewed !== 'boolean') {
+    return NextResponse.json({ error: 'Missing id or reviewed' }, { status: 400 });
+  }
+
+  await adminDb.collection('trial_submissions').doc(id).update({ reviewed });
+  return NextResponse.json({ success: true });
+}
