@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { AuthProvider, useAuth } from '@/lib/firebase/AuthContext';
+import { getRepProfile } from '@/lib/firebase/firestore';
 import { LayoutDashboard, Users, BookOpen, GraduationCap, Phone, LogOut, Menu, X } from 'lucide-react';
 
 const navItems = [
@@ -25,6 +26,7 @@ export default function RepLayout({ children }: { children: React.ReactNode }) {
 function RepLayoutInner({ children }: { children: React.ReactNode }) {
   const { user, loading, signOut } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [repVerified, setRepVerified] = useState<boolean | null>(null);
   const router = useRouter();
   const pathname = usePathname();
 
@@ -33,7 +35,20 @@ function RepLayoutInner({ children }: { children: React.ReactNode }) {
     if (loading) return;
     if (!user) {
       router.replace('/rep/signin');
+      return;
     }
+    // Verify this user is an actual rep
+    getRepProfile(user.uid).then((profile) => {
+      if (profile) {
+        setRepVerified(true);
+      } else {
+        setRepVerified(false);
+        router.replace('/');
+      }
+    }).catch(() => {
+      setRepVerified(false);
+      router.replace('/');
+    });
   }, [user, loading, router, pathname]);
 
   // Signin page — no sidebar, no auth gate
@@ -41,8 +56,16 @@ function RepLayoutInner({ children }: { children: React.ReactNode }) {
     return <>{children}</>;
   }
 
-  // Not authenticated — effect will redirect, show nothing while it does
+  // Not authenticated or not a verified rep — effect will redirect
   if (!loading && !user) return null;
+  if (repVerified === false) return null;
+  if (repVerified === null && !loading && user) {
+    return (
+      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
+        <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   // Render portal immediately — effect redirects if auth fails
   return (

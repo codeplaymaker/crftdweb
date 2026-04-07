@@ -5,7 +5,7 @@ import { useAuth } from '@/lib/firebase/AuthContext';
 import { RepTrainingService } from '@/lib/services/repTrainingService';
 import { CallTranscriptEntry, CallSummary } from '@/lib/types/repTraining';
 import Link from 'next/link';
-import { Phone, PhoneOff, Loader2, Send, Plus, Mic, MicOff, Clipboard, History } from 'lucide-react';
+import { Phone, PhoneOff, Loader2, Send, Plus, Mic, MicOff, Clipboard, History, Lock, GraduationCap } from 'lucide-react';
 
 type CallStage = 'prep' | 'active' | 'summary';
 
@@ -46,6 +46,18 @@ declare global {
 
 export default function LiveCallPage() {
   const { user } = useAuth();
+  const [trainingLocked, setTrainingLocked] = useState<boolean | null>(null);
+  const [lockInfo, setLockInfo] = useState({ avgScore: 0, totalSessions: 0 });
+
+  useEffect(() => {
+    if (!user) return;
+    RepTrainingService.getTrainingStats(user.uid).then((stats) => {
+      const avg = stats?.averageScore ?? 0;
+      const sessions = stats?.totalSessions ?? 0;
+      setLockInfo({ avgScore: avg, totalSessions: sessions });
+      setTrainingLocked(!(avg >= 60 && sessions >= 10));
+    }).catch(() => setTrainingLocked(true));
+  }, [user]);
 
   // Prep form
   const [leadName, setLeadName] = useState('');
@@ -255,6 +267,42 @@ export default function LiveCallPage() {
       setCallStage('summary');
     }
   }, [transcript, leadName, businessType, callGoal, callDuration, sessionId, outcome, notes]);
+
+  // ── TRAINING GATE ─────────────────────────────────────────
+  if (trainingLocked) {
+    return (
+      <div className="max-w-lg mx-auto text-center py-20 space-y-5">
+        <div className="w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mx-auto">
+          <Lock className="w-7 h-7 text-amber-400" />
+        </div>
+        <div>
+          <h2 className="text-xl font-bold text-white">Live Call Locked</h2>
+          <p className="text-sm text-white/40 mt-2">Complete your training before using the live call tool.<br />You need <strong className="text-white/60">10 roleplay sessions</strong> and an <strong className="text-white/60">average score of 60+</strong>.</p>
+        </div>
+        <div className="bg-white/5 border border-white/8 rounded-xl p-4 space-y-3 text-left max-w-xs mx-auto">
+          <div>
+            <div className="flex justify-between text-xs text-white/40 mb-1">
+              <span>Sessions</span><span>{lockInfo.totalSessions}/10</span>
+            </div>
+            <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
+              <div className="h-full bg-amber-400/60 rounded-full transition-all" style={{ width: `${Math.min(100, (lockInfo.totalSessions / 10) * 100)}%` }} />
+            </div>
+          </div>
+          <div>
+            <div className="flex justify-between text-xs text-white/40 mb-1">
+              <span>Avg Score</span><span>{Math.round(lockInfo.avgScore)}/60</span>
+            </div>
+            <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
+              <div className="h-full bg-amber-400/60 rounded-full transition-all" style={{ width: `${Math.min(100, (lockInfo.avgScore / 60) * 100)}%` }} />
+            </div>
+          </div>
+        </div>
+        <Link href="/rep/train" className="inline-flex items-center gap-2 bg-white text-black font-bold py-3 px-6 rounded-xl hover:bg-white/90 transition-colors">
+          <GraduationCap className="w-4 h-4" /> Go to Training
+        </Link>
+      </div>
+    );
+  }
 
   // ── PREP STAGE ───────────────────────────────────────────
   if (callStage === 'prep') {

@@ -388,6 +388,8 @@ export interface RepLead {
   source: LeadSource;
   createdAt: Timestamp;
   updatedAt: Timestamp;
+  lastEmailedAt?: Timestamp | null;
+  lastRepliedAt?: Timestamp | null;
 }
 
 export interface RepCommission {
@@ -501,6 +503,60 @@ export async function markCommissionPaid(commissionId: string) {
     status: 'paid',
     paidAt: serverTimestamp(),
   });
+}
+
+// ─── Email Log (read-only on client — writes via API route) ─────────
+
+export interface RepEmailLog {
+  id: string;
+  repId: string;
+  repName: string;
+  leadId: string;
+  businessName: string;
+  recipientEmail: string;
+  templateKey: string;
+  subject: string;
+  body: string;
+  resendId: string | null;
+  status: 'sent' | 'failed';
+  error?: string;
+  sentAt: Timestamp;
+  repliedAt?: Timestamp | null;
+}
+
+export async function getLeadEmails(leadId: string, repId: string): Promise<RepEmailLog[]> {
+  const q = query(
+    collection(db, 'repEmails'),
+    where('repId', '==', repId),
+    where('leadId', '==', leadId),
+    orderBy('sentAt', 'desc')
+  );
+  const snap = await getDocs(q);
+  return snap.docs.map(d => d.data() as RepEmailLog);
+}
+
+export interface RepEmailReply {
+  id: string;
+  resendEmailId: string;
+  leadId: string;
+  repId: string;
+  from: string;
+  to: string[];
+  subject: string;
+  textBody: string;
+  htmlBody: string;
+  receivedAt: Timestamp;
+}
+
+export async function getLeadReplies(leadId: string, repId: string): Promise<RepEmailReply[]> {
+  const q = query(
+    collection(db, 'repEmailReplies'),
+    where('repId', '==', repId),
+    where('leadId', '==', leadId),
+    orderBy('receivedAt', 'desc')
+  );
+  const snap = await getDocs(q);
+  return snap.docs.map(d => d.data() as RepEmailReply);
 }
 
 // ─── Client Portal Types ────────────────────────────────────────────

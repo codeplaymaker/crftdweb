@@ -116,6 +116,18 @@ service cloud.firestore {
       allow delete: if false;
     }
 
+    // Rep emails — reps can read their own logs; writes via Admin SDK only
+    match /repEmails/{docId} {
+      allow read: if request.auth != null && resource.data.repId == request.auth.uid;
+      allow write: if false;
+    }
+
+    // Rep email replies — reps can read replies for their leads; writes via Admin SDK (webhook)
+    match /repEmailReplies/{docId} {
+      allow read: if request.auth != null && resource.data.repId == request.auth.uid;
+      allow write: if false;
+    }
+
     // ── Screening / Booking Collections ──────────────────
 
     // Slots are publicly readable so the booking page can show them

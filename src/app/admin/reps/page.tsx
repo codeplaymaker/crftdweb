@@ -659,6 +659,32 @@ const stats = [
 ];
 
 // ─── Management Tab ───
+interface AdminEmail {
+  id: string;
+  repId: string;
+  repName: string;
+  leadId: string;
+  businessName: string;
+  recipientEmail: string;
+  templateKey: string;
+  subject: string;
+  body: string;
+  status: 'sent' | 'failed';
+  error?: string;
+  sentAt: string | null;
+  repliedAt?: string | null;
+}
+
+interface AdminReply {
+  id: string;
+  leadId: string;
+  repId: string;
+  from: string;
+  subject: string;
+  textBody: string;
+  receivedAt: string | null;
+}
+
 function ManagementTab() {
   const [reps, setReps] = useState<RepProfile[]>([]);
   const [leads, setLeads] = useState<RepLead[]>([]);
@@ -673,15 +699,35 @@ function ManagementTab() {
   const [loginEmailError, setLoginEmailError] = useState('');
   const [showLoginPreview, setShowLoginPreview] = useState(false);
 
+  // Email log + settings
+  const [emails, setEmails] = useState<AdminEmail[]>([]);
+  const [adminReplies, setAdminReplies] = useState<AdminReply[]>([]);
+  const [maxEmailsPerDay, setMaxEmailsPerDay] = useState(20);
+  const [editingMaxEmails, setEditingMaxEmails] = useState(false);
+  const [maxEmailsInput, setMaxEmailsInput] = useState('20');
+  const [savingMaxEmails, setSavingMaxEmails] = useState(false);
+  const [expandedEmailId, setExpandedEmailId] = useState<string | null>(null);
+
   useEffect(() => {
     Promise.all([
       fetch('/api/admin/reps').then(r => r.json()),
       fetch('/api/admin/leads').then(r => r.json()),
       fetch('/api/admin/commissions').then(r => r.json()),
-    ]).then(([r, l, c]) => {
+      fetch('/api/admin/emails').then(r => r.json()),
+      fetch('/api/admin/email-settings').then(r => r.json()),
+    ]).then(([r, l, c, e, s]) => {
       setReps(r);
       setLeads(l);
       setCommissions(c);
+      // Handle both old array format and new { emails, replies } format
+      if (Array.isArray(e)) {
+        setEmails(e);
+      } else {
+        setEmails(Array.isArray(e?.emails) ? e.emails : []);
+        setAdminReplies(Array.isArray(e?.replies) ? e.replies : []);
+      }
+      setMaxEmailsPerDay(s?.maxEmailsPerDay ?? 20);
+      setMaxEmailsInput(String(s?.maxEmailsPerDay ?? 20));
       setLoading(false);
     });
   }, []);
@@ -705,6 +751,20 @@ function ManagementTab() {
       console.error(err);
       setAddRepStatus('error');
     }
+  }
+
+  async function handleSaveMaxEmails() {
+    const val = Number(maxEmailsInput);
+    if (!val || val < 1 || val > 500) return;
+    setSavingMaxEmails(true);
+    await fetch('/api/admin/email-settings', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ maxEmailsPerDay: val }),
+    });
+    setMaxEmailsPerDay(val);
+    setEditingMaxEmails(false);
+    setSavingMaxEmails(false);
   }
 
   async function handleMarkPaid(commissionId: string) {
@@ -953,6 +1013,122 @@ function ManagementTab() {
           ))}
         </div>
       </div>
+
+      {/* Email Settings + Log */}
+      <div>
+        <div className="flex items-center justify-between mb-3">
+          <p className="text-sm font-semibold text-white/70">Rep Emails</p>
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] text-white/25">Max per rep per day:</span>
+            {editingMaxEmails ? (
+              <div className="flex items-center gap-1.5">
+                <input
+                  type="number"
+                  value={maxEmailsInput}
+                  onChange={e => setMaxEmailsInput(e.target.value)}
+                  min={1}
+                  max={500}
+                  className="w-16 bg-white/5 border border-white/10 rounded-lg px-2 py-1 text-xs text-white text-center focus:outline-none focus:border-white/30"
+                />
+                <button
+                  onClick={handleSaveMaxEmails}
+                  disabled={savingMaxEmails}
+                  className="flex items-center gap-1 text-[10px] px-2 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/20 transition-colors disabled:opacity-40"
+                >
+                  {savingMaxEmails ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}
+                  Save
+                </button>
+                <button
+                  onClick={() => { setEditingMaxEmails(false); setMaxEmailsInput(String(maxEmailsPerDay)); }}
+                  className="text-[10px] px-2 py-1 rounded-lg bg-white/5 text-white/30 hover:text-white/50"
+                >
+                  Cancel
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => setEditingMaxEmails(true)}
+                className="text-xs font-bold text-white/60 bg-white/5 border border-white/8 rounded-lg px-2.5 py-1 hover:bg-white/10 transition-colors"
+              >
+                {maxEmailsPerDay}
+              </button>
+            )}
+          </div>
+        </div>
+
+        {emails.length === 0 && <p className="text-sm text-white/25 py-4 text-center">No emails sent yet.</p>}
+        <div className="space-y-1.5">
+          {emails.map(email => (
+            <div key={email.id} className="bg-white/[0.02] border border-white/5 rounded-xl overflow-hidden">
+              <button
+                onClick={() => setExpandedEmailId(expandedEmailId === email.id ? null : email.id)}
+                className="w-full flex items-center justify-between px-4 py-2.5 text-left"
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full flex-shrink-0 ${
+                    email.status === 'sent' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'
+                  }`}>{email.status}</span>
+                  {email.repliedAt && (
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full flex-shrink-0 bg-blue-500/20 text-blue-400">replied</span>
+                  )}
+                  <div className="min-w-0">
+                    <p className="text-sm text-white/60 truncate">{email.subject}</p>
+                    <p className="text-[10px] text-white/25 truncate">{email.repName} → {email.recipientEmail}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 flex-shrink-0 ml-2">
+                  <span className="text-[10px] text-white/20">
+                    {email.sentAt ? new Date(email.sentAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : '—'}
+                  </span>
+                  {expandedEmailId === email.id ? <ChevronUp className="w-3.5 h-3.5 text-white/20" /> : <ChevronDown className="w-3.5 h-3.5 text-white/20" />}
+                </div>
+              </button>
+              {expandedEmailId === email.id && (
+                <div className="px-4 pb-3 border-t border-white/5 pt-2 space-y-2">
+                  <div className="grid grid-cols-2 gap-2 text-[10px]">
+                    <div><span className="text-white/25">Business:</span> <span className="text-white/50">{email.businessName}</span></div>
+                    <div><span className="text-white/25">Template:</span> <span className="text-white/50">{email.templateKey.replace('_', ' ')}</span></div>
+                    <div><span className="text-white/25">Rep:</span> <span className="text-white/50">{email.repName}</span></div>
+                    <div><span className="text-white/25">Time:</span> <span className="text-white/50">{email.sentAt ? new Date(email.sentAt).toLocaleString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '—'}</span></div>
+                  </div>
+                  <div className="bg-white/[0.03] rounded-lg p-3">
+                    <p className="text-[10px] text-white/25 mb-1">Body</p>
+                    <p className="text-xs text-white/50 leading-relaxed whitespace-pre-wrap">{email.body}</p>
+                  </div>
+                  {email.error && (
+                    <p className="text-[10px] text-red-400">Error: {email.error}</p>
+                  )}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Prospect Replies */}
+      {adminReplies.length > 0 && (
+        <div>
+          <p className="text-sm font-semibold text-white/70 mb-3">Prospect Replies <span className="text-[10px] text-blue-400 bg-blue-500/10 px-1.5 py-0.5 rounded-full ml-1">{adminReplies.length}</span></p>
+          <div className="space-y-1.5">
+            {adminReplies.map(reply => (
+              <div key={reply.id} className="bg-blue-500/[0.03] border border-blue-500/10 rounded-xl px-4 py-2.5">
+                <div className="flex items-center justify-between">
+                  <div className="min-w-0">
+                    <p className="text-sm text-blue-300/70 truncate">{reply.subject}</p>
+                    <p className="text-[10px] text-white/25 truncate">From: {reply.from}</p>
+                  </div>
+                  <span className="text-[10px] text-white/20 flex-shrink-0 ml-2">
+                    {reply.receivedAt ? new Date(reply.receivedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : '—'}
+                  </span>
+                </div>
+                {reply.textBody && (
+                  <p className="text-xs text-white/40 mt-1.5 line-clamp-2 leading-relaxed">{reply.textBody}</p>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* All leads overview */}
       <div>

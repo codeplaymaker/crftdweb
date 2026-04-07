@@ -6,8 +6,11 @@ import {
   getRepLeads, addLead, updateLead, deleteLead,
   getRepProfile, RepLead, LeadStatus, LeadSource, RepProfile
 } from '@/lib/firebase/firestore';
+import { RepTrainingService } from '@/lib/services/repTrainingService';
 import { getAuth } from 'firebase/auth';
-import { Plus, ChevronDown, ChevronUp, Trash2, Edit2, Check, X, PoundSterling } from 'lucide-react';
+import Link from 'next/link';
+import EmailComposeModal from '@/components/rep/EmailComposeModal';
+import { Plus, ChevronDown, ChevronUp, Trash2, Edit2, Check, X, PoundSterling, Lock, GraduationCap, Mail, Reply } from 'lucide-react';
 
 const PIPELINE: { key: LeadStatus; label: string; color: string }[] = [
   { key: 'contacted', label: 'Contacted', color: 'border-t-white/20' },
@@ -29,6 +32,19 @@ const STATUS_COLORS: Record<LeadStatus, string> = {
 
 const SOURCES: LeadSource[] = ['cold_call', 'linkedin', 'email', 'referral', 'other'];
 
+function timeAgo(date: Date): string {
+  const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
+  if (seconds < 60) return 'just now';
+  const mins = Math.floor(seconds / 60);
+  if (mins < 60) return `${mins}m ago`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  if (days < 7) return `${days}d ago`;
+  const weeks = Math.floor(days / 7);
+  return `${weeks}w ago`;
+}
+
 const emptyForm = {
   businessName: '',
   contactName: '',
@@ -45,6 +61,8 @@ export default function RepLeadsPage() {
   const [leads, setLeads] = useState<RepLead[]>([]);
   const [profile, setProfile] = useState<RepProfile | null>(null);
   const [loading, setLoading] = useState(false);
+  const [trainingLocked, setTrainingLocked] = useState<boolean | null>(null);
+  const [lockInfo, setLockInfo] = useState({ avgScore: 0, totalSessions: 0 });
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState(emptyForm);
@@ -55,15 +73,62 @@ export default function RepLeadsPage() {
   const [wonDealValue, setWonDealValue] = useState('');
   const [wonSaving, setWonSaving] = useState(false);
   const [wonError, setWonError] = useState('');
+  const [emailLead, setEmailLead] = useState<RepLead | null>(null);
 
   useEffect(() => {
     if (!user) return;
     setLoading(true);
-    Promise.all([getRepLeads(user.uid), getRepProfile(user.uid)])
-      .then(([l, p]) => { setLeads(l); setProfile(p); })
+    Promise.all([
+      getRepLeads(user.uid),
+      getRepProfile(user.uid),
+      RepTrainingService.getTrainingStats(user.uid),
+    ])
+      .then(([l, p, stats]) => {
+        setLeads(l);
+        setProfile(p);
+        const avg = stats?.averageScore ?? 0;
+        const sessions = stats?.totalSessions ?? 0;
+        setLockInfo({ avgScore: avg, totalSessions: sessions });
+        setTrainingLocked(!(avg >= 60 && sessions >= 10));
+      })
       .catch(console.error)
       .finally(() => setLoading(false));
   }, [user]);
+
+  if (trainingLocked) {
+    return (
+      <div className="max-w-lg mx-auto text-center py-20 space-y-5">
+        <div className="w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mx-auto">
+          <Lock className="w-7 h-7 text-amber-400" />
+        </div>
+        <div>
+          <h2 className="text-xl font-bold text-white">Leads Locked</h2>
+          <p className="text-sm text-white/40 mt-2">Complete your training before accessing leads.<br />You need <strong className="text-white/60">10 roleplay sessions</strong> and an <strong className="text-white/60">average score of 60+</strong>.</p>
+        </div>
+        <div className="bg-white/5 border border-white/8 rounded-xl p-4 space-y-3 text-left max-w-xs mx-auto">
+          <div>
+            <div className="flex justify-between text-xs text-white/40 mb-1">
+              <span>Sessions</span><span>{lockInfo.totalSessions}/10</span>
+            </div>
+            <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
+              <div className="h-full bg-amber-400/60 rounded-full transition-all" style={{ width: `${Math.min(100, (lockInfo.totalSessions / 10) * 100)}%` }} />
+            </div>
+          </div>
+          <div>
+            <div className="flex justify-between text-xs text-white/40 mb-1">
+              <span>Avg Score</span><span>{Math.round(lockInfo.avgScore)}/60</span>
+            </div>
+            <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
+              <div className="h-full bg-amber-400/60 rounded-full transition-all" style={{ width: `${Math.min(100, (lockInfo.avgScore / 60) * 100)}%` }} />
+            </div>
+          </div>
+        </div>
+        <Link href="/rep/train" className="inline-flex items-center gap-2 bg-white text-black font-bold py-3 px-6 rounded-xl hover:bg-white/90 transition-colors">
+          <GraduationCap className="w-4 h-4" /> Go to Training
+        </Link>
+      </div>
+    );
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -360,6 +425,18 @@ export default function RepLeadsPage() {
                   </div>
                 </div>
                 <div className="flex items-center gap-3 flex-shrink-0 ml-2">
+                  {lead.lastRepliedAt && (
+                    <span className="text-[10px] text-blue-400 flex items-center gap-1 bg-blue-500/10 px-1.5 py-0.5 rounded-full">
+                      <Reply className="w-3 h-3" />
+                      Replied
+                    </span>
+                  )}
+                  {lead.lastEmailedAt && !lead.lastRepliedAt && (
+                    <span className="text-[10px] text-blue-400/60 flex items-center gap-1">
+                      <Mail className="w-3 h-3" />
+                      {timeAgo(lead.lastEmailedAt.toDate())}
+                    </span>
+                  )}
                   {lead.dealValue > 0 && (
                     <span className="text-xs text-emerald-400 font-medium">£{lead.dealValue.toLocaleString()}</span>
                   )}
@@ -397,6 +474,9 @@ export default function RepLeadsPage() {
                     </div>
                   </div>
                   <div className="flex gap-2 pt-1">
+                    <button onClick={() => setEmailLead(lead)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-blue-400/60 hover:text-blue-400 bg-white/5 hover:bg-blue-500/10 transition-colors">
+                      <Mail className="w-3 h-3" /> Follow up
+                    </button>
                     <button onClick={() => startEdit(lead)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-white/40 hover:text-white/70 bg-white/5 hover:bg-white/10 transition-colors">
                       <Edit2 className="w-3 h-3" /> Edit
                     </button>
@@ -427,8 +507,28 @@ export default function RepLeadsPage() {
                     <div key={lead.id} className="bg-white/[0.03] rounded-lg p-2.5">
                       <p className="text-xs font-medium text-white/70 leading-tight">{lead.businessName}</p>
                       <p className="text-[10px] text-white/30 mt-0.5">{lead.contactName}</p>
-                      {lead.dealValue > 0 && (
-                        <p className="text-[10px] text-emerald-400 mt-1">£{lead.dealValue.toLocaleString()}</p>
+                      <div className="flex items-center gap-2 mt-1">
+                        {lead.dealValue > 0 && (
+                          <span className="text-[10px] text-emerald-400">£{lead.dealValue.toLocaleString()}</span>
+                        )}
+                        {lead.lastRepliedAt && (
+                          <span className="text-[9px] text-blue-400 flex items-center gap-0.5 bg-blue-500/10 px-1 py-0.5 rounded-full">
+                            <Reply className="w-2 h-2" />Replied
+                          </span>
+                        )}
+                        {lead.lastEmailedAt && !lead.lastRepliedAt && (
+                          <span className="text-[9px] text-blue-400/50 flex items-center gap-0.5">
+                            <Mail className="w-2 h-2" />{timeAgo(lead.lastEmailedAt.toDate())}
+                          </span>
+                        )}
+                      </div>
+                      {lead.contactEmail && (
+                        <button
+                          onClick={() => setEmailLead(lead)}
+                          className="flex items-center gap-1 mt-1.5 text-[10px] text-blue-400/50 hover:text-blue-400 transition-colors"
+                        >
+                          <Mail className="w-2.5 h-2.5" /> Follow up
+                        </button>
                       )}
                     </div>
                   ))}
@@ -440,6 +540,25 @@ export default function RepLeadsPage() {
             );
           })}
         </div>
+      )}
+
+      {/* Email compose modal */}
+      {emailLead && profile && (
+        <EmailComposeModal
+          lead={emailLead}
+          repName={profile.name}
+          repEmail={profile.email}
+          onClose={() => setEmailLead(null)}
+          onSent={() => {
+            // Update local state so badge shows immediately
+            setLeads(prev => prev.map(l =>
+              l.id === emailLead.id
+                ? { ...l, lastEmailedAt: { toDate: () => new Date() } as never }
+                : l
+            ));
+            setEmailLead(null);
+          }}
+        />
       )}
     </div>
   );
