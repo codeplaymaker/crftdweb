@@ -30,8 +30,32 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Normalise the file so Whisper gets a recognised extension + MIME type.
+    // Some browsers (Safari/iOS) produce mimeTypes like "audio/mp4;codecs=…" or
+    // "audio/aac" that Whisper rejects. Map to an extension Whisper accepts.
+    const mimeMap: Record<string, { ext: string; mime: string }> = {
+      'audio/webm':  { ext: 'webm', mime: 'audio/webm' },
+      'audio/ogg':   { ext: 'ogg',  mime: 'audio/ogg' },
+      'audio/mp4':   { ext: 'm4a',  mime: 'audio/m4a' },
+      'audio/m4a':   { ext: 'm4a',  mime: 'audio/m4a' },
+      'audio/aac':   { ext: 'm4a',  mime: 'audio/m4a' },
+      'audio/mpeg':  { ext: 'mp3',  mime: 'audio/mpeg' },
+      'audio/mp3':   { ext: 'mp3',  mime: 'audio/mpeg' },
+      'audio/wav':   { ext: 'wav',  mime: 'audio/wav' },
+      'audio/flac':  { ext: 'flac', mime: 'audio/flac' },
+      'audio/x-m4a': { ext: 'm4a',  mime: 'audio/m4a' },
+    };
+    const baseMime = audioFile.type.split(';')[0].trim().toLowerCase();
+    const mapping = mimeMap[baseMime] ?? { ext: 'webm', mime: 'audio/webm' };
+
+    const whisperFile = new File(
+      [audioFile],
+      `recording.${mapping.ext}`,
+      { type: mapping.mime },
+    );
+
     const transcription = await openai.audio.transcriptions.create({
-      file: audioFile,
+      file: whisperFile,
       model: 'whisper-1',
       language: 'en',
       response_format: 'json',

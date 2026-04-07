@@ -245,7 +245,7 @@ function DrillContent() {
             onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSubmit(); } }}
             placeholder="Type your response..."
             rows={4}
-            className="w-full bg-white/8 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/25 resize-none outline-none focus:border-white/20"
+            className="w-full bg-white/[0.06] border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/25 resize-none outline-none focus:border-white/20"
           />
           <button
             onClick={handleSubmit}

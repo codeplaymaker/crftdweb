@@ -265,6 +265,13 @@ export default function TrainPage() {
               </p>
             </div>
           )}
+          {stats?.strongestCategory && (
+            <div className="mt-2 px-3 py-2 bg-green-500/10 border border-green-500/20 rounded-lg">
+              <p className="text-xs text-green-400">
+                💪 Strongest: <strong>{categoryLabels[stats.strongestCategory].label}</strong> — lean into this
+              </p>
+            </div>
+          )}
         </div>
       </div>
 

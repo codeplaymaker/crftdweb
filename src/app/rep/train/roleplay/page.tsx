@@ -42,15 +42,26 @@ function RoleplayContent() {
   const [voiceEnabled, setVoiceEnabled] = useState(true);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [voiceError, setVoiceError] = useState<string | null>(null);
+  const [autoFlow, setAutoFlow] = useState(false);
+  const autoFlowRef = useRef(false);
+  const pendingAutoSendRef = useRef(false);
 
   const voice = useVoiceRecorder({
     onTranscription: (text) => {
-      setInputText((prev) => (prev ? prev + ' ' + text : text));
+      setInputText((prev) => {
+        const next = prev ? prev + ' ' + text : text;
+        if (autoFlowRef.current && next.trim()) {
+          pendingAutoSendRef.current = true;
+        }
+        return next;
+      });
     },
     onError: (err) => {
       setVoiceError(err);
       setTimeout(() => setVoiceError(null), 4000);
     },
+    autoStopOnSilence: autoFlow,
+    silenceTimeout: 2,
   });
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
@@ -58,6 +69,8 @@ function RoleplayContent() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const audioUnlockedRef = useRef(false);
   const blobUrlRef = useRef<string | null>(null);
+  const stoppingCallRef = useRef(false);
+  const sendMessageRef = useRef<() => void>(() => {});
 
   // Create persistent audio element on mount (mobile requires reuse)
   useEffect(() => {
@@ -113,13 +126,35 @@ function RoleplayContent() {
       audio.currentTime = 0;
       audio.src = url;
       audio.volume = 1;
-      audio.onended = () => setIsSpeaking(false);
+      audio.onended = () => {
+        setIsSpeaking(false);
+        // Auto-flow: start recording after prospect finishes speaking
+        if (autoFlowRef.current && !stoppingCallRef.current) {
+          setTimeout(() => {
+            if (autoFlowRef.current && !voice.isRecording && !voice.isTranscribing) {
+              voice.startRecording();
+            }
+          }, 400);
+        }
+      };
       audio.onerror = () => setIsSpeaking(false);
       await audio.play();
     } catch {
       setIsSpeaking(false);
     }
   }, [voiceEnabled, scenario?.difficulty]);
+
+  // Keep autoFlowRef in sync
+  useEffect(() => { autoFlowRef.current = autoFlow; }, [autoFlow]);
+
+  // Auto-send after transcription completes in auto-flow mode
+  useEffect(() => {
+    if (pendingAutoSendRef.current && inputText.trim() && !voice.isRecording && !voice.isTranscribing) {
+      pendingAutoSendRef.current = false;
+      const t = setTimeout(() => sendMessageRef.current(), 300);
+      return () => clearTimeout(t);
+    }
+  }, [inputText, voice.isRecording, voice.isTranscribing]);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -280,8 +315,13 @@ function RoleplayContent() {
     }
   }, [inputText, sessionId, isAiThinking, messages, scenario, speakProspect]);
 
+  // Keep sendMessage ref in sync for auto-flow effect
+  useEffect(() => { sendMessageRef.current = sendMessage; }, [sendMessage]);
+
   const endCall = useCallback(async () => {
     if (!sessionId || !scenario) return;
+    stoppingCallRef.current = true;
+    setAutoFlow(false);
     if (messages.filter((m) => m.role === 'rep').length === 0) {
       setStartError('Say something first — there\u2019s nothing to rate yet.');
       return;
@@ -456,6 +496,17 @@ function RoleplayContent() {
         </div>
         <div className="flex items-center gap-3">
           <span className="text-sm font-mono text-white/60">{fmt(callDuration)}</span>
+          <button
+            onClick={() => setAutoFlow((v) => !v)}
+            className={`px-2 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-colors border ${
+              autoFlow
+                ? 'bg-green-500/15 border-green-500/30 text-green-400'
+                : 'bg-white/5 border-white/10 text-white/30 hover:text-white/50'
+            }`}
+            title={autoFlow ? 'Auto voice flow ON — mic records automatically after prospect speaks' : 'Auto voice flow OFF — manual mic control'}
+          >
+            Auto
+          </button>
           <button
             onClick={() => setVoiceEnabled((v) => !v)}
             className="p-2 rounded-lg text-white/50 hover:text-white/80 hover:bg-white/10 transition-colors"
