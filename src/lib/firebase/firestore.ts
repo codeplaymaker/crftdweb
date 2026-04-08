@@ -360,12 +360,15 @@ export async function deductCredits(uid: string, amount: number): Promise<boolea
 
 // ─── Rep System Types ───────────────────────────────────────────────
 
+export type RepTier = 'rep' | 'senior_rep' | 'closer';
+
 export interface RepProfile {
   uid: string;
   name: string;
   email: string;
   phone: string;
   status: 'active' | 'trial' | 'inactive';
+  tier?: RepTier;
   commissionRate: number; // percentage e.g. 15
   joinedAt: Timestamp;
   notes: string;

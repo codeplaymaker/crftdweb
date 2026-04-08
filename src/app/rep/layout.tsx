@@ -102,8 +102,8 @@ function RepLayoutInner({ children }: { children: React.ReactNode }) {
             <p className="text-xs font-semibold text-white/80 truncate">{user?.displayName ?? 'Rep'}</p>
             <p className="text-[10px] text-white/30 truncate">{user?.email}</p>
             {repProfile && (
-              <p className="text-[10px] mt-1 font-medium truncate" style={{ color: repProfile.status === 'active' ? '#34d399' : repProfile.status === 'trial' ? '#fbbf24' : '#6b7280' }}>
-                {repProfile.status === 'active' ? '🎯 Rep' : repProfile.status === 'trial' ? '⏳ Trial' : '⏸ Inactive'}
+              <p className="text-[10px] mt-1 font-medium truncate text-emerald-400">
+                {repProfile.tier === 'closer' ? '🦈 Closer' : repProfile.tier === 'senior_rep' ? '🏆 Senior Rep' : '🎯 Rep'}
               </p>
             )}
           </div>
@@ -146,8 +146,8 @@ function RepLayoutInner({ children }: { children: React.ReactNode }) {
             <LogOut className="w-4 h-4" />
             Sign out
             {repProfile && (
-              <span className="ml-auto text-[10px] font-medium" style={{ color: repProfile.status === 'active' ? '#34d399' : repProfile.status === 'trial' ? '#fbbf24' : '#6b7280' }}>
-                {repProfile.status === 'active' ? '🎯 Rep' : repProfile.status === 'trial' ? '⏳ Trial' : '⏸ Inactive'}
+              <span className="ml-auto text-[10px] font-medium text-emerald-400">
+                {repProfile.tier === 'closer' ? '🦈 Closer' : repProfile.tier === 'senior_rep' ? '🏆 Senior Rep' : '🎯 Rep'}
               </span>
             )}
           </button>

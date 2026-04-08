@@ -778,6 +778,15 @@ function ManagementTab() {
     setMarkingPaid(null);
   }
 
+  async function handleUpdateRep(uid: string, field: 'status' | 'tier', value: string) {
+    await fetch('/api/admin/reps', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ uid, [field]: value }),
+    });
+    setReps(prev => prev.map(r => r.uid === uid ? { ...r, [field]: value } : r));
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-16">
@@ -976,7 +985,28 @@ function ManagementTab() {
                       rep.status === 'active' ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' :
                       rep.status === 'trial' ? 'text-yellow-400 bg-yellow-500/10 border-yellow-500/20' :
                       'text-white/30 bg-white/5 border-white/10'
-                    }`}>{rep.status}</span>
+                    }`}>
+                      <select
+                        value={rep.status}
+                        onChange={e => handleUpdateRep(rep.uid, 'status', e.target.value)}
+                        className="bg-transparent border-none outline-none cursor-pointer text-inherit text-[10px] font-bold"
+                      >
+                        <option value="trial">trial</option>
+                        <option value="active">active</option>
+                        <option value="inactive">inactive</option>
+                      </select>
+                    </span>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full border text-emerald-400 bg-emerald-500/10 border-emerald-500/20">
+                      <select
+                        value={rep.tier ?? 'rep'}
+                        onChange={e => handleUpdateRep(rep.uid, 'tier', e.target.value)}
+                        className="bg-transparent border-none outline-none cursor-pointer text-inherit text-[10px] font-bold"
+                      >
+                        <option value="rep">🎯 Rep</option>
+                        <option value="senior_rep">🏆 Senior</option>
+                        <option value="closer">🦈 Closer</option>
+                      </select>
+                    </span>
                   </div>
                 </div>
               </div>
