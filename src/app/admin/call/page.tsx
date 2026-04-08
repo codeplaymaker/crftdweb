@@ -124,7 +124,7 @@ export default function AdminCallPage() {
     recognition.lang = 'en-GB';
     recognitionRef.current = recognition;
 
-    recognition.onresult = async (event: { results: { length: number; [i: number]: [{ transcript: string }] } }) => {
+    recognition.onresult = async (event) => {
       const text = event.results[event.results.length - 1][0].transcript.trim();
       if (!text) return;
       const entry: CallTranscriptEntry = {
