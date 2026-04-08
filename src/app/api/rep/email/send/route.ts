@@ -13,12 +13,13 @@ const RESEND_API_KEY = process.env.RESEND_API_KEY || '';
 const FROM_EMAIL = process.env.OUTREACH_FROM_EMAIL || 'hello@crftdweb.com';
 const DEFAULT_MAX_EMAILS_PER_DAY = 20;
 
-function buildHtml(bodyText: string, repName: string): string {
+function buildHtml(bodyText: string, repName: string, contactName: string): string {
+  const greeting = contactName.trim()
+    ? `<p style="margin:0 0 20px;font-size:16px;color:#111;font-weight:600;">Hi ${contactName.trim()},</p>`
+    : '';
   const bodyHtml = bodyText
     .split('\n\n')
-    .map((p, i) => i === 0
-      ? `<p style="margin:0 0 16px;font-size:15px;color:#444;line-height:1.7;font-weight:600;">${p.replace(/\n/g, '<br/>')}</p>`
-      : `<p style="margin:0 0 16px;font-size:15px;color:#444;line-height:1.7;">${p.replace(/\n/g, '<br/>')}</p>`)
+    .map(p => `<p style="margin:0 0 16px;font-size:15px;color:#444;line-height:1.7;">${p.replace(/\n/g, '<br/>')}</p>`)
     .join('');
 
   return `<!DOCTYPE html>
@@ -35,7 +36,7 @@ function buildHtml(bodyText: string, repName: string): string {
         </tr>
         <tr>
           <td style="background:#ffffff;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 12px 12px;padding:40px;">
-            ${bodyHtml}
+            ${greeting}${bodyHtml}
             <table width="100%" cellpadding="0" cellspacing="0" style="margin:24px 0 0;">
               <tr><td style="border-top:1px solid #e8e8e8;padding-top:20px;">
                 <p style="margin:0 0 2px;font-size:14px;font-weight:600;color:#111;">${repName}</p>
@@ -135,7 +136,8 @@ export async function POST(req: NextRequest) {
   try {
     const fromField = `${repName} at CrftdWeb <${FROM_EMAIL}>`;
     const replyTo = `reply-${leadId}@eanexuekro.resend.app`;
-    const html = buildHtml(body, repName);
+    const contactFirstName = (leadData.contactName || '').split(' ')[0];
+    const html = buildHtml(body, repName, contactFirstName);
     const res = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {

@@ -21,11 +21,13 @@ function fillTemplate(text: string, vars: Record<string, string>): string {
     .replace(/\{\{businessName\}\}/g, vars.businessName || '');
 }
 
-function buildPreviewHtml(bodyText: string, senderName: string, subjectLine: string): string {
+function buildPreviewHtml(bodyText: string, senderName: string, subjectLine: string, contactName: string): string {
+  const greeting = contactName.trim()
+    ? `<p style="margin:0 0 20px;font-size:16px;color:#111;font-weight:600;">Hi ${contactName.trim()},</p>`
+    : '';
   const bodyHtml = bodyText
-    ? bodyText.split('\n\n').map((p, i) => i === 0
-        ? `<p style="margin:0 0 16px;font-size:15px;color:#444;line-height:1.7;font-weight:600;">${p.replace(/\n/g, '<br/>')}</p>`
-        : `<p style="margin:0 0 16px;font-size:15px;color:#444;line-height:1.7;">${p.replace(/\n/g, '<br/>')}</p>`
+    ? bodyText.split('\n\n').map(p =>
+        `<p style="margin:0 0 16px;font-size:15px;color:#444;line-height:1.7;">${p.replace(/\n/g, '<br/>')}</p>`
       ).join('')
     : '<p style="margin:0;font-size:15px;color:#aaa;font-style:italic;">Your message will appear here\u2026</p>';
 
@@ -39,7 +41,7 @@ function buildPreviewHtml(bodyText: string, senderName: string, subjectLine: str
         <img src="https://crftdweb.com/CW-logo-white.png" alt="CrftdWeb" width="160" style="display:block;border:0;border-radius:8px;" />
       </td></tr>
       <tr><td style="background:#ffffff;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 12px 12px;padding:40px;">
-        ${bodyHtml}
+        ${greeting}${bodyHtml}
         <table width="100%" cellpadding="0" cellspacing="0" style="margin:24px 0 0;"><tr><td style="border-top:1px solid #e8e8e8;padding-top:20px;">
           <p style="margin:0 0 2px;font-size:14px;font-weight:600;color:#111;">${senderName}</p>
           <p style="margin:0 0 8px;font-size:13px;color:#999;">Sales Rep &middot; CrftdWeb</p>
@@ -300,7 +302,7 @@ export default function EmailComposeModal({ lead, repName, repEmail, onClose, on
                   <span className="text-[10px] text-white/25 font-mono">email preview — {subject || 'no subject'}</span>
                 </div>
                 <iframe
-                  srcDoc={buildPreviewHtml(body, repName, subject)}
+                  srcDoc={buildPreviewHtml(body, repName, subject, lead.contactName.split(' ')[0])}
                   className="w-full bg-white"
                   style={{ height: '420px', border: 'none' }}
                   title="Email preview"
