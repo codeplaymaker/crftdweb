@@ -2,20 +2,27 @@
 
 import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const navItems = [
   { name: 'Services', href: '/services' },
   { name: 'Work', href: '/work' },
   { name: 'About', href: '/about' },
-  { name: 'Playbook', href: '/playbook' },
-  { name: 'Engine', href: '/engine' },
+  { name: 'Playbook', href: '/playbook', adminOnly: true },
+  { name: 'Engine', href: '/engine', adminOnly: true },
   { name: 'Contact', href: '/contact' }
 ];
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    setIsAdmin(document.cookie.includes('admin_token='));
+  }, []);
+
+  const visibleItems = navItems.filter((item) => !item.adminOnly || isAdmin);
 
   return (
     <nav className="fixed top-0 w-full bg-background/80 backdrop-blur-sm z-50 border-b">
@@ -29,7 +36,7 @@ export default function Navbar() {
         
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-8">
-          {navItems.map((item) => (
+          {visibleItems.map((item) => (
             <Link
               key={item.name}
               href={item.href}
@@ -66,7 +73,7 @@ export default function Navbar() {
             className="md:hidden border-t"
           >
             <div className="container py-4 flex flex-col gap-4">
-              {navItems.map((item) => (
+              {visibleItems.map((item) => (
                 <Link
                   key={item.name}
                   href={item.href}
