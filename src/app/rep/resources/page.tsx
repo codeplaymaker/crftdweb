@@ -16,7 +16,7 @@ const CALL_SCRIPT = [
   },
   {
     step: 'Step 3a: If Yes / "Yeah actually"',
-    content: `"Perfect. I work with a developer who specialises in building clean, fast websites for businesses like yours, usually starting from £1,200. Would you be open to a quick 15-minute call with him to see if it's a fit?"`,
+    content: `"Perfect. I work with a developer who specialises in building clean, fast websites for businesses like yours, usually starting from £1,200. Would you be open to a quick 15-minute discovery call to see if it's a fit?"`,
     note: null,
   },
   {
@@ -42,7 +42,7 @@ const EMAIL_TEMPLATES = [
     subject: 'Your call with CrftdWeb is confirmed',
     body: `Hi [Name],
 
-Just confirming your 15-minute call with the founder of CrftdWeb on [day] at [time].
+Just confirming your free 15-minute consultation with CrftdWeb on [day] at [time].
 
 What to expect:
 The site will be reviewed before the call
@@ -66,7 +66,7 @@ Tried you on the phone earlier, just wanted to pass this across.
 
 We built sites for [industry, e.g. local tradespeople / gyms / consultants] that are designed to bring in actual enquiries, not just look decent.
 
-If you've got 15 minutes in the next few days, happy to get you a call with the founder. He'll be honest about whether it makes sense for your business.
+If you've got 15 minutes in the next few days, happy to set up a free consultation. We'll be straight with you about whether it makes sense for your business.
 
 Worth it?
 
@@ -81,7 +81,7 @@ Here are a few recent sites we've built: crftdweb.com/work
 
 The process is quick, most sites are live in 2 to 5 weeks. Starting from £1,200 for a landing page.
 
-If anything looks relevant to what you're after, I can get you 15 minutes with the founder this week.
+If anything looks relevant to what you're after, I can get you a free 15-minute consultation this week.
 
 [Your name]`,
   },
@@ -90,7 +90,7 @@ If anything looks relevant to what you're after, I can get you 15 minutes with t
 const FAQS = [
   {
     q: 'What exactly am I selling?',
-    a: 'Custom websites. Landing pages from £1,200 (1 to 2 weeks). Business sites from £3,200 (3 to 5 weeks). Web apps from £8,000 (6 to 12 weeks). Your job is to book the discovery call, not close the deal. The founder handles that.',
+    a: 'Custom websites. Landing pages from £1,200 (1 to 2 weeks). Business sites from £3,200 (3 to 5 weeks). Web apps from £8,000 (6 to 12 weeks). Your job is to book the discovery call, not close the deal. The team handles that.',
   },
   {
     q: 'When do I get paid?',
@@ -98,11 +98,11 @@ const FAQS = [
   },
   {
     q: 'What if they ask technical questions?',
-    a: "Don't answer them. Say: \"That's exactly what he'll cover on the call, he'd rather explain it properly in context than me get something wrong.\" Then book the call.",
+    a: "Don't answer them. Say: \"That's exactly what we'll cover on the call, it's better to explain it properly in context than me get something wrong.\" Then book the call.",
   },
   {
     q: "What if they say it's too expensive?",
-    a: "Don't negotiate on price. Say: \"Fair enough, that's up to him to discuss. The call is completely free and he'll give you a proper breakdown. Worth 15 minutes?\"",
+    a: "Don't negotiate on price. Say: \"Fair enough, that's something we can discuss on the call. It's completely free and you'll get a proper breakdown. Worth 15 minutes?\"",
   },
   {
     q: 'How do I log a lead?',
@@ -246,7 +246,7 @@ Quick question, do you have a proper website for the business? I work with a web
 1. Hey [Name], saw your page, [genuine compliment].
 2. I work with a web designer who builds sites for businesses like yours.
 3. Noticed you don't have a website / your current site could do more for you.
-4. Would you be open to a quick 15-min call with him? Completely free, no pressure.
+4. Would you be open to a quick 15-min discovery call? Completely free, no pressure.
 5. Let me know!`,
     note: 'Voice notes feel personal. 3x higher reply rate than text DMs. Keep it under 30 seconds.',
   },
@@ -254,14 +254,14 @@ Quick question, do you have a proper website for the business? I work with a web
     label: 'Facebook DM: After Group Interaction',
     text: `Hey [Name], saw your post in [group name] about [topic]. Thought I'd reach out directly.
 
-I work with a developer who specialises in building websites for [their industry]. Not trying to sell you anything, but if you've been thinking about sorting out your online presence, he does free 15-minute audits. Might be useful?`,
+I work with a developer who specialises in building websites for [their industry]. Not trying to sell you anything, but if you've been thinking about sorting out your online presence, we do free 15-minute audits. Might be useful?`,
     note: 'Only send this after you\'ve interacted with them publicly first. Cold Facebook DMs go to "Message Requests" and get ignored.',
   },
   {
     label: 'WhatsApp: After Getting Number',
     text: `Hi [Name], it's [Your Name] from CrftdWeb. Thanks for chatting earlier.
 
-Just wanted to drop you a quick message so you've got my number. I'll get that call booked with the founder for [day/time].
+Just wanted to drop you a quick message so you've got my number. I'll get that consultation booked for [day/time].
 
 Any questions before then, just ping me here.`,
     note: 'Only use WhatsApp after phone/DM contact. Never cold message on WhatsApp.',
@@ -497,7 +497,7 @@ export default function RepResourcesPage() {
           <ol className="list-decimal list-inside space-y-2">
             {[
               'Never read it word for word, know it, then make it natural',
-              'Your only goal is to book a call, not sell the website, that\'s his job',
+              'Your only goal is to book a call, not sell the website, the team handles that',
               'Keep calls under 3 minutes, don\'t pitch, don\'t ramble',
               'Log every lead immediately in the portal',
               'Follow up everything, most closes happen on the 2nd or 3rd contact',
