@@ -44,9 +44,9 @@ export const EMAIL_TEMPLATES: EmailTemplate[] = [
 Just confirming your 15-minute call with the founder of CrftdWeb.
 
 What to expect:
-- The site will be reviewed before the call
-- You'll get straight feedback on what's working and what isn't
-- If there's a fit, you'll hear exactly what we'd build and what it would cost
+The site will be reviewed before the call
+You'll get straight feedback on what's working and what isn't
+If there's a fit, you'll hear exactly what we'd build and what it would cost
 
 No pressure, no hard sell.
 
