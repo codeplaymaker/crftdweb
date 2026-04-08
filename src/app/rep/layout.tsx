@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { AuthProvider, useAuth } from '@/lib/firebase/AuthContext';
-import { getRepProfile } from '@/lib/firebase/firestore';
+import { getRepProfile, RepProfile } from '@/lib/firebase/firestore';
 import { LayoutDashboard, Users, BookOpen, GraduationCap, Phone, Search, LogOut, Menu, X } from 'lucide-react';
 
 const navItems = [
@@ -28,6 +28,7 @@ function RepLayoutInner({ children }: { children: React.ReactNode }) {
   const { user, loading, signOut } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [repVerified, setRepVerified] = useState<boolean | null>(null);
+  const [repProfile, setRepProfile] = useState<RepProfile | null>(null);
   const router = useRouter();
   const pathname = usePathname();
 
@@ -42,6 +43,7 @@ function RepLayoutInner({ children }: { children: React.ReactNode }) {
     getRepProfile(user.uid).then((profile) => {
       if (profile) {
         setRepVerified(true);
+        setRepProfile(profile);
       } else {
         setRepVerified(false);
         router.replace('/');
@@ -99,6 +101,11 @@ function RepLayoutInner({ children }: { children: React.ReactNode }) {
           <div className="px-3 py-2">
             <p className="text-xs font-semibold text-white/80 truncate">{user?.displayName ?? 'Rep'}</p>
             <p className="text-[10px] text-white/30 truncate">{user?.email}</p>
+            {repProfile && (
+              <p className="text-[10px] mt-1 font-medium truncate" style={{ color: repProfile.status === 'active' ? '#34d399' : repProfile.status === 'trial' ? '#fbbf24' : '#6b7280' }}>
+                {repProfile.status === 'active' ? '🎯 Rep' : repProfile.status === 'trial' ? '⏳ Trial' : '⏸ Inactive'}
+              </p>
+            )}
           </div>
           <button
             onClick={signOut}
@@ -138,6 +145,11 @@ function RepLayoutInner({ children }: { children: React.ReactNode }) {
           <button onClick={signOut} className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-white/30 mt-auto">
             <LogOut className="w-4 h-4" />
             Sign out
+            {repProfile && (
+              <span className="ml-auto text-[10px] font-medium" style={{ color: repProfile.status === 'active' ? '#34d399' : repProfile.status === 'trial' ? '#fbbf24' : '#6b7280' }}>
+                {repProfile.status === 'active' ? '🎯 Rep' : repProfile.status === 'trial' ? '⏳ Trial' : '⏸ Inactive'}
+              </span>
+            )}
           </button>
         </div>
       )}
