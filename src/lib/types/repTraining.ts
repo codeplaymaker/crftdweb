@@ -151,6 +151,7 @@ export interface CallTranscriptEntry {
   speaker: 'rep' | 'prospect' | 'unknown';
   text: string;
   timestamp: number; // seconds from call start
+  confidence?: number;
   createdAt: Date;
 }
 
@@ -167,6 +168,9 @@ export interface LiveCallSession {
   outcome?: 'booked' | 'follow_up' | 'not_interested' | 'callback';
   summary?: CallSummary;
   notes: string;
+  audioUrl?: string;
+  audioSource?: 'mic' | 'system';
+  transcriptionSource?: 'deepgram' | 'whisper' | 'browser' | 'manual';
   startedAt: Date;
   endedAt?: Date;
   createdAt: Date;

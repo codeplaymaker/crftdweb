@@ -358,9 +358,11 @@ export class RepTrainingService {
     summary: CallSummary,
     duration: number,
     outcome: LiveCallSession['outcome'],
-    notes: string
+    notes: string,
+    audioUrl?: string,
+    finalTranscript?: CallTranscriptEntry[]
   ): Promise<void> {
-    await updateDoc(doc(db, 'repCallSessions', sessionId), {
+    const update: Record<string, unknown> = {
       status: 'completed',
       summary,
       duration,
@@ -368,7 +370,10 @@ export class RepTrainingService {
       notes,
       endedAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
-    });
+    };
+    if (audioUrl) update.audioUrl = audioUrl;
+    if (finalTranscript) update.transcript = finalTranscript;
+    await updateDoc(doc(db, 'repCallSessions', sessionId), update);
   }
 
   static async getUserCallSessions(repId: string, max = 20): Promise<LiveCallSession[]> {

@@ -5,16 +5,22 @@ import { useAuth } from '@/lib/firebase/AuthContext';
 import { RepTrainingService } from '@/lib/services/repTrainingService';
 import { CallTranscriptEntry, CallSummary } from '@/lib/types/repTraining';
 import Link from 'next/link';
-import { Phone, PhoneOff, Loader2, Send, Plus, Mic, MicOff, Clipboard, History, Lock, GraduationCap } from 'lucide-react';
+import {
+  Phone, PhoneOff, Loader2, Send, Plus, Mic, MicOff, Clipboard,
+  History, Lock, GraduationCap, Monitor, Download, FileText,
+  Minimize2, Maximize2, ChevronUp, ChevronDown, Circle, Square,
+} from 'lucide-react';
 
-type CallStage = 'prep' | 'active' | 'summary';
+type CallStage = 'context' | 'prep' | 'active' | 'summary';
 
+interface TopicToExplore { topic: string; trigger: string; question: string; }
 interface TalkingPoint { topic: string; question: string; why: string; }
 interface Objection { objection: string; response: string; }
 interface PrepNotes {
   opener: string;
   keyObjective: string;
   talkingPoints: TalkingPoint[];
+  topicsToExplore: TopicToExplore[];
   potentialObjections: Objection[];
   closingStrategy: string;
   warningsOrTips: string[];
@@ -31,7 +37,7 @@ interface ISpeechRecognition {
   continuous: boolean;
   interimResults: boolean;
   lang: string;
-  onresult: ((event: { results: { length: number; [i: number]: [{ transcript: string }] } }) => void) | null;
+  onresult: ((event: { results: { length: number; [i: number]: { isFinal: boolean; [j: number]: { transcript: string } } }; resultIndex: number }) => void) | null;
   onerror: ((event: Event) => void) | null;
   onend: (() => void) | null;
   start(): void;
@@ -59,25 +65,42 @@ export default function LiveCallPage() {
     }).catch(() => setTrainingLocked(true));
   }, [user]);
 
-  // Prep form
-  const [leadName, setLeadName] = useState('');
-  const [businessType, setBusinessType] = useState('');
-  const [callGoal, setCallGoal] = useState('Book a 15-minute discovery call with CrftdWeb');
-  const [additionalContext, setAdditionalContext] = useState('');
+  // Call context (pre-call setup)
+  const [callContext, setCallContext] = useState({
+    contactName: '',
+    callerType: '',
+    callGoal: 'Book a 15-minute discovery call with CrftdWeb',
+    additionalContext: '',
+  });
+
+  // Prep
   const [isPrepping, setIsPrepping] = useState(false);
   const [prepNotes, setPrepNotes] = useState<PrepNotes | null>(null);
+  const [showPrep, setShowPrep] = useState(true);
+  const [usedTopics, setUsedTopics] = useState<Set<string>>(new Set());
 
   // Active call
-  const [callStage, setCallStage] = useState<CallStage>('prep');
+  const [callStage, setCallStage] = useState<CallStage>('context');
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [callDuration, setCallDuration] = useState(0);
   const [transcript, setTranscript] = useState<CallTranscriptEntry[]>([]);
+  const [liveText, setLiveText] = useState('');
   const [isListening, setIsListening] = useState(false);
   const [askText, setAskText] = useState('');
   const [suggestion, setSuggestion] = useState<AiSuggestion | null>(null);
   const [isGettingSuggestion, setIsGettingSuggestion] = useState(false);
   const [manualEntry, setManualEntry] = useState('');
   const [manualSpeaker, setManualSpeaker] = useState<'rep' | 'prospect'>('rep');
+  const [autoSuggest, setAutoSuggest] = useState(true);
+  const [isOverlayMode, setIsOverlayMode] = useState(false);
+
+  // Audio source + recording
+  const [audioSource, setAudioSource] = useState<'mic' | 'system'>('mic');
+  const [isRecordingAudio, setIsRecordingAudio] = useState(false);
+  const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const [isTranscribing, setIsTranscribing] = useState(false);
+  const [useDeepgram, setUseDeepgram] = useState(true);
 
   // Outcome + summary
   const [outcome, setOutcome] = useState<'booked' | 'follow_up' | 'not_interested' | 'callback'>('follow_up');
@@ -85,18 +108,30 @@ export default function LiveCallPage() {
   const [isSummarisingCall, setIsSummarisingCall] = useState(false);
   const [callSummary, setCallSummary] = useState<CallSummary | null>(null);
 
+  // Refs
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const recognitionRef = useRef<ISpeechRecognition | null>(null);
+  const speechRef = useRef<ISpeechRecognition | null>(null);
+  const deepgramSocketRef = useRef<WebSocket | null>(null);
+  const deepgramRecorderRef = useRef<MediaRecorder | null>(null);
   const transcriptEndRef = useRef<HTMLDivElement>(null);
   const lastAutoSuggestLength = useRef(0);
+  const isActiveRef = useRef(false);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
+  const recordingStreamRef = useRef<MediaStream | null>(null);
+  const systemStreamRef = useRef<MediaStream | null>(null);
+  const callDurationRef = useRef(0);
 
   useEffect(() => {
     transcriptEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [transcript]);
+  }, [transcript, liveText]);
 
-  // Auto-suggest whenever a prospect message is added
+  // Keep duration ref in sync
+  useEffect(() => { callDurationRef.current = callDuration; }, [callDuration]);
+
+  // Auto-suggest when prospect speaks
   useEffect(() => {
-    if (callStage !== 'active') return;
+    if (callStage !== 'active' || !autoSuggest) return;
     if (transcript.length <= lastAutoSuggestLength.current) return;
     const last = transcript[transcript.length - 1];
     if (last?.speaker !== 'prospect') return;
@@ -107,8 +142,8 @@ export default function LiveCallPage() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         transcript: transcript.map((t) => ({ speaker: t.speaker, text: t.text })),
-        leadName,
-        businessType,
+        leadName: callContext.contactName,
+        businessType: callContext.callerType,
         lastProspectMessage: last.text,
         userQuestion: '',
       }),
@@ -117,7 +152,7 @@ export default function LiveCallPage() {
       .then((data) => setSuggestion(data))
       .catch(() => null)
       .finally(() => setIsGettingSuggestion(false));
-  }, [transcript, callStage, leadName, businessType]);
+  }, [transcript, callStage, callContext.contactName, callContext.callerType, autoSuggest]);
 
   useEffect(() => {
     if (callStage === 'active') {
@@ -126,76 +161,361 @@ export default function LiveCallPage() {
     return () => { if (timerRef.current) clearInterval(timerRef.current); };
   }, [callStage]);
 
+  useEffect(() => { isActiveRef.current = callStage === 'active'; }, [callStage]);
+
   const fmt = (s: number) => `${Math.floor(s / 60).toString().padStart(2, '0')}:${(s % 60).toString().padStart(2, '0')}`;
 
-  // Get prep notes
+  // ── Audio Recording ───────────────────────────────────
+  const startAudioRecording = useCallback(async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: { echoCancellation: true, noiseSuppression: true, sampleRate: 44100 },
+      });
+      recordingStreamRef.current = stream;
+      audioChunksRef.current = [];
+
+      const mediaRecorder = new MediaRecorder(stream, {
+        mimeType: MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/mp4',
+      });
+
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) audioChunksRef.current.push(event.data);
+      };
+
+      mediaRecorder.onstop = () => {
+        const blob = new Blob(audioChunksRef.current, { type: mediaRecorder.mimeType });
+        setAudioBlob(blob);
+        setAudioUrl(URL.createObjectURL(blob));
+        recordingStreamRef.current?.getTracks().forEach((track) => track.stop());
+      };
+
+      mediaRecorderRef.current = mediaRecorder;
+      mediaRecorder.start(1000);
+      setIsRecordingAudio(true);
+    } catch {
+      alert('Could not access microphone. Please allow microphone access.');
+    }
+  }, []);
+
+  const stopAudioRecording = useCallback(() => {
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+      mediaRecorderRef.current.stop();
+      setIsRecordingAudio(false);
+    }
+  }, []);
+
+  const downloadRecording = useCallback(() => {
+    if (!audioBlob || !audioUrl) return;
+    const ext = audioBlob.type.includes('webm') ? 'webm' : 'm4a';
+    const a = document.createElement('a');
+    a.href = audioUrl;
+    a.download = `call-${callContext.contactName || 'recording'}-${new Date().toISOString().slice(0, 10)}.${ext}`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }, [audioBlob, audioUrl, callContext.contactName]);
+
+  // ── Whisper Transcription ──────────────────────────────
+  const transcribeRecording = useCallback(async () => {
+    if (!audioBlob) return;
+    const fileSizeMB = audioBlob.size / (1024 * 1024);
+    if (fileSizeMB > 4) {
+      alert(`Audio file is too large (${fileSizeMB.toFixed(1)}MB). Please record a shorter clip (under 4MB).`);
+      return;
+    }
+    setIsTranscribing(true);
+    try {
+      const ext = audioBlob.type.includes('webm') ? 'webm' : 'm4a';
+      const file = new File([audioBlob], `recording.${ext}`, { type: audioBlob.type });
+      const formData = new FormData();
+      formData.append('audio', file);
+
+      const response = await fetch('/api/rep/call/whisper', { method: 'POST', body: formData });
+      if (response.status === 413) throw new Error('File too large. Please record a shorter clip.');
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err.error || 'Transcription failed');
+      }
+      const data = await response.json();
+      return data;
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : 'Failed to transcribe';
+      alert(msg);
+      return null;
+    } finally {
+      setIsTranscribing(false);
+    }
+  }, [audioBlob]);
+
+  // ── System Audio ───────────────────────────────────────
+  const requestSystemAudio = async (): Promise<MediaStream | null> => {
+    try {
+      const stream = await navigator.mediaDevices.getDisplayMedia({
+        video: true,
+        audio: { echoCancellation: true, noiseSuppression: true, sampleRate: 44100 } as MediaTrackConstraints,
+      });
+      const audioTracks = stream.getAudioTracks();
+      if (audioTracks.length === 0) {
+        alert('No audio track captured. Make sure to check "Share audio" when selecting the tab/screen.');
+        stream.getTracks().forEach((t) => t.stop());
+        return null;
+      }
+      stream.getVideoTracks().forEach((t) => t.stop());
+      return stream;
+    } catch {
+      return null;
+    }
+  };
+
+  // ── Deepgram Transcription ─────────────────────────────
+  const startDeepgramTranscription = async (stream: MediaStream) => {
+    try {
+      const tokenRes = await fetch('/api/rep/call/deepgram');
+      if (!tokenRes.ok) return false;
+      const { apiKey } = await tokenRes.json();
+
+      const socket = new WebSocket(
+        'wss://api.deepgram.com/v1/listen?model=nova-2&punctuate=true&interim_results=true&endpointing=300',
+        ['token', apiKey]
+      );
+      deepgramSocketRef.current = socket;
+
+      const mediaRecorder = new MediaRecorder(stream, {
+        mimeType: MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/mp4',
+      });
+      deepgramRecorderRef.current = mediaRecorder;
+
+      socket.onopen = () => {
+        setIsListening(true);
+        mediaRecorder.ondataavailable = (event) => {
+          if (event.data.size > 0 && socket.readyState === WebSocket.OPEN) {
+            socket.send(event.data);
+          }
+        };
+        mediaRecorder.start(250);
+      };
+
+      socket.onmessage = (message) => {
+        const data = JSON.parse(message.data);
+        if (data.type === 'Results' && data.channel?.alternatives?.[0]) {
+          const text = data.channel.alternatives[0].transcript;
+          const isFinal = data.is_final;
+          if (text) {
+            if (isFinal) {
+              setTranscript((p) => [...p, {
+                id: `dg_${Date.now()}`,
+                speaker: 'prospect',
+                text,
+                timestamp: callDurationRef.current,
+                confidence: data.channel.alternatives[0].confidence || 0.95,
+                createdAt: new Date(),
+              }]);
+              setLiveText('');
+            } else {
+              setLiveText(text);
+            }
+          }
+        }
+      };
+
+      socket.onerror = () => {};
+      socket.onclose = () => {
+        setIsListening(false);
+        if (mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+      };
+
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
+  // ── Get Prep Notes ─────────────────────────────────────
   const getPrepNotes = useCallback(async () => {
-    if (!leadName.trim()) return;
+    if (!callContext.contactName.trim()) return;
     setIsPrepping(true);
     try {
       const res = await fetch('/api/rep/call/prep', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ leadName, businessType, callGoal, additionalContext }),
+        body: JSON.stringify({
+          leadName: callContext.contactName,
+          businessType: callContext.callerType,
+          callGoal: callContext.callGoal,
+          additionalContext: callContext.additionalContext,
+        }),
       });
       const data = await res.json();
       setPrepNotes(data);
+      setCallStage('prep');
     } finally {
       setIsPrepping(false);
     }
-  }, [leadName, businessType, callGoal, additionalContext]);
+  }, [callContext]);
 
-  // Start call
+  const markTopicUsed = (topic: string) => {
+    setUsedTopics((prev) => new Set([...prev, topic]));
+  };
+
+  const useTopicQuestion = (question: string, topic: string) => {
+    setSuggestion({ type: 'question', suggestion: question, why: `From prep: ${topic}`, framework: '' });
+    markTopicUsed(topic);
+  };
+
+  // ── Start Call ─────────────────────────────────────────
   const startCall = useCallback(async () => {
     if (!user?.uid) return;
+
     const id = await RepTrainingService.createLiveCallSession(user.uid, {
-      leadName,
-      businessType,
-      callGoal,
+      leadName: callContext.contactName || 'Prospect',
+      businessType: callContext.callerType,
+      callGoal: callContext.callGoal,
     });
     setSessionId(id);
     setCallStage('active');
-  }, [user?.uid, leadName, businessType, callGoal]);
+    setCallDuration(0);
 
-  // Toggle speech recognition
-  const toggleListening = useCallback(() => {
-    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SR) {
-      alert('Speech recognition not supported in this browser. Use manual entry below.');
+    // Get mic stream
+    let micStream: MediaStream;
+    try {
+      micStream = await navigator.mediaDevices.getUserMedia({
+        audio: { echoCancellation: true, noiseSuppression: true, sampleRate: 16000 },
+      });
+    } catch {
+      alert('Could not access microphone. Please allow microphone access.');
       return;
     }
 
-    if (isListening && recognitionRef.current) {
-      recognitionRef.current.stop();
-      setIsListening(false);
+    // Try Deepgram first, fall back to Web Speech API
+    if (useDeepgram) {
+      const started = await startDeepgramTranscription(micStream);
+      if (started) {
+        startAudioRecording();
+        return;
+      }
+    }
+
+    // Fallback: Web Speech API
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) { alert('Speech recognition not supported. Use Chrome or Edge.'); return; }
+
+    const recognition = new SR();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = 'en-GB';
+
+    recognition.onresult = (event) => {
+      let interim = '', final_text = '';
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const t = event.results[i][0].transcript;
+        if (event.results[i].isFinal) final_text += t;
+        else interim += t;
+      }
+      setLiveText(interim);
+      if (final_text) {
+        setTranscript((p) => [...p, {
+          id: `ws_${Date.now()}`,
+          speaker: 'rep',
+          text: final_text.trim(),
+          timestamp: callDurationRef.current,
+          createdAt: new Date(),
+        }]);
+        setLiveText('');
+      }
+    };
+    recognition.onerror = () => setIsListening(false);
+    recognition.onend = () => {
+      if (isActiveRef.current && speechRef.current) {
+        try { recognition.start(); } catch { /* ignore */ }
+      } else { setIsListening(false); }
+    };
+
+    speechRef.current = recognition;
+    recognition.start();
+    setIsListening(true);
+    startAudioRecording();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.uid, callContext, useDeepgram, startAudioRecording]);
+
+  // ── Start Call with System Audio ───────────────────────
+  const startCallWithSystemAudio = useCallback(async () => {
+    if (!user?.uid) return;
+
+    const stream = await requestSystemAudio();
+    if (!stream) {
+      alert('Could not capture system audio. Try using microphone instead.');
+      return;
+    }
+    systemStreamRef.current = stream;
+
+    const id = await RepTrainingService.createLiveCallSession(user.uid, {
+      leadName: callContext.contactName || 'Prospect',
+      businessType: callContext.callerType,
+      callGoal: callContext.callGoal,
+    });
+    setSessionId(id);
+    setCallStage('active');
+    setCallDuration(0);
+
+    // Use Deepgram with system audio if available
+    if (useDeepgram) {
+      const started = await startDeepgramTranscription(stream);
+      if (started) {
+        startAudioRecording();
+        stream.getAudioTracks()[0].onended = () => { if (isActiveRef.current) endCall(); };
+        return;
+      }
+    }
+
+    // Fallback: Web Speech API (mic only, system audio recorded separately)
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) {
+      alert('Speech recognition not supported. Use Chrome or Edge.');
+      stream.getTracks().forEach((t) => t.stop());
       return;
     }
 
     const recognition = new SR();
     recognition.continuous = true;
-    recognition.interimResults = false;
+    recognition.interimResults = true;
     recognition.lang = 'en-GB';
-    recognitionRef.current = recognition;
 
-    recognition.onresult = async (event: { results: { length: number; [i: number]: [{ transcript: string }] } }) => {
-      const text = event.results[event.results.length - 1][0].transcript.trim();
-      if (!text) return;
-      const entry: CallTranscriptEntry = {
-        id: Date.now().toString(),
-        speaker: 'rep',
-        text,
-        timestamp: callDuration,
-        createdAt: new Date(),
-      };
-      setTranscript((prev) => [...prev, entry]);
-      if (sessionId) await RepTrainingService.addCallTranscriptEntry(sessionId, entry);
+    recognition.onresult = (event) => {
+      let interim = '', final_text = '';
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const t = event.results[i][0].transcript;
+        if (event.results[i].isFinal) final_text += t;
+        else interim += t;
+      }
+      setLiveText(interim);
+      if (final_text) {
+        setTranscript((p) => [...p, {
+          id: `ws_${Date.now()}`,
+          speaker: 'rep',
+          text: final_text.trim(),
+          timestamp: callDurationRef.current,
+          createdAt: new Date(),
+        }]);
+        setLiveText('');
+      }
+    };
+    recognition.onerror = () => {};
+    recognition.onend = () => {
+      if (isActiveRef.current && speechRef.current) {
+        try { recognition.start(); } catch { /* ignore */ }
+      } else { setIsListening(false); }
     };
 
-    recognition.onerror = () => setIsListening(false);
-    recognition.onend = () => setIsListening(false);
+    speechRef.current = recognition;
     recognition.start();
     setIsListening(true);
-  }, [isListening, callDuration, sessionId]);
+    startAudioRecording();
+
+    stream.getAudioTracks()[0].onended = () => {
+      if (isActiveRef.current) endCall();
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.uid, callContext, useDeepgram, startAudioRecording]);
 
   // Manual transcript entry
   const addManualEntry = useCallback(async () => {
@@ -223,8 +543,8 @@ export default function LiveCallPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           transcript: transcript.map((t) => ({ speaker: t.speaker, text: t.text })),
-          leadName,
-          businessType,
+          leadName: callContext.contactName,
+          businessType: callContext.callerType,
           lastProspectMessage: lastProspect?.text || '',
           userQuestion: askText,
         }),
@@ -235,40 +555,126 @@ export default function LiveCallPage() {
     } finally {
       setIsGettingSuggestion(false);
     }
-  }, [transcript, askText, leadName, businessType]);
+  }, [transcript, askText, callContext.contactName, callContext.callerType]);
 
-  // End call → summary
+  // ── End Call → Summary ─────────────────────────────────
   const endCall = useCallback(async () => {
+    isActiveRef.current = false;
     if (timerRef.current) clearInterval(timerRef.current);
-    if (recognitionRef.current) recognitionRef.current.stop();
+
+    // Stop Deepgram
+    if (deepgramSocketRef.current) {
+      deepgramSocketRef.current.close();
+      deepgramSocketRef.current = null;
+    }
+    if (deepgramRecorderRef.current && deepgramRecorderRef.current.state !== 'inactive') {
+      deepgramRecorderRef.current.stop();
+    }
+
+    // Stop Web Speech
+    if (speechRef.current) {
+      speechRef.current.stop();
+      speechRef.current = null;
+    }
     setIsListening(false);
+
+    // Stop audio recording and wait for blob
+    let recordedBlob: Blob | null = null;
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
+      try {
+        recordedBlob = await new Promise<Blob>((resolve, reject) => {
+          const mr = mediaRecorderRef.current!;
+          const timeout = setTimeout(() => reject(new Error('timeout')), 5000);
+          mr.onstop = () => {
+            clearTimeout(timeout);
+            const blob = new Blob(audioChunksRef.current, { type: mr.mimeType });
+            setAudioBlob(blob);
+            setAudioUrl(URL.createObjectURL(blob));
+            recordingStreamRef.current?.getTracks().forEach((track) => track.stop());
+            resolve(blob);
+          };
+          mr.stop();
+          setIsRecordingAudio(false);
+        });
+      } catch { /* continue without recording */ }
+    }
+
+    // Stop system audio
+    if (systemStreamRef.current) {
+      systemStreamRef.current.getTracks().forEach((t) => t.stop());
+      systemStreamRef.current = null;
+    }
+
     setIsSummarisingCall(true);
 
     try {
+      // Whisper re-transcription if we have a recording
+      let finalTranscript = transcript;
+      if (recordedBlob) {
+        const fileSizeMB = recordedBlob.size / (1024 * 1024);
+        if (fileSizeMB <= 4) {
+          try {
+            const ext = recordedBlob.type.includes('webm') ? 'webm' : 'm4a';
+            const file = new File([recordedBlob], `recording.${ext}`, { type: recordedBlob.type });
+            const formData = new FormData();
+            formData.append('audio', file);
+
+            const whisperRes = await fetch('/api/rep/call/whisper', { method: 'POST', body: formData });
+            if (whisperRes.ok) {
+              const whisperData = await whisperRes.json();
+              if (whisperData.text) {
+                const sentences = whisperData.text.split(/(?<=[.!?])\s+/).filter((s: string) => s.trim());
+                finalTranscript = sentences.map((text: string, i: number) => ({
+                  id: `whisper_${Date.now()}_${i}`,
+                  speaker: 'unknown' as const,
+                  text: text.trim(),
+                  timestamp: Math.floor((i / sentences.length) * callDurationRef.current),
+                  confidence: 0.95,
+                  createdAt: new Date(),
+                }));
+              }
+            }
+          } catch { /* use live transcript */ }
+        }
+      }
+
       const res = await fetch('/api/rep/call/summary', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          transcript: transcript.map((t) => ({ speaker: t.speaker, text: t.text, timestamp: t.timestamp })),
-          leadName,
-          businessType,
-          callGoal,
-          duration: callDuration,
+          transcript: finalTranscript.map((t) => ({ speaker: t.speaker, text: t.text, timestamp: t.timestamp })),
+          leadName: callContext.contactName,
+          businessType: callContext.callerType,
+          callGoal: callContext.callGoal,
+          duration: callDurationRef.current,
+          notes,
         }),
       });
       const summary: CallSummary = await res.json();
       setCallSummary(summary);
 
       if (sessionId) {
-        await RepTrainingService.completeCallSession(sessionId, summary, callDuration, outcome, notes);
+        await RepTrainingService.completeCallSession(
+          sessionId, summary, callDurationRef.current, outcome, notes, undefined, finalTranscript
+        );
       }
-    } finally {
+    } catch { /* ignore */ } finally {
       setIsSummarisingCall(false);
       setCallStage('summary');
     }
-  }, [transcript, leadName, businessType, callGoal, callDuration, sessionId, outcome, notes]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [transcript, callContext, sessionId, outcome, notes]);
 
-  // ── TRAINING GATE ─────────────────────────────────────────
+  // Quick pick options for context
+  const callerTypeOptions = [
+    'Local business needing a website',
+    'Business wanting website revamp',
+    'Warm lead / referral',
+    'Cold outreach',
+    'Follow-up from previous call',
+  ];
+
+  // ── TRAINING GATE ─────────────────────────────────────
   if (trainingLocked) {
     return (
       <div className="max-w-lg mx-auto text-center py-20 space-y-5">
@@ -304,14 +710,14 @@ export default function LiveCallPage() {
     );
   }
 
-  // ── PREP STAGE ───────────────────────────────────────────
-  if (callStage === 'prep') {
+  // ── CONTEXT SETUP STAGE ────────────────────────────────
+  if (callStage === 'context') {
     return (
       <div className="max-w-2xl mx-auto space-y-5">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-lg font-bold text-white">Live Call Assistant</h2>
-            <p className="text-sm text-white/40">Pre-call intelligence + real-time AI suggestions</p>
+            <p className="text-sm text-white/40">Set up your call context, then get AI prep notes</p>
           </div>
           <Link href="/rep/call/history" className="flex items-center gap-1.5 text-xs text-white/30 hover:text-white/60 transition-colors">
             <History className="w-3.5 h-3.5" />
@@ -319,42 +725,59 @@ export default function LiveCallPage() {
           </Link>
         </div>
 
-        {/* Context form */}
         <div className="bg-white/5 border border-white/8 rounded-xl p-5 space-y-4">
           <p className="text-xs text-white/30 uppercase tracking-widest">Call Context</p>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-xs text-white/40 mb-1 block">Lead Name *</label>
+              <label className="text-xs text-white/40 mb-1 block">Contact / Business Name *</label>
               <input
-                value={leadName}
-                onChange={(e) => setLeadName(e.target.value)}
+                value={callContext.contactName}
+                onChange={(e) => setCallContext((p) => ({ ...p, contactName: e.target.value }))}
                 placeholder="e.g. Dave at DK Plumbing"
                 className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-white/20 outline-none focus:border-white/20"
               />
             </div>
             <div>
-              <label className="text-xs text-white/40 mb-1 block">Business Type</label>
+              <label className="text-xs text-white/40 mb-1 block">Type of Contact</label>
               <input
-                value={businessType}
-                onChange={(e) => setBusinessType(e.target.value)}
+                value={callContext.callerType}
+                onChange={(e) => setCallContext((p) => ({ ...p, callerType: e.target.value }))}
                 placeholder="e.g. Plumber"
                 className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-white/20 outline-none focus:border-white/20"
               />
             </div>
           </div>
+
+          {/* Quick picks for caller type */}
+          <div className="flex flex-wrap gap-1.5">
+            {callerTypeOptions.map((opt) => (
+              <button
+                key={opt}
+                onClick={() => setCallContext((p) => ({ ...p, callerType: opt }))}
+                className={`text-xs px-2.5 py-1 rounded-full transition-colors ${
+                  callContext.callerType === opt
+                    ? 'bg-white text-black font-semibold'
+                    : 'text-white/30 border border-white/10 hover:text-white/60'
+                }`}
+              >
+                {opt}
+              </button>
+            ))}
+          </div>
+
           <div>
             <label className="text-xs text-white/40 mb-1 block">Call Goal</label>
             <input
-              value={callGoal}
-              onChange={(e) => setCallGoal(e.target.value)}
+              value={callContext.callGoal}
+              onChange={(e) => setCallContext((p) => ({ ...p, callGoal: e.target.value }))}
               className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-white/20 outline-none focus:border-white/20"
             />
           </div>
           <div>
             <label className="text-xs text-white/40 mb-1 block">Additional Context (optional)</label>
             <textarea
-              value={additionalContext}
-              onChange={(e) => setAdditionalContext(e.target.value)}
+              value={callContext.additionalContext}
+              onChange={(e) => setCallContext((p) => ({ ...p, additionalContext: e.target.value }))}
               placeholder="Any notes about this lead, their website, industry situation..."
               rows={2}
               className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-white/20 outline-none focus:border-white/20 resize-none"
@@ -362,25 +785,70 @@ export default function LiveCallPage() {
           </div>
           <button
             onClick={getPrepNotes}
-            disabled={!leadName.trim() || isPrepping}
+            disabled={!callContext.contactName.trim() || isPrepping}
             className="w-full border border-white/20 text-white/70 font-semibold py-2.5 rounded-xl hover:bg-white/5 transition-colors disabled:opacity-30 flex items-center justify-center gap-2"
           >
             {isPrepping ? <><Loader2 className="w-4 h-4 animate-spin" /> Prepping...</> : <><Clipboard className="w-4 h-4" /> Get AI Prep Notes</>}
           </button>
         </div>
 
-        {/* Prep notes */}
-        {prepNotes && (
+        {/* Skip to call directly */}
+        <button
+          onClick={() => setCallStage('prep')}
+          disabled={!callContext.contactName.trim()}
+          className="w-full text-white/30 text-xs hover:text-white/50 transition-colors disabled:opacity-30"
+        >
+          Skip prep, go straight to call →
+        </button>
+      </div>
+    );
+  }
+
+  // ── PREP STAGE (with prep notes + start call) ──────────
+  if (callStage === 'prep') {
+    return (
+      <div className="max-w-2xl mx-auto space-y-5">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-lg font-bold text-white">Pre-Call Prep</h2>
+            <p className="text-sm text-white/40">{callContext.contactName} {callContext.callerType ? `· ${callContext.callerType}` : ''}</p>
+          </div>
+          <button onClick={() => setCallStage('context')} className="text-xs text-white/30 hover:text-white/60 transition-colors">
+            ← Edit Context
+          </button>
+        </div>
+
+        {prepNotes ? (
           <div className="bg-white/5 border border-white/8 rounded-xl p-5 space-y-4">
             <p className="text-xs text-white/30 uppercase tracking-widest">AI Prep Notes</p>
+
+            {/* Key Objective */}
+            <div className="bg-white/5 rounded-lg p-3">
+              <p className="text-xs text-white/30 mb-1">Key Objective</p>
+              <p className="text-sm text-white font-medium">{prepNotes.keyObjective}</p>
+            </div>
+
+            {/* Opening Line */}
             <div className="bg-white/5 rounded-lg p-3">
               <p className="text-xs text-white/30 mb-1">Opening Line</p>
-              <p className="text-sm text-white">"{prepNotes.opener}"</p>
+              <p className="text-sm text-white">&ldquo;{prepNotes.opener}&rdquo;</p>
             </div>
-            <div>
-              <p className="text-xs text-white/30 mb-1">Key Objective</p>
-              <p className="text-sm text-white/70">{prepNotes.keyObjective}</p>
-            </div>
+
+            {/* Topics to Explore */}
+            {prepNotes.topicsToExplore?.length > 0 && (
+              <div>
+                <p className="text-xs text-white/30 mb-2">Topics to Explore</p>
+                {prepNotes.topicsToExplore.map((t, i) => (
+                  <div key={i} className="mb-2 bg-white/3 rounded-lg p-3">
+                    <p className="text-xs text-white/70 font-medium">{t.topic}</p>
+                    <p className="text-xs text-white/30 mt-0.5">When: {t.trigger}</p>
+                    <p className="text-xs text-white/50 mt-1">&ldquo;{t.question}&rdquo;</p>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Talking Points */}
             <div>
               <p className="text-xs text-white/30 mb-2">Talking Points</p>
               {prepNotes.talkingPoints.map((p, i) => (
@@ -390,6 +858,8 @@ export default function LiveCallPage() {
                 </div>
               ))}
             </div>
+
+            {/* Predicted Objections */}
             <div>
               <p className="text-xs text-white/30 mb-2">Predicted Objections</p>
               {prepNotes.potentialObjections.map((o, i) => (
@@ -399,10 +869,13 @@ export default function LiveCallPage() {
                 </div>
               ))}
             </div>
+
+            {/* Closing Strategy */}
             <div>
               <p className="text-xs text-white/30 mb-1">Closing Strategy</p>
               <p className="text-xs text-white/60">{prepNotes.closingStrategy}</p>
             </div>
+
             {prepNotes.warningsOrTips.length > 0 && (
               <div>
                 <p className="text-xs text-white/30 mb-2">Tips</p>
@@ -412,16 +885,57 @@ export default function LiveCallPage() {
               </div>
             )}
           </div>
+        ) : (
+          <div className="bg-white/5 border border-white/8 rounded-xl p-10 text-center">
+            <p className="text-sm text-white/30">No prep notes loaded. Press &quot;Get AI Prep Notes&quot; on the context screen, or start the call directly.</p>
+          </div>
         )}
 
-        {/* Start call */}
+        {/* Audio Source Toggle */}
+        <div className="bg-white/5 border border-white/8 rounded-xl p-4 space-y-3">
+          <p className="text-xs text-white/30 uppercase tracking-widest">Audio Source</p>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setAudioSource('mic')}
+              className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                audioSource === 'mic' ? 'bg-white text-black' : 'text-white/40 border border-white/10 hover:text-white/60'
+              }`}
+            >
+              <Mic className="w-4 h-4" /> Microphone
+            </button>
+            <button
+              onClick={() => setAudioSource('system')}
+              className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                audioSource === 'system' ? 'bg-white text-black' : 'text-white/40 border border-white/10 hover:text-white/60'
+              }`}
+            >
+              <Monitor className="w-4 h-4" /> Browser Tab
+            </button>
+          </div>
+          {audioSource === 'system' && (
+            <p className="text-xs text-amber-400/70 text-center">Select the browser tab with your call (Zoom, Meet, etc.) and check &quot;Share audio&quot;</p>
+          )}
+
+          {/* Deepgram toggle */}
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-white/30">Use Deepgram (higher accuracy)</span>
+            <button
+              onClick={() => setUseDeepgram(!useDeepgram)}
+              className={`w-10 h-5 rounded-full transition-colors relative ${useDeepgram ? 'bg-green-500' : 'bg-white/20'}`}
+            >
+              <div className={`w-4 h-4 rounded-full bg-white absolute top-0.5 transition-all ${useDeepgram ? 'left-5' : 'left-0.5'}`} />
+            </button>
+          </div>
+        </div>
+
+        {/* Start Call */}
         <button
-          onClick={startCall}
-          disabled={!leadName.trim()}
+          onClick={audioSource === 'mic' ? startCall : startCallWithSystemAudio}
+          disabled={!callContext.contactName.trim()}
           className="w-full bg-green-500 hover:bg-green-400 disabled:opacity-30 text-black font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 transition-colors"
         >
           <Phone className="w-5 h-5" />
-          Start Live Call
+          {audioSource === 'mic' ? 'Start Live Call' : 'Start Call (Browser Tab)'}
         </button>
       </div>
     );
@@ -433,7 +947,7 @@ export default function LiveCallPage() {
       <div className="max-w-2xl mx-auto space-y-5 pb-10">
         <div>
           <h2 className="text-lg font-bold text-white">Call Complete</h2>
-          <p className="text-sm text-white/40">{leadName} · {fmt(callDuration)}</p>
+          <p className="text-sm text-white/40">{callContext.contactName} · {fmt(callDuration)}</p>
         </div>
 
         {isSummarisingCall ? (
@@ -480,13 +994,36 @@ export default function LiveCallPage() {
           </>
         ) : null}
 
+        {/* Audio Recording Playback */}
+        {audioUrl && (
+          <div className="bg-white/5 border border-white/8 rounded-xl p-4 space-y-3">
+            <p className="text-xs text-white/30 uppercase tracking-widest">Call Recording</p>
+            <audio src={audioUrl} controls className="w-full h-10" />
+            <div className="flex gap-2">
+              <button
+                onClick={downloadRecording}
+                className="flex items-center gap-1.5 text-xs text-white/50 hover:text-white/80 transition-colors"
+              >
+                <Download className="w-3.5 h-3.5" /> Download
+              </button>
+              <button
+                onClick={transcribeRecording}
+                disabled={isTranscribing}
+                className="flex items-center gap-1.5 text-xs text-white/50 hover:text-white/80 transition-colors disabled:opacity-30"
+              >
+                <FileText className="w-3.5 h-3.5" /> {isTranscribing ? 'Transcribing...' : 'Re-transcribe (Whisper)'}
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Transcript */}
         {transcript.length > 0 && (
           <div className="bg-white/5 border border-white/8 rounded-xl p-4 space-y-2 max-h-60 overflow-y-auto">
             <p className="text-xs text-white/30 uppercase tracking-widest sticky top-0">Transcript</p>
             {transcript.map((t) => (
               <div key={t.id}>
-                <span className={`text-xs font-semibold ${t.speaker === 'rep' ? 'text-white/50' : 'text-amber-400/70'}`}>
+                <span className={`text-xs font-semibold ${t.speaker === 'rep' ? 'text-white/50' : t.speaker === 'prospect' ? 'text-amber-400/70' : 'text-blue-400/70'}`}>
                   {t.speaker.toUpperCase()}: </span>
                 <span className="text-xs text-white/60">{t.text}</span>
               </div>
@@ -495,7 +1032,19 @@ export default function LiveCallPage() {
         )}
 
         <button
-          onClick={() => { setCallStage('prep'); setTranscript([]); setSuggestion(null); setCallSummary(null); setCallDuration(0); setSessionId(null); setPrepNotes(null); }}
+          onClick={() => {
+            setCallStage('context');
+            setTranscript([]);
+            setSuggestion(null);
+            setCallSummary(null);
+            setCallDuration(0);
+            setSessionId(null);
+            setPrepNotes(null);
+            setAudioBlob(null);
+            setAudioUrl(null);
+            setUsedTopics(new Set());
+            setCallContext({ contactName: '', callerType: '', callGoal: 'Book a 15-minute discovery call with CrftdWeb', additionalContext: '' });
+          }}
           className="w-full bg-white text-black font-bold py-3 rounded-xl hover:bg-white/90 transition-colors"
         >
           New Call
@@ -506,14 +1055,31 @@ export default function LiveCallPage() {
 
   // ── ACTIVE CALL STAGE ────────────────────────────────────
   return (
-    <div className="max-w-2xl mx-auto space-y-4">
+    <div className={`${isOverlayMode ? 'max-w-md mx-auto' : 'max-w-2xl mx-auto'} space-y-4`}>
       {/* Call header */}
       <div className="flex items-center justify-between bg-white/5 border border-white/8 rounded-xl px-4 py-3">
         <div>
-          <p className="text-sm font-semibold text-white">{leadName}</p>
-          <p className="text-xs text-white/40">{businessType}</p>
+          <p className="text-sm font-semibold text-white">{callContext.contactName}</p>
+          <p className="text-xs text-white/40">{callContext.callerType}</p>
         </div>
         <div className="flex items-center gap-3">
+          {/* Overlay toggle */}
+          <button
+            onClick={() => setIsOverlayMode(!isOverlayMode)}
+            className={`p-1.5 rounded-lg transition-colors ${isOverlayMode ? 'bg-white/10 text-white/60' : 'text-white/25 hover:text-white/50'}`}
+            title={isOverlayMode ? 'Full view' : 'Compact view'}
+          >
+            {isOverlayMode ? <Maximize2 className="w-3.5 h-3.5" /> : <Minimize2 className="w-3.5 h-3.5" />}
+          </button>
+
+          {/* Recording indicator */}
+          {isRecordingAudio && (
+            <div className="flex items-center gap-1 text-red-400">
+              <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse" />
+              <span className="text-xs">REC</span>
+            </div>
+          )}
+
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
             <span className="text-sm font-mono text-white/60">{fmt(callDuration)}</span>
@@ -529,19 +1095,29 @@ export default function LiveCallPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-5 gap-4">
+      <div className={`grid ${isOverlayMode ? 'grid-cols-1' : 'grid-cols-5'} gap-4`}>
         {/* Transcript panel */}
-        <div className="col-span-3 space-y-3">
+        <div className={`${isOverlayMode ? '' : 'col-span-3'} space-y-3`}>
           <div className="bg-white/5 border border-white/8 rounded-xl p-3 h-64 overflow-y-auto space-y-1.5">
-            {transcript.length === 0 ? (
+            {transcript.length === 0 && !liveText ? (
               <p className="text-xs text-white/25 italic text-center pt-8">Transcript will appear here</p>
-            ) : transcript.map((t) => (
-              <div key={t.id}>
-                <span className={`text-xs font-semibold ${t.speaker === 'rep' ? 'text-white/50' : 'text-amber-400/70'}`}>
-                  {t.speaker.toUpperCase()}: </span>
-                <span className="text-xs text-white/70">{t.text}</span>
-              </div>
-            ))}
+            ) : (
+              <>
+                {transcript.map((t) => (
+                  <div key={t.id}>
+                    <span className={`text-xs font-semibold ${t.speaker === 'rep' ? 'text-white/50' : t.speaker === 'prospect' ? 'text-amber-400/70' : 'text-blue-400/70'}`}>
+                      {t.speaker.toUpperCase()}: </span>
+                    <span className="text-xs text-white/70">{t.text}</span>
+                  </div>
+                ))}
+                {liveText && (
+                  <div className="opacity-50">
+                    <span className="text-xs font-semibold text-amber-400/50">...</span>
+                    <span className="text-xs text-white/40 italic"> {liveText}</span>
+                  </div>
+                )}
+              </>
+            )}
             <div ref={transcriptEndRef} />
           </div>
 
@@ -566,26 +1142,112 @@ export default function LiveCallPage() {
               <Plus className="w-4 h-4" />
             </button>
             <button
-              onClick={toggleListening}
+              onClick={() => {
+                if (isListening) {
+                  if (speechRef.current) speechRef.current.stop();
+                  setIsListening(false);
+                } else if (speechRef.current) {
+                  speechRef.current.start();
+                  setIsListening(true);
+                }
+              }}
               className={`rounded-lg px-3 py-2 ${isListening ? 'bg-red-500/20 text-red-400' : 'bg-white/10 text-white/60 hover:bg-white/15'}`}
             >
               {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
             </button>
           </div>
+
+          {/* Audio recording controls */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={isRecordingAudio ? stopAudioRecording : startAudioRecording}
+              className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg transition-colors ${
+                isRecordingAudio ? 'bg-red-500/20 text-red-400' : 'bg-white/5 text-white/40 hover:text-white/60'
+              }`}
+            >
+              {isRecordingAudio ? <><Square className="w-3 h-3" /> Stop Recording</> : <><Circle className="w-3 h-3" /> Record Audio</>}
+            </button>
+            {audioUrl && !isRecordingAudio && (
+              <>
+                <audio src={audioUrl} controls className="h-8 flex-1" />
+                <button onClick={downloadRecording} className="text-xs text-white/30 hover:text-white/50">
+                  <Download className="w-3.5 h-3.5" />
+                </button>
+              </>
+            )}
+          </div>
         </div>
 
-        {/* AI suggestion panel */}
-        <div className="col-span-2 space-y-3">
-          {/* Prep notes quick view */}
+        {/* AI suggestion panel + prep */}
+        <div className={`${isOverlayMode ? '' : 'col-span-2'} space-y-3`}>
+          {/* Prep notes quick view (collapsible) */}
           {prepNotes && (
             <div className="bg-white/5 border border-white/8 rounded-xl p-3 space-y-1.5">
-              <p className="text-xs text-white/30 uppercase tracking-widest">Prep</p>
-              <p className="text-xs text-white/50">Opening: <span className="text-white/70">"{prepNotes.opener.slice(0, 60)}..."</span></p>
-              {prepNotes.potentialObjections.slice(0, 2).map((o, i) => (
-                <p key={i} className="text-xs text-amber-400/60">⚠ {o.objection.slice(0, 50)}...</p>
-              ))}
+              <button onClick={() => setShowPrep(!showPrep)} className="flex items-center justify-between w-full">
+                <p className="text-xs text-white/30 uppercase tracking-widest">Prep</p>
+                {showPrep ? <ChevronUp className="w-3 h-3 text-white/20" /> : <ChevronDown className="w-3 h-3 text-white/20" />}
+              </button>
+              {showPrep && (
+                <div className="space-y-1.5 pt-1">
+                  <p className="text-xs text-white/50">Opening: <span className="text-white/70">&ldquo;{prepNotes.opener.slice(0, 80)}{prepNotes.opener.length > 80 ? '...' : ''}&rdquo;</span></p>
+
+                  {/* Clickable topics to explore */}
+                  {prepNotes.topicsToExplore?.map((t, i) => (
+                    <button
+                      key={i}
+                      onClick={() => useTopicQuestion(t.question, t.topic)}
+                      disabled={usedTopics.has(t.topic)}
+                      className={`w-full text-left text-xs px-2 py-1.5 rounded-lg transition-colors ${
+                        usedTopics.has(t.topic)
+                          ? 'text-white/20 line-through'
+                          : 'text-white/50 hover:bg-white/5 hover:text-white/70'
+                      }`}
+                    >
+                      {usedTopics.has(t.topic) ? '✓' : '→'} {t.topic}
+                    </button>
+                  ))}
+
+                  {/* Clickable talking points */}
+                  {prepNotes.talkingPoints.map((p, i) => (
+                    <button
+                      key={i}
+                      onClick={() => useTopicQuestion(p.question, p.topic)}
+                      disabled={usedTopics.has(p.topic)}
+                      className={`w-full text-left text-xs px-2 py-1.5 rounded-lg transition-colors ${
+                        usedTopics.has(p.topic)
+                          ? 'text-white/20 line-through'
+                          : 'text-white/50 hover:bg-white/5 hover:text-white/70'
+                      }`}
+                    >
+                      {usedTopics.has(p.topic) ? '✓' : '→'} {p.topic}
+                    </button>
+                  ))}
+
+                  {/* Objections */}
+                  {prepNotes.potentialObjections.slice(0, 3).map((o, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setSuggestion({ type: 'objection_handler', suggestion: o.response, why: `Handles: "${o.objection}"`, framework: '' })}
+                      className="w-full text-left text-xs text-amber-400/50 hover:text-amber-400/80 px-2 py-1 rounded-lg transition-colors"
+                    >
+                      ⚠ {o.objection.slice(0, 40)}{o.objection.length > 40 ? '...' : ''}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           )}
+
+          {/* Auto-suggest toggle */}
+          <div className="flex items-center justify-between px-1">
+            <span className="text-xs text-white/20">Auto-suggest</span>
+            <button
+              onClick={() => setAutoSuggest(!autoSuggest)}
+              className={`w-8 h-4 rounded-full transition-colors relative ${autoSuggest ? 'bg-green-500' : 'bg-white/15'}`}
+            >
+              <div className={`w-3 h-3 rounded-full bg-white absolute top-0.5 transition-all ${autoSuggest ? 'left-4' : 'left-0.5'}`} />
+            </button>
+          </div>
 
           {/* Ask AI */}
           <div className="bg-white/5 border border-white/8 rounded-xl p-3 space-y-2">
@@ -613,14 +1275,14 @@ export default function LiveCallPage() {
                 <p className="text-xs text-white/30 uppercase tracking-widest">Suggestion</p>
                 {suggestion.framework && <span className="text-xs text-white/25">{suggestion.framework}</span>}
               </div>
-              <p className="text-xs text-white font-medium leading-relaxed">"{suggestion.suggestion}"</p>
+              <p className="text-xs text-white font-medium leading-relaxed">&ldquo;{suggestion.suggestion}&rdquo;</p>
               {suggestion.why && <p className="text-xs text-white/40">{suggestion.why}</p>}
             </div>
           )}
         </div>
       </div>
 
-      {/* Outcome selector (set before ending) */}
+      {/* Outcome selector */}
       <div className="flex items-center gap-3 bg-white/5 border border-white/8 rounded-xl px-4 py-3">
         <p className="text-xs text-white/30">Outcome:</p>
         {(['booked', 'follow_up', 'callback', 'not_interested'] as const).map((o) => (

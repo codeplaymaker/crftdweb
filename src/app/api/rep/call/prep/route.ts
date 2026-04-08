@@ -38,6 +38,9 @@ Generate pre-call prep notes in this exact JSON format:
   "talkingPoints": [
     { "topic": "string", "question": "string", "why": "string" }
   ],
+  "topicsToExplore": [
+    { "topic": "string", "trigger": "<when to bring this up>", "question": "string" }
+  ],
   "potentialObjections": [
     { "objection": "string", "response": "string" }
   ],
@@ -45,7 +48,7 @@ Generate pre-call prep notes in this exact JSON format:
   "warningsOrTips": ["string"]
 }
 
-Include 3 talking points, 3–4 predicted objections, and 2–3 warnings.
+Include 3 talking points, 3–4 topics to explore with specific triggers, 3–4 predicted objections, and 2–3 warnings.
 Be specific. Reference the business type and goal. No generic advice.`;
 
     const userPrompt = `BUSINESS NAME / CONTACT: ${leadName}
