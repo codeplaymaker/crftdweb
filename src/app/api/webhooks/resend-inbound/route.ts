@@ -63,12 +63,12 @@ export async function POST(req: NextRequest) {
   // Find the tagged reply-to address: reply-{leadId}@crftdweb.com
   // Handle both plain emails and "Name <email>" format
   const taggedAddress = toAddresses.find((addr: string) =>
-    addr.match(/reply-[a-zA-Z0-9]+@crftdweb\.com/)
+    addr.match(/reply-[a-zA-Z0-9]+@eanexuekro\.resend\.app/)
   );
 
   if (!taggedAddress) {
     console.log('[inbound-webhook] No tagged address found in to:', toAddresses);
-    // Not a rep email reply — ignore (could be admin@crftdweb.com etc.)
+    // Not a rep email reply — ignore
     return NextResponse.json({ ok: true, skipped: true });
   }
 

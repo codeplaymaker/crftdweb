@@ -91,7 +91,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const fromField = `${repName} at CrftdWeb <${FROM_EMAIL}>`;
-    const replyTo = `reply-${leadId}@crftdweb.com`;
+    const replyTo = `reply-${leadId}@eanexuekro.resend.app`;
     const res = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
