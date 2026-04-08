@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { RepLead, RepEmailLog, RepEmailReply, getLeadEmails, getLeadReplies } from '@/lib/firebase/firestore';
 import { EMAIL_TEMPLATES, EmailTemplateKey } from '@/lib/types/repEmail';
 import { getAuth } from 'firebase/auth';
-import { X, Send, Loader2, Mail, ChevronDown, ChevronUp, Check, AlertCircle, Reply, Inbox } from 'lucide-react';
+import { X, Send, Loader2, Mail, ChevronDown, ChevronUp, Check, AlertCircle, Reply, Inbox, Eye, EyeOff } from 'lucide-react';
 
 interface EmailComposeModalProps {
   lead: RepLead;
@@ -21,6 +21,36 @@ function fillTemplate(text: string, vars: Record<string, string>): string {
     .replace(/\{\{businessName\}\}/g, vars.businessName || '');
 }
 
+function buildPreviewHtml(bodyText: string, senderName: string, subjectLine: string): string {
+  const bodyHtml = bodyText
+    ? bodyText.split('\n\n').map(p =>
+        `<p style="margin:0 0 16px;font-size:15px;color:#444;line-height:1.7;">${p.replace(/\n/g, '<br/>')}</p>`
+      ).join('')
+    : '<p style="margin:0;font-size:15px;color:#aaa;font-style:italic;">Your message will appear here\u2026</p>';
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>${subjectLine || 'Email preview'}</title></head>
+<body style="margin:0;padding:0;background:#f4f4f4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:40px 20px;"><tr><td align="center">
+    <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+      <tr><td align="center" style="background:#000000;border-radius:12px 12px 0 0;padding:32px 40px;">
+        <img src="https://crftdweb.com/CW-logo-white.png" alt="CrftdWeb" width="160" style="display:block;border:0;border-radius:8px;" />
+      </td></tr>
+      <tr><td style="background:#ffffff;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 12px 12px;padding:40px;">
+        ${bodyHtml}
+        <table width="100%" cellpadding="0" cellspacing="0" style="margin:24px 0 0;"><tr><td style="border-top:1px solid #e8e8e8;padding-top:20px;">
+          <p style="margin:0 0 2px;font-size:14px;font-weight:600;color:#111;">${senderName}</p>
+          <p style="margin:0 0 8px;font-size:13px;color:#999;">Sales Rep &middot; CrftdWeb</p>
+          <img src="https://crftdweb.com/CW-logo.png" alt="CrftdWeb" width="40" style="display:block;border:0;margin-bottom:6px;" />
+          <a href="https://crftdweb.com" style="font-size:12px;color:#999;text-decoration:none;">crftdweb.com</a>
+        </td></tr></table>
+      </td></tr>
+    </table>
+  </td></tr></table>
+</body></html>`;
+}
+
 export default function EmailComposeModal({ lead, repName, repEmail, onClose, onSent }: EmailComposeModalProps) {
   const [selectedTemplate, setSelectedTemplate] = useState<EmailTemplateKey>('follow_up_no_reply');
   const [subject, setSubject] = useState('');
@@ -28,6 +58,7 @@ export default function EmailComposeModal({ lead, repName, repEmail, onClose, on
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState('');
+  const [showPreview, setShowPreview] = useState(false);
 
   // Email history
   const [history, setHistory] = useState<RepEmailLog[]>([]);
@@ -250,6 +281,32 @@ export default function EmailComposeModal({ lead, repName, repEmail, onClose, on
               placeholder="Type your message..."
               className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 resize-none leading-relaxed"
             />
+          </div>
+
+          {/* Preview toggle */}
+          <div>
+            <button
+              onClick={() => setShowPreview(!showPreview)}
+              className="flex items-center gap-2 text-xs text-white/40 hover:text-white/60 transition-colors"
+            >
+              {showPreview ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+              {showPreview ? 'Hide preview' : 'Preview email'}
+            </button>
+            {showPreview && (
+              <div className="mt-3 rounded-xl overflow-hidden border border-white/10">
+                <div className="bg-white/[0.03] px-3 py-2 border-b border-white/6 flex items-center gap-2">
+                  <Eye className="w-3 h-3 text-white/20" />
+                  <span className="text-[10px] text-white/25 font-mono">email preview — {subject || 'no subject'}</span>
+                </div>
+                <iframe
+                  srcDoc={buildPreviewHtml(body, repName, subject)}
+                  className="w-full bg-white"
+                  style={{ height: '420px', border: 'none' }}
+                  title="Email preview"
+                  sandbox="allow-same-origin"
+                />
+              </div>
+            )}
           </div>
 
           {error && (
