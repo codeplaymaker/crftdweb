@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/lib/firebase/AuthContext';
+import { getAuth } from 'firebase/auth';
 import { RepTrainingService } from '@/lib/services/repTrainingService';
 import {
   TRAINING_SCENARIOS,
@@ -46,6 +47,11 @@ function RoleplayContent() {
   const autoFlowRef = useRef(false);
   const pendingAutoSendRef = useRef(false);
 
+  const getAuthHeaders = useCallback(async (): Promise<Record<string, string>> => {
+    const token = await getAuth().currentUser?.getIdToken();
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  }, []);
+
   const voice = useVoiceRecorder({
     onTranscription: (text) => {
       setInputText((prev) => {
@@ -62,6 +68,7 @@ function RoleplayContent() {
     },
     autoStopOnSilence: autoFlow,
     silenceTimeout: 2,
+    getAuthHeaders,
   });
   const voiceRef = useRef(voice);
   useEffect(() => { voiceRef.current = voice; });
@@ -116,7 +123,7 @@ function RoleplayContent() {
           : (difficulty === 'elite' ? 'male_aggressive' : difficulty === 'advanced' ? 'male_aggressive' : 'male_professional');
       const res = await fetch('/api/rep/train/tts', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...await getAuthHeaders() },
         body: JSON.stringify({ text, voice: voiceKey }),
       });
       if (!res.ok) throw new Error('TTS failed');
@@ -194,7 +201,7 @@ function RoleplayContent() {
         const systemPrompt = buildRoleplaySystemPrompt(scenario, scenario.difficulty);
         const response = await fetch('/api/rep/train/roleplay', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json', ...await getAuthHeaders() },
           body: JSON.stringify({
             systemPrompt,
             messages: [],
@@ -269,7 +276,7 @@ function RoleplayContent() {
       const systemPrompt = buildRoleplaySystemPrompt(scenario, scenario.difficulty);
       const response = await fetch('/api/rep/train/roleplay', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...await getAuthHeaders() },
         body: JSON.stringify({
           systemPrompt,
           messages: updatedMessages.map((m) => ({ role: m.role === 'rep' ? 'rep' : 'prospect', content: m.content })),
@@ -337,7 +344,7 @@ function RoleplayContent() {
       const ratingSystemPrompt = buildRatingSystemPrompt(scenario);
       const response = await fetch('/api/rep/train/rate', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...await getAuthHeaders() },
         body: JSON.stringify({
           ratingSystemPrompt,
           scenario: {

@@ -17,6 +17,8 @@ interface UseVoiceRecorderOptions {
   silenceTimeout?: number;
   /** Auto-stop on silence? Default false */
   autoStopOnSilence?: boolean;
+  /** Return auth headers for API calls */
+  getAuthHeaders?: () => Promise<Record<string, string>>;
 }
 
 interface UseVoiceRecorderReturn {
@@ -49,8 +51,10 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions = {}): UseVoic
   // Stabilise callbacks so startRecording / stopRecording don't recreate every render
   const onTranscriptionRef = useRef(options.onTranscription);
   const onErrorRef = useRef(options.onError);
+  const getAuthHeadersRef = useRef(options.getAuthHeaders);
   useEffect(() => { onTranscriptionRef.current = options.onTranscription; }, [options.onTranscription]);
   useEffect(() => { onErrorRef.current = options.onError; }, [options.onError]);
+  useEffect(() => { getAuthHeadersRef.current = options.getAuthHeaders; }, [options.getAuthHeaders]);
 
   const cleanupSilenceDetection = useCallback(() => {
     if (silenceFrameRef.current) { cancelAnimationFrame(silenceFrameRef.current); silenceFrameRef.current = null; }
@@ -99,6 +103,7 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions = {}): UseVoic
           const res = await fetch('/api/rep/train/whisper', {
             method: 'POST',
             body: formData,
+            headers: await getAuthHeadersRef.current?.() ?? {},
           });
 
           if (!res.ok) {
