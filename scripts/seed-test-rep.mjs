@@ -60,7 +60,7 @@ async function run() {
     email: TEST_EMAIL,
     phone: '07700 000000',
     status: 'active',
-    commissionRate: 15,
+    commissionRate: 20,
     notes: 'Test rep account — delete after review',
     joinedAt: FieldValue.serverTimestamp(),
   });

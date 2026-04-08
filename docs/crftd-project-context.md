@@ -47,7 +47,7 @@ Revenue comes from project fees. Sales are driven by a commission-only rep progr
 
 CrftdWeb operates a distributed sales team of independent commission-only reps. Reps find businesses, qualify them, and book discovery calls. CrftdWeb closes the deal.
 
-- **Commission rate:** 15% of confirmed project value
+- **Commission rate:** Tiered — 20% on Starter, 15% on Launch, 12% on Growth, 10% on Scale
 - **Payment:** Within 14 days of client deposit clearing
 - **Rep management:** Via the rep portal at crftdweb.com/rep
 - **Rep status:** trial → active → inactive

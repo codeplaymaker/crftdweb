@@ -27,7 +27,7 @@ The CrftdWeb codebase is a Next.js 14+ monorepo running on Vercel. It hosts mult
 
 ## Sales Model
 
-Sales are driven by a **commission-only rep program**. Independent reps cold outreach businesses, qualify them, and book discovery calls. CrftdWeb closes the deal and pays 15% commission within 14 days of client deposit.
+Sales are driven by a **commission-only rep program**. Independent reps cold outreach businesses, qualify them, and book discovery calls. CrftdWeb closes the deal and pays tiered commission (20% Starter, 15% Launch, 12% Growth, 10% Scale) within 7 days of client deposit.
 
 Reps operate through the rep portal at `/rep` which provides:
 - Lead pipeline management (Kanban: contacted → won/lost)

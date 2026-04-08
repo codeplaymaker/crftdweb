@@ -258,22 +258,26 @@ export default function RepLeadsPage() {
               <PoundSterling className="w-5 h-5 text-emerald-400" />
               <p className="text-base font-semibold text-white">Mark as Won — {wonLead.businessName}</p>
             </div>
-            <p className="text-sm text-white/40">Enter the confirmed deal value so your commission can be calculated (15%).</p>
+            <p className="text-sm text-white/40">Enter the confirmed deal value so your commission can be calculated.</p>
             <div>
               <label className="block text-[10px] text-white/30 mb-1.5 uppercase tracking-widest">Deal Value (£)</label>
               <input
                 type="number"
                 value={wonDealValue}
                 onChange={e => setWonDealValue(e.target.value)}
-                placeholder="e.g. 3200"
+                placeholder="e.g. 2497"
                 autoFocus
                 className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/30"
               />
-              {wonDealValue && Number(wonDealValue) > 0 && (
-                <p className="text-xs text-emerald-400 mt-1.5">
-                  Commission: £{Math.round(Number(wonDealValue) * 0.15).toLocaleString()}
-                </p>
-              )}
+              {wonDealValue && Number(wonDealValue) > 0 && (() => {
+                const v = Number(wonDealValue);
+                const rate = v <= 997 ? 20 : v <= 2497 ? 15 : v <= 4997 ? 12 : 10;
+                return (
+                  <p className="text-xs text-emerald-400 mt-1.5">
+                    Commission ({rate}%): £{Math.round(v * rate / 100).toLocaleString()}
+                  </p>
+                );
+              })()}
             </div>
             {wonError && <p className="text-xs text-red-400">{wonError}</p>}
             <div className="flex gap-3">

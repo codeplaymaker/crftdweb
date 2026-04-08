@@ -94,7 +94,7 @@ const FAQS = [
   },
   {
     q: 'When do I get paid?',
-    a: 'Within 7 days of the client paying their deposit. Commission is 15% of the net project value. So a £2,497 Launch site = £374 to you.',
+    a: 'Within 7 days of the client paying their deposit. Commission is tiered: 20% on Starter (£997), 15% on Launch (£2,497), 12% on Growth (£4,997), 10% on Scale (£9,997+). So a £2,497 Launch site = £374 to you.',
   },
   {
     q: 'What if they ask technical questions?',
@@ -363,7 +363,15 @@ function ChannelCard({ channel, icon }: { channel: typeof SOURCING_CHANNELS[numb
 
 export default function RepResourcesPage() {
   const [dealValue, setDealValue] = useState('');
-  const commission = dealValue ? Math.round(Number(dealValue) * 0.15) : null;
+  const getCommissionRate = (val: number) => {
+    if (val <= 997) return 0.20;
+    if (val <= 2497) return 0.15;
+    if (val <= 4997) return 0.12;
+    return 0.10;
+  };
+  const commission = dealValue && Number(dealValue) > 0
+    ? { amount: Math.round(Number(dealValue) * getCommissionRate(Number(dealValue))), rate: Math.round(getCommissionRate(Number(dealValue)) * 100) }
+    : null;
 
   return (
     <div className="max-w-2xl space-y-10">
@@ -387,8 +395,8 @@ export default function RepResourcesPage() {
             />
           </div>
           <div className="text-right">
-            <p className="text-2xl font-bold text-emerald-400">{commission !== null ? `£${commission.toLocaleString()}` : '£—'}</p>
-            <p className="text-[10px] text-white/30">your 15%</p>
+            <p className="text-2xl font-bold text-emerald-400">{commission !== null ? `£${commission.amount.toLocaleString()}` : '£—'}</p>
+            <p className="text-[10px] text-white/30">{commission !== null ? `your ${commission.rate}%` : 'your 10–20%'}</p>
           </div>
         </div>
       </div>

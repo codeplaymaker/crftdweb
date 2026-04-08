@@ -249,7 +249,7 @@ const steps: Step[] = [
             },
             {
               title: 'Set expectations — out loud',
-              desc: 'Commission is 15% of project value, paid within 7 days of client payment clearing. No retainer, no salary, no expenses. They log every prospect in the portal. If they miss a week without contact, they\'re off the team.',
+              desc: 'Commission is tiered: 20% on Starter, 15% on Launch, 12% on Growth, 10% on Scale. Paid within 7 days of client payment clearing. No retainer, no salary, no expenses. They log every prospect in the portal. If they miss a week without contact, they\'re off the team.',
               accent: 'text-rose-400',
             },
           ].map((item, i) => (
@@ -655,7 +655,7 @@ const stats = [
   { label: 'Your time per recruit', value: '~45 mins' },
   { label: 'Trial task pass rate', value: '~20%' },
   { label: 'Calls/day target', value: '10' },
-  { label: 'Commission', value: '15%' },
+  { label: 'Commission', value: '10–20%' },
 ];
 
 // ─── Management Tab ───

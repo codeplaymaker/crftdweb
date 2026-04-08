@@ -123,14 +123,14 @@
 
 ## Rep Commission
 
-Reps earn **15% of confirmed project value** on any deal they introduce.
+Reps earn a **tiered commission** on any deal they introduce.
 
-| Deal Value | Rep Commission |
-|------------|----------------|
-| £997 | £149 |
-| £2,497 | £374 |
-| £4,997 | £749 |
-| £9,997+ | £1,499+ |
+| Deal Value | Rate | Rep Commission |
+|------------|------|----------------|
+| £997 (Starter) | 20% | £199 |
+| £2,497 (Launch) | 15% | £374 |
+| £4,997 (Growth) | 12% | £599 |
+| £9,997+ (Scale) | 10% | £999+ |
 
 Commission is paid within **7 days** of client deposit clearing. Not paid on calls that don't close.
 

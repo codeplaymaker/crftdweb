@@ -92,7 +92,7 @@ export default function RepDashboard() {
         </h1>
         <p className="text-sm text-white/40 mt-1">
           {new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' })}
-          {' · '}15% commission · paid within 7 days of deposit
+          {' · '}10–20% commission · paid within 7 days of deposit
         </p>
       </div>
 

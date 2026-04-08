@@ -38,7 +38,7 @@ Get the rep portal to a 10/10 production-ready state. That means:
 - `train/review/page.tsx` — Training review and feedback
 - `train/roleplay/page.tsx` — AI prospect roleplay scenarios
 - `call/page.tsx` — Live call assistant: prep notes, transcription, AI suggestions, outcome tracking
-- `resources/page.tsx` — Commission calculator (15%), daily targets, reference docs
+- `resources/page.tsx` — Commission calculator (tiered: 20%/15%/12%/10%), daily targets, reference docs
 - `signin/page.tsx` — Firebase email/password sign in
 
 ### Admin Pages (`src/app/admin/`)
@@ -80,7 +80,7 @@ Get the rep portal to a 10/10 production-ready state. That means:
 
 ## Firestore Collections
 
-- `reps` — Rep profiles (uid, name, email, status: active/trial/inactive, commissionRate: 0.15)
+- `reps` — Rep profiles (uid, name, email, status: active/trial/inactive, commissionRate: default 20)
 - `repLeads` — Leads per rep (repId, businessName, status pipeline, dealValue, source)
 - `repCommissions` — Commissions (repId, leadId, dealValue, commissionAmount, status: pending/paid)
 - `repTrainingSessions` — Training session history
