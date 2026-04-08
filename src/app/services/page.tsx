@@ -77,7 +77,10 @@ export default function ServicesPage() {
                     tier.featured ? 'text-white/50' : 'text-muted-foreground'
                   }`}>{tier.timeline}</p>
                   <h3 className="text-lg font-bold tracking-tight mb-1">{tier.name}</h3>
-                  <p className={`text-2xl font-bold mb-4 ${tier.featured ? 'text-white' : ''}`}>{tier.price}</p>
+                  <p className={`text-2xl font-bold ${tier.paymentPlan ? 'mb-1' : 'mb-4'} ${tier.featured ? 'text-white' : ''}`}>{tier.price}</p>
+                  {tier.paymentPlan && (
+                    <p className={`text-xs mb-4 ${tier.featured ? 'text-white/50' : 'text-muted-foreground'}`}>{tier.paymentPlan}</p>
+                  )}
                   <p className={`text-sm leading-relaxed mb-5 ${
                     tier.featured ? 'text-white/70' : 'text-muted-foreground'
                   }`}>{tier.description}</p>
@@ -339,6 +342,7 @@ const pricingTiers = [
     timeline: "1–2 weeks",
     description: "One page. One goal. One CTA. For product launches, lead magnets, and waitlists.",
     includes: ["Hero + up to 4 sections", "Mobile-responsive", "SEO foundations", "Contact form or email capture", "Vercel deployment"],
+    paymentPlan: null,
     featured: false,
   },
   {
@@ -347,6 +351,7 @@ const pricingTiers = [
     timeline: "2–3 weeks",
     description: "Full conversion-focused site for service businesses, startups, and agencies.",
     includes: ["5–7 custom pages", "TRAIN design system", "Case studies layout", "Analytics + full SEO setup", "30 days post-launch support"],
+    paymentPlan: "or 2 × £1,249",
     featured: true,
   },
   {
@@ -355,6 +360,7 @@ const pricingTiers = [
     timeline: "3–5 weeks",
     description: "Everything in Launch plus blog, booking integration, and advanced analytics.",
     includes: ["Up to 10 pages", "Blog with CMS", "Booking integration", "Conversion-optimised copy structure", "90 days post-launch support"],
+    paymentPlan: "or 3 × £1,666",
     featured: false,
   },
   {
@@ -363,6 +369,7 @@ const pricingTiers = [
     timeline: "6–12 weeks",
     description: "Custom web app with auth, database, and dashboard. For SaaS products and client portals.",
     includes: ["Everything in Growth", "User authentication", "Database integration", "Custom dashboard UI", "12-month partnership support"],
+    paymentPlan: "flexible instalments available",
     featured: false,
   },
 ];
