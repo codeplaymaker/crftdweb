@@ -38,7 +38,7 @@ export const EMAIL_TEMPLATES: EmailTemplate[] = [
   {
     key: 'call_booked',
     label: 'After Booking a Call',
-    subject: 'Your call with CrftdWeb — confirmed',
+    subject: 'Your call with CrftdWeb is confirmed',
     body: `Just confirming your 15-minute call with the founder of CrftdWeb.
 
 What to expect:
@@ -54,11 +54,11 @@ Talk soon,`,
     key: 'follow_up_no_reply',
     label: 'Follow-up (No Reply)',
     subject: 'Re: your website',
-    body: `Tried you on the phone earlier — just wanted to pass this across.
+    body: `Tried you on the phone earlier, just wanted to pass this across.
 
 We build sites for businesses like {{businessName}} that are designed to bring in actual enquiries, not just look decent.
 
-If you've got 15 minutes in the next few days, happy to get you a call with the founder — he'll be honest about whether it makes sense for your business.
+If you've got 15 minutes in the next few days, happy to get you a call with the founder. He'll be honest about whether it makes sense for your business.
 
 Worth it?`,
   },
@@ -68,7 +68,7 @@ Worth it?`,
     subject: 'Examples from CrftdWeb',
     body: `Here are a few recent sites we've built: crftdweb.com/work
 
-The process is quick — most sites are live in 2–5 weeks. Starting from £1,200 for a landing page.
+The process is quick, most sites are live in 2 to 5 weeks. Starting from £1,200 for a landing page.
 
 If anything looks relevant to what you're after, I can get you 15 minutes with the founder this week.`,
   },
