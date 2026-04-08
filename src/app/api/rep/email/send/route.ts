@@ -13,6 +13,47 @@ const RESEND_API_KEY = process.env.RESEND_API_KEY || '';
 const FROM_EMAIL = process.env.OUTREACH_FROM_EMAIL || 'hello@crftdweb.com';
 const DEFAULT_MAX_EMAILS_PER_DAY = 20;
 
+function buildHtml(bodyText: string, repName: string): string {
+  const bodyHtml = bodyText
+    .split('\n\n')
+    .map(p => `<p style="margin:0 0 16px;font-size:15px;color:#444;line-height:1.7;">${p.replace(/\n/g, '<br/>')}</p>`)
+    .join('');
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
+<body style="margin:0;padding:0;background:#f4f4f4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:40px 20px;">
+    <tr><td align="center">
+      <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+        <tr>
+          <td align="center" style="background:#000000;border-radius:12px 12px 0 0;padding:32px 40px;">
+            <img src="https://crftdweb.com/CW-logo-white.png" alt="CrftdWeb" width="160" style="display:block;border:0;border-radius:8px;" />
+          </td>
+        </tr>
+        <tr>
+          <td style="background:#ffffff;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 12px 12px;padding:40px;">
+            ${bodyHtml}
+            <table width="100%" cellpadding="0" cellspacing="0" style="margin:24px 0 0;">
+              <tr><td style="border-top:1px solid #e8e8e8;padding-top:20px;">
+                <p style="margin:0 0 2px;font-size:14px;font-weight:600;color:#111;">${repName}</p>
+                <p style="margin:0 0 8px;font-size:13px;color:#999;">Sales Rep &middot; CrftdWeb</p>
+                <img src="https://crftdweb.com/CW-logo.png" alt="CrftdWeb" width="40" style="display:block;border:0;margin-bottom:6px;" />
+                <a href="https://crftdweb.com" style="font-size:12px;color:#999;text-decoration:none;">crftdweb.com</a>
+              </td></tr>
+            </table>
+          </td>
+        </tr>
+        <tr><td align="center" style="padding-top:24px;">
+          <p style="margin:0;font-size:11px;color:#aaa;">CrftdWeb &middot; crftdweb.com</p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
+}
+
 async function getMaxEmailsPerDay(): Promise<number> {
   const doc = await adminDb.collection('settings').doc('repEmail').get();
   if (doc.exists) {
@@ -92,6 +133,7 @@ export async function POST(req: NextRequest) {
   try {
     const fromField = `${repName} at CrftdWeb <${FROM_EMAIL}>`;
     const replyTo = `reply-${leadId}@eanexuekro.resend.app`;
+    const html = buildHtml(body, repName);
     const res = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
@@ -104,6 +146,7 @@ export async function POST(req: NextRequest) {
         reply_to: replyTo,
         subject,
         text: body,
+        html,
       }),
     });
 
