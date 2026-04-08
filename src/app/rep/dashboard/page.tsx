@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '@/lib/firebase/AuthContext';
 import { getRepLeads, getRepCommissions, getRepProfile, RepLead, RepCommission, RepProfile } from '@/lib/firebase/firestore';
 import Link from 'next/link';
-import { ArrowRight, TrendingUp, Phone, PoundSterling, Clock } from 'lucide-react';
+import { ArrowRight, TrendingUp, Phone, PoundSterling, Clock, Copy, Check } from 'lucide-react';
 
 const STATUS_LABELS: Record<string, string> = {
   contacted: 'Contacted',
@@ -30,6 +30,9 @@ export default function RepDashboard() {
   const [commissions, setCommissions] = useState<RepCommission[]>([]);
   const [profile, setProfile] = useState<RepProfile | null>(null);
   const [loading, setLoading] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const referralLink = user ? `https://www.crftdweb.com?ref=${user.uid}` : '';
 
   useEffect(() => {
     if (!user) return;
@@ -93,6 +96,24 @@ export default function RepDashboard() {
         </p>
       </div>
 
+      {/* Referral Link */}
+      <div className="bg-white/[0.03] border border-white/8 rounded-2xl p-4 flex items-center gap-3">
+        <div className="flex-1 min-w-0">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-white/30 mb-1">Your Referral Link</p>
+          <p className="text-sm text-white/60 truncate font-mono">{referralLink}</p>
+        </div>
+        <button
+          onClick={() => {
+            navigator.clipboard.writeText(referralLink);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+          }}
+          className="flex-shrink-0 px-3 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-xs text-white/70 font-medium transition-colors flex items-center gap-1.5"
+        >
+          {copied ? <><Check className="w-3 h-3 text-green-400" /> Copied</> : <><Copy className="w-3 h-3" /> Copy</>}
+        </button>
+      </div>
+
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {stats.map((stat) => {
@@ -110,7 +131,7 @@ export default function RepDashboard() {
       {/* Today's goal */}
       <div className="bg-white/[0.02] border border-white/8 rounded-2xl p-5">
         <p className="text-xs font-bold uppercase tracking-widest text-white/30 mb-3">Daily Target</p>
-        <div className="grid grid-cols-3 gap-4 text-center">
+        <div className="grid grid-cols-3 gap-3 text-center">
           <div>
             <p className="text-2xl font-bold text-white">10</p>
             <p className="text-[11px] text-white/30 mt-0.5">Calls / day</p>

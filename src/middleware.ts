@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  const { pathname, searchParams } = request.nextUrl;
 
   // Only protect /admin routes (but not the login page itself)
   if (pathname.startsWith('/admin') && pathname !== '/admin/login') {
@@ -14,9 +14,22 @@ export function middleware(request: NextRequest) {
     }
   }
 
+  // Capture rep referral param
+  const ref = searchParams.get('ref');
+  if (ref && /^[a-zA-Z0-9]{10,40}$/.test(ref)) {
+    const response = NextResponse.next();
+    response.cookies.set('rep_ref', ref, {
+      maxAge: 60 * 60 * 24 * 30, // 30 days
+      path: '/',
+      httpOnly: true,
+      sameSite: 'lax',
+    });
+    return response;
+  }
+
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ['/admin/:path*'],
+  matcher: ['/admin/:path*', '/', '/contact', '/services', '/work', '/about'],
 };

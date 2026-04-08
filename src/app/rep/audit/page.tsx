@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react';
 import { useAuth } from '@/lib/firebase/AuthContext';
 import { getAuth } from 'firebase/auth';
-import { Search, Loader2, ArrowLeft, Globe, Smartphone, Monitor, AlertTriangle, CheckCircle, ExternalLink } from 'lucide-react';
+import { Search, Loader2, ArrowLeft, Globe, Smartphone, Monitor, AlertTriangle, CheckCircle, ExternalLink, Copy, Check, Share2 } from 'lucide-react';
 import Link from 'next/link';
 
 interface AuditScores {
@@ -102,6 +102,7 @@ export default function AuditPage() {
   const [results, setResults] = useState<Record<string, AuditResult>>({});
   const [view, setView] = useState<'mobile' | 'desktop'>('mobile');
   const [auditUrl, setAuditUrl] = useState('');
+  const [copiedResults, setCopiedResults] = useState(false);
 
   const fetchStrategy = useCallback(async (targetUrl: string, strategy: 'mobile' | 'desktop') => {
     const token = await getAuth().currentUser?.getIdToken();
@@ -252,7 +253,7 @@ export default function AuditPage() {
             </div>
 
             {/* Score Rings */}
-            <div className="flex justify-center gap-6">
+            <div className="grid grid-cols-2 gap-4 sm:flex sm:justify-center sm:gap-6">
               <ScoreRing score={data.scores.performance} label="Speed" />
               <ScoreRing score={data.scores.accessibility} label="Access." />
               <ScoreRing score={data.scores.seo} label="SEO" />
@@ -293,6 +294,57 @@ export default function AuditPage() {
           )}
 
           {/* CTA */}
+          <div className="flex gap-3">
+            <button
+              onClick={() => {
+                if (!data) return;
+                const text = [
+                  `Website Audit Report — ${data.url}`,
+                  `Strategy: ${view === 'mobile' ? 'Mobile' : 'Desktop'}`,
+                  `Overall Score: ${avg}/100 (${avg >= 90 ? 'Excellent' : avg >= 70 ? 'Needs Work' : avg >= 50 ? 'Poor' : 'Critical'})`,
+                  '',
+                  `Speed: ${data.scores.performance}/100`,
+                  `Accessibility: ${data.scores.accessibility}/100`,
+                  `SEO: ${data.scores.seo}/100`,
+                  `Best Practices: ${data.scores.bestPractices}/100`,
+                  '',
+                  'Key Metrics:',
+                  `  First Contentful Paint: ${data.metrics.fcp}`,
+                  `  Largest Contentful Paint: ${data.metrics.lcp}`,
+                  `  Total Blocking Time: ${data.metrics.tbt}`,
+                  `  Cumulative Layout Shift: ${data.metrics.cls}`,
+                  '',
+                  ...(data.opportunities.length > 0 ? [
+                    'Issues Found:',
+                    ...data.opportunities.map(o => `  • ${o.title}${o.displayValue ? ` (${o.displayValue})` : ''}`),
+                    '',
+                  ] : []),
+                  'Want a site that scores 95+? Book a free discovery call:',
+                  'https://www.crftdweb.com/contact',
+                  '',
+                  'Powered by CrftdWeb · Google PageSpeed Insights',
+                ].join('\n');
+                navigator.clipboard.writeText(text);
+                setCopiedResults(true);
+                setTimeout(() => setCopiedResults(false), 2000);
+              }}
+              className="flex-1 px-4 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-sm text-white/70 font-medium transition-colors flex items-center justify-center gap-2"
+            >
+              {copiedResults ? <><Check className="w-4 h-4 text-green-400" /> Copied to clipboard</> : <><Copy className="w-4 h-4" /> Copy Results</>}
+            </button>
+            <button
+              onClick={() => {
+                if (!data) return;
+                const text = `I ran a free audit on ${data.url} — it scored ${avg}/100. Here's what I found and how we can fix it. Want me to walk you through it?`;
+                navigator.clipboard.writeText(text);
+              }}
+              className="px-4 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-sm text-white/70 font-medium transition-colors flex items-center gap-2"
+              title="Copy outreach message"
+            >
+              <Share2 className="w-4 h-4" />
+            </button>
+          </div>
+
           <div className="bg-green-500/5 border border-green-500/20 rounded-xl p-5 text-center space-y-3">
             <CheckCircle className="w-6 h-6 text-green-400 mx-auto" />
             <h3 className="text-sm font-bold text-white">Want a website that scores 95+?</h3>
