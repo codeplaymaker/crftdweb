@@ -45,7 +45,7 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions = {}): UseVoic
   const silenceFrameRef = useRef<ReturnType<typeof requestAnimationFrame> | null>(null);
   const stoppingRef = useRef(false);
 
-  const silenceTimeoutSec = options.silenceTimeout ?? 2.5;
+  const silenceTimeoutSec = options.silenceTimeout ?? 3;
   const autoStopOnSilence = options.autoStopOnSilence ?? false;
 
   // Stabilise callbacks so startRecording / stopRecording don't recreate every render
@@ -186,7 +186,7 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions = {}): UseVoic
             for (let i = 0; i < data.length; i++) { const v = (data[i] - 128) / 128; sum += v * v; }
             const rms = Math.sqrt(sum / data.length) * 200;
 
-            if (rms > 8) { hasSpeech = true; silenceStart = null; }
+            if (rms > 5) { hasSpeech = true; silenceStart = null; }
             else if (hasSpeech) {
               if (!silenceStart) silenceStart = Date.now();
               if ((Date.now() - silenceStart) / 1000 >= silenceTimeoutSec && !silenceTimerRef.current) {

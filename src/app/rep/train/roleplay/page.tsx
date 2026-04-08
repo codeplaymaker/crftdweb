@@ -67,7 +67,7 @@ function RoleplayContent() {
       setTimeout(() => setVoiceError(null), 4000);
     },
     autoStopOnSilence: autoFlow,
-    silenceTimeout: 2,
+    silenceTimeout: 3,
     getAuthHeaders,
   });
   const voiceRef = useRef(voice);
