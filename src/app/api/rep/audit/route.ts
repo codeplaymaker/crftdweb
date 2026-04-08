@@ -2,6 +2,19 @@ import { NextRequest, NextResponse } from 'next/server';
 import { verifyRepAuth } from '@/lib/auth/verifyRepAuth';
 
 const PSI_API = 'https://www.googleapis.com/pagespeedonline/v5/runPagespeed';
+const API_KEY = process.env.GOOGLE_PSI_API_KEY || '';
+
+function psiUrl(targetUrl: string, strategy: 'mobile' | 'desktop') {
+  const params = new URLSearchParams({
+    url: targetUrl,
+    strategy,
+    ...(API_KEY && { key: API_KEY }),
+  });
+  ['performance', 'accessibility', 'seo', 'best-practices'].forEach((c) =>
+    params.append('category', c),
+  );
+  return `${PSI_API}?${params}`;
+}
 
 export async function POST(req: NextRequest) {
   const authResult = await verifyRepAuth(req);
@@ -25,8 +38,8 @@ export async function POST(req: NextRequest) {
 
     // Run both mobile and desktop audits in parallel
     const [mobileRes, desktopRes] = await Promise.all([
-      fetch(`${PSI_API}?url=${encodeURIComponent(targetUrl)}&strategy=mobile&category=performance&category=accessibility&category=seo&category=best-practices`),
-      fetch(`${PSI_API}?url=${encodeURIComponent(targetUrl)}&strategy=desktop&category=performance&category=accessibility&category=seo&category=best-practices`),
+      fetch(psiUrl(targetUrl, 'mobile')),
+      fetch(psiUrl(targetUrl, 'desktop')),
     ]);
 
     if (!mobileRes.ok || !desktopRes.ok) {
