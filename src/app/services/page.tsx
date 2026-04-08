@@ -61,7 +61,7 @@ export default function ServicesPage() {
                 No surprises. No scope creep. You know exactly what you&apos;re getting before we write a line of code.
               </p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto md:max-w-none">
               {pricingTiers.map((tier, index) => (
                 <motion.div
                   key={tier.name}
@@ -70,6 +70,9 @@ export default function ServicesPage() {
                   viewport={{ once: true }}
                   transition={{ duration: 0.4, delay: index * 0.1 }}
                   className={`p-6 rounded-xl border transition-colors ${
+                    index === 0 ? 'md:col-span-2 md:mx-auto md:w-1/2' :
+                    index === 3 ? 'md:col-span-2 md:mx-auto md:w-1/2' : ''
+                  } ${
                     tier.featured ? 'bg-black text-white' : 'bg-background hover:border-black/20'
                   }`}
                 >
