@@ -18,9 +18,10 @@
 - Skim their current website if they have one
 - Know which package fits them based on what they said
 - Have the pricing ranges ready mentally:
-  - Landing page: £1,200–£2,400
-  - Business site: £3,200–£6,400
-  - Web app / custom: £6,400+
+  - Starter: £997
+  - Launch: £2,497
+  - Growth: £4,997
+  - Scale: £9,997+
 
 ---
 
@@ -156,9 +157,10 @@ Then send the proposal. A "think about it" with a proposal in their inbox is a w
 
 | Package | Range | Typical Timeline |
 |---|---|---|
-| Landing page | £1,200 – £2,400 | 1–2 weeks |
-| Business website | £3,200 – £6,400 | 2–4 weeks |
-| Web application | £6,400+ | 4–10 weeks |
+| Starter | £997 | 1–2 weeks |
+| Launch | £2,497 | 2–3 weeks |
+| Growth | £4,997 | 3–5 weeks |
+| Scale | £9,997+ | 6–12 weeks |
 
 Payment: 50% deposit / 50% on launch, bank transfer  
 Revisions: stated in scope (usually 2 rounds included)

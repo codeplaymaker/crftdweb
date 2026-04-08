@@ -20,9 +20,10 @@ The CrftdWeb codebase is a Next.js 14+ monorepo running on Vercel. It hosts mult
 
 | Package | What It Is | Price | Timeline |
 |---------|------------|-------|----------|
-| Landing Page | Single page, one goal, one CTA | £1,200 – £2,400 | 1–2 weeks |
-| Business Website | 5–7 pages, full SEO, conversion-focused | £3,200 – £6,400 | 3–5 weeks |
-| Web Application | Custom app with auth, dashboard, database | £6,400+ | 6–10 weeks |
+| Starter | One page, one goal, one CTA | £997 | 1–2 weeks |
+| Launch | Full conversion-focused site | £2,497 | 2–3 weeks |
+| Growth | Launch + blog, booking, CMS | £4,997 | 3–5 weeks |
+| Scale | Custom web app, auth, dashboard | £9,997+ | 6–12 weeks |
 
 ## Sales Model
 

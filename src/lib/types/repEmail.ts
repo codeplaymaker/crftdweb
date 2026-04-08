@@ -68,7 +68,7 @@ Worth it?`,
     subject: 'Examples from CrftdWeb',
     body: `Here are a few recent sites we've built: crftdweb.com/work
 
-The process is quick, most sites are live in 2 to 5 weeks. Starting from £1,200 for a landing page.
+The process is quick, most sites are live in 2 to 5 weeks. Starting from £997 for a landing page.
 
 If anything looks relevant to what you're after, I can get you a free 15-minute consultation this week.`,
   },

@@ -5,7 +5,7 @@
 
 ---
 
-## Tier 1: Landing Page
+## Tier 1: Starter
 
 **What it is:** Single page. One goal. One CTA.
 **Best for:** Product launches, lead magnets, event signups, waitlists.
@@ -25,11 +25,11 @@
 - Ongoing maintenance
 
 **Timeline:** 1–2 weeks
-**Price range:** £1,200 – £2,400
+**Price:** £997
 
 ---
 
-## Tier 2: Business Website
+## Tier 2: Launch
 
 **What it is:** Full website. 5–7 pages. Conversion-focused.
 **Best for:** Service businesses, startups, agencies, consultants.
@@ -56,12 +56,32 @@
 - Database/backend functionality
 - Monthly maintenance (available as add-on)
 
-**Timeline:** 3–5 weeks
-**Price range:** £3,200 – £6,400
+**Timeline:** 2–3 weeks
+**Price:** £2,497
 
 ---
 
-## Tier 3: Web Application
+## Tier 3: Growth
+
+**What it is:** Everything in Launch plus blog, booking integration, and advanced analytics.
+**Best for:** Growing businesses that need content marketing and online booking.
+
+**Includes:**
+- Everything in Tier 2, plus:
+- Up to 10 pages
+- Blog with CMS
+- Online booking integration (Calendly, Cal.com, etc.)
+- Conversion-optimised copy structure
+- Advanced analytics and tracking
+- 3 rounds of revisions
+- 90 days post-launch support
+
+**Timeline:** 3–5 weeks
+**Price:** £4,997
+
+---
+
+## Tier 4: Scale
 
 **What it is:** Custom web app with auth, database, dashboard.
 **Best for:** SaaS products, client portals, internal tools, platforms.
@@ -82,8 +102,8 @@
 - Mobile app (React Native available as separate project)
 - Payment processing (available as add-on)
 
-**Timeline:** 6–10 weeks
-**Price range:** £6,400 – £16,000+
+**Timeline:** 6–12 weeks
+**Price:** £9,997+
 
 ---
 
@@ -91,13 +111,13 @@
 
 | Add-On | Price | Notes |
 |--------|-------|-------|
-| Copywriting | £400 – £1,200 | Per page, problem-first, TRAIN-aligned |
-| Brand Identity | £1,500 – £4,000 | Logo, colors, typography, brand guide |
-| Monthly Maintenance | £250 – £600/mo | Updates, fixes, content changes |
-| SEO Optimisation | £400 – £1,200 | Technical SEO audit + implementation |
-| Analytics Setup | £250 – £400 | GA4, conversion tracking, dashboards |
-| Additional Pages | £400 – £800/page | Beyond what's in the tier |
-| Site Audit | £400 – £800 | TRAIN + Playbook audit of existing site |
+| Copywriting | £497/page | Problem-first, TRAIN-aligned |
+| Logo & Brand Kit | £297 | Logo, colours, typography, brand guide |
+| Monthly Maintenance | £97/mo | Updates, fixes, content changes |
+| SEO Boost | £197/mo | Keyword targeting, blog posts, GMB |
+| Extra Pages | £197/page | Beyond what's in the tier |
+| Email Setup | £197 | Custom domain email (Google Workspace) |
+| E-commerce | £997+ | Stripe/Shopify integration |
 
 ---
 
@@ -107,13 +127,12 @@ Reps earn **15% of confirmed project value** on any deal they introduce.
 
 | Deal Value | Rep Commission |
 |------------|----------------|
-| £1,200 | £180 |
-| £2,400 | £360 |
-| £3,200 | £480 |
-| £6,400 | £960 |
-| £8,000+ | £1,200+ |
+| £997 | £149 |
+| £2,497 | £374 |
+| £4,997 | £749 |
+| £9,997+ | £1,499+ |
 
-Commission is paid within **14 days** of client deposit clearing. Not paid on calls that don't close.
+Commission is paid within **7 days** of client deposit clearing. Not paid on calls that don't close.
 
 ---
 

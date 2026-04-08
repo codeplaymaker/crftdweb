@@ -16,7 +16,7 @@ const CALL_SCRIPT = [
   },
   {
     step: 'Step 3a: If Yes / "Yeah actually"',
-    content: `"Perfect. I work with a developer who specialises in building clean, fast websites for businesses like yours, usually starting from £1,200. Would you be open to a quick 15-minute discovery call to see if it's a fit?"`,
+    content: `"Perfect. I work with a developer who specialises in building clean, fast websites for businesses like yours, starting from £997. Would you be open to a quick 15-minute discovery call to see if it's a fit?"`,
     note: null,
   },
   {
@@ -79,7 +79,7 @@ Worth it?
 
 Here are a few recent sites we've built: crftdweb.com/work
 
-The process is quick, most sites are live in 2 to 5 weeks. Starting from £1,200 for a landing page.
+The process is quick, most sites are live in 2 to 5 weeks. Starting from £997 for a landing page.
 
 If anything looks relevant to what you're after, I can get you a free 15-minute consultation this week.
 
@@ -90,11 +90,11 @@ If anything looks relevant to what you're after, I can get you a free 15-minute 
 const FAQS = [
   {
     q: 'What exactly am I selling?',
-    a: 'Custom websites. Landing pages from £1,200 (1 to 2 weeks). Business sites from £3,200 (3 to 5 weeks). Web apps from £8,000 (6 to 12 weeks). Your job is to book the discovery call, not close the deal. The team handles that.',
+    a: 'Custom websites. Starter from £997 (1 to 2 weeks). Launch from £2,497 (2 to 3 weeks). Growth from £4,997 (3 to 5 weeks). Scale from £9,997+ (6 to 12 weeks). Your job is to book the discovery call, not close the deal. The team handles that.',
   },
   {
     q: 'When do I get paid?',
-    a: 'Within 7 days of the client paying their deposit. Commission is 15% of the net project value. So a £3,200 site = £480 to you.',
+    a: 'Within 7 days of the client paying their deposit. Commission is 15% of the net project value. So a £2,497 Launch site = £374 to you.',
   },
   {
     q: 'What if they ask technical questions?',
@@ -455,7 +455,7 @@ export default function RepResourcesPage() {
           ))}
           <div className="bg-emerald-500/5 border border-emerald-500/15 rounded-xl p-4 mt-2">
             <p className="text-xs text-emerald-400/70 leading-relaxed">
-              <span className="font-bold text-emerald-400">The maths:</span> 20 outreaches/day × 5 days = 100/week. At 2% conversion = 2 booked calls. 2 calls → 1 proposal → 1 close every 1-2 weeks. One £3,200 deal = £480 commission. Consistency beats intensity.
+              <span className="font-bold text-emerald-400">The maths:</span> 20 outreaches/day × 5 days = 100/week. At 2% conversion = 2 booked calls. 2 calls → 1 proposal → 1 close every 1-2 weeks. One £2,497 deal = £374 commission. Consistency beats intensity.
             </p>
           </div>
         </div>

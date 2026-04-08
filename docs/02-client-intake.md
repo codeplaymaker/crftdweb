@@ -61,7 +61,7 @@
 ## Budget & Pricing
 
 - **Client's budget range:**
-- **Our quote:** (£1,200–£2,400 landing page / £3,200–£6,400 business site / £6,400+ web app)
+- **Our quote:** (Starter £997 / Launch £2,497 / Growth £4,997 / Scale £9,997+)
 - **Payment structure:** 50% upfront, 50% on launch
 - **Rep who referred (if any):** (name — 15% commission applies)
 

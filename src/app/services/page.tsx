@@ -334,27 +334,35 @@ const visualDevices = [
 
 const pricingTiers = [
   {
-    name: "Landing Page",
-    price: "from £1,200",
+    name: "Starter",
+    price: "£997",
     timeline: "1–2 weeks",
     description: "One page. One goal. One CTA. For product launches, lead magnets, and waitlists.",
     includes: ["Hero + up to 4 sections", "Mobile-responsive", "SEO foundations", "Contact form or email capture", "Vercel deployment"],
     featured: false,
   },
   {
-    name: "Business Website",
-    price: "from £3,200",
-    timeline: "3–5 weeks",
+    name: "Launch",
+    price: "£2,497",
+    timeline: "2–3 weeks",
     description: "Full conversion-focused site for service businesses, startups, and agencies.",
-    includes: ["5–7 custom pages", "TRAIN design system", "Case studies layout", "Analytics + full SEO setup", "2 weeks post-launch support"],
+    includes: ["5–7 custom pages", "TRAIN design system", "Case studies layout", "Analytics + full SEO setup", "30 days post-launch support"],
     featured: true,
   },
   {
-    name: "Web Application",
-    price: "from £8,000",
+    name: "Growth",
+    price: "£4,997",
+    timeline: "3–5 weeks",
+    description: "Everything in Launch plus blog, booking integration, and advanced analytics.",
+    includes: ["Up to 10 pages", "Blog with CMS", "Booking integration", "Conversion-optimised copy structure", "90 days post-launch support"],
+    featured: false,
+  },
+  {
+    name: "Scale",
+    price: "£9,997+",
     timeline: "6–12 weeks",
     description: "Custom web app with auth, database, and dashboard. For SaaS products and client portals.",
-    includes: ["Everything in Business", "User authentication", "Database integration", "Custom dashboard UI", "4 weeks post-launch support"],
+    includes: ["Everything in Growth", "User authentication", "Database integration", "Custom dashboard UI", "12-month partnership support"],
     featured: false,
   },
 ];
@@ -368,27 +376,27 @@ const addOns = [
   {
     title: "Copywriting",
     description: "We write every word. Problem-first headlines, conversion copy, and SEO-optimised page content in your brand voice.",
-    price: "£400–£1,200 / page",
+    price: "£497 / page",
   },
   {
-    title: "Brand Identity",
+    title: "Logo & Brand Kit",
     description: "Logo, colour palette, typography system, and brand guidelines. The visual foundation everything else is built on.",
-    price: "from £1,500",
+    price: "£297",
   },
   {
     title: "Monthly Maintenance",
     description: "Updates, performance monitoring, content changes, and priority support. We stay on, so you don't have to worry about it.",
-    price: "£250–£650 / mo",
+    price: "£97 / mo",
   },
   {
-    title: "SEO Optimisation",
-    description: "Technical SEO audit, keyword mapping, on-page optimisation, and structured data. Built to rank, not just to look good.",
-    price: "from £400",
+    title: "SEO Boost",
+    description: "Ongoing keyword targeting, blog posts, Google Business Profile optimisation, and monthly performance reports. Built to rank, not just to look good.",
+    price: "£197 / mo",
   },
   {
-    title: "Site Audit",
-    description: "TRAIN design check, conversion audit, performance report, and a prioritised fix list. Useful before a rebuild — or to validate an existing site.",
-    price: "£400–£800",
+    title: "Extra Pages",
+    description: "Additional pages beyond your package allowance. Same quality, same custom code.",
+    price: "£197 / page",
   },
 ];
 
