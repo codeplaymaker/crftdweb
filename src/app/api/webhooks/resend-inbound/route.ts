@@ -88,40 +88,45 @@ export async function POST(req: NextRequest) {
 
   const leadData = leadDoc.data()!;
 
-  // Fetch full email content from Resend API
-  let htmlBody = '';
-  let textBody = '';
-  try {
-    const res = await fetch(`https://api.resend.com/emails/receiving/${emailId}`, {
-      headers: { Authorization: `Bearer ${RESEND_API_KEY}` },
-    });
-    if (res.ok) {
-      const emailData = await res.json();
-      console.log('[inbound-webhook] Email data keys:', Object.keys(emailData));
-      console.log('[inbound-webhook] Email text:', emailData.text?.substring(0, 200));
-      console.log('[inbound-webhook] Email html:', emailData.html?.substring(0, 200));
-      htmlBody = emailData.html || '';
-      textBody = emailData.text || '';
-      
-      // If text/html are empty, try to download from raw URL
-      if (!textBody && !htmlBody && emailData.raw?.download_url) {
-        console.log('[inbound-webhook] Trying raw download URL...');
-        const rawRes = await fetch(emailData.raw.download_url);
-        if (rawRes.ok) {
-          const rawText = await rawRes.text();
-          // Extract plain text from raw email (after the headers)
-          const bodyStart = rawText.indexOf('\r\n\r\n');
-          if (bodyStart > -1) {
-            textBody = rawText.substring(bodyStart + 4).trim();
+  // 1. Try to get body directly from webhook event payload first
+  let htmlBody = data.html || '';
+  let textBody = data.text || data.body || '';
+  console.log('[inbound-webhook] Event payload text:', textBody?.substring(0, 200));
+  console.log('[inbound-webhook] Event payload html:', htmlBody?.substring(0, 200));
+
+  // 2. If not in event payload, fetch from Resend API
+  if (!textBody && !htmlBody) {
+    try {
+      const res = await fetch(`https://api.resend.com/emails/receiving/${emailId}`, {
+        headers: { Authorization: `Bearer ${RESEND_API_KEY}` },
+      });
+      if (res.ok) {
+        const emailData = await res.json();
+        console.log('[inbound-webhook] API response keys:', Object.keys(emailData));
+        console.log('[inbound-webhook] API text:', emailData.text?.substring(0, 200));
+        console.log('[inbound-webhook] API html:', emailData.html?.substring(0, 200));
+        htmlBody = emailData.html || '';
+        textBody = emailData.text || emailData.body || '';
+        
+        // 3. If still empty, try raw download URL
+        if (!textBody && !htmlBody && emailData.raw?.download_url) {
+          console.log('[inbound-webhook] Trying raw download URL...');
+          const rawRes = await fetch(emailData.raw.download_url);
+          if (rawRes.ok) {
+            const rawText = await rawRes.text();
+            const bodyStart = rawText.indexOf('\r\n\r\n');
+            if (bodyStart > -1) {
+              textBody = rawText.substring(bodyStart + 4).trim();
+            }
           }
         }
+      } else {
+        console.error('[inbound-webhook] Resend API error:', res.status, await res.text());
       }
-    } else {
-      console.error('[inbound-webhook] Resend API error:', res.status, await res.text());
+    } catch (err) {
+      console.error('[inbound-webhook] Failed to fetch email content:', err);
+      // Continue — we still log the reply even without body
     }
-  } catch (err) {
-    console.error('[inbound-webhook] Failed to fetch email content:', err);
-    // Continue — we still log the reply even without body
   }
 
   // Store the reply in Firestore

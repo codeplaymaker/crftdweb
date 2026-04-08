@@ -326,7 +326,7 @@ export default function EmailComposeModal({ lead, repName, repEmail, onClose, on
                             {isExpanded && (
                               <div className="px-3 pb-3 border-t border-blue-500/10 pt-2">
                                 <p className="text-xs text-white/50 leading-relaxed whitespace-pre-wrap">
-                                  {r.textBody || '(No text content)'}
+                                  {r.textBody || (r.htmlBody ? <span dangerouslySetInnerHTML={{ __html: r.htmlBody }} /> : '(No text content)')}
                                 </p>
                               </div>
                             )}
