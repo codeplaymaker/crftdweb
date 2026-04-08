@@ -5,13 +5,14 @@ import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { AuthProvider, useAuth } from '@/lib/firebase/AuthContext';
 import { getRepProfile } from '@/lib/firebase/firestore';
-import { LayoutDashboard, Users, BookOpen, GraduationCap, Phone, LogOut, Menu, X } from 'lucide-react';
+import { LayoutDashboard, Users, BookOpen, GraduationCap, Phone, Search, LogOut, Menu, X } from 'lucide-react';
 
 const navItems = [
   { href: '/rep/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/rep/leads', label: 'My Leads', icon: Users },
   { href: '/rep/train', label: 'Training', icon: GraduationCap },
   { href: '/rep/call', label: 'Live Call', icon: Phone },
+  { href: '/rep/audit', label: 'Site Audit', icon: Search },
   { href: '/rep/resources', label: 'Resources', icon: BookOpen },
 ];
 
