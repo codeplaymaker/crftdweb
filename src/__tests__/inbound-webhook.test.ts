@@ -201,11 +201,8 @@ describe('Inbound Webhook: POST /api/webhooks/resend-inbound', () => {
     mockLeadDoc.exists = origMockLeadExists;
   });
 
-  it('stores reply in Firestore using event payload text', async () => {
-    const req = makeWebhookRequest(makeInboundEvent({
-      text: 'Hi from event payload',
-      html: '<p>Hi from event payload</p>',
-    }));
+  it('stores reply in Firestore with content from Resend API', async () => {
+    const req = makeWebhookRequest(makeInboundEvent());
     const res = await POST(req as any);
     const json = await res.json();
 
@@ -225,29 +222,12 @@ describe('Inbound Webhook: POST /api/webhooks/resend-inbound', () => {
     expect(replyData.repId).toBe('rep-123');
     expect(replyData.from).toBe('prospect@example.com');
     expect(replyData.subject).toBe('Re: your website');
-    expect(replyData.textBody).toBe('Hi from event payload');
-    expect(replyData.htmlBody).toBe('<p>Hi from event payload</p>');
-    expect(replyData.resendEmailId).toBe('email-abc-123');
-
-    // Should NOT call Resend API when event payload has text
-    expect(fetch).not.toHaveBeenCalled();
-  });
-
-  it('stores reply from API when event payload has no text', async () => {
-    const req = makeWebhookRequest(makeInboundEvent());
-    const res = await POST(req as any);
-    const json = await res.json();
-
-    expect(res.status).toBe(200);
-    expect(json.ok).toBe(true);
-
-    const replyData = mockBatchSet.mock.calls[0][1];
     expect(replyData.textBody).toBe('Hi I want my site changed');
     expect(replyData.htmlBody).toBe('<p>Hi I want my site changed</p>');
+    expect(replyData.resendEmailId).toBe('email-abc-123');
   });
 
-  it('fetches email content from Resend API only when event payload is empty', async () => {
-    // Event with no text/html — should call API
+  it('fetches email content from Resend Received Emails API', async () => {
     const req = makeWebhookRequest(makeInboundEvent());
     await POST(req as any);
 
@@ -308,10 +288,9 @@ describe('Inbound Webhook: POST /api/webhooks/resend-inbound', () => {
   });
 
   it('extracts leadId from various tagged address formats', async () => {
-    // Test with "Name <email>" format — include text so it skips API call
+    // Test with "Name <email>" format
     const req = makeWebhookRequest(makeInboundEvent({
       to: ['CrftdWeb <reply-ABC123xyz@eanexuekro.resend.app>'],
-      text: 'test reply',
     }));
     const res = await POST(req as any);
     const json = await res.json();

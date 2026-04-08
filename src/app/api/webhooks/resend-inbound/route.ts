@@ -1,8 +1,9 @@
 /**
  * Webhook: Resend Inbound Email
  * Receives email.received events from Resend when a prospect replies.
- * Matches the reply to a lead via the tagged reply-to address (reply-{leadId}@crftdweb.com),
- * fetches the full email content from Resend, and stores it in Firestore.
+ * Matches the reply to a lead via the tagged reply-to address
+ * (reply-{leadId}@eanexuekro.resend.app), fetches the full email content
+ * from Resend's Received Emails API, and stores it in Firestore.
  */
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -19,8 +20,6 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-  console.log('[inbound-webhook] POST received');
-
   // Verify webhook signature
   if (!WEBHOOK_SECRET) {
     console.error('[inbound-webhook] No webhook secret configured');
@@ -28,7 +27,6 @@ export async function POST(req: NextRequest) {
   }
 
   const payload = await req.text();
-  console.log('[inbound-webhook] Payload length:', payload.length);
 
   try {
     const wh = new Webhook(WEBHOOK_SECRET);
@@ -37,18 +35,14 @@ export async function POST(req: NextRequest) {
       'svix-timestamp': req.headers.get('svix-timestamp') || '',
       'svix-signature': req.headers.get('svix-signature') || '',
     });
-    console.log('[inbound-webhook] Signature verified');
   } catch (err) {
     console.error('[inbound-webhook] Signature verification failed:', err);
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
   }
 
   const event = JSON.parse(payload);
-  console.log('[inbound-webhook] Event type:', event.type);
-  console.log('[inbound-webhook] Event data:', JSON.stringify(event.data, null, 2));
 
   if (event.type !== 'email.received') {
-    // Ignore non-inbound events
     return NextResponse.json({ ok: true });
   }
 
@@ -58,17 +52,13 @@ export async function POST(req: NextRequest) {
   const toAddresses: string[] = data.to || [];
   const subject = data.subject || '';
 
-  console.log('[inbound-webhook] email_id:', emailId, 'from:', from, 'to:', toAddresses, 'subject:', subject);
-
-  // Find the tagged reply-to address: reply-{leadId}@crftdweb.com
+  // Find the tagged reply-to address: reply-{leadId}@eanexuekro.resend.app
   // Handle both plain emails and "Name <email>" format
   const taggedAddress = toAddresses.find((addr: string) =>
     addr.match(/reply-[a-zA-Z0-9]+@eanexuekro\.resend\.app/)
   );
 
   if (!taggedAddress) {
-    console.log('[inbound-webhook] No tagged address found in to:', toAddresses);
-    // Not a rep email reply — ignore
     return NextResponse.json({ ok: true, skipped: true });
   }
 
@@ -88,45 +78,35 @@ export async function POST(req: NextRequest) {
 
   const leadData = leadDoc.data()!;
 
-  // 1. Try to get body directly from webhook event payload first
-  let htmlBody = data.html || '';
-  let textBody = data.text || data.body || '';
-  console.log('[inbound-webhook] Event payload text:', textBody?.substring(0, 200));
-  console.log('[inbound-webhook] Event payload html:', htmlBody?.substring(0, 200));
+  // Fetch email content from Resend Received Emails API
+  // (webhook payloads only contain metadata, not the body)
+  let htmlBody = '';
+  let textBody = '';
+  try {
+    const res = await fetch(`https://api.resend.com/emails/receiving/${emailId}`, {
+      headers: { Authorization: `Bearer ${RESEND_API_KEY}` },
+    });
+    if (res.ok) {
+      const emailData = await res.json();
+      htmlBody = emailData.html || '';
+      textBody = emailData.text || '';
 
-  // 2. If not in event payload, fetch from Resend API
-  if (!textBody && !htmlBody) {
-    try {
-      const res = await fetch(`https://api.resend.com/emails/receiving/${emailId}`, {
-        headers: { Authorization: `Bearer ${RESEND_API_KEY}` },
-      });
-      if (res.ok) {
-        const emailData = await res.json();
-        console.log('[inbound-webhook] API response keys:', Object.keys(emailData));
-        console.log('[inbound-webhook] API text:', emailData.text?.substring(0, 200));
-        console.log('[inbound-webhook] API html:', emailData.html?.substring(0, 200));
-        htmlBody = emailData.html || '';
-        textBody = emailData.text || emailData.body || '';
-        
-        // 3. If still empty, try raw download URL
-        if (!textBody && !htmlBody && emailData.raw?.download_url) {
-          console.log('[inbound-webhook] Trying raw download URL...');
-          const rawRes = await fetch(emailData.raw.download_url);
-          if (rawRes.ok) {
-            const rawText = await rawRes.text();
-            const bodyStart = rawText.indexOf('\r\n\r\n');
-            if (bodyStart > -1) {
-              textBody = rawText.substring(bodyStart + 4).trim();
-            }
+      // Fallback: try raw download if text/html are empty
+      if (!textBody && !htmlBody && emailData.raw?.download_url) {
+        const rawRes = await fetch(emailData.raw.download_url);
+        if (rawRes.ok) {
+          const rawText = await rawRes.text();
+          const bodyStart = rawText.indexOf('\r\n\r\n');
+          if (bodyStart > -1) {
+            textBody = rawText.substring(bodyStart + 4).trim();
           }
         }
-      } else {
-        console.error('[inbound-webhook] Resend API error:', res.status, await res.text());
       }
-    } catch (err) {
-      console.error('[inbound-webhook] Failed to fetch email content:', err);
-      // Continue — we still log the reply even without body
+    } else {
+      console.error('[inbound-webhook] Resend API error:', res.status);
     }
+  } catch (err) {
+    console.error('[inbound-webhook] Failed to fetch email content:', err);
   }
 
   // Store the reply in Firestore
@@ -154,6 +134,5 @@ export async function POST(req: NextRequest) {
 
   await batch.commit();
 
-  console.log(`[inbound-webhook] Reply stored for lead ${leadId} from ${from}`);
   return NextResponse.json({ ok: true, replyId: replyRef.id });
 }
