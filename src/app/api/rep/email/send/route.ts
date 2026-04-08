@@ -16,7 +16,9 @@ const DEFAULT_MAX_EMAILS_PER_DAY = 20;
 function buildHtml(bodyText: string, repName: string): string {
   const bodyHtml = bodyText
     .split('\n\n')
-    .map(p => `<p style="margin:0 0 16px;font-size:15px;color:#444;line-height:1.7;">${p.replace(/\n/g, '<br/>')}</p>`)
+    .map((p, i) => i === 0
+      ? `<p style="margin:0 0 16px;font-size:15px;color:#444;line-height:1.7;font-weight:600;">${p.replace(/\n/g, '<br/>')}</p>`
+      : `<p style="margin:0 0 16px;font-size:15px;color:#444;line-height:1.7;">${p.replace(/\n/g, '<br/>')}</p>`)
     .join('');
 
   return `<!DOCTYPE html>

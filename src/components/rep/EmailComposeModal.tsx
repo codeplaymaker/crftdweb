@@ -23,8 +23,9 @@ function fillTemplate(text: string, vars: Record<string, string>): string {
 
 function buildPreviewHtml(bodyText: string, senderName: string, subjectLine: string): string {
   const bodyHtml = bodyText
-    ? bodyText.split('\n\n').map(p =>
-        `<p style="margin:0 0 16px;font-size:15px;color:#444;line-height:1.7;">${p.replace(/\n/g, '<br/>')}</p>`
+    ? bodyText.split('\n\n').map((p, i) => i === 0
+        ? `<p style="margin:0 0 16px;font-size:15px;color:#444;line-height:1.7;font-weight:600;">${p.replace(/\n/g, '<br/>')}</p>`
+        : `<p style="margin:0 0 16px;font-size:15px;color:#444;line-height:1.7;">${p.replace(/\n/g, '<br/>')}</p>`
       ).join('')
     : '<p style="margin:0;font-size:15px;color:#aaa;font-style:italic;">Your message will appear here\u2026</p>';
 
