@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyRepAuth } from '@/lib/auth/verifyRepAuth';
 
+export const maxDuration = 60;
+
 const PSI_API = 'https://www.googleapis.com/pagespeedonline/v5/runPagespeed';
 const API_KEY = process.env.GOOGLE_PSI_API_KEY || '';
 
