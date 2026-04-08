@@ -50,11 +50,7 @@ If there's a fit, you'll hear exactly what we'd build and what it would cost
 
 No pressure, no hard sell.
 
-Talk soon,
-{{repName}}
-CrftdWeb Rep
-
-crftdweb.com`,
+Talk soon,`,
   },
   {
     key: 'follow_up_no_reply',
@@ -68,9 +64,7 @@ We build sites for businesses like {{businessName}} that are designed to bring i
 
 If you've got 15 minutes in the next few days, happy to get you a call with the founder — he'll be honest about whether it makes sense for your business.
 
-Worth it?
-
-{{repName}}`,
+Worth it?`,
   },
   {
     key: 'after_portfolio',
@@ -82,8 +76,6 @@ Here are a few recent sites we've built: crftdweb.com/work
 
 The process is quick — most sites are live in 2–5 weeks. Starting from £1,200 for a landing page.
 
-If anything looks relevant to what you're after, I can get you 15 minutes with the founder this week.
-
-{{repName}}`,
+If anything looks relevant to what you're after, I can get you 15 minutes with the founder this week.`,
   },
 ];
