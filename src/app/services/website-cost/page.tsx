@@ -40,7 +40,7 @@ const faqs = [
   {
     question: 'How much does CrftdWeb charge?',
     answer:
-      'Our Launch package is £2,497 (5-page custom-coded site). Growth is £4,997 (up to 10 pages with booking integration, blog, and 90-day support). Scale is £9,997+ (unlimited pages, API integrations, 12-month partnership). All include a 100% money-back guarantee.',
+      'Our Starter package is £997 (single landing page). Launch is £2,497 (5-page custom-coded site). Growth is £4,997 (up to 10 pages with booking integration, blog, and 90-day support). Scale is £9,997+ (unlimited pages, API integrations, 12-month partnership). All include a 100% money-back guarantee.',
   },
   {
     question: 'Why are some websites £500 and others £25,000?',
@@ -209,8 +209,13 @@ export default function WebsiteCostPage() {
                 We&apos;re transparent about our pricing. Every site is custom-coded in Next.js — the same technology
                 used by Nike, Netflix, and Notion. No WordPress, no templates, no bloat.
               </p>
-              <div className="grid gap-6 md:grid-cols-3">
+              <div className="grid gap-6 md:grid-cols-4">
                 {[
+                  {
+                    name: 'Starter',
+                    price: '£997',
+                    features: ['1 landing page', 'Custom-coded', 'Mobile-first', 'SEO foundations', '14-day delivery'],
+                  },
                   {
                     name: 'Launch',
                     price: '£2,497',
