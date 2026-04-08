@@ -5,33 +5,33 @@ import { ChevronDown, ChevronUp, Copy, Check, Search, MapPin, Instagram, Message
 
 const CALL_SCRIPT = [
   {
-    step: 'Step 1 — Opening (first 10 seconds)',
-    content: `"Hi, can I speak to the owner? … Hi [Name], my name is [Your Name], I'm calling from a web design studio called CrftdWeb. I'll be really quick — I'm not trying to sell you anything today, I just had a quick question."`,
+    step: 'Step 1: Opening (first 10 seconds)',
+    content: `"Hi, can I speak to the owner? … Hi [Name], my name is [Your Name], I'm calling from a web design studio called CrftdWeb. I'll be really quick, I'm not trying to sell you anything today, I just had a quick question."`,
     note: 'Pause. Let them respond.',
   },
   {
-    step: 'Step 2 — The Hook',
-    content: `"I came across your business online and noticed your website — honestly it looks like it could be doing a lot more for you. Is that something you've thought about at all?"`,
-    note: "Wait for their response — don't fill the silence.",
+    step: 'Step 2: The Hook',
+    content: `"I came across your business online and noticed your website, honestly it looks like it could be doing a lot more for you. Is that something you've thought about at all?"`,
+    note: "Wait for their response, don't fill the silence.",
   },
   {
-    step: 'Step 3a — If Yes / "Yeah actually"',
-    content: `"Perfect. I work with a developer who specialises in building clean, fast websites for businesses like yours — usually starting from £1,200. Would you be open to a quick 15-minute call with him to see if it's a fit?"`,
+    step: 'Step 3a: If Yes / "Yeah actually"',
+    content: `"Perfect. I work with a developer who specialises in building clean, fast websites for businesses like yours, usually starting from £1,200. Would you be open to a quick 15-minute call with him to see if it's a fit?"`,
     note: null,
   },
   {
-    step: 'Step 3b — If No / "We\'re fine"',
+    step: 'Step 3b: If No / "We\'re fine"',
     content: `"Totally get that. Out of curiosity, are you getting enquiries through the site regularly, or do most people find you another way?"`,
     note: "Gets them talking. If the site isn't converting, you're back in.",
   },
   {
-    step: 'Step 4 — Book the Call',
-    content: `"Great — he's pretty flexible. I can get you a slot as early as [day]. What works better for you, mornings or afternoons?"`,
-    note: 'Always give a choice. Never ask "when are you free?" — too open ended.',
+    step: 'Step 4: Book the Call',
+    content: `"Great, he's pretty flexible. I can get you a slot as early as [day]. What works better for you, mornings or afternoons?"`,
+    note: 'Always give a choice. Never ask "when are you free?", too open ended.',
   },
   {
-    step: 'Step 5 — If Not Interested',
-    content: `"No problem at all. Can I just send over a quick email with some examples of his work — just so you have it if things change?"`,
+    step: 'Step 5: If Not Interested',
+    content: `"No problem at all. Can I just send over a quick email with some examples of his work, just so you have it if things change?"`,
     note: 'Gets the email. Turns a dead call into a warm lead for follow-up.',
   },
 ];
@@ -39,15 +39,15 @@ const CALL_SCRIPT = [
 const EMAIL_TEMPLATES = [
   {
     label: 'After Booking a Call',
-    subject: 'Your call with CrftdWeb — confirmed',
+    subject: 'Your call with CrftdWeb is confirmed',
     body: `Hi [Name],
 
 Just confirming your 15-minute call with the founder of CrftdWeb on [day] at [time].
 
 What to expect:
-- The site will be reviewed before the call
-- You'll get straight feedback on what's working and what isn't
-- If there's a fit, you'll hear exactly what we'd build and what it would cost
+The site will be reviewed before the call
+You'll get straight feedback on what's working and what isn't
+If there's a fit, you'll hear exactly what we'd build and what it would cost
 
 No pressure, no hard sell.
 
@@ -62,11 +62,11 @@ crftdweb.com`,
     subject: 'Re: your website',
     body: `Hi [Name],
 
-Tried you on the phone earlier — just wanted to pass this across.
+Tried you on the phone earlier, just wanted to pass this across.
 
 We built sites for [industry, e.g. local tradespeople / gyms / consultants] that are designed to bring in actual enquiries, not just look decent.
 
-If you've got 15 minutes in the next few days, happy to get you a call with the founder — he'll be honest about whether it makes sense for your business.
+If you've got 15 minutes in the next few days, happy to get you a call with the founder. He'll be honest about whether it makes sense for your business.
 
 Worth it?
 
@@ -79,7 +79,7 @@ Worth it?
 
 Here are a few recent sites we've built: crftdweb.com/work
 
-The process is quick — most sites are live in 2–5 weeks. Starting from £1,200 for a landing page.
+The process is quick, most sites are live in 2 to 5 weeks. Starting from £1,200 for a landing page.
 
 If anything looks relevant to what you're after, I can get you 15 minutes with the founder this week.
 
@@ -90,7 +90,7 @@ If anything looks relevant to what you're after, I can get you 15 minutes with t
 const FAQS = [
   {
     q: 'What exactly am I selling?',
-    a: 'Custom websites. Landing pages from £1,200 (1–2 weeks). Business sites from £3,200 (3–5 weeks). Web apps from £8,000 (6–12 weeks). Your job is to book the discovery call — not close the deal. The founder handles that.',
+    a: 'Custom websites. Landing pages from £1,200 (1 to 2 weeks). Business sites from £3,200 (3 to 5 weeks). Web apps from £8,000 (6 to 12 weeks). Your job is to book the discovery call, not close the deal. The founder handles that.',
   },
   {
     q: 'When do I get paid?',
@@ -98,15 +98,15 @@ const FAQS = [
   },
   {
     q: 'What if they ask technical questions?',
-    a: "Don't answer them. Say: \"That's exactly what he'll cover on the call — he'd rather explain it properly in context than me get something wrong.\" Then book the call.",
+    a: "Don't answer them. Say: \"That's exactly what he'll cover on the call, he'd rather explain it properly in context than me get something wrong.\" Then book the call.",
   },
   {
     q: "What if they say it's too expensive?",
-    a: "Don't negotiate on price. Say: \"Fair enough — that's up to him to discuss. The call is completely free and he'll give you a proper breakdown. Worth 15 minutes?\"",
+    a: "Don't negotiate on price. Say: \"Fair enough, that's up to him to discuss. The call is completely free and he'll give you a proper breakdown. Worth 15 minutes?\"",
   },
   {
     q: 'How do I log a lead?',
-    a: "Use the 'My Leads' section in this portal. Add them as soon as you hang up — never at the end of the day. Pick the right status, add a note with what they said.",
+    a: "Use the 'My Leads' section in this portal. Add them as soon as you hang up, never at the end of the day. Pick the right status, add a note with what they said.",
   },
   {
     q: 'What counts as a "won" deal?',
@@ -125,13 +125,13 @@ const SOURCING_CHANNELS = [
     speed: 'Fast',
     description: 'The fastest way to build a daily prospect list. Unlimited free leads.',
     steps: [
-      'Open Google Maps. Search "[industry] near [city]" — e.g. "restaurants near Bristol", "barbers near Leeds", "dentists near Manchester".',
-      'Click each result. Check their website link. If it\'s slow, ugly, not mobile-friendly, or missing entirely — they\'re a prospect.',
-      'Run their URL through Google PageSpeed Insights (pagespeed.web.dev). Screenshot the score — you\'ll use this in your outreach.',
+      'Open Google Maps. Search "[industry] near [city]", e.g. "restaurants near Bristol", "barbers near Leeds", "dentists near Manchester".',,
+      'Click each result. Check their website link. If it\'s slow, ugly, not mobile-friendly, or missing entirely, they\'re a prospect.',
+      'Run their URL through Google PageSpeed Insights (pagespeed.web.dev). Screenshot the score, you\'ll use this in your outreach.',
       'Note down: business name, phone number, website URL, owner name (check "About" page or Google listing).',
       'Call them directly using the cold call script, or find their Instagram/Facebook for a DM approach.',
     ],
-    proTip: 'Sort by "Newest" to find recently opened businesses — they\'re the most likely to need a website and the least likely to have been contacted by other agencies.',
+    proTip: 'Sort by "Newest" to find recently opened businesses, they\'re the most likely to need a website and the least likely to have been contacted by other agencies.',
   },
   {
     id: 'instagram',
@@ -143,7 +143,7 @@ const SOURCING_CHANNELS = [
     steps: [
       'Search location tags: tap the search icon, go to "Places", type a city. Browse businesses posting from that area.',
       'Search industry hashtags: #bristolrestaurant, #londonbarber, #manchesterfitness, #leedssalon. Find businesses with 500-10K followers.',
-      'Check their bio link. If it\'s a Linktree, a dead link, or no link at all — they need a website.',
+      'Check their bio link. If it\'s a Linktree, a dead link, or no link at all, they need a website.',
       'Look at their content. If they\'re posting regularly but have no website, they\'re investing in marketing but missing the conversion piece.',
       'Send a DM using the templates below. Voice notes convert 3x better than text.',
     ],
@@ -159,8 +159,8 @@ const SOURCING_CHANNELS = [
     steps: [
       'Join groups: "[City] Small Business Owners", "[City] Business Network", "[Industry] UK". Request to join 5-10 groups.',
       'Don\'t pitch immediately. Spend 2-3 days commenting on posts, answering questions, being helpful.',
-      'When someone posts about their website, marketing, or getting more customers — that\'s your opening. Comment helpfully, then DM.',
-      'Post value: "3 things I noticed checking local business websites this week" — share genuine insights without selling. This positions you as knowledgeable.',
+      'When someone posts about their website, marketing, or getting more customers, that\'s your opening. Comment helpfully, then DM.',
+      'Post value: "3 things I noticed checking local business websites this week", share genuine insights without selling. This positions you as knowledgeable.',
       'DM people who engage with your comments. They already see you as helpful.',
     ],
     proTip: 'Never post "We build websites, DM me!" in a group. You\'ll get kicked. The play is: give value publicly, sell privately.',
@@ -173,13 +173,13 @@ const SOURCING_CHANNELS = [
     speed: 'Fast',
     description: 'Page 2+ of Google = weak SEO = weak website = your prospect.',
     steps: [
-      'Search "[Industry] [city]" — e.g. "plumber Bristol", "accountant Leeds", "gym Manchester".',
+      'Search "[Industry] [city]", e.g. "plumber Bristol", "accountant Leeds", "gym Manchester".',
       'Skip page 1 (they probably have good sites already). Go to pages 2-5.',
-      'Every business there has a website that isn\'t ranking — proof it\'s not working for them.',
+      'Every business there has a website that isn\'t ranking, proof it\'s not working for them.',
       'Also search "[Industry] near me" and check who has no website at all in the Google Business listings.',
       'Cross-reference with their Google reviews. High reviews + bad website = business is good but online presence is letting them down. Strong pitch angle.',
     ],
-    proTip: 'Use this search to verify any lead: "[Business name] website" — you\'ll instantly see what you\'re working with before you call.',
+    proTip: 'Use this search to verify any lead: "[Business name] website", you\'ll instantly see what you\'re working with before you call.',
   },
   {
     id: 'yell',
@@ -190,12 +190,12 @@ const SOURCING_CHANNELS = [
     description: 'Business directories with phone numbers. Bulk source leads by area and industry.',
     steps: [
       'Go to yell.com. Enter an industry and location. Filter by category.',
-      'Each listing shows: name, phone, website, reviews. If their website is a Yell page or a basic template — they\'re a prospect.',
+      'Each listing shows: name, phone, website, reviews. If their website is a Yell page or a basic template, they\'re a prospect.',
       'Export 20 businesses per session. Call through the list using the cold call script.',
-      'Check who has "No Website" listed — these are the easiest sells. They already know they need one.',
+      'Check who has "No Website" listed, these are the easiest sells. They already know they need one.',
       'Cross-check with Google to find their social media if you prefer DM outreach over calling.',
     ],
-    proTip: 'Businesses paying for a Yell listing already spend money on marketing. They understand the value of being found online — you just need to show them a better way.',
+    proTip: 'Businesses paying for a Yell listing already spend money on marketing. They understand the value of being found online, you just need to show them a better way.',
   },
   {
     id: 'indeed',
@@ -205,10 +205,10 @@ const SOURCING_CHANNELS = [
     speed: 'Medium',
     description: 'Businesses hiring = businesses growing = businesses that need a better online presence.',
     steps: [
-      'Search Indeed for businesses hiring in your area — receptionists, sales staff, managers.',
+      'Search Indeed for businesses hiring in your area, receptionists, sales staff, managers.',
       'A business investing in staff is a business that\'s growing. Growth requires a better front door (website).',
       'Note the company name. Google them. Check their website.',
-      'Call and say: "I saw you\'re hiring — congrats on the growth. I actually wanted to speak to you about something else. I noticed your website and..."',
+      'Call and say: "I saw you\'re hiring, congrats on the growth. I actually wanted to speak to you about something else. I noticed your website and..."',
       'This opener works because it shows you did research. It\'s not a cold call from nowhere.',
     ],
     proTip: 'This is one of the least competitive channels. No other agency reps are sourcing leads from job boards. You\'ll have zero competition.',
@@ -222,28 +222,28 @@ const SOURCING_CHANNELS = [
     description: 'Direct access to business owners and decision-makers. Best for higher-value projects.',
     steps: [
       'Search for job titles: "Owner", "Founder", "Director" + industry + location. E.g. "Restaurant Owner Manchester" or "Salon Founder Bristol".',
-      'Filter by "People" and "2nd" or "3rd+" connections. Check their company page — look at their website link.',
-      'If their website is outdated, a template, or missing — send a connection request with a short note (under 300 chars).',
+      'Filter by "People" and "2nd" or "3rd+" connections. Check their company page, look at their website link.',
+      'If their website is outdated, a template, or missing, send a connection request with a short note (under 300 chars).',
       'Once connected, send a personalised message. Reference something from their profile or recent post. Never pitch in the connection request.',
       'Engage with their posts first (like, comment something genuine) before messaging. Warm connections reply 5x more than cold ones.',
     ],
-    proTip: 'LinkedIn is the only platform where business owners expect to be contacted about business. Use it for higher-ticket prospects — the average deal from LinkedIn outreach is larger than from Instagram or cold calls.',
+    proTip: 'LinkedIn is the only platform where business owners expect to be contacted about business. Use it for higher-ticket prospects, the average deal from LinkedIn outreach is larger than from Instagram or cold calls.',
   },
 ];
 
 const DM_TEMPLATES = [
   {
-    label: 'Instagram DM — First Contact',
-    text: `Hey [Name]! Love what you're doing with [business name] — your [specific thing you noticed, e.g. "food photos", "client transformations"] are quality.
+    label: 'Instagram DM: First Contact',
+    text: `Hey [Name]! Love what you're doing with [business name], your [specific thing you noticed, e.g. "food photos", "client transformations"] are quality.
 
-Quick question — do you have a proper website for the business? I work with a web designer who builds sites specifically for [their industry] to bring in more bookings/enquiries. Might be worth a quick chat if you're open to it?`,
+Quick question, do you have a proper website for the business? I work with a web designer who builds sites specifically for [their industry] to bring in more bookings/enquiries. Might be worth a quick chat if you're open to it?`,
     note: 'Personalise the compliment. Generic = ignored. Mention something specific from their feed.',
   },
   {
-    label: 'Instagram DM — Voice Note',
-    text: `[Record a 20-30 second voice note — DO NOT read a script. Hit these points naturally:]
+    label: 'Instagram DM: Voice Note',
+    text: `[Record a 20-30 second voice note, DO NOT read a script. Hit these points naturally:]
 
-1. Hey [Name], saw your page — [genuine compliment].
+1. Hey [Name], saw your page, [genuine compliment].
 2. I work with a web designer who builds sites for businesses like yours.
 3. Noticed you don't have a website / your current site could do more for you.
 4. Would you be open to a quick 15-min call with him? Completely free, no pressure.
@@ -251,14 +251,14 @@ Quick question — do you have a proper website for the business? I work with a 
     note: 'Voice notes feel personal. 3x higher reply rate than text DMs. Keep it under 30 seconds.',
   },
   {
-    label: 'Facebook DM — After Group Interaction',
+    label: 'Facebook DM: After Group Interaction',
     text: `Hey [Name], saw your post in [group name] about [topic]. Thought I'd reach out directly.
 
-I work with a developer who specialises in building websites for [their industry]. Not trying to sell you anything — but if you've been thinking about sorting out your online presence, he does free 15-minute audits. Might be useful?`,
+I work with a developer who specialises in building websites for [their industry]. Not trying to sell you anything, but if you've been thinking about sorting out your online presence, he does free 15-minute audits. Might be useful?`,
     note: 'Only send this after you\'ve interacted with them publicly first. Cold Facebook DMs go to "Message Requests" and get ignored.',
   },
   {
-    label: 'WhatsApp — After Getting Number',
+    label: 'WhatsApp: After Getting Number',
     text: `Hi [Name], it's [Your Name] from CrftdWeb. Thanks for chatting earlier.
 
 Just wanted to drop you a quick message so you've got my number. I'll get that call booked with the founder for [day/time].
@@ -267,15 +267,15 @@ Any questions before then, just ping me here.`,
     note: 'Only use WhatsApp after phone/DM contact. Never cold message on WhatsApp.',
   },
   {
-    label: 'LinkedIn — Connection Request Note',
-    text: `Hey [Name] — saw you run [business name] in [city]. Impressive stuff. I work with a web designer who builds sites for [their industry]. Would love to connect.`,
-    note: 'Keep connection notes under 300 characters. Do NOT pitch here — just get accepted. Pitch in the follow-up message.',
+    label: 'LinkedIn: Connection Request Note',
+    text: `Hey [Name], saw you run [business name] in [city]. Impressive stuff. I work with a web designer who builds sites for [their industry]. Would love to connect.`,
+    note: 'Keep connection notes under 300 characters. Do NOT pitch here, just get accepted. Pitch in the follow-up message.',
   },
   {
-    label: 'LinkedIn — Follow-Up After Connecting',
-    text: `Thanks for connecting, [Name]. Saw [something specific — their latest post, a milestone, their Google reviews].
+    label: 'LinkedIn: Follow-Up After Connecting',
+    text: `Thanks for connecting, [Name]. Saw [something specific, their latest post, a milestone, their Google reviews].
 
-Quick one — I noticed your website and thought it could be doing more for you. I work with a developer who builds custom sites for [industry] businesses. He does a free 15-minute audit to show you exactly what's costing you enquiries.
+Quick one, I noticed your website and thought it could be doing more for you. I work with a developer who builds custom sites for [industry] businesses. He does a free 15-minute audit to show you exactly what's costing you enquiries.
 
 Worth a quick chat? No pressure either way.`,
     note: 'Send 1-2 days after connecting. Reference something real from their profile. If they don\'t reply after 5 days, like one of their posts and try once more.',
@@ -284,8 +284,8 @@ Worth a quick chat? No pressure either way.`,
 
 const DAILY_ROUTINE = [
   { time: '30 mins', task: 'Source 20 prospects', detail: 'Google Maps + Instagram. Build your list for the day. Name, phone/DM, website URL, notes.' },
-  { time: '60 mins', task: 'Outreach block 1 — Calls', detail: '10-15 cold calls from your list. Use the script. Log every call in the portal immediately.' },
-  { time: '45 mins', task: 'Outreach block 2 — DMs', detail: '10-15 Instagram/Facebook DMs. Personalise each one. No copy-paste blasts.' },
+  { time: '60 mins', task: 'Outreach block 1: Calls', detail: '10-15 cold calls from your list. Use the script. Log every call in the portal immediately.' },
+  { time: '45 mins', task: 'Outreach block 2: DMs', detail: '10-15 Instagram/Facebook DMs. Personalise each one. No copy-paste blasts.' },
   { time: '15 mins', task: 'Follow-ups', detail: 'Chase yesterday\'s warm leads. Second touch converts more than first. Send the follow-up email template.' },
   { time: '10 mins', task: 'Log and review', detail: 'Update all leads in the portal. Check your numbers: 20 outreaches hit? Calls booked? Notes added?' },
 ];
@@ -398,7 +398,7 @@ export default function RepResourcesPage() {
         {[
           { num: '20', label: 'Outreaches / day' },
           { num: '10', label: 'Calls / day' },
-          { num: '2–3', label: 'Booked calls / wk' },
+          { num: '2 to 3', label: 'Booked calls / wk' },
           { num: '1', label: 'Closed deal / wk' },
         ].map(t => (
           <div key={t.label} className="bg-white/[0.03] border border-white/8 rounded-xl p-4 text-center">
@@ -412,7 +412,7 @@ export default function RepResourcesPage() {
       <div>
         <div className="mb-5">
           <p className="text-xs font-bold text-white/30 uppercase tracking-widest mb-1">Where to Find Leads</p>
-          <p className="text-xs text-white/20 italic">Your job starts here. Before you can call or DM anyone, you need a list. These are your sourcing channels — aim for 20 fresh prospects every morning.</p>
+          <p className="text-xs text-white/20 italic">Your job starts here. Before you can call or DM anyone, you need a list. These are your sourcing channels, aim for 20 fresh prospects every morning.</p>
         </div>
 
         <div className="space-y-3">
@@ -464,7 +464,7 @@ export default function RepResourcesPage() {
       {/* ═══ DM TEMPLATES ═══ */}
       <div>
         <p className="text-xs font-bold text-white/30 uppercase tracking-widest mb-1">DM &amp; Social Outreach Templates</p>
-        <p className="text-xs text-white/20 mb-5 italic">For Instagram, Facebook, and WhatsApp. Personalise every message — copy-paste blasts get you blocked.</p>
+        <p className="text-xs text-white/20 mb-5 italic">For Instagram, Facebook, and WhatsApp. Personalise every message, copy-paste blasts get you blocked.</p>
         <div className="space-y-3">
           {DM_TEMPLATES.map((tpl, i) => (
             <div key={i} className="bg-white/[0.02] border border-white/8 rounded-xl p-4">
@@ -482,7 +482,7 @@ export default function RepResourcesPage() {
       {/* Call script */}
       <div>
         <p className="text-xs font-bold text-white/30 uppercase tracking-widest mb-4">Cold Call Script</p>
-        <p className="text-xs text-white/25 mb-5 italic">Know it — don't read it. Your only goal is to book a 15-min call.</p>
+        <p className="text-xs text-white/25 mb-5 italic">Know it, don't read it. Your only goal is to book a 15-min call.</p>
         <div className="space-y-3">
           {CALL_SCRIPT.map((item, i) => (
             <div key={i} className="bg-white/[0.02] border border-white/8 rounded-xl p-4">
@@ -496,11 +496,11 @@ export default function RepResourcesPage() {
           <p className="text-[10px] font-bold text-white/30 uppercase tracking-widest mb-3">The Rules</p>
           <ol className="list-decimal list-inside space-y-2">
             {[
-              'Never read it word for word — know it, then make it natural',
-              'Your only goal is to book a call — not sell the website, that\'s his job',
-              'Keep calls under 3 minutes — don\'t pitch, don\'t ramble',
+              'Never read it word for word, know it, then make it natural',
+              'Your only goal is to book a call, not sell the website, that\'s his job',
+              'Keep calls under 3 minutes, don\'t pitch, don\'t ramble',
               'Log every lead immediately in the portal',
-              'Follow up everything — most closes happen on the 2nd or 3rd contact',
+              'Follow up everything, most closes happen on the 2nd or 3rd contact',
             ].map((rule, i) => (
               <li key={i} className="text-xs text-white/40 leading-relaxed">{rule}</li>
             ))}
