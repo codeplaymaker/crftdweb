@@ -13,10 +13,14 @@ import { useState, useRef, useCallback, useEffect } from 'react';
 interface UseVoiceRecorderOptions {
   onTranscription?: (text: string) => void;
   onError?: (error: string) => void;
-  /** Seconds of silence before auto-stop. Default 2.5 */
+  /** Seconds of silence before auto-stop. Default 3 */
   silenceTimeout?: number;
   /** Auto-stop on silence? Default false */
   autoStopOnSilence?: boolean;
+  /** Max recording duration in seconds. Default 45 */
+  maxDuration?: number;
+  /** Seconds to wait for first speech before auto-stop. Default 10 */
+  noSpeechTimeout?: number;
   /** Return auth headers for API calls */
   getAuthHeaders?: () => Promise<Record<string, string>>;
 }
@@ -41,12 +45,15 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions = {}): UseVoic
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const startTimeRef = useRef<number>(0);
   const silenceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const maxDurationTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const silenceFrameRef = useRef<ReturnType<typeof requestAnimationFrame> | null>(null);
   const stoppingRef = useRef(false);
 
   const silenceTimeoutSec = options.silenceTimeout ?? 3;
   const autoStopOnSilence = options.autoStopOnSilence ?? false;
+  const maxDurationSec = options.maxDuration ?? 45;
+  const noSpeechTimeoutSec = options.noSpeechTimeout ?? 10;
 
   // Stabilise callbacks so startRecording / stopRecording don't recreate every render
   const onTranscriptionRef = useRef(options.onTranscription);
@@ -59,6 +66,7 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions = {}): UseVoic
   const cleanupSilenceDetection = useCallback(() => {
     if (silenceFrameRef.current) { cancelAnimationFrame(silenceFrameRef.current); silenceFrameRef.current = null; }
     if (silenceTimerRef.current) { clearTimeout(silenceTimerRef.current); silenceTimerRef.current = null; }
+    if (maxDurationTimerRef.current) { clearTimeout(maxDurationTimerRef.current); maxDurationTimerRef.current = null; }
     if (audioContextRef.current) { audioContextRef.current.close().catch(() => {}); audioContextRef.current = null; }
   }, []);
 
@@ -178,6 +186,7 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions = {}): UseVoic
           const data = new Uint8Array(analyser.frequencyBinCount);
           let silenceStart: number | null = null;
           let hasSpeech = false;
+          const recordStart = Date.now();
 
           const check = () => {
             if (stoppingRef.current) return;
@@ -194,11 +203,20 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions = {}): UseVoic
                   if (!stoppingRef.current) stopRecording();
                 }, 50);
               }
+            } else if (!hasSpeech && (Date.now() - recordStart) / 1000 >= noSpeechTimeoutSec) {
+              // No speech detected after noSpeechTimeout — auto-stop
+              if (!stoppingRef.current) stopRecording();
+              return;
             }
             silenceFrameRef.current = requestAnimationFrame(check);
           };
           silenceFrameRef.current = requestAnimationFrame(check);
         } catch { /* silence detection unavailable */ }
+
+        // Max recording duration safety guard
+        maxDurationTimerRef.current = setTimeout(() => {
+          if (!stoppingRef.current) stopRecording();
+        }, maxDurationSec * 1000);
       }
     } catch (err: unknown) {
       const name = err instanceof Error ? (err as { name?: string }).name : '';
