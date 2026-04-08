@@ -97,8 +97,27 @@ export async function POST(req: NextRequest) {
     });
     if (res.ok) {
       const emailData = await res.json();
+      console.log('[inbound-webhook] Email data keys:', Object.keys(emailData));
+      console.log('[inbound-webhook] Email text:', emailData.text?.substring(0, 200));
+      console.log('[inbound-webhook] Email html:', emailData.html?.substring(0, 200));
       htmlBody = emailData.html || '';
       textBody = emailData.text || '';
+      
+      // If text/html are empty, try to download from raw URL
+      if (!textBody && !htmlBody && emailData.raw?.download_url) {
+        console.log('[inbound-webhook] Trying raw download URL...');
+        const rawRes = await fetch(emailData.raw.download_url);
+        if (rawRes.ok) {
+          const rawText = await rawRes.text();
+          // Extract plain text from raw email (after the headers)
+          const bodyStart = rawText.indexOf('\r\n\r\n');
+          if (bodyStart > -1) {
+            textBody = rawText.substring(bodyStart + 4).trim();
+          }
+        }
+      }
+    } else {
+      console.error('[inbound-webhook] Resend API error:', res.status, await res.text());
     }
   } catch (err) {
     console.error('[inbound-webhook] Failed to fetch email content:', err);
