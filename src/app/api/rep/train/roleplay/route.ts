@@ -5,10 +5,14 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
+import { verifyRepAuth } from '@/lib/auth/verifyRepAuth';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export async function POST(request: NextRequest) {
+  const auth = await verifyRepAuth(request);
+  if (auth instanceof NextResponse) return auth;
+
   try {
     const body = await request.json();
     const { systemPrompt, messages, difficulty } = body as {

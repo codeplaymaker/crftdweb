@@ -5,6 +5,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
+import { verifyRepAuth } from '@/lib/auth/verifyRepAuth';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -18,6 +19,9 @@ interface SummaryRequest {
 }
 
 export async function POST(request: NextRequest) {
+  const auth = await verifyRepAuth(request);
+  if (auth instanceof NextResponse) return auth;
+
   try {
     const body = await request.json();
     const { transcript, leadName, businessType, callGoal, duration, notes } = body as SummaryRequest;

@@ -3,12 +3,13 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/firebase/AuthContext';
-import { signIn } from '@/lib/firebase/auth';
+import { signIn, resetPassword } from '@/lib/firebase/auth';
 
 export default function RepSignIn() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
@@ -21,6 +22,7 @@ export default function RepSignIn() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError('');
+    setSuccess('');
     setLoading(true);
     try {
       await signIn(email, password);
@@ -28,6 +30,21 @@ export default function RepSignIn() {
     } catch {
       setError('Incorrect email or password.');
       setLoading(false);
+    }
+  }
+
+  async function handleForgotPassword() {
+    if (!email) {
+      setError('Enter your email address first.');
+      return;
+    }
+    setError('');
+    setSuccess('');
+    try {
+      await resetPassword(email);
+      setSuccess('Password reset email sent. Check your inbox.');
+    } catch {
+      setError('Could not send reset email. Check the address and try again.');
     }
   }
 
@@ -61,10 +78,21 @@ export default function RepSignIn() {
               className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 transition-colors"
               placeholder="••••••••"
             />
+            <button
+              type="button"
+              onClick={handleForgotPassword}
+              className="mt-1.5 text-[11px] text-white/30 hover:text-white/50 transition-colors"
+            >
+              Forgot password?
+            </button>
           </div>
 
           {error && (
             <p className="text-xs text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg px-4 py-2.5">{error}</p>
+          )}
+
+          {success && (
+            <p className="text-xs text-green-400 bg-green-500/10 border border-green-500/20 rounded-lg px-4 py-2.5">{success}</p>
           )}
 
           <button

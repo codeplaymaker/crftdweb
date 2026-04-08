@@ -5,8 +5,12 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { verifyRepAuth } from '@/lib/auth/verifyRepAuth';
 
-export async function POST(_request: NextRequest) {
+export async function POST(request: NextRequest) {
+  const auth = await verifyRepAuth(request);
+  if (auth instanceof NextResponse) return auth;
+
   try {
     const apiKey = process.env.ASSEMBLYAI_API_KEY;
 

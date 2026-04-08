@@ -7,6 +7,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
+import { verifyRepAuth } from '@/lib/auth/verifyRepAuth';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -25,6 +26,9 @@ const PROSPECT_VOICES: Record<string, 'alloy' | 'echo' | 'fable' | 'onyx' | 'nov
 };
 
 export async function POST(req: NextRequest) {
+  const auth = await verifyRepAuth(req);
+  if (auth instanceof NextResponse) return auth;
+
   try {
     const body = await req.json();
     const { text, voice: voiceKey } = body;

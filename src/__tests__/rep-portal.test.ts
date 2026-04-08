@@ -16,6 +16,11 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 vi.stubEnv('OPENAI_API_KEY', 'test-key');
 
+// Mock auth verification — all rep API routes require auth
+vi.mock('@/lib/auth/verifyRepAuth', () => ({
+  verifyRepAuth: vi.fn().mockResolvedValue('test-uid'),
+}));
+
 vi.mock('firebase/app', () => ({
   initializeApp: vi.fn(() => ({})),
   getApps: vi.fn(() => []),

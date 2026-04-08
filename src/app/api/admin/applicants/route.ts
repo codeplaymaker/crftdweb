@@ -1,62 +1,39 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { adminDb } from '@/lib/firebase/admin';
-import { APPLICANTS } from '@/app/admin/applicants/data';
 
 function isAdmin(req: NextRequest) {
   const token = req.cookies.get('admin_token')?.value;
   return token && token === process.env.ADMIN_TOKEN;
 }
 
-// GET /api/admin/applicants — hardcoded + Firestore-only applicants merged
+// GET /api/admin/applicants — all applicants from Firestore
 export async function GET(req: NextRequest) {
   if (!isAdmin(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const snap = await adminDb.collection('applicants').get();
-  const firestoreMap: Record<string, Record<string, unknown>> = {};
-  const firestoreOnlyApplicants: Record<string, unknown>[] = [];
-  const hardcodedIds = new Set(APPLICANTS.map((a) => a.id));
-
-  snap.docs.forEach((d) => {
+  const applicants = snap.docs.map((d) => {
     const data = d.data();
-    if (hardcodedIds.has(d.id)) {
-      firestoreMap[d.id] = data;
-    } else {
-      // Fully Firestore-backed applicant (manually added)
-      firestoreOnlyApplicants.push({ id: d.id, ...data });
-    }
+    return {
+      id: d.id,
+      name: (data.name as string) ?? '',
+      email: (data.email as string) ?? '',
+      phone: (data.phone as string) ?? '',
+      location: (data.location as string) ?? '',
+      rating: (data.rating as number) ?? 3,
+      verdict: (data.verdict as string) ?? 'booking',
+      salesSignals: (data.salesSignals as string) ?? '',
+      education: (data.education as string) ?? '',
+      keyStrength: (data.keyStrength as string) ?? '',
+      indeedEmail: (data.indeedEmail as boolean) ?? false,
+      notes: (data.notes as string) ?? '',
+      status: (data.status as string) ?? 'pending',
+      emailSentAt: (data.emailSentAt as string) ?? null,
+      bookedAt: (data.bookedAt as string) ?? null,
+      activityLog: (data.activityLog as unknown[]) ?? [],
+    };
   });
 
-  const merged = APPLICANTS.map((a) => ({
-    ...a,
-    status: (firestoreMap[a.id]?.status as string) ?? 'pending',
-    emailSentAt: (firestoreMap[a.id]?.emailSentAt as string) ?? null,
-    bookedAt: (firestoreMap[a.id]?.bookedAt as string) ?? null,
-    activityLog: (firestoreMap[a.id]?.activityLog as unknown[]) ?? [],
-  }));
-
-  // Append Firestore-only applicants with defaults
-  for (const fa of firestoreOnlyApplicants) {
-    merged.push({
-      id: fa.id as string,
-      name: (fa.name as string) ?? '',
-      email: (fa.email as string) ?? '',
-      phone: (fa.phone as string) ?? '',
-      location: (fa.location as string) ?? '',
-      rating: (fa.rating as number) ?? 3,
-      verdict: (fa.verdict as 'booking' | 'trial' | 'decline') ?? 'booking',
-      salesSignals: (fa.salesSignals as string) ?? '',
-      education: (fa.education as string) ?? '',
-      keyStrength: (fa.keyStrength as string) ?? '',
-      indeedEmail: (fa.indeedEmail as boolean) ?? false,
-      notes: (fa.notes as string) ?? '',
-      status: (fa.status as string) ?? 'pending',
-      emailSentAt: (fa.emailSentAt as string) ?? null,
-      bookedAt: (fa.bookedAt as string) ?? null,
-      activityLog: (fa.activityLog as unknown[]) ?? [],
-    });
-  }
-
-  return NextResponse.json(merged);
+  return NextResponse.json(applicants);
 }
 
 // POST /api/admin/applicants — create a new applicant in Firestore
