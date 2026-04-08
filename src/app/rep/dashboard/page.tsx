@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/lib/firebase/AuthContext';
-import { getRepLeads, getRepCommissions, getRepProfile, RepLead, RepCommission, RepProfile } from '@/lib/firebase/firestore';
+import { getRepLeads, getRepCommissions, getRepProfile, updateRepProfile, RepLead, RepCommission, RepProfile } from '@/lib/firebase/firestore';
 import Link from 'next/link';
 import { ArrowRight, TrendingUp, Phone, PoundSterling, Clock, Copy, Check } from 'lucide-react';
 
@@ -179,6 +179,9 @@ export default function RepDashboard() {
         </div>
       )}
 
+      {/* Payment details */}
+      <PaymentDetailsCard profile={profile} user={user} onUpdate={(p) => setProfile(p)} />
+
       {/* Recent leads */}
       <div>
         <div className="flex items-center justify-between mb-4">
@@ -228,6 +231,123 @@ export default function RepDashboard() {
           <ArrowRight className="w-4 h-4 text-white/30 group-hover:text-white/60 group-hover:translate-x-1 transition-all" />
         </Link>
       </div>
+    </div>
+  );
+}
+
+// ─── Payment Details Card ──────────────────────────────────────────────────
+
+function PaymentDetailsCard({ profile, user, onUpdate }: { profile: RepProfile | null; user: { uid: string } | null; onUpdate: (p: RepProfile) => void }) {
+  const [editing, setEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [accountName, setAccountName] = useState('');
+  const [sortCode, setSortCode] = useState('');
+  const [accountNumber, setAccountNumber] = useState('');
+
+  const hasBankDetails = profile?.bankDetails?.sortCode && profile?.bankDetails?.accountNumber;
+
+  function startEditing() {
+    setAccountName(profile?.bankDetails?.accountName ?? profile?.name ?? '');
+    setSortCode(profile?.bankDetails?.sortCode ?? '');
+    setAccountNumber(profile?.bankDetails?.accountNumber ?? '');
+    setEditing(true);
+  }
+
+  async function handleSave() {
+    if (!user || !accountName.trim() || !sortCode.trim() || !accountNumber.trim()) return;
+    setSaving(true);
+    try {
+      const bankDetails = {
+        accountName: accountName.trim(),
+        sortCode: sortCode.replace(/\s/g, '').replace(/(\d{2})(\d{2})(\d{2})/, '$1-$2-$3'),
+        accountNumber: accountNumber.replace(/\s/g, ''),
+      };
+      await updateRepProfile(user.uid, { bankDetails });
+      if (profile) onUpdate({ ...profile, bankDetails });
+      setEditing(false);
+    } catch {
+      // silent
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <div className={`bg-white/[0.02] border rounded-2xl p-5 ${hasBankDetails ? 'border-white/8' : 'border-amber-500/20'}`}>
+      <div className="flex items-center justify-between mb-3">
+        <p className="text-xs font-bold uppercase tracking-widest text-white/30">Payment Details</p>
+        {hasBankDetails && !editing && (
+          <button onClick={startEditing} className="text-[11px] text-white/30 hover:text-white/60 transition-colors">
+            Edit
+          </button>
+        )}
+      </div>
+
+      {editing ? (
+        <div className="space-y-3">
+          <div>
+            <label className="text-[10px] text-white/30 uppercase tracking-wider font-semibold">Account Name</label>
+            <input
+              value={accountName}
+              onChange={(e) => setAccountName(e.target.value)}
+              className="w-full mt-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-white/30"
+              placeholder="Full name on account"
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-[10px] text-white/30 uppercase tracking-wider font-semibold">Sort Code</label>
+              <input
+                value={sortCode}
+                onChange={(e) => setSortCode(e.target.value)}
+                className="w-full mt-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-white/30 font-mono"
+                placeholder="00-00-00"
+                maxLength={8}
+              />
+            </div>
+            <div>
+              <label className="text-[10px] text-white/30 uppercase tracking-wider font-semibold">Account Number</label>
+              <input
+                value={accountNumber}
+                onChange={(e) => setAccountNumber(e.target.value)}
+                className="w-full mt-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-white/30 font-mono"
+                placeholder="12345678"
+                maxLength={8}
+              />
+            </div>
+          </div>
+          <div className="flex gap-2 pt-1">
+            <button
+              onClick={handleSave}
+              disabled={saving || !accountName.trim() || !sortCode.trim() || !accountNumber.trim()}
+              className="bg-white text-zinc-900 text-xs font-bold px-4 py-2 rounded-lg hover:bg-zinc-100 disabled:opacity-50 transition-colors"
+            >
+              {saving ? 'Saving…' : 'Save'}
+            </button>
+            <button
+              onClick={() => setEditing(false)}
+              className="text-xs text-white/30 hover:text-white/60 px-3 py-2 transition-colors"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      ) : hasBankDetails ? (
+        <div className="space-y-1">
+          <p className="text-sm text-white/70">{profile!.bankDetails!.accountName}</p>
+          <p className="text-sm text-white/40 font-mono">{profile!.bankDetails!.sortCode} · {profile!.bankDetails!.accountNumber}</p>
+        </div>
+      ) : (
+        <div className="text-center py-2">
+          <p className="text-sm text-amber-400/80 mb-2">Add your bank details so we can pay your commission</p>
+          <button
+            onClick={startEditing}
+            className="bg-white text-zinc-900 text-xs font-bold px-4 py-2 rounded-lg hover:bg-zinc-100 transition-colors"
+          >
+            Add Payment Details
+          </button>
+        </div>
+      )}
     </div>
   );
 }

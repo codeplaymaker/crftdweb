@@ -965,6 +965,13 @@ function ManagementTab() {
                   <div>
                     <p className="text-sm font-medium text-white/80">{rep.name}</p>
                     <p className="text-xs text-white/30">{rep.email}</p>
+                    {rep.bankDetails?.sortCode ? (
+                      <p className="text-[10px] text-white/20 font-mono mt-0.5">
+                        {rep.bankDetails.accountName} · {rep.bankDetails.sortCode} · {rep.bankDetails.accountNumber}
+                      </p>
+                    ) : (
+                      <p className="text-[10px] text-amber-400/50 mt-0.5">No bank details</p>
+                    )}
                   </div>
                   <div className="flex items-center gap-4 text-right text-xs">
                     <div>

@@ -372,6 +372,11 @@ export interface RepProfile {
   commissionRate: number; // percentage e.g. 15
   joinedAt: Timestamp;
   notes: string;
+  bankDetails?: {
+    accountName: string;
+    sortCode: string;
+    accountNumber: string;
+  };
 }
 
 export type LeadStatus = 'contacted' | 'interested' | 'call_booked' | 'proposal_sent' | 'won' | 'lost';
