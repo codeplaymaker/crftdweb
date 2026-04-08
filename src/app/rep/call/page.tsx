@@ -800,6 +800,18 @@ export default function LiveCallPage() {
         >
           Skip prep, go straight to call →
         </button>
+
+        <details className="bg-white/5 border border-white/8 rounded-xl">
+          <summary className="text-xs text-white/40 uppercase tracking-widest cursor-pointer px-5 py-3 hover:text-white/60 select-none">
+            How it works
+          </summary>
+          <div className="px-5 pb-4 space-y-2 text-sm text-white/50">
+            <p>1. Fill in the prospect details above, then hit <span className="text-white/70 font-medium">Get AI Prep Notes</span> for talking points — or skip straight to the call.</p>
+            <p>2. Call the prospect on your phone. The assistant listens through your mic and transcribes in real time.</p>
+            <p>3. Toggle <span className="text-white/70 font-medium">Auto-Suggest</span> to get live talking points and topic prompts as the conversation flows.</p>
+            <p>4. Click topics to mark them as covered. When done, hit <span className="text-white/70 font-medium">End Call</span> for a full summary, action items, and follow-up draft.</p>
+          </div>
+        </details>
       </div>
     );
   }
@@ -937,18 +949,6 @@ export default function LiveCallPage() {
           <Phone className="w-5 h-5" />
           {audioSource === 'mic' ? 'Start Live Call' : 'Start Call (Browser Tab)'}
         </button>
-
-        <details className="bg-white/5 border border-white/8 rounded-xl">
-          <summary className="text-xs text-white/40 uppercase tracking-widest cursor-pointer px-5 py-3 hover:text-white/60 select-none">
-            How it works
-          </summary>
-          <div className="px-5 pb-4 space-y-2 text-sm text-white/50">
-            <p>1. Fill in the prospect details above, then hit <span className="text-white/70 font-medium">Start Live Call</span>. AI prep notes will generate automatically.</p>
-            <p>2. Call the prospect on your phone. The assistant listens through your mic and transcribes in real time.</p>
-            <p>3. Toggle <span className="text-white/70 font-medium">Auto-Suggest</span> to get live talking points and topic prompts as the conversation flows.</p>
-            <p>4. Click topics to mark them as covered. When done, hit <span className="text-white/70 font-medium">End Call</span> for a full summary, action items, and follow-up draft.</p>
-          </div>
-        </details>
       </div>
     );
   }
