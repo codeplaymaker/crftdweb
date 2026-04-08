@@ -30,8 +30,10 @@ interface AuditOpportunity {
 
 interface AuditResult {
   url: string;
-  mobile: { scores: AuditScores; metrics: AuditMetrics; opportunities: AuditOpportunity[] };
-  desktop: { scores: AuditScores; metrics: AuditMetrics; opportunities: AuditOpportunity[] };
+  strategy: 'mobile' | 'desktop';
+  scores: AuditScores;
+  metrics: AuditMetrics;
+  opportunities: AuditOpportunity[];
 }
 
 function ScoreRing({ score, label, size = 72 }: { score: number; label: string; size?: number }) {
@@ -97,40 +99,69 @@ export default function AuditPage() {
   const [url, setUrl] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<AuditResult | null>(null);
+  const [results, setResults] = useState<Record<string, AuditResult>>({});
   const [view, setView] = useState<'mobile' | 'desktop'>('mobile');
+  const [auditUrl, setAuditUrl] = useState('');
+
+  const fetchStrategy = useCallback(async (targetUrl: string, strategy: 'mobile' | 'desktop') => {
+    const token = await getAuth().currentUser?.getIdToken();
+    const res = await fetch('/api/rep/audit', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({ url: targetUrl, strategy }),
+    });
+
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data.error || 'Audit failed');
+    }
+
+    return (await res.json()) as AuditResult;
+  }, []);
 
   const runAudit = useCallback(async () => {
     if (!url.trim() || !user) return;
     setLoading(true);
     setError(null);
-    setResult(null);
+    setResults({});
+    setAuditUrl(url.trim());
 
     try {
-      const token = await getAuth().currentUser?.getIdToken();
-      const res = await fetch('/api/rep/audit', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        body: JSON.stringify({ url: url.trim() }),
-      });
+      const result = await fetchStrategy(url.trim(), view);
+      setResults({ [view]: result });
 
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || 'Audit failed');
-      }
-
-      setResult(await res.json());
+      // Fetch the other strategy in the background
+      const other = view === 'mobile' ? 'desktop' : 'mobile';
+      fetchStrategy(url.trim(), other).then((r) =>
+        setResults((prev) => ({ ...prev, [other]: r }))
+      ).catch(() => { /* silent — user can retry via toggle */ });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Audit failed');
     } finally {
       setLoading(false);
     }
-  }, [url, user]);
+  }, [url, user, view, fetchStrategy]);
 
-  const data = result ? result[view] : null;
+  const switchView = useCallback(async (strategy: 'mobile' | 'desktop') => {
+    setView(strategy);
+    if (results[strategy] || !auditUrl) return;
+    // Fetch if not cached
+    setLoading(true);
+    setError(null);
+    try {
+      const result = await fetchStrategy(auditUrl, strategy);
+      setResults((prev) => ({ ...prev, [strategy]: result }));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Audit failed');
+    } finally {
+      setLoading(false);
+    }
+  }, [results, auditUrl, fetchStrategy]);
+
+  const data = results[view] || null;
   const avg = data ? Math.round((data.scores.performance + data.scores.accessibility + data.scores.seo + data.scores.bestPractices) / 4) : 0;
 
   return (
@@ -181,25 +212,25 @@ export default function AuditPage() {
         </div>
       )}
 
-      {result && data && (
+      {data && (
         <>
           {/* Header + Strategy Toggle */}
           <div className="bg-white/5 border border-white/8 rounded-xl p-5">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <a href={result.url} target="_blank" rel="noopener noreferrer" className="text-sm text-white/70 hover:text-white flex items-center gap-1.5">
-                  {result.url} <ExternalLink className="w-3 h-3" />
+                <a href={data.url} target="_blank" rel="noopener noreferrer" className="text-sm text-white/70 hover:text-white flex items-center gap-1.5">
+                  {data.url} <ExternalLink className="w-3 h-3" />
                 </a>
               </div>
               <div className="flex bg-white/5 rounded-lg p-0.5">
                 <button
-                  onClick={() => setView('mobile')}
+                  onClick={() => switchView('mobile')}
                   className={`px-3 py-1.5 rounded-md text-xs font-medium flex items-center gap-1.5 transition-colors ${view === 'mobile' ? 'bg-white/10 text-white' : 'text-white/40 hover:text-white/60'}`}
                 >
                   <Smartphone className="w-3 h-3" /> Mobile
                 </button>
                 <button
-                  onClick={() => setView('desktop')}
+                  onClick={() => switchView('desktop')}
                   className={`px-3 py-1.5 rounded-md text-xs font-medium flex items-center gap-1.5 transition-colors ${view === 'desktop' ? 'bg-white/10 text-white' : 'text-white/40 hover:text-white/60'}`}
                 >
                   <Monitor className="w-3 h-3" /> Desktop

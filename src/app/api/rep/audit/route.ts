@@ -23,9 +23,12 @@ export async function POST(req: NextRequest) {
   if (authResult instanceof NextResponse) return authResult;
 
   try {
-    const { url } = await req.json();
+    const { url, strategy = 'mobile' } = await req.json();
     if (!url || typeof url !== 'string') {
       return NextResponse.json({ error: 'URL is required' }, { status: 400 });
+    }
+    if (strategy !== 'mobile' && strategy !== 'desktop') {
+      return NextResponse.json({ error: 'Invalid strategy' }, { status: 400 });
     }
 
     // Validate URL format
@@ -38,21 +41,17 @@ export async function POST(req: NextRequest) {
 
     const targetUrl = parsedUrl.toString();
 
-    // Run both mobile and desktop audits in parallel
-    const [mobileRes, desktopRes] = await Promise.all([
-      fetch(psiUrl(targetUrl, 'mobile')),
-      fetch(psiUrl(targetUrl, 'desktop')),
-    ]);
+    const res = await fetch(psiUrl(targetUrl, strategy));
 
-    if (!mobileRes.ok || !desktopRes.ok) {
-      const err = await (mobileRes.ok ? desktopRes : mobileRes).json();
+    if (!res.ok) {
+      const err = await res.json();
       return NextResponse.json(
         { error: err?.error?.message || 'PageSpeed API error' },
         { status: 502 },
       );
     }
 
-    const [mobileData, desktopData] = await Promise.all([mobileRes.json(), desktopRes.json()]);
+    const data = await res.json();
 
     const extractScores = (data: Record<string, unknown>) => {
       const cats = (data as { lighthouseResult?: { categories?: Record<string, { score?: number }> } }).lighthouseResult?.categories || {};
@@ -91,16 +90,10 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       url: targetUrl,
-      mobile: {
-        scores: extractScores(mobileData),
-        metrics: extractMetrics(mobileData),
-        opportunities: extractOpportunities(mobileData),
-      },
-      desktop: {
-        scores: extractScores(desktopData),
-        metrics: extractMetrics(desktopData),
-        opportunities: extractOpportunities(desktopData),
-      },
+      strategy,
+      scores: extractScores(data),
+      metrics: extractMetrics(data),
+      opportunities: extractOpportunities(data),
     });
   } catch {
     return NextResponse.json({ error: 'Audit failed' }, { status: 500 });
