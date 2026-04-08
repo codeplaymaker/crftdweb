@@ -429,6 +429,17 @@ function RoleplayContent() {
           </button>
           {startError && <p className="text-xs text-red-400 text-center">{startError}</p>}
         </div>
+        <details className="bg-white/5 border border-white/8 rounded-xl">
+          <summary className="text-xs text-white/40 uppercase tracking-widest cursor-pointer px-5 py-3 hover:text-white/60 select-none">
+            How it works
+          </summary>
+          <div className="px-5 pb-4 space-y-2 text-sm text-white/50">
+            <p>1. Read the briefing, then hit <span className="text-white/70 font-medium">Start Call</span>. The prospect will answer first.</p>
+            <p>2. Type your response or tap the <span className="text-white/70 font-medium">mic</span> to speak — it auto-transcribes when you stop talking.</p>
+            <p>3. Toggle <span className="text-white/70 font-medium">Auto</span> for hands-free mode: mic starts automatically after the prospect speaks, and your reply sends after you pause for 3 seconds.</p>
+            <p>4. When you&apos;re done, hit <span className="text-white/70 font-medium">End Call</span> to get scored on discovery, objections, closing, and more.</p>
+          </div>
+        </details>
       </div>
     );
   }
