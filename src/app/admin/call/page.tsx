@@ -28,23 +28,6 @@ interface AiSuggestion {
   framework: string;
 }
 
-interface ISpeechRecognition {
-  continuous: boolean;
-  interimResults: boolean;
-  lang: string;
-  onresult: ((event: { results: { length: number; [i: number]: [{ transcript: string }] } }) => void) | null;
-  onerror: ((event: Event) => void) | null;
-  onend: (() => void) | null;
-  start(): void;
-  stop(): void;
-}
-declare global {
-  interface Window {
-    SpeechRecognition?: new () => ISpeechRecognition;
-    webkitSpeechRecognition?: new () => ISpeechRecognition;
-  }
-}
-
 export default function AdminCallPage() {
   // Prep form
   const [leadName, setLeadName] = useState('');
