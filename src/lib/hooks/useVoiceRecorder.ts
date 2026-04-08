@@ -8,7 +8,7 @@
  * - Sends audio to /api/rep/train/whisper for transcription
  */
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 
 interface UseVoiceRecorderOptions {
   onTranscription?: (text: string) => void;
@@ -46,6 +46,12 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions = {}): UseVoic
   const silenceTimeoutSec = options.silenceTimeout ?? 2.5;
   const autoStopOnSilence = options.autoStopOnSilence ?? false;
 
+  // Stabilise callbacks so startRecording / stopRecording don't recreate every render
+  const onTranscriptionRef = useRef(options.onTranscription);
+  const onErrorRef = useRef(options.onError);
+  useEffect(() => { onTranscriptionRef.current = options.onTranscription; }, [options.onTranscription]);
+  useEffect(() => { onErrorRef.current = options.onError; }, [options.onError]);
+
   const cleanupSilenceDetection = useCallback(() => {
     if (silenceFrameRef.current) { cancelAnimationFrame(silenceFrameRef.current); silenceFrameRef.current = null; }
     if (silenceTimerRef.current) { clearTimeout(silenceTimerRef.current); silenceTimerRef.current = null; }
@@ -77,7 +83,7 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions = {}): UseVoic
 
         const duration = Date.now() - startTimeRef.current;
         if (duration < 500) {
-          options.onError?.('Recording too short. Hold for at least a second.');
+          onErrorRef.current?.('Recording too short. Hold for at least a second.');
           stoppingRef.current = false;
           resolve(null);
           return;
@@ -104,15 +110,15 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions = {}): UseVoic
           const text = (data.text as string)?.trim() || '';
 
           if (!text) {
-            options.onError?.('No speech detected. Try again.');
+            onErrorRef.current?.('No speech detected. Try again.');
             resolve(null);
           } else {
-            options.onTranscription?.(text);
+            onTranscriptionRef.current?.(text);
             resolve(text);
           }
         } catch (err: unknown) {
           const message = err instanceof Error ? err.message : 'Transcription failed';
-          options.onError?.(message);
+          onErrorRef.current?.(message);
           resolve(null);
         } finally {
           setIsTranscribing(false);
@@ -122,9 +128,11 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions = {}): UseVoic
 
       recorder.stop();
     });
-  }, [cleanupSilenceDetection, options]);
+  }, [cleanupSilenceDetection]);
 
   const startRecording = useCallback(async () => {
+    // Prevent double recording
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') return;
     stoppingRef.current = false;
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -189,13 +197,13 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions = {}): UseVoic
       }
     } catch (err: unknown) {
       const name = err instanceof Error ? (err as { name?: string }).name : '';
-      options.onError?.(
+      onErrorRef.current?.(
         name === 'NotAllowedError'
           ? 'Microphone access denied. Please allow mic access in your browser settings.'
           : 'Could not access microphone.'
       );
     }
-  }, [autoStopOnSilence, silenceTimeoutSec, stopRecording, options]);
+  }, [autoStopOnSilence, silenceTimeoutSec, stopRecording]);
 
   const toggleRecording = useCallback(async (): Promise<string | null> => {
     if (isRecording) return stopRecording();

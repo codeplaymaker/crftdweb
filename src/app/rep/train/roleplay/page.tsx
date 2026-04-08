@@ -63,6 +63,8 @@ function RoleplayContent() {
     autoStopOnSilence: autoFlow,
     silenceTimeout: 2,
   });
+  const voiceRef = useRef(voice);
+  useEffect(() => { voiceRef.current = voice; });
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const startTimeRef = useRef<number>(0);
@@ -131,8 +133,9 @@ function RoleplayContent() {
         // Auto-flow: start recording after prospect finishes speaking
         if (autoFlowRef.current && !stoppingCallRef.current) {
           setTimeout(() => {
-            if (autoFlowRef.current && !voice.isRecording && !voice.isTranscribing) {
-              voice.startRecording();
+            const v = voiceRef.current;
+            if (autoFlowRef.current && !v.isRecording && !v.isTranscribing) {
+              v.startRecording();
             }
           }, 400);
         }
