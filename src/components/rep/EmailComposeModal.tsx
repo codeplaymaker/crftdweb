@@ -276,16 +276,7 @@ export default function EmailComposeModal({ lead, repName, repEmail, onClose, on
 
           {/* Body */}
           <div>
-            <div className="flex items-center justify-between mb-1.5">
-              <label className="text-[10px] text-white/30 uppercase tracking-widest">Message</label>
-              <button
-                onClick={() => setShowPreview(!showPreview)}
-                className="flex items-center gap-1.5 text-[10px] text-white/30 hover:text-white/50 transition-colors"
-              >
-                {showPreview ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
-                {showPreview ? 'Hide preview' : 'Preview'}
-              </button>
-            </div>
+            <label className="block text-[10px] text-white/30 mb-1.5 uppercase tracking-widest">Message</label>
             <textarea
               value={body}
               onChange={e => setBody(e.target.value)}
@@ -293,8 +284,19 @@ export default function EmailComposeModal({ lead, repName, repEmail, onClose, on
               placeholder="Type your message..."
               className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 resize-none leading-relaxed"
             />
+          </div>
+
+          {/* Preview toggle */}
+          <div>
+            <button
+              onClick={() => setShowPreview(!showPreview)}
+              className="flex items-center gap-2 text-xs text-white/40 hover:text-white/60 transition-colors"
+            >
+              {showPreview ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+              {showPreview ? 'Hide preview' : 'Preview email'}
+            </button>
             {showPreview && (
-              <div className="mt-2 rounded-xl overflow-hidden border border-white/10">
+              <div className="mt-3 rounded-xl overflow-hidden border border-white/10">
                 <div className="bg-white/[0.03] px-3 py-2 border-b border-white/6 flex items-center gap-2">
                   <Eye className="w-3 h-3 text-white/20" />
                   <span className="text-[10px] text-white/25 font-mono">email preview — {subject || 'no subject'}</span>
