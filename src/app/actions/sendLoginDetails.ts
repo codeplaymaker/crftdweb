@@ -46,6 +46,13 @@ function buildHtml(name: string, repEmail: string, tempPassword: string): string
             <p style="margin:0 0 24px;font-size:13px;color:#999;line-height:1.6;">
               Change your password after your first login. If you have any questions, reply to this email.
             </p>
+            <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px;">
+              <tr><td style="background:#f9f9f9;border:1px solid #e8e8e8;border-radius:10px;padding:16px 20px;">
+                <p style="margin:0 0 8px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#999;">Reference Documents</p>
+                <p style="margin:0 0 4px;font-size:13px;"><a href="${BASE_URL}/rep-onboarding-pack.html" style="color:#111;font-weight:600;text-decoration:none;">📋 Onboarding Pack</a> <span style="color:#888;">&mdash; role, commission, career progression</span></p>
+                <p style="margin:0;font-size:13px;"><a href="${BASE_URL}/docs/rep-contractor-agreement.html" style="color:#111;font-weight:600;text-decoration:none;">📄 Contractor Agreement</a> <span style="color:#888;">&mdash; legal terms</span></p>
+              </td></tr>
+            </table>
             <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
               <tr><td style="border-top:1px solid #e8e8e8;"></td></tr>
             </table>

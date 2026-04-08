@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { Loader2, Mail, ArrowLeft, AlertTriangle, CheckCircle2, Star, MapPin, Phone, ExternalLink, ClipboardCheck, Plus, X, Send, Clock } from 'lucide-react';
 import Link from 'next/link';
 import { sendBookingLink } from '@/app/actions/sendBookingLink';
+import { sendOffer } from '@/app/actions/sendOffer';
 import { type Verdict, type ApplicantStatus, type ApplicantWithStatus } from '@/app/admin/applicants/data';
 
 // ─── Activity Log ──────────────────────────────────────────────────────────
@@ -35,6 +36,9 @@ const STATUS_STYLES: Record<ApplicantStatus, string> = {
   email_sent: 'bg-sky-500/10 text-sky-400',
   booked: 'bg-blue-500/10 text-blue-400',
   screened: 'bg-purple-500/10 text-purple-400',
+  offered: 'bg-amber-500/10 text-amber-400',
+  accepted: 'bg-emerald-500/10 text-emerald-400',
+  declined: 'bg-red-500/10 text-red-400',
   no_show: 'bg-orange-500/10 text-orange-400',
   rejected: 'bg-red-500/10 text-red-400',
 };
@@ -44,6 +48,9 @@ const STATUS_LABELS: Record<ApplicantStatus, string> = {
   email_sent: 'Email Sent',
   booked: 'Booked',
   screened: 'Screened',
+  offered: 'Offer Sent',
+  accepted: 'Accepted',
+  declined: 'Declined',
   no_show: 'No Show',
   rejected: 'Rejected',
 };
@@ -152,6 +159,28 @@ export default function AdminApplicantsPage() {
       setSentIds((s) => new Set(s).add(applicant.id));
     } else {
       setErrors((e) => ({ ...e, [applicant.id]: result.error ?? 'Failed to send' }));
+    }
+
+    setSending(null);
+  }
+
+  async function handleSendOffer(applicant: ApplicantWithActivity) {
+    setSending(applicant.id);
+    setErrors((e) => { const n = { ...e }; delete n[applicant.id]; return n; });
+
+    const result = await sendOffer(applicant.name, applicant.email, applicant.id);
+
+    if (result.success) {
+      setApplicants((prev) =>
+        prev.map((a) =>
+          a.id === applicant.id
+            ? { ...a, status: 'offered' as ApplicantStatus }
+            : a
+        )
+      );
+      setSentIds((s) => new Set(s).add(applicant.id));
+    } else {
+      setErrors((e) => ({ ...e, [applicant.id]: result.error ?? 'Failed to send offer' }));
     }
 
     setSending(null);
@@ -293,6 +322,7 @@ export default function AdminApplicantsPage() {
                 justSent={sentIds.has(applicant.id)}
                 error={errors[applicant.id]}
                 onSendBooking={handleSendBooking}
+                onSendOffer={handleSendOffer}
                 onAddActivity={handleAddActivity}
                 onToggleReviewed={handleToggleReviewed}
                 togglingReview={togglingReview === applicant.id}
@@ -317,17 +347,19 @@ interface RowProps {
   justSent: boolean;
   error?: string;
   onSendBooking: (a: ApplicantWithActivity) => void;
+  onSendOffer: (a: ApplicantWithActivity) => void;
   onAddActivity: (applicantId: string, text: string) => void;
   onToggleReviewed: (submissionId: string, reviewed: boolean) => void;
   togglingReview: boolean;
   submission: TrialSubmission | null;
 }
 
-function ApplicantRow({ applicant, sending, justSent, error, onSendBooking, onAddActivity, onToggleReviewed, togglingReview, submission }: RowProps) {
+function ApplicantRow({ applicant, sending, justSent, error, onSendBooking, onSendOffer, onAddActivity, onToggleReviewed, togglingReview, submission }: RowProps) {
   const [expanded, setExpanded] = useState(false);
   const [noteText, setNoteText] = useState('');
   const [addingNote, setAddingNote] = useState(false);
   const canSendBooking = applicant.verdict === 'booking' && applicant.status === 'pending';
+  const canSendOffer = applicant.status === 'screened';
   const alreadySent = applicant.status !== 'pending';
 
   const handleAddNote = async () => {
@@ -411,7 +443,21 @@ function ApplicantRow({ applicant, sending, justSent, error, onSendBooking, onAd
                   {sending ? 'Sending…' : 'Send Booking Email'}
                 </button>
               )}
-              {(alreadySent || justSent) && (
+              {canSendOffer && (
+                <button
+                  onClick={() => onSendOffer(applicant)}
+                  disabled={sending}
+                  className="flex items-center gap-1.5 bg-amber-500/10 text-amber-400 border border-amber-500/20 text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-amber-500/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  {sending ? (
+                    <Loader2 size={12} className="animate-spin" />
+                  ) : (
+                    <Send size={12} />
+                  )}
+                  {sending ? 'Sending…' : 'Send Offer'}
+                </button>
+              )}
+              {(alreadySent || justSent) && !canSendOffer && (
                 <span className="flex items-center gap-1 text-xs text-emerald-400">
                   <CheckCircle2 size={12} />
                   {STATUS_LABELS[applicant.status]}
