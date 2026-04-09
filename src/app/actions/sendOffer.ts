@@ -25,7 +25,7 @@ function buildHtml(name: string, acceptUrl: string, declineUrl: string): string 
           <td style="background:#ffffff;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 12px 12px;padding:40px;">
             <p style="margin:0 0 16px;font-size:16px;color:#111;font-weight:600;">Hi ${firstName},</p>
             <p style="margin:0 0 16px;font-size:15px;color:#444;line-height:1.7;">
-              Great news &mdash; I&rsquo;d like to offer you a position as a <strong style="color:#111;">CrftdWeb Sales Representative</strong>.
+              Great news &mdash; we&rsquo;d like to offer you a position as a <strong style="color:#111;">CrftdWeb Sales Representative</strong>.
             </p>
             <p style="margin:0 0 24px;font-size:15px;color:#444;line-height:1.7;">
               Before you accept, please review the documents below so you know exactly how the role works:
@@ -83,7 +83,7 @@ function buildHtml(name: string, acceptUrl: string, declineUrl: string): string 
             </table>
 
             <p style="margin:0 0 24px;font-size:13px;color:#999;line-height:1.6;">
-              This offer expires in <strong style="color:#666;">48 hours</strong>. If you have any questions, reply to this email.
+              This offer expires in <strong style="color:#666;">48 hours</strong>. If you have any questions, just reply to this email.
             </p>
 
             <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
@@ -106,7 +106,7 @@ function buildHtml(name: string, acceptUrl: string, declineUrl: string): string 
 const plainText = (name: string, acceptUrl: string, declineUrl: string) =>
 `Hi ${name.split(' ')[0]},
 
-I'd like to offer you a position as a CrftdWeb Sales Representative.
+We'd like to offer you a position as a CrftdWeb Sales Representative.
 
 Before you accept, please review:
 
