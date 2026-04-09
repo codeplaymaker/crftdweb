@@ -149,6 +149,42 @@ export default function ServicesPage() {
             </div>
           </div>
 
+          {/* AI Agents */}
+          <div className="max-w-4xl mx-auto mb-20">
+            <div className="text-center mb-12">
+              <h2 className="text-sm font-semibold tracking-[0.15em] uppercase text-muted-foreground mb-4">AI AGENTS</h2>
+              <p className="text-2xl md:text-3xl font-bold tracking-tight mb-3">Put your business on autopilot</p>
+              <p className="text-muted-foreground max-w-xl mx-auto leading-relaxed">
+                Custom AI agents built into your site or ops — not off-the-shelf widgets. They qualify leads, answer questions, book calls, and handle tasks while you sleep.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+              {aiAgents.map((agent, index) => (
+                <motion.div
+                  key={agent.title}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: index * 0.07 }}
+                  className="p-6 rounded-xl border bg-background hover:border-black/20 transition-colors"
+                >
+                  <div className="flex items-start justify-between gap-4 mb-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg">{agent.icon}</span>
+                      <h3 className="font-semibold text-sm tracking-tight">{agent.title}</h3>
+                    </div>
+                    <span className="text-xs font-medium text-muted-foreground whitespace-nowrap">{agent.price}</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground leading-relaxed">{agent.description}</p>
+                </motion.div>
+              ))}
+            </div>
+            <div className="p-6 rounded-xl border border-black/10 bg-black text-white text-center">
+              <p className="text-sm font-semibold mb-1">Every AI agent is built custom — no third-party widgets, no monthly SaaS fees.</p>
+              <p className="text-xs text-white/50">One-time build cost. You own it. Runs on your infrastructure.</p>
+            </div>
+          </div>
+
           {/* How We Design — TRAIN */}
           <div className="max-w-4xl mx-auto mb-20">
             <div className="text-center mb-12">
@@ -376,11 +412,6 @@ const pricingTiers = [
 
 const addOns = [
   {
-    title: "AI Integration & Chatbots",
-    description: "Add a custom AI chatbot that answers questions, qualifies leads, and books calls — 24/7, without you. Beyond chat: smart search, content generation, GPT-powered tools, and workflow automation. Built to your business, not a copy-paste widget.",
-    price: "from £800",
-  },
-  {
     title: "Copywriting",
     description: "We write every word. Problem-first headlines, conversion copy, and SEO-optimised page content in your brand voice.",
     price: "£497 / page",
@@ -404,6 +435,45 @@ const addOns = [
     title: "Extra Pages",
     description: "Additional pages beyond your package allowance. Same quality, same custom code.",
     price: "£197 / page",
+  },
+];
+
+const aiAgents = [
+  {
+    icon: '🤖',
+    title: 'Lead Qualifier Agent',
+    description: 'Engages every visitor, asks the right questions, and segments them by intent — so you only spend time on prospects that are ready to buy.',
+    price: 'from £1,200',
+  },
+  {
+    icon: '📅',
+    title: 'Booking & Scheduling Bot',
+    description: 'Answers questions, handles objections, and books discovery calls directly into your calendar — 24/7, without human input.',
+    price: 'from £800',
+  },
+  {
+    icon: '💬',
+    title: 'FAQ & Support Agent',
+    description: 'Trained on your business, products, and FAQs. Handles 80% of customer queries instantly so you\'re not tied to your inbox.',
+    price: 'from £600',
+  },
+  {
+    icon: '⚙️',
+    title: 'Internal Ops Agent',
+    description: 'Automates internal workflows — reporting, data entry, email triage, CRM updates. Saves 5–15 hours a week for growing teams.',
+    price: 'from £1,500',
+  },
+  {
+    icon: '✍️',
+    title: 'Content Generation Agent',
+    description: 'Produces on-brand blog posts, social captions, and email sequences on a schedule. Built on your tone of voice, not a generic prompt.',
+    price: 'from £900',
+  },
+  {
+    icon: '🔍',
+    title: 'Smart Search & Recommendation',
+    description: 'AI-powered search and product/service recommendations for your site. Surfaces the right thing to the right visitor at the right moment.',
+    price: 'from £1,000',
   },
 ];
 
