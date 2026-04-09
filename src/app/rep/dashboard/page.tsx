@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '@/lib/firebase/AuthContext';
 import { getRepLeads, getRepCommissions, getRepProfile, updateRepProfile, RepLead, RepCommission, RepProfile } from '@/lib/firebase/firestore';
 import Link from 'next/link';
-import { ArrowRight, TrendingUp, Phone, PoundSterling, Clock, Copy, Check } from 'lucide-react';
+import { ArrowRight, TrendingUp, Phone, PoundSterling, Clock, Copy, Check, Lock } from 'lucide-react';
+import { getAuth, updatePassword, EmailAuthProvider, reauthenticateWithCredential } from 'firebase/auth';
 
 const STATUS_LABELS: Record<string, string> = {
   contacted: 'Contacted',
@@ -182,6 +183,9 @@ export default function RepDashboard() {
       {/* Payment details */}
       <PaymentDetailsCard profile={profile} user={user} onUpdate={(p) => setProfile(p)} />
 
+      {/* Change password */}
+      <ChangePasswordCard />
+
       {/* Recent leads */}
       <div>
         <div className="flex items-center justify-between mb-4">
@@ -347,6 +351,125 @@ function PaymentDetailsCard({ profile, user, onUpdate }: { profile: RepProfile |
             Add Payment Details
           </button>
         </div>
+      )}
+    </div>
+  );
+}
+
+/* ── Change Password Card ── */
+function ChangePasswordCard() {
+  const [editing, setEditing] = useState(false);
+  const [currentPw, setCurrentPw] = useState('');
+  const [newPw, setNewPw] = useState('');
+  const [confirmPw, setConfirmPw] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
+
+  async function handleSave() {
+    setError('');
+    if (newPw.length < 8) { setError('Password must be at least 8 characters'); return; }
+    if (newPw !== confirmPw) { setError('Passwords do not match'); return; }
+
+    setSaving(true);
+    try {
+      const auth = getAuth();
+      const fbUser = auth.currentUser;
+      if (!fbUser || !fbUser.email) throw new Error('Not logged in');
+
+      const cred = EmailAuthProvider.credential(fbUser.email, currentPw);
+      await reauthenticateWithCredential(fbUser, cred);
+      await updatePassword(fbUser, newPw);
+
+      setSuccess(true);
+      setEditing(false);
+      setCurrentPw('');
+      setNewPw('');
+      setConfirmPw('');
+      setTimeout(() => setSuccess(false), 3000);
+    } catch (err: unknown) {
+      const code = (err as { code?: string })?.code;
+      if (code === 'auth/wrong-password' || code === 'auth/invalid-credential') {
+        setError('Current password is incorrect');
+      } else {
+        setError('Failed to update password. Try again.');
+      }
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <div className="bg-white/[0.02] border border-white/8 rounded-2xl p-5">
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2">
+          <Lock className="w-3.5 h-3.5 text-white/30" />
+          <p className="text-xs font-bold uppercase tracking-widest text-white/30">Password</p>
+        </div>
+        {!editing && (
+          <button onClick={() => { setEditing(true); setError(''); setSuccess(false); }} className="text-[11px] text-white/30 hover:text-white/60 transition-colors">
+            Change
+          </button>
+        )}
+      </div>
+
+      {success && (
+        <div className="flex items-center gap-2 text-emerald-400 text-xs mb-3">
+          <Check className="w-3.5 h-3.5" /> Password updated
+        </div>
+      )}
+
+      {editing ? (
+        <div className="space-y-3">
+          <div>
+            <label className="text-[10px] text-white/30 uppercase tracking-wider font-semibold">Current Password</label>
+            <input
+              type="password"
+              value={currentPw}
+              onChange={(e) => setCurrentPw(e.target.value)}
+              className="w-full mt-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-white/30"
+              placeholder="Enter current password"
+            />
+          </div>
+          <div>
+            <label className="text-[10px] text-white/30 uppercase tracking-wider font-semibold">New Password</label>
+            <input
+              type="password"
+              value={newPw}
+              onChange={(e) => setNewPw(e.target.value)}
+              className="w-full mt-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-white/30"
+              placeholder="At least 8 characters"
+            />
+          </div>
+          <div>
+            <label className="text-[10px] text-white/30 uppercase tracking-wider font-semibold">Confirm New Password</label>
+            <input
+              type="password"
+              value={confirmPw}
+              onChange={(e) => setConfirmPw(e.target.value)}
+              className="w-full mt-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-white/30"
+              placeholder="Repeat new password"
+            />
+          </div>
+          {error && <p className="text-xs text-red-400">{error}</p>}
+          <div className="flex gap-2 pt-1">
+            <button
+              onClick={handleSave}
+              disabled={saving || !currentPw || !newPw || !confirmPw}
+              className="bg-white text-zinc-900 text-xs font-bold px-4 py-2 rounded-lg hover:bg-zinc-100 disabled:opacity-50 transition-colors"
+            >
+              {saving ? 'Updating…' : 'Update Password'}
+            </button>
+            <button
+              onClick={() => { setEditing(false); setError(''); setCurrentPw(''); setNewPw(''); setConfirmPw(''); }}
+              className="text-xs text-white/30 hover:text-white/60 px-3 py-2 transition-colors"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      ) : (
+        <p className="text-sm text-white/40">••••••••</p>
       )}
     </div>
   );

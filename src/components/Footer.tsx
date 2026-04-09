@@ -63,6 +63,7 @@ export default function Footer() {
             © {new Date().getFullYear()} CrftdWeb. All rights reserved.
           </p>
           <div className="flex items-center gap-6">
+            <Link href="/privacy" className="text-white/40 hover:text-white/60 text-sm transition-colors">Privacy</Link>
             <Link href="/contact" className="text-white/40 hover:text-white/60 text-sm transition-colors">Contact</Link>
             <Link href="/playbook" className="text-white/40 hover:text-white/60 text-sm transition-colors">Playbook</Link>
             <Link href="/engine" className="text-white/40 hover:text-white/60 text-sm transition-colors">Engine</Link>

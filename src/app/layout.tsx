@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import RootLayoutShell from '@/components/RootLayoutShell';
 import { LocalBusinessJsonLd, WebSiteJsonLd } from '@/components/seo/JsonLd';
 import GoogleAnalytics from '@/components/GoogleAnalytics';
+import { Analytics } from '@vercel/analytics/react';
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -80,6 +81,7 @@ export default function RootLayout({
         <RootLayoutShell>
           {children}
         </RootLayoutShell>
+        <Analytics />
       </body>
     </html>
   );

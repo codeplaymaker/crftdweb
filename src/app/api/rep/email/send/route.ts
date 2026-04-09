@@ -129,6 +129,24 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  // Bounce/complaint safety check — block reps with too many bounces
+  const repDoc = await adminDb.collection('reps').doc(uid).get();
+  const repData = repDoc.data();
+  const bounceCount = repData?.bounceCount || 0;
+  const complaintCount = repData?.complaintCount || 0;
+  if (complaintCount >= 2) {
+    return NextResponse.json(
+      { error: 'Email access suspended due to spam complaints. Contact admin.' },
+      { status: 403 }
+    );
+  }
+  if (bounceCount >= 5) {
+    return NextResponse.json(
+      { error: 'Email access suspended due to too many bounced emails. Contact admin to resolve.' },
+      { status: 403 }
+    );
+  }
+
   // Send via Resend
   let resendId: string | null = null;
   let sendError: string | null = null;
