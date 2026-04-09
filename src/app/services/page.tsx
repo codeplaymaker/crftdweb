@@ -21,7 +21,7 @@ export default function ServicesPage() {
             </span>
             <h1 className="text-4xl md:text-6xl font-bold mb-5 tracking-tight leading-tight">
               We build websites that<br className="hidden md:block" />
-              <span className="text-muted-foreground">turn visitors into customers.</span>
+              {' '}<span className="text-muted-foreground">turn visitors into customers.</span>
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
               Not templates. Not page builders. Custom-coded sites designed around 
