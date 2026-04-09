@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import Image from 'next/image';
 import { CheckCircle2, Loader2 } from 'lucide-react';
 
 type FormState = 'idle' | 'submitting' | 'success' | 'error';
@@ -55,6 +56,9 @@ export default function RepApplyPage() {
               transition={{ duration: 0.6 }}
               className="max-w-lg mx-auto text-center"
             >
+              <Link href="/" className="inline-block mb-8">
+                <Image src="/CW-logo.png" alt="CrftdWeb" width={48} height={48} className="mx-auto" />
+              </Link>
               <div className="w-14 h-14 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mx-auto mb-6">
                 <CheckCircle2 className="text-emerald-500" size={24} />
               </div>
@@ -83,6 +87,9 @@ export default function RepApplyPage() {
             className="max-w-2xl mx-auto"
           >
             <div className="text-center mb-14">
+              <Link href="/" className="inline-block mb-8">
+                <Image src="/CW-logo.png" alt="CrftdWeb" width={48} height={48} className="mx-auto" />
+              </Link>
               <span className="text-xs font-semibold tracking-[0.2em] uppercase text-muted-foreground mb-6 block">
                 SALES REP ROLE
               </span>
