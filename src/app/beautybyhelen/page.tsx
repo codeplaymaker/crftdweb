@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { ArrowRight, Star, MapPin, Clock, Instagram, Scissors, CheckCircle2, Palette, Wind, Sparkles, Phone } from 'lucide-react';
+import { ArrowRight, Star, MapPin, Clock, Instagram, CheckCircle2, Phone } from 'lucide-react';
 import Image from 'next/image';
 
 /* ── Animation variants ── */
@@ -25,43 +25,75 @@ const brand = {
   cream: '#F5EDE3',
 };
 
-/* ── Services: hair primary, beauty secondary ── */
+/* ── Services: her actual specialties ── */
 const primaryServices = [
   {
-    name: 'Cut & Style',
-    desc: 'Precision cuts tailored to your face shape, hair texture, and lifestyle. From sleek bobs to lived-in layers.',
+    name: 'Box Braids',
+    desc: 'Classic and knotless box braids in any length, size, or colour. Clean parts, neat finish, long-lasting protective style.',
+    icon: 'sparkles',
+  },
+  {
+    name: 'Albaso Braids',
+    desc: 'Intricate Albaso braids crafted with precision. A bold, statement protective style that turns heads.',
     icon: 'scissors',
   },
   {
-    name: 'Colour & Highlights',
-    desc: 'Full colour, balayage, highlights, and toners. Expertly blended for a natural, dimensional finish.',
-    icon: 'palette',
+    name: 'Silk Press',
+    desc: 'A flawless silk press that leaves your natural hair sleek, shiny, and bouncy — without the damage.',
+    icon: 'flame',
   },
   {
-    name: 'Blow Dry & Styling',
-    desc: 'Bouncy blow-dries, sleek finishes, and event-ready updos. Walk in relaxed, walk out stunning.',
-    icon: 'wind',
-  },
-  {
-    name: 'Hair Treatments',
-    desc: 'Deep conditioning, keratin smoothing, and bond repair. Restore strength, shine, and softness.',
-    icon: 'sparkles',
+    name: 'Wedding Hair',
+    desc: 'Bridal and wedding party hair that lasts all day. Braids, updos, and styled looks for your most important moments.',
+    icon: 'crown',
   },
 ];
 
 const serviceIcons: Record<string, React.ReactNode> = {
-  scissors: <Scissors className="w-5 h-5" />,
-  palette: <Palette className="w-5 h-5" />,
-  wind: <Wind className="w-5 h-5" />,
-  sparkles: <Sparkles className="w-5 h-5" />,
+  // Box Braids — two crossing S-curves + faint centre strand
+  sparkles: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" className="w-5 h-5">
+      <path d="M9 3C9 6 15 6 15 9C15 12 9 12 9 15C9 18 15 18 15 21"/>
+      <path d="M15 3C15 6 9 6 9 9C9 12 15 12 15 15C15 18 9 18 9 21"/>
+      <path d="M12 3C12 5 12 7 12 9C12 11 12 13 12 15C12 17 12 19 12 21" strokeOpacity="0.3"/>
+    </svg>
+  ),
+  // Albaso Braids — zigzag cornrow pattern with 3 rows
+  scissors: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+      <path d="M3 7L6 5L9 7L12 5L15 7L18 5L21 7"/>
+      <path d="M3 12L6 10L9 12L12 10L15 12L18 10L21 12"/>
+      <path d="M3 17L6 15L9 17L12 15L15 17L18 15L21 17"/>
+    </svg>
+  ),
+  // Silk Press — flat iron tongs with curved handle and heat dots
+  flame: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+      <rect x="3" y="7" width="13" height="3.5" rx="1.75"/>
+      <rect x="3" y="13.5" width="13" height="3.5" rx="1.75"/>
+      <path d="M16 8.75Q21 8.75 21 12Q21 15.25 16 15.25"/>
+      <circle cx="6.5" cy="8.75" r="0.8" fill="currentColor" stroke="none"/>
+      <circle cx="9.5" cy="8.75" r="0.8" fill="currentColor" stroke="none"/>
+      <circle cx="12.5" cy="8.75" r="0.8" fill="currentColor" stroke="none"/>
+    </svg>
+  ),
+  // Wedding Hair — heart with small ring on top
+  crown: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+      <path d="M12 21L4 13C2 10.5 2 7 5 5.5C7.5 4.2 10 5.5 12 8C14 5.5 16.5 4.2 19 5.5C22 7 22 10.5 20 13L12 21Z" fill="currentColor" fillOpacity="0.12"/>
+      <path d="M12 21L4 13C2 10.5 2 7 5 5.5C7.5 4.2 10 5.5 12 8C14 5.5 16.5 4.2 19 5.5C22 7 22 10.5 20 13L12 21Z"/>
+      <circle cx="12" cy="3.5" r="2" strokeWidth="1.3"/>
+      <line x1="12" y1="5.5" x2="12" y2="8" strokeWidth="1.3"/>
+    </svg>
+  ),
 };
 
 const additionalServices = [
-  { name: 'Lash Extensions & Lifts', desc: 'Classic, hybrid, and volume sets plus lash lifts and tints.' },
-  { name: 'Brow Lamination & Tinting', desc: 'Sculpted, fuller brows that frame your face.' },
-  { name: 'Facials & Skin Treatments', desc: 'Customised facials to refresh and restore your glow.' },
-  { name: 'Waxing', desc: 'Full-body waxing with gentle technique for smooth results.' },
-  { name: 'Makeup Artistry', desc: 'Flawless glam for special occasions, bridal, or a night out.' },
+  { name: 'Braids', desc: 'All braid styles — from simple to intricate. Natural or with extensions.' },
+  { name: 'Protective Styles', desc: 'Low-manipulation styles that protect your edges and promote growth.' },
+  { name: 'Twist Styles', desc: 'Two-strand twists, Senegalese twists, and more.' },
+  { name: 'Natural Styles', desc: 'Wash-and-go, defined curls, and natural texture styling.' },
+  { name: 'Event Styles', desc: 'Styled looks for birthdays, parties, and special occasions.' },
 ];
 
 /* ── Flow: booking process ── */
@@ -76,15 +108,15 @@ const process = [
 const reviews = [
   {
     name: 'Sophie M.',
-    text: 'Helen is absolutely amazing. My lashes have never looked this good. She takes the time to get it perfect every single time.',
+    text: 'Helen did my box braids and they lasted over two months. Neat parts, no tension, and she actually listened to what I wanted. Best braider I\'ve been to.',
   },
   {
     name: 'Jessica R.',
-    text: 'I always leave feeling so confident. The brow lamination was a game changer. I get compliments constantly now.',
+    text: 'Got a silk press for my birthday and my hair has never looked this good. So shiny and bouncy — I get compliments everywhere I go now.',
   },
   {
     name: 'Amy K.',
-    text: 'Best beauty experience I\'ve ever had. Helen\'s studio is so relaxing and she really listens to what you want. 10/10.',
+    text: 'Helen did my wedding hair and I cried when I saw it. She made me feel so beautiful on the biggest day of my life. Absolutely 10/10.',
   },
 ];
 
@@ -101,7 +133,7 @@ export default function BeautyByHelenPage() {
         className="w-full py-2.5 text-center text-xs font-medium tracking-[0.2em] uppercase"
         style={{ backgroundColor: brand.cream, color: brand.dark }}
       >
-        Website Preview for Beauty by Helen
+        Website Preview for Beauty by Helen &nbsp;&middot;&nbsp; Braids &middot; Silk Press &middot; Wedding Hair
       </div>
 
       {/* ─── Nav ─── */}
@@ -159,7 +191,7 @@ export default function BeautyByHelenPage() {
               className="text-xs font-semibold tracking-[0.2em] uppercase mb-8 block"
               style={{ color: brand.warm }}
             >
-              HAIR · LASHES · BROWS · BEAUTY
+              BRAIDS · SILK PRESS · STYLES · WEDDING
             </motion.span>
 
             <motion.h1
@@ -175,7 +207,7 @@ export default function BeautyByHelenPage() {
               className="text-lg md:text-xl text-gray-500 mb-12 max-w-2xl mx-auto leading-relaxed"
             >
               Most people settle for &ldquo;good enough.&rdquo; Helen doesn&apos;t.
-              Expert cuts, colour, lashes, and brows, tailored to you, not a template.
+              Expert braids, silk press, and protective styles &mdash; crafted for your hair, your lifestyle, your look.
             </motion.p>
 
             <motion.div
@@ -253,7 +285,7 @@ export default function BeautyByHelenPage() {
             </span>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight">
               Hair that actually suits you.{' '}
-              <span style={{ color: brand.warm }}>Plus everything else.</span>
+              <span style={{ color: brand.warm }}>Braids, silk press & beyond.</span>
             </h2>
           </motion.div>
 
@@ -508,7 +540,7 @@ export default function BeautyByHelenPage() {
           >
             {[
               'Personal consultation before every session',
-              'Products suited to your hair and skin type',
+              'Products suited to your hair type and texture',
               'A clean, relaxing studio environment',
               'Honest advice, never upsold',
               'Aftercare tips so results last longer',
@@ -567,12 +599,12 @@ export default function BeautyByHelenPage() {
             className="grid grid-cols-2 md:grid-cols-3 gap-4"
           >
             {[
-              'Balayage Colour',
-              'Precision Cut',
-              'Bridal Updo',
-              'Blow Dry & Style',
-              'Lash Extensions',
-              'Brow Lamination',
+              'Box Braids',
+              'Knotless Braids',
+              'Albaso Braids',
+              'Silk Press',
+              'Wedding Updo',
+              'Protective Style',
             ].map((label) => (
               <motion.div
                 key={label}
@@ -580,7 +612,10 @@ export default function BeautyByHelenPage() {
                 className="group relative aspect-square rounded-2xl overflow-hidden cursor-pointer bg-white"
               >
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <Scissors className="w-8 h-8 opacity-10" style={{ color: brand.warm }} />
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" className="w-8 h-8 opacity-10" style={{ color: brand.warm }}>
+                    <path d="M9 3C9 6 15 6 15 9C15 12 9 12 9 15C9 18 15 18 15 21" />
+                    <path d="M15 3C15 6 9 6 9 9C9 12 15 12 15 15C15 18 9 18 9 21" />
+                  </svg>
                 </div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
