@@ -218,6 +218,14 @@ export default function EmailComposeModal({ lead, repName, repEmail, onClose, on
 
         {/* Body — scrollable */}
         <div className="flex-1 overflow-y-auto p-5 space-y-4">
+          {/* Email policy notice */}
+          <div className="flex items-start gap-2 bg-blue-500/8 border border-blue-500/15 rounded-xl p-3">
+            <AlertCircle className="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5" />
+            <p className="text-[11px] text-blue-400/80 leading-relaxed">
+              Only email leads you&apos;ve personally spoken to or who&apos;ve shown interest. For cold outreach, use your own personal email. Misuse will result in account removal.
+            </p>
+          </div>
+
           {/* No email warning */}
           {!lead.contactEmail && (
             <div className="flex items-center gap-2 bg-amber-500/10 border border-amber-500/20 rounded-xl p-3">
