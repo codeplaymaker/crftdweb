@@ -12,7 +12,7 @@ function buildHtml(name: string, email: string): string {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CrftdWeb - Quick task before we chat</title>
+  <title>CrftdWeb — Quick task before we chat</title>
 </head>
 <body style="margin:0;padding:0;background:#f4f4f4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;">
   <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:40px 20px;">
@@ -36,7 +36,7 @@ function buildHtml(name: string, email: string): string {
                 Hi ${name},
               </p>
               <p style="margin:0 0 16px;font-size:15px;color:#444;line-height:1.7;">
-                Thanks for applying - your background looks interesting.
+                Thanks for applying — your background looks interesting.
               </p>
               <p style="margin:0 0 24px;font-size:15px;color:#444;line-height:1.7;">
                 Before we book a call, I'd like to see how you think.
@@ -55,13 +55,13 @@ function buildHtml(name: string, email: string): string {
               </table>
 
               <p style="margin:0 0 12px;font-size:14px;color:#888;line-height:1.7;">
-                Not just <em>"it looks old"</em> - something specific like:
+                Not just <em>"it looks old"</em> — something specific like:
               </p>
 
               <!-- Examples -->
               <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 28px;">
                 ${[
-                  'No mobile version - the site breaks on any phone',
+                  'No mobile version — the site breaks on any phone',
                   'No contact number visible above the fold',
                   "The site hasn't been updated since 2018",
                 ].map(ex => `
@@ -131,11 +131,11 @@ function buildHtml(name: string, email: string): string {
 
 const plainText = (name: string) => `Hi ${name},
 
-Thanks for applying - your background looks interesting.
+Thanks for applying — your background looks interesting.
 
 Before we book a call, I'd like to see how you think.
 
-Your task: Find 5 UK businesses with a bad website and write one specific sentence for each explaining why it needs a redesign - not just "it looks old", but something like "no mobile version" or "no contact number visible above the fold" or "the site hasn't been updated since 2018".
+Your task: Find 5 UK businesses with a bad website and write one specific sentence for each explaining why it needs a redesign — not just "it looks old", but something like "no mobile version" or "no contact number visible above the fold" or "the site hasn't been updated since 2018".
 
 Submit your list here within 48 hours: ${BASE_URL}/apply/trial
 
@@ -169,7 +169,7 @@ export async function sendTrialTask(name: string, email: string): Promise<{ succ
     await resend.emails.send({
       from: 'CrftdWeb <admin@crftdweb.com>',
       to: [email],
-      subject: 'CrftdWeb - Quick task before we chat',
+      subject: 'CrftdWeb — Quick task before we chat',
       html: buildHtml(name, email),
       text: plainText(name),
     });
