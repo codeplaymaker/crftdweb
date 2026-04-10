@@ -181,6 +181,26 @@ export async function sendTrialTask(name: string, email: string): Promise<{ succ
       sentAt: new Date(),
     });
 
+    // Upsert applicant — create if new, update status if not yet further along
+    const STATUS_RANK: Record<string, number> = {
+      pending: 0, email_sent: 1, booked: 2, no_show: 2,
+      screened: 3, offered: 4, accepted: 5, declined: 5, rejected: 5,
+    };
+    const applicantSnap = await adminDb.collection('applicants')
+      .where('email', '==', normalised).limit(1).get();
+    if (applicantSnap.empty) {
+      await adminDb.collection('applicants').add({
+        name, email: normalised, status: 'screened',
+        createdAt: new Date().toISOString(), source: 'cv_review',
+      });
+    } else {
+      const doc = applicantSnap.docs[0];
+      const currentRank = STATUS_RANK[doc.data().status as string] ?? 0;
+      if (currentRank < STATUS_RANK['screened']) {
+        await doc.ref.update({ status: 'screened' });
+      }
+    }
+
     return { success: true };
   } catch (error) {
     console.error('Failed to send trial task email:', error);
