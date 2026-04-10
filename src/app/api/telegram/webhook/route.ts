@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { waitUntil } from '@vercel/functions';
 import { sendMessage, sendMessageWithButtons, sendVoice, answerCallbackQuery, editMessageText, sendPhoto, sendDocument, type TelegramUpdate } from '@/lib/telegram/bot';
 import { generatePost, type PostType } from '@/lib/telegram/generate-post';
 import { type TemplateType } from '@/lib/telegram/templates';
 import { transcribeVoice, textToSpeech } from '@/lib/telegram/voice';
 import { runAssistant } from '@/lib/telegram/assistant';
-
-export const maxDuration = 60;
 
 // Verify the webhook is from Telegram (optional secret token)
 const WEBHOOK_SECRET = process.env.TELEGRAM_WEBHOOK_SECRET;
@@ -124,35 +123,37 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ ok: true });
       }
 
+      // Immediately ack Telegram and run analysis in background (avoids 10s Hobby timeout)
       await sendMessage(chatId, '📄 Got the CV — analysing...');
 
-      try {
-        // Get file path from Telegram
-        const fileRes = await fetch(`https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/getFile?file_id=${doc.file_id}`);
-        const fileData = await fileRes.json();
-        if (!fileData.ok) throw new Error('Failed to get file info from Telegram');
-        const filePath = fileData.result.file_path as string;
+      waitUntil((async () => {
+        try {
+          // Get file path from Telegram
+          const fileRes = await fetch(`https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/getFile?file_id=${doc.file_id}`);
+          const fileData = await fileRes.json();
+          if (!fileData.ok) throw new Error('Failed to get file info from Telegram');
+          const filePath = fileData.result.file_path as string;
 
-        // Download the PDF buffer
-        const pdfRes = await fetch(`https://api.telegram.org/file/bot${process.env.TELEGRAM_BOT_TOKEN}/${filePath}`);
-        if (!pdfRes.ok) throw new Error('Failed to download file from Telegram');
-        const pdfBuffer = Buffer.from(await pdfRes.arrayBuffer());
+          // Download the PDF buffer
+          const pdfRes = await fetch(`https://api.telegram.org/file/bot${process.env.TELEGRAM_BOT_TOKEN}/${filePath}`);
+          if (!pdfRes.ok) throw new Error('Failed to download file from Telegram');
+          const pdfBuffer = Buffer.from(await pdfRes.arrayBuffer());
 
-        // Parse PDF text
-        // eslint-disable-next-line @typescript-eslint/no-require-imports
-        const pdfParse = require('pdf-parse');
-        const parsed = await pdfParse(pdfBuffer);
-        const cvText = parsed.text?.trim() || '';
+          // Parse PDF text
+          // eslint-disable-next-line @typescript-eslint/no-require-imports
+          const pdfParse = require('pdf-parse');
+          const parsed = await pdfParse(pdfBuffer);
+          const cvText = parsed.text?.trim() || '';
 
-        if (cvText.length < 50) {
-          await sendMessage(chatId, '❌ Couldn\'t extract text from that PDF. Make sure it\'s a text-based CV, not a scanned image.');
-          return NextResponse.json({ ok: true });
-        }
+          if (cvText.length < 50) {
+            await sendMessage(chatId, '❌ Couldn\'t extract text from that PDF. Make sure it\'s a text-based CV, not a scanned image.');
+            return;
+          }
 
-        // Analyse with OpenAI
-        const OpenAI = (await import('openai')).default;
-        const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-        const prompt = `You are a hiring assistant for CrftdWeb, a UK web design agency looking for commission-only sales reps who cold call small businesses to book website consultations.
+          // Analyse with OpenAI
+          const OpenAI = (await import('openai')).default;
+          const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+          const prompt = `You are a hiring assistant for CrftdWeb, a UK web design agency looking for commission-only sales reps who cold call small businesses to book website consultations.
 
 The role requires: picking up the phone, calling strangers, handling rejection, and booking calls. No base salary — 15% commission only. Reps need to be confident, persuasive, and resilient.
 
@@ -180,45 +181,47 @@ ${cvText.slice(0, 3000)}
 
 Return ONLY valid JSON, no markdown.`;
 
-        const res = await openai.chat.completions.create({
-          model: 'gpt-4o-mini',
-          messages: [{ role: 'user', content: prompt }],
-          temperature: 0.3,
-          max_tokens: 600,
-          response_format: { type: 'json_object' },
-        });
+          const res = await openai.chat.completions.create({
+            model: 'gpt-4o-mini',
+            messages: [{ role: 'user', content: prompt }],
+            temperature: 0.3,
+            max_tokens: 600,
+            response_format: { type: 'json_object' },
+          });
 
-        const result = JSON.parse(res.choices[0]?.message?.content || '{}');
-        const verdictEmoji = result.verdict === 'Book Screening Call' ? '✅' : result.verdict === 'Send Trial Task' ? '🟡' : '❌';
+          const result = JSON.parse(res.choices[0]?.message?.content || '{}');
+          const verdictEmoji = result.verdict === 'Book Screening Call' ? '✅' : result.verdict === 'Send Trial Task' ? '🟡' : '❌';
 
-        let reply = `${verdictEmoji} <b>${result.verdict}</b> — ${result.name || 'Unknown'} (${result.score}/10)\n`;
-        if (result.email) reply += `📧 ${result.email}\n`;
-        reply += '\n';
-        if (result.salesSignals?.length) {
-          reply += `<b>Sales signals:</b>\n${(result.salesSignals as string[]).map((s: string) => `• ${s}`).join('\n')}\n\n`;
-        }
-        reply += `<b>Verdict:</b>\n${(result.reasons as string[]).map((r: string) => `• ${r}`).join('\n')}`;
-        if (result.redFlags?.length) {
-          reply += `\n\n<b>Red flags:</b>\n${(result.redFlags as string[]).map((r: string) => `• ${r}`).join('\n')}`;
-        }
+          let reply = `${verdictEmoji} <b>${result.verdict}</b> — ${result.name || 'Unknown'} (${result.score}/10)\n`;
+          if (result.email) reply += `📧 ${result.email}\n`;
+          reply += '\n';
+          if (result.salesSignals?.length) {
+            reply += `<b>Sales signals:</b>\n${(result.salesSignals as string[]).map((s: string) => `• ${s}`).join('\n')}\n\n`;
+          }
+          reply += `<b>Verdict:</b>\n${(result.reasons as string[]).map((r: string) => `• ${r}`).join('\n')}`;
+          if (result.redFlags?.length) {
+            reply += `\n\n<b>Red flags:</b>\n${(result.redFlags as string[]).map((r: string) => `• ${r}`).join('\n')}`;
+          }
 
-        // Add action buttons if email was extracted and verdict warrants action
-        const cvEmail = (result.email as string | undefined)?.trim() || '';
-        const cvName = (result.name as string | undefined)?.trim() || '';
-        if (cvEmail && result.verdict !== 'Pass') {
-          const encoded = encodeURIComponent(`${cvName}|||${cvEmail}`);
-          const buttons =
-            result.verdict === 'Book Screening Call'
-              ? [[{ text: '📅 Send Booking Link', callback_data: `cv_action:booking:${encoded}` }]]
-              : [[{ text: '📋 Send Trial Task', callback_data: `cv_action:trial:${encoded}` }]];
-          await sendMessageWithButtons(chatId, reply, buttons);
-        } else {
-          await sendMessage(chatId, reply);
+          // Add action buttons if email was extracted and verdict warrants action
+          const cvEmail = (result.email as string | undefined)?.trim() || '';
+          const cvName = (result.name as string | undefined)?.trim() || '';
+          if (cvEmail && result.verdict !== 'Pass') {
+            const encoded = encodeURIComponent(`${cvName}|||${cvEmail}`);
+            const buttons =
+              result.verdict === 'Book Screening Call'
+                ? [[{ text: '📅 Send Booking Link', callback_data: `cv_action:booking:${encoded}` }]]
+                : [[{ text: '📋 Send Trial Task', callback_data: `cv_action:trial:${encoded}` }]];
+            await sendMessageWithButtons(chatId, reply, buttons);
+          } else {
+            await sendMessage(chatId, reply);
+          }
+        } catch (err) {
+          console.error('[cv-review] error:', err);
+          await sendMessage(chatId, '❌ Something went wrong analysing that CV. Try again.');
         }
-      } catch (err) {
-        console.error('[cv-review] error:', err);
-        await sendMessage(chatId, '❌ Something went wrong analysing that CV. Try again.');
-      }
+      })());
+
       return NextResponse.json({ ok: true });
     }
 
