@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { waitUntil } from '@vercel/functions';
 import OpenAI from 'openai';
 import { sendMessage, sendMessageWithButtons } from '@/lib/telegram/bot';
 
@@ -32,10 +33,8 @@ CV:
 
 Return ONLY valid JSON, no markdown.`;
 
-export async function POST(req: NextRequest) {
+async function runAnalysis(fileId: string, chatId: number) {
   try {
-    const { fileId, chatId } = await req.json();
-    if (!fileId || !chatId) return NextResponse.json({ ok: false }, { status: 400 });
 
     // Download PDF from Telegram
     const fileRes = await fetch(
@@ -50,15 +49,15 @@ export async function POST(req: NextRequest) {
     if (!pdfRes.ok) throw new Error('Failed to download PDF');
     const pdfBuffer = Buffer.from(await pdfRes.arrayBuffer());
 
-    // Parse PDF text
+    // Parse PDF text — use lib path to avoid serverless init crash (pdf-parse reads test file on require)
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const pdfParse = require('pdf-parse');
+    const pdfParse = require('pdf-parse/lib/pdf-parse.js');
     const parsed = await pdfParse(pdfBuffer);
     const cvText = parsed.text?.trim() || '';
 
     if (cvText.length < 50) {
       await sendMessage(chatId, "❌ Couldn't extract text from that PDF. Make sure it's a text-based CV, not a scanned image.");
-      return NextResponse.json({ ok: true });
+      return;
     }
 
     // Analyse with OpenAI
@@ -98,10 +97,19 @@ export async function POST(req: NextRequest) {
       await sendMessage(chatId, reply);
     }
 
-    return NextResponse.json({ ok: true });
   } catch (err) {
     console.error('[process-cv] error:', err);
-    // Best-effort error message — chatId may not be available if JSON parse failed
-    return NextResponse.json({ ok: false, error: String(err) }, { status: 500 });
+    await sendMessage(chatId, `❌ Something went wrong analysing the CV: ${err instanceof Error ? err.message : String(err)}`);
   }
+}
+
+export async function POST(req: NextRequest) {
+  const body = await req.json();
+  const { fileId, chatId } = body;
+  if (!fileId || !chatId) return NextResponse.json({ ok: false }, { status: 400 });
+
+  // Return 200 immediately so the calling function (webhook waitUntil) resolves fast.
+  // The heavy work runs in process-cv's own waitUntil with a fresh execution budget.
+  waitUntil(runAnalysis(fileId, chatId));
+  return NextResponse.json({ ok: true });
 }
