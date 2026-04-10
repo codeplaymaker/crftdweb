@@ -209,16 +209,38 @@ async function executeTool(name: string, args: Record<string, unknown>): Promise
 
       case 'send_no_show_email': {
         const { sendCustomEmail } = await import('@/app/actions/sendCustomEmail');
-        const html = `<!DOCTYPE html><html><body style="font-family:sans-serif;color:#111;padding:32px;">
-<p>Hi ${args.name},</p>
-<p>We noticed you missed your scheduled call. No worries — just reply to this email and we'll find a new time that works for you.</p>
-<p>Looking forward to speaking soon.</p>
-<p>— CrftdWeb</p>
+        const n = args.name as string;
+        const html = `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>CrftdWeb — We missed you</title></head>
+<body style="margin:0;padding:0;background:#f4f4f4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:40px 20px;">
+    <tr><td align="center">
+      <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+        <tr><td align="center" style="background:#000000;border-radius:12px 12px 0 0;padding:32px 40px;">
+          <img src="https://crftdweb.com/CW-logo-white.png" alt="CrftdWeb" width="160" style="display:block;border:0;border-radius:8px;" />
+        </td></tr>
+        <tr><td style="background:#ffffff;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 12px 12px;padding:40px;">
+          <p style="margin:0 0 20px;font-size:16px;color:#111;line-height:1.6;font-weight:600;">Hi ${n},</p>
+          <p style="margin:0 0 20px;font-size:15px;color:#444;line-height:1.7;">We noticed you missed your scheduled screening call. No worries — these things happen.</p>
+          <p style="margin:0 0 28px;font-size:15px;color:#444;line-height:1.7;">Just reply to this email and we'll find a new time that works for you. We're still interested and looking forward to speaking soon.</p>
+          <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;"><tr><td style="border-top:1px solid #e8e8e8;"></td></tr></table>
+          <table cellpadding="0" cellspacing="0"><tr><td>
+            <img src="https://crftdweb.com/CW-logo.png" alt="CrftdWeb" width="48" style="display:block;border:0;margin-bottom:8px;" />
+            <p style="margin:0;font-size:13px;color:#999;">crftdweb.com &middot; admin@crftdweb.com</p>
+          </td></tr></table>
+        </td></tr>
+        <tr><td align="center" style="padding-top:24px;">
+          <p style="margin:0;font-size:11px;color:#aaa;">admin@crftdweb.com &middot; crftdweb.com &middot; Bristol, UK</p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
 </body></html>`;
         const result = await sendCustomEmail(
           args.name as string,
           args.email as string,
-          'CrftdWeb — Missed your call',
+          'CrftdWeb — We missed you',
           html,
         );
         return result.success ? `No-show email sent to ${args.name}.` : `Failed: ${result.error}`;
@@ -226,11 +248,33 @@ async function executeTool(name: string, args: Record<string, unknown>): Promise
 
       case 'send_offer_reminder': {
         const { sendCustomEmail } = await import('@/app/actions/sendCustomEmail');
-        const html = `<!DOCTYPE html><html><body style="font-family:sans-serif;color:#111;padding:32px;">
-<p>Hi ${args.name},</p>
-<p>Just a quick reminder — your CrftdWeb offer expires in <strong>24 hours</strong>.</p>
-<p>Check your inbox for the original offer email and click <strong>Accept Offer</strong> before it expires.</p>
-<p>— CrftdWeb</p>
+        const n = args.name as string;
+        const html = `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>CrftdWeb — Your offer expires soon</title></head>
+<body style="margin:0;padding:0;background:#f4f4f4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:40px 20px;">
+    <tr><td align="center">
+      <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+        <tr><td align="center" style="background:#000000;border-radius:12px 12px 0 0;padding:32px 40px;">
+          <img src="https://crftdweb.com/CW-logo-white.png" alt="CrftdWeb" width="160" style="display:block;border:0;border-radius:8px;" />
+        </td></tr>
+        <tr><td style="background:#ffffff;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 12px 12px;padding:40px;">
+          <p style="margin:0 0 20px;font-size:16px;color:#111;line-height:1.6;font-weight:600;">Hi ${n},</p>
+          <p style="margin:0 0 20px;font-size:15px;color:#444;line-height:1.7;">Just a quick heads up — your CrftdWeb offer expires in <strong style="color:#111;">24 hours</strong>.</p>
+          <p style="margin:0 0 28px;font-size:15px;color:#444;line-height:1.7;">Check your inbox for the original offer email and click <strong style="color:#111;">Accept Offer</strong> before it expires. If you have any questions, just reply here.</p>
+          <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;"><tr><td style="border-top:1px solid #e8e8e8;"></td></tr></table>
+          <table cellpadding="0" cellspacing="0"><tr><td>
+            <img src="https://crftdweb.com/CW-logo.png" alt="CrftdWeb" width="48" style="display:block;border:0;margin-bottom:8px;" />
+            <p style="margin:0;font-size:13px;color:#999;">crftdweb.com &middot; admin@crftdweb.com</p>
+          </td></tr></table>
+        </td></tr>
+        <tr><td align="center" style="padding-top:24px;">
+          <p style="margin:0;font-size:11px;color:#aaa;">admin@crftdweb.com &middot; crftdweb.com &middot; Bristol, UK</p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
 </body></html>`;
         const result = await sendCustomEmail(
           args.name as string,
@@ -243,11 +287,33 @@ async function executeTool(name: string, args: Record<string, unknown>): Promise
 
       case 'send_trial_reminder': {
         const { sendCustomEmail } = await import('@/app/actions/sendCustomEmail');
-        const html = `<!DOCTYPE html><html><body style="font-family:sans-serif;color:#111;padding:32px;">
-<p>Hi ${args.name},</p>
-<p>Just checking in — your trial task submission is due soon. Log in to your rep portal to complete and submit it.</p>
-<p>If you have any questions, reply to this email.</p>
-<p>— CrftdWeb</p>
+        const n = args.name as string;
+        const html = `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>CrftdWeb — Trial task reminder</title></head>
+<body style="margin:0;padding:0;background:#f4f4f4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:40px 20px;">
+    <tr><td align="center">
+      <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+        <tr><td align="center" style="background:#000000;border-radius:12px 12px 0 0;padding:32px 40px;">
+          <img src="https://crftdweb.com/CW-logo-white.png" alt="CrftdWeb" width="160" style="display:block;border:0;border-radius:8px;" />
+        </td></tr>
+        <tr><td style="background:#ffffff;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 12px 12px;padding:40px;">
+          <p style="margin:0 0 20px;font-size:16px;color:#111;line-height:1.6;font-weight:600;">Hi ${n},</p>
+          <p style="margin:0 0 20px;font-size:15px;color:#444;line-height:1.7;">Just checking in — your trial task submission is due soon.</p>
+          <p style="margin:0 0 28px;font-size:15px;color:#444;line-height:1.7;">Log in to complete and submit it at <a href="https://crftdweb.com/rep/signin" style="color:#111;font-weight:600;">crftdweb.com/rep/signin</a>. If you have any questions, just reply to this email.</p>
+          <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;"><tr><td style="border-top:1px solid #e8e8e8;"></td></tr></table>
+          <table cellpadding="0" cellspacing="0"><tr><td>
+            <img src="https://crftdweb.com/CW-logo.png" alt="CrftdWeb" width="48" style="display:block;border:0;margin-bottom:8px;" />
+            <p style="margin:0;font-size:13px;color:#999;">crftdweb.com &middot; admin@crftdweb.com</p>
+          </td></tr></table>
+        </td></tr>
+        <tr><td align="center" style="padding-top:24px;">
+          <p style="margin:0;font-size:11px;color:#aaa;">admin@crftdweb.com &middot; crftdweb.com &middot; Bristol, UK</p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
 </body></html>`;
         const result = await sendCustomEmail(
           args.name as string,
