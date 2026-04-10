@@ -30,7 +30,7 @@ function buildTrialTaskHtml(name: string): string {
           </td></tr>
         </table>
         <p style="margin:0 0 12px;font-size:14px;color:#888;line-height:1.7;">Not just <em>“it looks old”</em> — something specific like: <em>“No mobile version — the site breaks on any phone”</em></p>
-        <p style="margin:0 0 28px;font-size:15px;color:#444;line-height:1.7;">No formatting required — just reply to this email with your list within <strong style="color:#111;">48 hours</strong>.</p>
+        <p style="margin:0 0 28px;font-size:15px;color:#444;line-height:1.7;">No formatting required — submit your list using the button below within <strong style="color:#111;">48 hours</strong>.</p>
         <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;"><tr><td style="border-top:1px solid #e8e8e8;"></td></tr></table>
         <img src="https://crftdweb.com/CW-logo.png" alt="CrftdWeb" width="48" style="display:block;border:0;margin-bottom:8px;" />
         <p style="margin:0;font-size:13px;color:#999;">crftdweb.com &middot; admin@crftdweb.com</p>
@@ -884,46 +884,47 @@ CrftdWeb | crftdweb.com`,
         subject: 'Welcome to CrftdWeb — everything you need to get started',
         body: `Hi [Rep Name],
 
-Welcome aboard — really glad to have you on the team.
+Welcome aboard.
 
-Here's everything you need to get started:
+Your login details are in a separate email. Here's a quick summary of how this works:
 
 ─────────────────────────
 YOUR ROLE
 ─────────────────────────
-You find businesses that need a better website, start the conversation, and book them in for a call with me. That's it — I handle everything after the call.
+Find businesses that need a website, qualify them, and book them on a discovery call with us. That's it — we handle everything after the call.
 
 ─────────────────────────
 COMMISSION
 ─────────────────────────
-15% of the project value, paid within 7 days of client payment clearing.
+Tiered commission, paid within 7 days of client deposit clearing:
 
-Examples:
-• £850 landing page → you earn £127
-• £3,000 business site → you earn £450
-• £10,000 web app → you earn £1,500
-
-─────────────────────────
-HOW TO LOG LEADS
-─────────────────────────
-Add every prospect to the shared Google Sheet: [Sheet link]
-Columns: Business Name, Contact Name, Phone/Email, Date Called, Outcome, Next Action
+• Starter (£997) → you earn £199 (20%)
+• Launch (£2,497) → you earn £374 (15%)
+• Growth (£4,997) → you earn £599 (12%)
+• Scale (£9,997+) → you earn £999+ (10%)
 
 ─────────────────────────
-YOUR CALL SCRIPT
+YOUR TOOLS
 ─────────────────────────
-I've sent your call script separately as a PDF. Print it and keep it next to you.
+Everything is in your rep portal at crftdweb.com/rep/signin:
+
+• My Leads — log every prospect here
+• Training — complete this before your first outreach
+• Live Call Assistant — AI coaching during real calls
+• Site Audit — run prospects' websites for instant ammunition
+• Resources — scripts, DM templates, objection handling, lead sourcing
 
 ─────────────────────────
 TO GET STARTED
 ─────────────────────────
-Aim for 10 calls on your first day. Don't overthink it — follow the script and focus on booking calls, not selling websites.
+1. Log in and complete the training (aim for 60+ average score to unlock leads)
+2. Read the onboarding pack — it answers everything
+3. Aim for 20 outreaches on day one
 
-Any questions, WhatsApp me directly: [Your number]
+Any questions, reply to this email.
 
 Let's go.
 
-— Obi
 CrftdWeb`,
       },
       {

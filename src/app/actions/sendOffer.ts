@@ -132,7 +132,7 @@ export async function sendOffer(
 
   try {
     const token = randomBytes(32).toString('hex');
-    const expiresAt = new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString();
+    const expiresAt = new Date(Date.now() + 72 * 60 * 60 * 1000).toISOString();
 
     await adminDb.collection('offerTokens').doc(token).set({
       token,

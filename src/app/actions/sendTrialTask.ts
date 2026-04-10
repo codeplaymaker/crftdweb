@@ -6,7 +6,7 @@ import { adminDb } from '@/lib/firebase/admin';
 const resend = new Resend(process.env.RESEND_API_KEY);
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://crftdweb.com';
 
-function buildHtml(name: string): string {
+function buildHtml(name: string, email: string): string {
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -91,7 +91,7 @@ function buildHtml(name: string): string {
               </table>
 
               <p style="margin:0 0 32px;font-size:13px;color:#999;line-height:1.6;">
-                You&apos;ll need to enter this email address on the form so we can match it to your application: <strong style="color:#555;">${name}</strong>
+                You&apos;ll need to enter this email address on the form so we can match it to your application: <strong style="color:#555;">${email}</strong>
               </p>
 
               <!-- Divider -->
@@ -170,7 +170,7 @@ export async function sendTrialTask(name: string, email: string): Promise<{ succ
       from: 'CrftdWeb <admin@crftdweb.com>',
       to: [email],
       subject: 'CrftdWeb - Quick task before we chat',
-      html: buildHtml(name),
+      html: buildHtml(name, email),
       text: plainText(name),
     });
 

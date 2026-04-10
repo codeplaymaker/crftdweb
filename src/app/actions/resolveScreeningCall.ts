@@ -145,7 +145,7 @@ export async function resolveScreeningCall(
       email: applicantEmail,
       phone: applicantPhone,
       status: 'trial',
-      commissionRate: 15,
+      commissionRate: 20,
       notes: '',
       joinedAt: FieldValue.serverTimestamp(),
     });
