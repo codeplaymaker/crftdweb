@@ -202,7 +202,12 @@ async function executeTool(name: string, args: Record<string, unknown>): Promise
 
       case 'send_offer': {
         const { sendOffer } = await import('@/app/actions/sendOffer');
-        const result = await sendOffer(args.name as string, args.email as string);
+        // Look up applicant by email so status gets updated to 'offered'
+        const emailKey = (args.email as string).trim().toLowerCase();
+        const snap = await adminDb.collection('applicants')
+          .where('email', '==', emailKey).limit(1).get();
+        const applicantId = snap.empty ? undefined : snap.docs[0].id;
+        const result = await sendOffer(args.name as string, args.email as string, applicantId);
         return result.success
           ? `Offer sent to ${args.name} (${args.email}). They have 72 hours to accept.`
           : `Failed to send offer: ${result.error}`;
