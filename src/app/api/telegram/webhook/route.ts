@@ -42,6 +42,36 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ ok: true });
       }
 
+      if (cbData.startsWith('cv_action:')) {
+        const parts = cbData.split(':');
+        const action = parts[1]; // 'booking' | 'trial'
+        const decoded = decodeURIComponent(parts.slice(2).join(':'));
+        const [cvName, cvEmail] = decoded.split('|||');
+
+        if (!cvName || !cvEmail) {
+          await answerCallbackQuery(cb.id, 'Missing name or email.');
+          return NextResponse.json({ ok: true });
+        }
+
+        try {
+          if (action === 'booking') {
+            const { sendBookingLink } = await import('@/app/actions/sendBookingLink');
+            const r = await sendBookingLink(cvName, cvEmail);
+            await answerCallbackQuery(cb.id, r.success ? '✅ Booking link sent!' : '❌ Failed');
+            if (cbMessageId) await editMessageText(cbChatId, cbMessageId, `${cbData.includes('booking') ? '📅' : '📋'} <b>Booking link sent</b> to ${cvName} (${cvEmail})`);
+          } else {
+            const { sendTrialTask } = await import('@/app/actions/sendTrialTask');
+            const r = await sendTrialTask(cvName, cvEmail);
+            await answerCallbackQuery(cb.id, r.success ? '✅ Trial task sent!' : '❌ Failed');
+            if (cbMessageId) await editMessageText(cbChatId, cbMessageId, `📋 <b>Trial task sent</b> to ${cvName} (${cvEmail})`);
+          }
+        } catch (err) {
+          console.error('[cv_action] error:', err);
+          await answerCallbackQuery(cb.id, '❌ Something went wrong.');
+        }
+        return NextResponse.json({ ok: true });
+      }
+
       if (cbData.startsWith('delete_preview:')) {
         const previewId = cbData.replace('delete_preview:', '');
         const { getPreview, deletePreview } = await import('@/lib/hunter/store');
@@ -170,7 +200,19 @@ Return ONLY valid JSON, no markdown.`;
           reply += `\n\n<b>Red flags:</b>\n${(result.redFlags as string[]).map((r: string) => `• ${r}`).join('\n')}`;
         }
 
-        await sendMessage(chatId, reply);
+        // Add action buttons if email was extracted and verdict warrants action
+        const cvEmail = (result.email as string | undefined)?.trim() || '';
+        const cvName = (result.name as string | undefined)?.trim() || '';
+        if (cvEmail && result.verdict !== 'Pass') {
+          const encoded = encodeURIComponent(`${cvName}|||${cvEmail}`);
+          const buttons =
+            result.verdict === 'Book Screening Call'
+              ? [[{ text: '📅 Send Booking Link', callback_data: `cv_action:booking:${encoded}` }]]
+              : [[{ text: '📋 Send Trial Task', callback_data: `cv_action:trial:${encoded}` }]];
+          await sendMessageWithButtons(chatId, reply, buttons);
+        } else {
+          await sendMessage(chatId, reply);
+        }
       } catch (err) {
         console.error('[cv-review] error:', err);
         await sendMessage(chatId, '❌ Something went wrong analysing that CV. Try again.');
