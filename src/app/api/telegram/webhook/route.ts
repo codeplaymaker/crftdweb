@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { waitUntil } from '@vercel/functions';
+import { adminDb } from '@/lib/firebase/admin';
 import { sendMessage, sendMessageWithButtons, sendVoice, answerCallbackQuery, editMessageText, sendPhoto, sendDocument, type TelegramUpdate } from '@/lib/telegram/bot';
 import { generatePost, type PostType } from '@/lib/telegram/generate-post';
 import { type TemplateType } from '@/lib/telegram/templates';
@@ -259,6 +260,12 @@ Return ONLY valid JSON, no markdown.`;
     const args = text.split(' ').slice(1);
 
     switch (command) {
+      case '/clear': {
+        await adminDb.collection('telegramHistory').doc(String(chatId)).delete();
+        await sendMessage(chatId, '🧹 Conversation history cleared.');
+        break;
+      }
+
       case '/start':
       case '/help': {
         await sendMessage(chatId, `
