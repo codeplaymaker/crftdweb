@@ -9,7 +9,7 @@ const CV_PROMPT = `You are a hiring assistant for CrftdWeb, a UK web design agen
 
 The role requires: picking up the phone, calling strangers, handling rejection, and booking calls. No base salary — 15% commission only. Reps need to be confident, persuasive, and resilient.
 
-Analyse this CV and return a JSON object with these exact fields:
+Analyse the CV and return a JSON object with these exact fields:
 
 - verdict: One of exactly: "Book Screening Call", "Send Trial Task", "Pass"
   - "Book Screening Call" = strong sales/outreach/cold calling background, high confidence
@@ -28,15 +28,14 @@ Rules:
 - "communications skills" as a listed skill without evidence = weak signal
 - Actual sales targets met, commission earned, outbound calls made = strong signal
 
-CV:
-{{CV_TEXT}}
-
 Return ONLY valid JSON, no markdown.`;
 
 async function runAnalysis(fileId: string, chatId: number) {
-  try {
+  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  let uploadedFileId: string | null = null;
 
-    // Download PDF from Telegram
+  try {
+    // ── Step 1: Download PDF from Telegram ──────────────────────────────────
     const fileRes = await fetch(
       `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/getFile?file_id=${fileId}`,
     );
@@ -49,26 +48,49 @@ async function runAnalysis(fileId: string, chatId: number) {
     if (!pdfRes.ok) throw new Error('Failed to download PDF');
     const pdfBuffer = Buffer.from(await pdfRes.arrayBuffer());
 
-    // Parse PDF text — use lib path to avoid serverless init crash (pdf-parse reads test file on require)
+    // ── Step 2: Try pdf-parse (fast + cheap for standard text-based CVs) ────
+    let res;
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const pdfParse = require('pdf-parse/lib/pdf-parse.js');
-    const parsed = await pdfParse(pdfBuffer);
-    const cvText = parsed.text?.trim() || '';
-
-    if (cvText.length < 50) {
-      await sendMessage(chatId, "❌ Couldn't extract text from that PDF. Make sure it's a text-based CV, not a scanned image.");
-      return;
+    let cvText = '';
+    try {
+      const parsed = await pdfParse(pdfBuffer);
+      cvText = parsed.text?.trim() || '';
+    } catch {
+      // pdf-parse failed entirely — fall through to method 3
     }
 
-    // Analyse with OpenAI
-    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-    const res = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
-      messages: [{ role: 'user', content: CV_PROMPT.replace('{{CV_TEXT}}', cvText.slice(0, 3000)) }],
-      temperature: 0.3,
-      max_tokens: 600,
-      response_format: { type: 'json_object' },
-    });
+    if (cvText.length >= 50) {
+      // ── Method 2: Text extracted — analyse with gpt-4o-mini (cheap) ────────
+      res = await openai.chat.completions.create({
+        model: 'gpt-4o-mini',
+        messages: [{ role: 'user', content: `${CV_PROMPT}\n\nCV TEXT:\n${cvText.slice(0, 3000)}` }],
+        temperature: 0.3,
+        max_tokens: 600,
+        response_format: { type: 'json_object' },
+      });
+    } else {
+      // ── Method 3: Designed/Canva CV — upload to OpenAI, use gpt-4o vision ──
+      const uploadedFile = await openai.files.create({
+        file: new File([pdfBuffer], 'cv.pdf', { type: 'application/pdf' }),
+        purpose: 'user_data',
+      });
+      uploadedFileId = uploadedFile.id;
+
+      res = await openai.chat.completions.create({
+        model: 'gpt-4o',
+        messages: [{
+          role: 'user',
+          content: [
+            { type: 'file', file: { file_id: uploadedFileId } } as never,
+            { type: 'text', text: CV_PROMPT },
+          ],
+        }],
+        temperature: 0.3,
+        max_tokens: 600,
+        response_format: { type: 'json_object' },
+      });
+    }
 
     const result = JSON.parse(res.choices[0]?.message?.content || '{}');
     const verdictEmoji = result.verdict === 'Book Screening Call' ? '✅' : result.verdict === 'Send Trial Task' ? '🟡' : '❌';
@@ -100,6 +122,11 @@ async function runAnalysis(fileId: string, chatId: number) {
   } catch (err) {
     console.error('[process-cv] error:', err);
     await sendMessage(chatId, `❌ Something went wrong analysing the CV: ${err instanceof Error ? err.message : String(err)}`);
+  } finally {
+    // Clean up uploaded file from OpenAI storage
+    if (uploadedFileId) {
+      await openai.files.delete(uploadedFileId).catch(() => null);
+    }
   }
 }
 
