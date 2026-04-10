@@ -133,6 +133,15 @@ const tools: OpenAI.Chat.ChatCompletionTool[] = [
           description: { type: 'string', description: 'Plain-English description of the action, e.g. "Send a job offer to Sarah (sarah@gmail.com)"' },
           tool_to_run: { type: 'string', description: 'The name of the tool to run after confirmation' },
           tool_args: { type: 'object', description: 'The arguments to pass to that tool after confirmation' },
+          email_preview: {
+            type: 'object',
+            description: 'For email actions only — a preview of the email that will be sent',
+            properties: {
+              subject: { type: 'string', description: 'The email subject line' },
+              to: { type: 'string', description: 'Recipient email address' },
+              summary: { type: 'string', description: 'A 2–3 sentence plain-text summary of the email body' },
+            },
+          },
         },
         required: ['description', 'tool_to_run', 'tool_args'],
       },
@@ -403,7 +412,7 @@ export async function runAssistant(userMessage: string, chatId: number): Promise
 
 Be concise, friendly, and use British English. When listing data, format it clearly. If something is ambiguous, ask a clarifying question before acting.
 
-IMPORTANT — confirmation rule: Before calling any tool that sends an email, changes data, or takes an action (send_offer, send_booking_link, send_no_show_email, send_offer_reminder, send_trial_reminder, change_applicant_status), you MUST first call request_confirmation with a plain-English description of what you're about to do. NEVER call action tools directly without confirmation first. Read-only tools (get_business_summary, list_applicants, list_reps) do NOT need confirmation.
+IMPORTANT — confirmation rule: Before calling any tool that sends an email, changes data, or takes an action (send_offer, send_booking_link, send_no_show_email, send_offer_reminder, send_trial_reminder, change_applicant_status), you MUST first call request_confirmation. Always populate the email_preview field for email actions with the subject line, recipient email, and a 2–3 sentence plain-text summary of what the email says. NEVER call action tools directly without confirmation first. Read-only tools (get_business_summary, list_applicants, list_reps) do NOT need confirmation.
 
 Today is ${new Date().toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}.
 
@@ -540,10 +549,17 @@ REP CONDUCT RULES
           toolArgs: args.tool_args as Record<string, unknown>,
           description: args.description as string,
         });
+
+        const preview = args.email_preview as { subject?: string; to?: string; summary?: string } | undefined;
+        let previewBlock = '';
+        if (preview) {
+          previewBlock = `\n📧 <b>Email Preview</b>\n<b>To:</b> ${preview.to ?? '—'}\n<b>Subject:</b> ${preview.subject ?? '—'}\n\n${preview.summary ?? ''}\n`;
+        }
+
         messages.push({
           role: 'tool',
           tool_call_id: toolCall.id,
-          content: `Confirmation stored. Tell the user: "${args.description} — shall I go ahead?"`,
+          content: `Confirmation stored. Reply to the user with exactly this (no extra commentary):\n${previewBlock}\n<b>${args.description}</b> — shall I go ahead?`,
         });
         continue;
       }
