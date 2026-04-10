@@ -96,7 +96,7 @@ async function runAnalysis(fileId: string, chatId: number) {
 
     const cvEmail = (result.email as string | undefined)?.trim() || '';
     const cvName = (result.name as string | undefined)?.trim() || '';
-    if (cvEmail && result.verdict !== 'Pass') {
+    if (result.verdict !== 'Pass') {
       const encoded = encodeURIComponent(`${cvName}|||${cvEmail}`);
       const buttons =
         result.verdict === 'Book Screening Call'

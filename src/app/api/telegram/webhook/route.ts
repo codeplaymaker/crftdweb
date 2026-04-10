@@ -50,8 +50,14 @@ export async function POST(req: NextRequest) {
         const decoded = decodeURIComponent(parts.slice(2).join(':'));
         const [cvName, cvEmail] = decoded.split('|||');
 
-        if (!cvName || !cvEmail) {
-          await answerCallbackQuery(cb.id, 'Missing name or email.');
+        if (!cvName) {
+          await answerCallbackQuery(cb.id, 'Missing candidate name.');
+          return NextResponse.json({ ok: true });
+        }
+
+        if (!cvEmail) {
+          await answerCallbackQuery(cb.id, '❌ No email found in CV.');
+          await sendMessage(cbChatId, `📧 No email was found in ${cvName}'s CV. Reply with their email address and I'll send it.`);
           return NextResponse.json({ ok: true });
         }
 
