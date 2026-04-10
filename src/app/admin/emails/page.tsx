@@ -8,6 +8,7 @@ import { sendBookingLink } from '@/app/actions/sendBookingLink';
 import { sendLoginDetails } from '@/app/actions/sendLoginDetails';
 import { sendOverqualified } from '@/app/actions/sendOverqualified';
 import { sendOffer } from '@/app/actions/sendOffer';
+import { sendCustomEmail } from '@/app/actions/sendCustomEmail';
 
 // ─── Email preview HTML builders (client-side mirrors of server actions) ───
 function buildTrialTaskHtml(name: string): string {
@@ -108,6 +109,81 @@ function buildLoginDetailsHtml(name: string, repEmail: string, tempPassword: str
       </table>
     </td></tr>
   </table>
+</body></html>`;
+}
+
+function buildNoShowHtml(name: string): string {
+  const firstName = name.split(' ')[0];
+  return `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
+<body style="margin:0;padding:0;background:#f4f4f4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:40px 20px;"><tr><td align="center">
+    <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+      <tr><td align="center" style="background:#000000;border-radius:12px 12px 0 0;padding:32px 40px;">
+        <img src="https://crftdweb.com/CW-logo-white.png" alt="CrftdWeb" width="160" style="display:block;border:0;border-radius:8px;" />
+      </td></tr>
+      <tr><td style="background:#ffffff;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 12px 12px;padding:40px;">
+        <p style="margin:0 0 16px;font-size:16px;color:#111;font-weight:600;">Hi ${firstName},</p>
+        <p style="margin:0 0 16px;font-size:15px;color:#444;line-height:1.7;">It looks like we missed each other on the call earlier today.</p>
+        <p style="margin:0 0 24px;font-size:15px;color:#444;line-height:1.7;">Happy to reschedule if you're still interested — just reply and let me know a time that works, or use the link below to pick a new slot.</p>
+        <p style="margin:0 0 24px;font-size:13px;color:#999;line-height:1.6;">If you're no longer looking, no worries — just let me know and I'll close your application.</p>
+        <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;"><tr><td style="border-top:1px solid #e8e8e8;"></td></tr></table>
+        <img src="https://crftdweb.com/CW-logo.png" alt="CrftdWeb" width="48" style="display:block;border:0;margin-bottom:8px;" />
+        <p style="margin:0;font-size:13px;color:#999;">crftdweb.com &middot; admin@crftdweb.com</p>
+      </td></tr>
+    </table>
+  </td></tr></table>
+</body></html>`;
+}
+
+function buildOfferReminderHtml(name: string): string {
+  const firstName = name.split(' ')[0];
+  return `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
+<body style="margin:0;padding:0;background:#f4f4f4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:40px 20px;"><tr><td align="center">
+    <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+      <tr><td align="center" style="background:#000000;border-radius:12px 12px 0 0;padding:32px 40px;">
+        <img src="https://crftdweb.com/CW-logo-white.png" alt="CrftdWeb" width="160" style="display:block;border:0;border-radius:8px;" />
+      </td></tr>
+      <tr><td style="background:#ffffff;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 12px 12px;padding:40px;">
+        <p style="margin:0 0 16px;font-size:16px;color:#111;font-weight:600;">Hi ${firstName},</p>
+        <p style="margin:0 0 16px;font-size:15px;color:#444;line-height:1.7;">Just checking you received the offer email I sent — the link expires soon, so wanted to make sure it didn't land in your spam.</p>
+        <p style="margin:0 0 24px;font-size:15px;color:#444;line-height:1.7;">If you have any questions before accepting, just reply and I'll answer them directly.</p>
+        <p style="margin:0 0 24px;font-size:13px;color:#999;line-height:1.6;">If you'd like to pass, no problem — just let me know so I can move forward with other candidates.</p>
+        <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;"><tr><td style="border-top:1px solid #e8e8e8;"></td></tr></table>
+        <img src="https://crftdweb.com/CW-logo.png" alt="CrftdWeb" width="48" style="display:block;border:0;margin-bottom:8px;" />
+        <p style="margin:0;font-size:13px;color:#999;">crftdweb.com &middot; admin@crftdweb.com</p>
+      </td></tr>
+    </table>
+  </td></tr></table>
+</body></html>`;
+}
+
+function buildTrialReminderHtml(name: string): string {
+  const firstName = name.split(' ')[0];
+  return `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
+<body style="margin:0;padding:0;background:#f4f4f4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:40px 20px;"><tr><td align="center">
+    <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+      <tr><td align="center" style="background:#000000;border-radius:12px 12px 0 0;padding:32px 40px;">
+        <img src="https://crftdweb.com/CW-logo-white.png" alt="CrftdWeb" width="160" style="display:block;border:0;border-radius:8px;" />
+      </td></tr>
+      <tr><td style="background:#ffffff;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 12px 12px;padding:40px;">
+        <p style="margin:0 0 16px;font-size:16px;color:#111;font-weight:600;">Hi ${firstName},</p>
+        <p style="margin:0 0 16px;font-size:15px;color:#444;line-height:1.7;">Just a quick nudge on the trial task I sent over — are you still planning to submit?</p>
+        <p style="margin:0 0 24px;font-size:15px;color:#444;line-height:1.7;">It shouldn't take long — just 5 businesses with a bad website and one specific sentence each. There's no right or wrong, I'm just looking for how you think.</p>
+        <p style="margin:0 0 24px;font-size:13px;color:#999;line-height:1.6;">If you're no longer interested, no worries — just let me know.</p>
+        <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;"><tr><td style="border-top:1px solid #e8e8e8;"></td></tr></table>
+        <img src="https://crftdweb.com/CW-logo.png" alt="CrftdWeb" width="48" style="display:block;border:0;margin-bottom:8px;" />
+        <p style="margin:0;font-size:13px;color:#999;">crftdweb.com &middot; admin@crftdweb.com</p>
+      </td></tr>
+    </table>
+  </td></tr></table>
 </body></html>`;
 }
 
@@ -223,10 +299,37 @@ const EMAIL_SEND_TEMPLATES = [
     id: 'overqualified',
     label: 'Decline',
     subject: 'Re: CrftdWeb rep application',
-    description: 'Polite no — for applicants you\'re not moving forward with at this stage.',
+    description: "Polite no — for applicants you're not moving forward with at this stage.",
     color: 'border-orange-500/30 bg-orange-500/5',
     activeColor: 'border-orange-500 bg-orange-500/15',
     labelColor: 'text-orange-400',
+  },
+  {
+    id: 'no-show',
+    label: 'No Show',
+    subject: 'CrftdWeb — Missed call',
+    description: 'They booked a screening call but did not turn up. Offers to reschedule.',
+    color: 'border-red-500/30 bg-red-500/5',
+    activeColor: 'border-red-500 bg-red-500/15',
+    labelColor: 'text-red-400',
+  },
+  {
+    id: 'offer-reminder',
+    label: 'Offer Reminder',
+    subject: 'Re: CrftdWeb offer — just checking in',
+    description: "They haven't accepted or declined after ~24h. Nudges them before the 72h token expires.",
+    color: 'border-yellow-500/30 bg-yellow-500/5',
+    activeColor: 'border-yellow-500 bg-yellow-500/15',
+    labelColor: 'text-yellow-400',
+  },
+  {
+    id: 'trial-reminder',
+    label: 'Trial Reminder',
+    subject: 'Re: CrftdWeb trial task',
+    description: "They haven't submitted their trial task after 24h. Short nudge to see if they're still interested.",
+    color: 'border-zinc-500/30 bg-zinc-500/5',
+    activeColor: 'border-zinc-500 bg-zinc-500/15',
+    labelColor: 'text-zinc-400',
   },
 ] as const;
 
@@ -508,6 +611,12 @@ function SendPanel() {
     ? buildLoginDetailsHtml(firstName || 'Hi', email || 'rep@email.com', tempPassword || 'TempPass!7')
     : templateId === 'offer'
     ? buildOfferHtml(firstName || 'Hi')
+    : templateId === 'no-show'
+    ? buildNoShowHtml(firstName || 'Hi')
+    : templateId === 'offer-reminder'
+    ? buildOfferReminderHtml(firstName || 'Hi')
+    : templateId === 'trial-reminder'
+    ? buildTrialReminderHtml(firstName || 'Hi')
     : buildOverqualifiedHtml(firstName || 'Hi');
 
   const selectedTemplate = EMAIL_SEND_TEMPLATES.find((t) => t.id === templateId)!;
@@ -527,6 +636,12 @@ function SendPanel() {
         result = await sendLoginDetails(name.trim(), email.trim(), tempPassword.trim());
       } else if (templateId === 'offer') {
         result = await sendOffer(name.trim(), email.trim());
+      } else if (templateId === 'no-show') {
+        result = await sendCustomEmail(name.trim(), email.trim(), 'CrftdWeb — Missed call', buildNoShowHtml(firstName));
+      } else if (templateId === 'offer-reminder') {
+        result = await sendCustomEmail(name.trim(), email.trim(), 'Re: CrftdWeb offer — just checking in', buildOfferReminderHtml(firstName));
+      } else if (templateId === 'trial-reminder') {
+        result = await sendCustomEmail(name.trim(), email.trim(), 'Re: CrftdWeb trial task', buildTrialReminderHtml(firstName));
       } else {
         result = await sendOverqualified(name.trim(), email.trim());
       }
