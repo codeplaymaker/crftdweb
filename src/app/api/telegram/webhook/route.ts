@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { sendMessage, sendMessageWithButtons, answerCallbackQuery, editMessageText, sendPhoto, sendDocument, type TelegramUpdate } from '@/lib/telegram/bot';
+import { sendMessage, sendMessageWithButtons, sendVoice, answerCallbackQuery, editMessageText, sendPhoto, sendDocument, type TelegramUpdate } from '@/lib/telegram/bot';
 import { generatePost, type PostType } from '@/lib/telegram/generate-post';
 import { type TemplateType } from '@/lib/telegram/templates';
+import { transcribeVoice, textToSpeech } from '@/lib/telegram/voice';
+import { runAssistant } from '@/lib/telegram/assistant';
 
 // Verify the webhook is from Telegram (optional secret token)
 const WEBHOOK_SECRET = process.env.TELEGRAM_WEBHOOK_SECRET;
@@ -65,20 +67,48 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true });
     }
 
-    // ─── Handle text messages / commands ───
+    // ─── Handle text messages / commands / voice ───
     const message = update.message;
 
-    if (!message?.text || !message.from) {
+    if ((!message?.text && !message?.voice) || !message.from) {
       return NextResponse.json({ ok: true });
     }
 
     const chatId = message.chat.id;
     const userId = message.from.id;
-    const text = message.text.trim();
 
     // Check authorization
     if (!isAllowed(userId)) {
       await sendMessage(chatId, '⛔ You are not authorized to use this bot.');
+      return NextResponse.json({ ok: true });
+    }
+
+    // ─── Handle voice messages via Whisper + AI assistant ───
+    if (message.voice) {
+      await sendMessage(chatId, '🎧 Heard you — thinking...');
+      try {
+        const transcript = await transcribeVoice(message.voice.file_id);
+        const reply = await runAssistant(transcript);
+        const audioBuffer = await textToSpeech(reply);
+        await sendVoice(chatId, audioBuffer);
+      } catch (err) {
+        console.error('[voice] error:', err);
+        await sendMessage(chatId, '❌ Sorry, I had trouble processing that. Try again or type it instead.');
+      }
+      return NextResponse.json({ ok: true });
+    }
+
+    const text = message.text!.trim();
+
+    // ─── Natural language (non-command) text → AI assistant ───
+    if (!text.startsWith('/')) {
+      try {
+        const reply = await runAssistant(text);
+        await sendMessage(chatId, reply);
+      } catch (err) {
+        console.error('[assistant] error:', err);
+        await sendMessage(chatId, '❌ Something went wrong. Try again.');
+      }
       return NextResponse.json({ ok: true });
     }
 
@@ -91,6 +121,13 @@ export async function POST(req: NextRequest) {
       case '/help': {
         await sendMessage(chatId, `
 <b>🚀 CRFTD Web Bot</b>
+
+<b>🤖 AI Assistant (just talk or send a voice note):</b>
+"Show me all applicants"
+"Send an offer to Sarah at sarah@gmail.com"
+"How many reps do I have?"
+"Send a booking link to James, james@gmail.com"
+"Give me a business summary"
 
 <b>🔍 Hunter — Find &amp; Close Leads:</b>
 /hunt &lt;niche&gt; &lt;city&gt; [country] — Find businesses &amp; audit sites

@@ -82,6 +82,18 @@ export async function sendPhoto(chatId: string | number, photoBuffer: Buffer, ca
   return res.json();
 }
 
+export async function sendVoice(chatId: string | number, audioBuffer: Buffer) {
+  const formData = new FormData();
+  formData.append('chat_id', String(chatId));
+  formData.append('voice', new Blob([new Uint8Array(audioBuffer)], { type: 'audio/ogg' }), 'reply.ogg');
+
+  const res = await fetch(`${TELEGRAM_API}/sendVoice`, {
+    method: 'POST',
+    body: formData,
+  });
+  return res.json();
+}
+
 export async function sendDocument(chatId: string | number, docBuffer: Buffer, filename: string, caption?: string) {
   const formData = new FormData();
   formData.append('chat_id', String(chatId));
@@ -135,6 +147,13 @@ export interface TelegramUpdate {
       type: string;
     };
     text?: string;
+    voice?: {
+      file_id: string;
+      file_unique_id: string;
+      duration: number;
+      mime_type?: string;
+      file_size?: number;
+    };
     date: number;
   };
   callback_query?: {
