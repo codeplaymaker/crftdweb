@@ -125,13 +125,17 @@ export async function sendBookingLink(
     if (applicantSnap.empty) {
       await adminDb.collection('applicants').add({
         name, email: emailKey, status: 'email_sent',
-        createdAt: new Date().toISOString(), source: 'cv_review',
+        phone: '', location: '', rating: 3,
+        verdict: 'booking', salesSignals: '', education: '',
+        keyStrength: '', indeedEmail: false, notes: '',
+        emailSentAt: new Date().toISOString(), bookedAt: null,
+        activityLog: [], createdAt: new Date().toISOString(), source: 'cv_review',
       });
     } else {
       const doc = applicantSnap.docs[0];
       const currentRank = STATUS_RANK[doc.data().status as string] ?? 0;
       if (currentRank < STATUS_RANK['email_sent']) {
-        await doc.ref.update({ status: 'email_sent' });
+        await doc.ref.update({ status: 'email_sent', emailSentAt: new Date().toISOString() });
       }
     }
 

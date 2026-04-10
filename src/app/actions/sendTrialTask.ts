@@ -190,14 +190,18 @@ export async function sendTrialTask(name: string, email: string): Promise<{ succ
       .where('email', '==', normalised).limit(1).get();
     if (applicantSnap.empty) {
       await adminDb.collection('applicants').add({
-        name, email: normalised, status: 'screened',
-        createdAt: new Date().toISOString(), source: 'cv_review',
+        name, email: normalised, status: 'email_sent',
+        phone: '', location: '', rating: 3,
+        verdict: 'trial', salesSignals: '', education: '',
+        keyStrength: '', indeedEmail: false, notes: '',
+        emailSentAt: new Date().toISOString(), bookedAt: null,
+        activityLog: [], createdAt: new Date().toISOString(), source: 'cv_review',
       });
     } else {
       const doc = applicantSnap.docs[0];
       const currentRank = STATUS_RANK[doc.data().status as string] ?? 0;
-      if (currentRank < STATUS_RANK['screened']) {
-        await doc.ref.update({ status: 'screened' });
+      if (currentRank < STATUS_RANK['email_sent']) {
+        await doc.ref.update({ status: 'email_sent', emailSentAt: new Date().toISOString() });
       }
     }
 
