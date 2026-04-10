@@ -71,12 +71,14 @@ function Stars({ count }: { count: number }) {
   );
 }
 
-type FilterTab = 'all' | Verdict;
+type FilterTab = 'all' | Verdict | 'no_show' | 'screened';
 
 const TABS: { key: FilterTab; label: string }[] = [
   { key: 'all', label: 'All' },
   { key: 'booking', label: 'Booking' },
   { key: 'trial', label: 'Trial Task' },
+  { key: 'no_show', label: 'No Show' },
+  { key: 'screened', label: 'Screened' },
   { key: 'decline', label: 'Decline' },
 ];
 
@@ -124,7 +126,16 @@ export default function AdminApplicantsPage() {
   }, []);
 
   const filtered = useMemo(() => {
-    const base = tab === 'all' ? applicants : applicants.filter((a) => a.verdict === tab);
+    let base;
+    if (tab === 'all') {
+      base = applicants;
+    } else if (tab === 'no_show') {
+      base = applicants.filter((a) => a.status === 'no_show');
+    } else if (tab === 'screened') {
+      base = applicants.filter((a) => a.status === 'screened');
+    } else {
+      base = applicants.filter((a) => a.verdict === tab);
+    }
     return [...base].sort((a, b) => b.rating - a.rating);
   }, [applicants, tab]);
 
@@ -132,6 +143,8 @@ export default function AdminApplicantsPage() {
     all: applicants.length,
     booking: applicants.filter((a) => a.verdict === 'booking').length,
     trial: applicants.filter((a) => a.verdict === 'trial').length,
+    no_show: applicants.filter((a) => a.status === 'no_show').length,
+    screened: applicants.filter((a) => a.status === 'screened').length,
     decline: applicants.filter((a) => a.verdict === 'decline').length,
   }), [applicants]);
 
