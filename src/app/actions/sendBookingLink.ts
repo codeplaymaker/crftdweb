@@ -116,7 +116,7 @@ export async function sendBookingLink(
 
     // Upsert applicant — create if new, update status if not yet further along
     const STATUS_RANK: Record<string, number> = {
-      pending: 0, email_sent: 1, booked: 2, no_show: 2,
+      pending: 0, email_sent: 1, trial_sent: 1, booked: 2, no_show: 2,
       screened: 3, offered: 4, accepted: 5, declined: 5, rejected: 5,
     };
     const emailKey = email.trim().toLowerCase();

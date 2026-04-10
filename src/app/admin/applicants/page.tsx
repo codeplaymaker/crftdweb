@@ -34,6 +34,7 @@ const VERDICT_LABELS: Record<Verdict, string> = {
 const STATUS_STYLES: Record<ApplicantStatus, string> = {
   pending: 'bg-zinc-800 text-zinc-400',
   email_sent: 'bg-sky-500/10 text-sky-400',
+  trial_sent: 'bg-teal-500/10 text-teal-400',
   booked: 'bg-blue-500/10 text-blue-400',
   screened: 'bg-purple-500/10 text-purple-400',
   offered: 'bg-amber-500/10 text-amber-400',
@@ -46,6 +47,7 @@ const STATUS_STYLES: Record<ApplicantStatus, string> = {
 const STATUS_LABELS: Record<ApplicantStatus, string> = {
   pending: 'Pending',
   email_sent: 'Email Sent',
+  trial_sent: 'Trial Sent',
   booked: 'Booked',
   screened: 'Screened',
   offered: 'Offer Sent',

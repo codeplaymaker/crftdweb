@@ -183,14 +183,14 @@ export async function sendTrialTask(name: string, email: string): Promise<{ succ
 
     // Upsert applicant — create if new, update status if not yet further along
     const STATUS_RANK: Record<string, number> = {
-      pending: 0, email_sent: 1, booked: 2, no_show: 2,
+      pending: 0, email_sent: 1, trial_sent: 1, booked: 2, no_show: 2,
       screened: 3, offered: 4, accepted: 5, declined: 5, rejected: 5,
     };
     const applicantSnap = await adminDb.collection('applicants')
       .where('email', '==', normalised).limit(1).get();
     if (applicantSnap.empty) {
       await adminDb.collection('applicants').add({
-        name, email: normalised, status: 'email_sent',
+        name, email: normalised, status: 'trial_sent',
         phone: '', location: '', rating: 3,
         verdict: 'trial', salesSignals: '', education: '',
         keyStrength: '', indeedEmail: false, notes: '',
@@ -200,8 +200,8 @@ export async function sendTrialTask(name: string, email: string): Promise<{ succ
     } else {
       const doc = applicantSnap.docs[0];
       const currentRank = STATUS_RANK[doc.data().status as string] ?? 0;
-      if (currentRank < STATUS_RANK['email_sent']) {
-        await doc.ref.update({ status: 'email_sent', emailSentAt: new Date().toISOString() });
+      if (currentRank < STATUS_RANK['trial_sent']) {
+        await doc.ref.update({ status: 'trial_sent', emailSentAt: new Date().toISOString() });
       }
     }
 

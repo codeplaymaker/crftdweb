@@ -1,5 +1,5 @@
 export type Verdict = 'booking' | 'trial' | 'decline';
-export type ApplicantStatus = 'pending' | 'email_sent' | 'booked' | 'screened' | 'offered' | 'accepted' | 'declined' | 'no_show' | 'rejected';
+export type ApplicantStatus = 'pending' | 'email_sent' | 'trial_sent' | 'booked' | 'screened' | 'offered' | 'accepted' | 'declined' | 'no_show' | 'rejected';
 
 export interface Applicant {
   id: string;
