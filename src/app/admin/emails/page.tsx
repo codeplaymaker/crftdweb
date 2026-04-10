@@ -2,7 +2,7 @@
 
 import { useState, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Copy, Check, ChevronDown, ChevronUp, Mail, RefreshCw, UserCheck, Handshake, Users, Send, Eye, Loader2, CheckCircle2, Sparkles, PenLine } from 'lucide-react';
+import { Copy, Check, ChevronDown, ChevronUp, Mail, RefreshCw, UserCheck, Handshake, Users, Send, Eye, Loader2, CheckCircle2, Sparkles, PenLine, UserPlus } from 'lucide-react';
 import { sendTrialTask } from '@/app/actions/sendTrialTask';
 import { sendBookingLink } from '@/app/actions/sendBookingLink';
 import { sendLoginDetails } from '@/app/actions/sendLoginDetails';
@@ -601,6 +601,9 @@ function SendPanel() {
   const [showPreview, setShowPreview] = useState(false);
   const [sendStatus, setSendStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
+  const [creatingAccount, setCreatingAccount] = useState(false);
+  const [accountCreated, setAccountCreated] = useState(false);
+  const [accountError, setAccountError] = useState('');
 
   const firstName = name.split(' ')[0] || 'there';
   const previewHtml = templateId === 'trial-task'
@@ -667,7 +670,7 @@ function SendPanel() {
           {EMAIL_SEND_TEMPLATES.map((t) => (
             <button
               key={t.id}
-              onClick={() => { setTemplateId(t.id); setSendStatus('idle'); }}
+              onClick={() => { setTemplateId(t.id); setSendStatus('idle'); setAccountCreated(false); setAccountError(''); setTempPassword(''); }}
               className={`text-left p-4 rounded-xl border transition-all ${
                 templateId === t.id ? t.activeColor : t.color + ' opacity-60 hover:opacity-100'
               }`}
@@ -706,16 +709,57 @@ function SendPanel() {
         </div>
         <p className="text-xs text-white/25 mt-2">Subject: <span className="text-white/40 italic">{selectedTemplate.subject}</span></p>
         {templateId === 'login-details' && (
-          <div className="mt-3">
-            <label className="block text-[10px] text-white/30 mb-1 uppercase tracking-widest">Temp Password</label>
-            <input
-              type="text"
-              value={tempPassword}
-              onChange={(e) => setTempPassword(e.target.value)}
-              placeholder="e.g. Welcome123!7"
-              className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 font-mono"
-            />
-            <p className="text-[10px] text-white/20 mt-1">This will appear in the email exactly as typed.</p>
+          <div className="mt-3 space-y-3">
+            <div className="p-3 rounded-xl bg-sky-500/5 border border-sky-500/20">
+              <p className="text-[10px] text-sky-400/70 uppercase tracking-widest font-semibold mb-2">Create Firebase Account</p>
+              <p className="text-xs text-white/30 mb-3">Creates the rep&apos;s Firebase Auth account and auto-fills the temp password below.</p>
+              {accountCreated ? (
+                <div className="flex items-center gap-2 text-xs text-emerald-400 font-semibold">
+                  <CheckCircle2 size={13} /> Account created — password auto-filled
+                </div>
+              ) : (
+                <div className="space-y-1">
+                  <button
+                    onClick={async () => {
+                      if (!name.trim() || !email.trim()) { setAccountError('Enter name and email first'); return; }
+                      setCreatingAccount(true);
+                      setAccountError('');
+                      try {
+                        const res = await fetch('/api/admin/create-rep', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ name: name.trim(), email: email.trim(), phone: '' }),
+                        });
+                        const data = await res.json();
+                        if (!res.ok) throw new Error(data.error ?? 'Failed');
+                        setTempPassword(data.tempPassword);
+                        setAccountCreated(true);
+                      } catch (err) {
+                        setAccountError(err instanceof Error ? err.message : 'Failed to create account');
+                      }
+                      setCreatingAccount(false);
+                    }}
+                    disabled={creatingAccount || !name.trim() || !email.trim()}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sky-600/20 border border-sky-500/30 text-sky-300 text-xs font-semibold hover:bg-sky-600/30 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                  >
+                    {creatingAccount ? <Loader2 size={12} className="animate-spin" /> : <UserPlus size={12} />}
+                    {creatingAccount ? 'Creating…' : 'Create Account'}
+                  </button>
+                  {accountError && <p className="text-[11px] text-red-400">{accountError}</p>}
+                </div>
+              )}
+            </div>
+            <div>
+              <label className="block text-[10px] text-white/30 mb-1 uppercase tracking-widest">Temp Password</label>
+              <input
+                type="text"
+                value={tempPassword}
+                onChange={(e) => setTempPassword(e.target.value)}
+                placeholder="Auto-filled after Create Account, or enter manually"
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 font-mono"
+              />
+              <p className="text-[10px] text-white/20 mt-1">This will appear in the email exactly as typed.</p>
+            </div>
           </div>
         )}
       </div>
