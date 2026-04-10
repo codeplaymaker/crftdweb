@@ -7,6 +7,7 @@ import { sendTrialTask } from '@/app/actions/sendTrialTask';
 import { sendBookingLink } from '@/app/actions/sendBookingLink';
 import { sendLoginDetails } from '@/app/actions/sendLoginDetails';
 import { sendOverqualified } from '@/app/actions/sendOverqualified';
+import { sendOffer } from '@/app/actions/sendOffer';
 
 // ─── Email preview HTML builders (client-side mirrors of server actions) ───
 function buildTrialTaskHtml(name: string): string {
@@ -110,6 +111,50 @@ function buildLoginDetailsHtml(name: string, repEmail: string, tempPassword: str
 </body></html>`;
 }
 
+function buildOfferHtml(name: string): string {
+  const firstName = name.split(' ')[0];
+  const acceptUrl = 'https://crftdweb.com/offer/preview-token?action=accept';
+  const declineUrl = 'https://crftdweb.com/offer/preview-token?action=decline';
+  return `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
+<body style="margin:0;padding:0;background:#f4f4f4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:40px 20px;"><tr><td align="center">
+    <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+      <tr><td align="center" style="background:#000000;border-radius:12px 12px 0 0;padding:32px 40px;">
+        <img src="https://crftdweb.com/CW-logo-white.png" alt="CrftdWeb" width="160" style="display:block;border:0;border-radius:8px;" />
+      </td></tr>
+      <tr><td style="background:#ffffff;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 12px 12px;padding:40px;">
+        <p style="margin:0 0 16px;font-size:16px;color:#111;font-weight:600;">Hi ${firstName},</p>
+        <p style="margin:0 0 16px;font-size:15px;color:#444;line-height:1.7;">Great news &mdash; we&rsquo;d like to offer you a position as a <strong style="color:#111;">CrftdWeb Sales Representative</strong>.</p>
+        <p style="margin:0 0 24px;font-size:15px;color:#444;line-height:1.7;">Before you accept, please review the documents below so you know exactly how the role works:</p>
+        <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px;"><tr><td style="background:#f9f9f9;border:1px solid #e8e8e8;border-radius:10px;padding:20px 24px;">
+          <p style="margin:0 0 12px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#999;">Review Before Accepting</p>
+          <p style="margin:4px 0;"><a href="https://crftdweb.com/rep-onboarding-pack.html" style="font-size:14px;color:#111;font-weight:600;text-decoration:none;">📋 Onboarding Pack</a> <span style="font-size:13px;color:#888;"> &mdash; role, commission, career progression</span></p>
+          <p style="margin:4px 0;"><a href="https://crftdweb.com/docs/rep-contractor-agreement.html" style="font-size:14px;color:#111;font-weight:600;text-decoration:none;">📄 Contractor Agreement</a> <span style="font-size:13px;color:#888;"> &mdash; legal terms, commission structure</span></p>
+        </td></tr></table>
+        <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 12px;"><tr><td style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:16px 20px;">
+          <p style="margin:0 0 4px;font-size:12px;color:#166534;font-weight:700;">Commission Structure</p>
+          <p style="margin:0;font-size:13px;color:#15803d;line-height:1.6;">20% on Starter (£997) · 15% on Launch (£2,497) · 12% on Growth (£4,997) · 10% on Scale (£9,997+)</p>
+        </td></tr></table>
+        <p style="margin:0 0 28px;font-size:14px;color:#666;line-height:1.7;">By clicking <strong>Accept</strong>, you confirm you&rsquo;ve read both documents and agree to the contractor agreement terms.</p>
+        <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 28px;"><tr><td align="center">
+          <table cellpadding="0" cellspacing="0"><tr>
+            <td style="background:#111;border-radius:8px;"><a href="${acceptUrl}" style="display:inline-block;padding:14px 32px;font-size:15px;font-weight:700;color:#ffffff;text-decoration:none;">Accept Offer &rarr;</a></td>
+            <td width="12"></td>
+            <td style="background:#f4f4f4;border:1px solid #ddd;border-radius:8px;"><a href="${declineUrl}" style="display:inline-block;padding:14px 24px;font-size:14px;font-weight:600;color:#666;text-decoration:none;">Decline</a></td>
+          </tr></table>
+        </td></tr></table>
+        <p style="margin:0 0 24px;font-size:13px;color:#999;line-height:1.6;">This offer expires in <strong style="color:#666;">72 hours</strong>.</p>
+        <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;"><tr><td style="border-top:1px solid #e8e8e8;"></td></tr></table>
+        <img src="https://crftdweb.com/CW-logo.png" alt="CrftdWeb" width="48" style="display:block;border:0;margin-bottom:8px;" />
+        <p style="margin:0;font-size:13px;color:#999;">crftdweb.com &middot; admin@crftdweb.com</p>
+      </td></tr>
+    </table>
+  </td></tr></table>
+</body></html>`;
+}
+
 function buildOverqualifiedHtml(name: string): string {
   const firstName = name.split(' ')[0];
   return `<!DOCTYPE html>
@@ -164,6 +209,15 @@ const EMAIL_SEND_TEMPLATES = [
     color: 'border-sky-500/30 bg-sky-500/5',
     activeColor: 'border-sky-500 bg-sky-500/15',
     labelColor: 'text-sky-400',
+  },
+  {
+    id: 'offer',
+    label: 'Job Offer',
+    subject: "CrftdWeb — You've been selected",
+    description: 'Sends the 72h accept/decline offer email with onboarding pack and contractor agreement links.',
+    color: 'border-amber-500/30 bg-amber-500/5',
+    activeColor: 'border-amber-500 bg-amber-500/15',
+    labelColor: 'text-amber-400',
   },
   {
     id: 'overqualified',
@@ -452,6 +506,8 @@ function SendPanel() {
     ? buildBookingLinkHtml(firstName || 'Hi')
     : templateId === 'login-details'
     ? buildLoginDetailsHtml(firstName || 'Hi', email || 'rep@email.com', tempPassword || 'TempPass!7')
+    : templateId === 'offer'
+    ? buildOfferHtml(firstName || 'Hi')
     : buildOverqualifiedHtml(firstName || 'Hi');
 
   const selectedTemplate = EMAIL_SEND_TEMPLATES.find((t) => t.id === templateId)!;
@@ -469,6 +525,8 @@ function SendPanel() {
         result = await sendBookingLink(firstName, email.trim());
       } else if (templateId === 'login-details') {
         result = await sendLoginDetails(name.trim(), email.trim(), tempPassword.trim());
+      } else if (templateId === 'offer') {
+        result = await sendOffer(name.trim(), email.trim());
       } else {
         result = await sendOverqualified(name.trim(), email.trim());
       }

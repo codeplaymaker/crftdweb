@@ -125,7 +125,7 @@ CrftdWeb · crftdweb.com`;
 export async function sendOffer(
   name: string,
   email: string,
-  applicantId: string,
+  applicantId?: string,
 ): Promise<{ success: boolean; error?: string }> {
   if (!process.env.RESEND_API_KEY) return { success: false, error: 'Email config error' };
   if (!name || !email || !email.includes('@')) return { success: false, error: 'Valid name and email required' };
@@ -136,7 +136,7 @@ export async function sendOffer(
 
     await adminDb.collection('offerTokens').doc(token).set({
       token,
-      applicantId,
+      applicantId: applicantId ?? null,
       applicantName: name,
       applicantEmail: email.trim().toLowerCase(),
       createdAt: new Date().toISOString(),
@@ -156,11 +156,13 @@ export async function sendOffer(
       text: plainText(name, acceptUrl, declineUrl),
     });
 
-    // Update applicant status to 'offered'
-    await adminDb.collection('applicants').doc(applicantId).set(
-      { status: 'offered', offerSentAt: new Date().toISOString(), offerToken: token },
-      { merge: true },
-    );
+    // Update applicant status to 'offered' only if we have an ID
+    if (applicantId) {
+      await adminDb.collection('applicants').doc(applicantId).set(
+        { status: 'offered', offerSentAt: new Date().toISOString(), offerToken: token },
+        { merge: true },
+      );
+    }
 
     return { success: true };
   } catch (err) {
