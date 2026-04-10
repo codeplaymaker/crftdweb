@@ -70,26 +70,14 @@ async function runAnalysis(fileId: string, chatId: number) {
         response_format: { type: 'json_object' },
       });
     } else {
-      // ── Method 3: Designed/Canva CV — upload to OpenAI, use gpt-4o vision ──
-      const uploadedFile = await openai.files.create({
-        file: new File([pdfBuffer], 'cv.pdf', { type: 'application/pdf' }),
-        purpose: 'user_data',
-      });
-      uploadedFileId = uploadedFile.id;
-
-      res = await openai.chat.completions.create({
-        model: 'gpt-4o',
-        messages: [{
-          role: 'user',
-          content: [
-            { type: 'file', file: { file_id: uploadedFileId } } as never,
-            { type: 'text', text: CV_PROMPT },
-          ],
-        }],
-        temperature: 0.3,
-        max_tokens: 600,
-        response_format: { type: 'json_object' },
-      });
+      // ── Method 2b: Designed/Canva CV — can't extract text ───────────────────
+      // gpt-4o Files API takes 15s+ which exceeds Vercel Hobby 10s limit.
+      // Ask the candidate to send a plain text version instead.
+      await sendMessage(
+        chatId,
+        `📄 <b>This CV is image-based or designed (e.g. Canva) — I can't read the text from it.</b>\n\nAsk the candidate to send a plain PDF export, or copy their CV text and paste it directly in the chat.`,
+      );
+      return;
     }
 
     const result = JSON.parse(res.choices[0]?.message?.content || '{}');
