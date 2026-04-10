@@ -125,6 +125,23 @@ const tools: OpenAI.Chat.ChatCompletionTool[] = [
   {
     type: 'function',
     function: {
+      name: 'send_custom_message',
+      description: 'Send a fully custom branded email to anyone — use when Obi wants to write a personal or one-off message that is not covered by the other email tools',
+      parameters: {
+        type: 'object',
+        properties: {
+          name: { type: 'string', description: "Recipient's full name" },
+          email: { type: 'string', description: "Recipient's email address" },
+          subject: { type: 'string', description: 'Email subject line' },
+          body: { type: 'string', description: 'The main body of the email in plain text — will be formatted into paragraphs automatically. Write naturally, no HTML.' },
+        },
+        required: ['name', 'email', 'subject', 'body'],
+      },
+    },
+  },
+  {
+    type: 'function',
+    function: {
       name: 'request_confirmation',
       description: 'Use this BEFORE executing any action that sends an email, creates an account, or changes data. Describe clearly what you are about to do and ask the user to confirm.',
       parameters: {
@@ -323,6 +340,44 @@ async function executeTool(name: string, args: Record<string, unknown>): Promise
         return result.success ? `Trial reminder sent to ${args.name}.` : `Failed: ${result.error}`;
       }
 
+      case 'send_custom_message': {
+        const { sendCustomEmail } = await import('@/app/actions/sendCustomEmail');
+        const n = args.name as string;
+        const firstName = n.split(' ')[0];
+        const bodyText = args.body as string;
+        // Split on double newlines or single newlines for paragraphs
+        const paragraphs = bodyText.split(/\n{1,}/).map(p => p.trim()).filter(Boolean);
+        const bodyHtml = paragraphs.map(p =>
+          `<p style="margin:0 0 16px;font-size:15px;color:#444;line-height:1.7;">${p}</p>`
+        ).join('\n        ');
+        const html = `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
+<body style="margin:0;padding:0;background:#f4f4f4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:40px 20px;"><tr><td align="center">
+    <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+      <tr><td align="center" style="background:#000000;border-radius:12px 12px 0 0;padding:32px 40px;">
+        <img src="https://crftdweb.com/CW-logo-white.png" alt="CrftdWeb" width="160" style="display:block;border:0;border-radius:8px;" />
+      </td></tr>
+      <tr><td style="background:#ffffff;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 12px 12px;padding:40px;">
+        <p style="margin:0 0 16px;font-size:16px;color:#111;font-weight:600;">Hi ${firstName},</p>
+        ${bodyHtml}
+        <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;"><tr><td style="border-top:1px solid #e8e8e8;"></td></tr></table>
+        <img src="https://crftdweb.com/CW-logo.png" alt="CrftdWeb" width="48" style="display:block;border:0;margin-bottom:8px;" />
+        <p style="margin:0;font-size:13px;color:#999;">crftdweb.com &middot; admin@crftdweb.com</p>
+      </td></tr>
+    </table>
+  </td></tr></table>
+</body></html>`;
+        const result = await sendCustomEmail(
+          args.name as string,
+          args.email as string,
+          args.subject as string,
+          html,
+        );
+        return result.success ? `Email sent to ${args.name} (${args.email}).` : `Failed: ${result.error}`;
+      }
+
       case 'change_applicant_status': {
         await adminDb
           .collection('applicants')
@@ -374,6 +429,43 @@ async function clearPending(chatId: number): Promise<void> {
   await adminDb.collection('telegramPending').doc(String(chatId)).delete();
 }
 
+// ─── Conversation history store (Firestore) ───────────────────────────────────
+
+const HISTORY_LIMIT = 10;
+const HISTORY_TTL_MS = 2 * 60 * 60 * 1000; // 2 hours
+
+interface HistoryMessage {
+  role: 'user' | 'assistant';
+  content: string;
+  timestamp: string;
+}
+
+async function getHistory(chatId: number): Promise<OpenAI.Chat.ChatCompletionMessageParam[]> {
+  const doc = await adminDb.collection('telegramHistory').doc(String(chatId)).get();
+  if (!doc.exists) return [];
+  const { messages } = doc.data() as { messages: HistoryMessage[] };
+  const cutoff = new Date(Date.now() - HISTORY_TTL_MS).toISOString();
+  return messages
+    .filter(m => m.timestamp > cutoff)
+    .map(m => ({ role: m.role, content: m.content }));
+}
+
+async function appendHistory(chatId: number, userMessage: string, assistantReply: string): Promise<void> {
+  const ref = adminDb.collection('telegramHistory').doc(String(chatId));
+  const doc = await ref.get();
+  const cutoff = new Date(Date.now() - HISTORY_TTL_MS).toISOString();
+  const existing: HistoryMessage[] = doc.exists
+    ? ((doc.data() as { messages: HistoryMessage[] }).messages ?? []).filter(m => m.timestamp > cutoff)
+    : [];
+  const now = new Date().toISOString();
+  const updated = [
+    ...existing,
+    { role: 'user' as const, content: userMessage, timestamp: now },
+    { role: 'assistant' as const, content: assistantReply, timestamp: now },
+  ].slice(-HISTORY_LIMIT);
+  await ref.set({ messages: updated });
+}
+
 const CONFIRM_WORDS = /^(yes|yeah|yep|go ahead|do it|confirm|ok|okay|sure|yup|absolutely|correct|send it|do that)$/i;
 
 export async function runAssistant(userMessage: string, chatId: number): Promise<string> {
@@ -395,6 +487,7 @@ export async function runAssistant(userMessage: string, chatId: number): Promise
       return `OK, cancelled. ${pending.description} — not sent.`;
     }
   }
+  const history = await getHistory(chatId);
   const messages: OpenAI.Chat.ChatCompletionMessageParam[] = [
     {
       role: 'system',
@@ -402,7 +495,7 @@ export async function runAssistant(userMessage: string, chatId: number): Promise
 
 Be concise, friendly, and use British English. When listing data, format it clearly. If something is ambiguous, ask a clarifying question before acting.
 
-IMPORTANT — confirmation rule: Before calling any tool that sends an email, changes data, or takes an action (send_offer, send_booking_link, send_no_show_email, send_offer_reminder, send_trial_reminder, change_applicant_status), you MUST first call request_confirmation. Always populate the email_preview field for email actions with the subject line, recipient email, and a 2–3 sentence plain-text summary of what the email says. NEVER call action tools directly without confirmation first. Read-only tools (get_business_summary, list_applicants, list_reps) do NOT need confirmation.
+IMPORTANT — confirmation rule: Before calling any tool that sends an email, changes data, or takes an action (send_offer, send_booking_link, send_no_show_email, send_offer_reminder, send_trial_reminder, send_custom_message, change_applicant_status), you MUST first call request_confirmation. Always populate the email_preview field for email actions with the subject line, recipient email, and a 2–3 sentence plain-text summary of what the email says. NEVER call action tools directly without confirmation first. Read-only tools (get_business_summary, list_applicants, list_reps) do NOT need confirmation.
 
 Today is ${new Date().toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}.
 
@@ -513,6 +606,7 @@ REP CONDUCT RULES
 - 2+ weeks under 50 outreaches = review + potential termination
 ══════════════════════════════════════════`,
     },
+    ...history,
     { role: 'user', content: userMessage },
   ];
 
@@ -567,8 +661,12 @@ REP CONDUCT RULES
       messages,
     });
 
-    return finalResponse.choices[0].message.content ?? 'Done.';
+    const reply = finalResponse.choices[0].message.content ?? 'Done.';
+    await appendHistory(chatId, userMessage, reply);
+    return reply;
   }
 
-  return aiMessage.content ?? "I'm not sure how to help with that. Try asking about applicants, reps, or sending an email.";
+  const reply = aiMessage.content ?? "I'm not sure how to help with that. Try asking about applicants, reps, or sending an email.";
+  await appendHistory(chatId, userMessage, reply);
+  return reply;
 }
