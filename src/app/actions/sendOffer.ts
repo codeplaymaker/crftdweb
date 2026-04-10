@@ -83,7 +83,7 @@ function buildHtml(name: string, acceptUrl: string, declineUrl: string): string 
             </table>
 
             <p style="margin:0 0 24px;font-size:13px;color:#999;line-height:1.6;">
-              This offer expires in <strong style="color:#666;">48 hours</strong>. If you have any questions, just reply to this email.
+              This offer expires in <strong style="color:#666;">72 hours</strong>. If you have any questions, just reply to this email.
             </p>
 
             <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
@@ -118,7 +118,7 @@ Commission: 20% on Starter (£997) · 15% on Launch (£2,497) · 12% on Growth (
 Accept: ${acceptUrl}
 Decline: ${declineUrl}
 
-This offer expires in 48 hours. Reply to this email with any questions.
+This offer expires in 72 hours. Reply to this email with any questions.
 
 CrftdWeb · crftdweb.com`;
 
