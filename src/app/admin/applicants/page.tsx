@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { Loader2, Mail, ArrowLeft, AlertTriangle, CheckCircle2, Star, MapPin, Phone, ExternalLink, ClipboardCheck, Plus, X, Send, Clock } from 'lucide-react';
+import { Loader2, Mail, ArrowLeft, AlertTriangle, CheckCircle2, Star, MapPin, Phone, ExternalLink, ClipboardCheck, Plus, X, Send, Clock, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { sendBookingLink } from '@/app/actions/sendBookingLink';
 import { sendOffer } from '@/app/actions/sendOffer';
@@ -107,6 +107,8 @@ export default function AdminApplicantsPage() {
   const [showAddForm, setShowAddForm] = useState(false);
   const [addingApplicant, setAddingApplicant] = useState(false);
   const [togglingReview, setTogglingReview] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [changingStatusId, setChangingStatusId] = useState<string | null>(null);
 
   useEffect(() => {
     Promise.all([
@@ -232,6 +234,34 @@ export default function AdminApplicantsPage() {
     }
   }
 
+  async function handleDeleteApplicant(id: string) {
+    setDeletingId(id);
+    try {
+      await fetch(`/api/admin/applicants?id=${encodeURIComponent(id)}`, { method: 'DELETE' });
+      setApplicants((prev) => prev.filter((a) => a.id !== id));
+    } catch {
+      // silent
+    }
+    setDeletingId(null);
+  }
+
+  async function handleStatusChange(id: string, status: ApplicantStatus) {
+    setChangingStatusId(id);
+    try {
+      await fetch('/api/admin/applicants', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, status }),
+      });
+      setApplicants((prev) =>
+        prev.map((a) => a.id === id ? { ...a, status } : a)
+      );
+    } catch {
+      // silent
+    }
+    setChangingStatusId(null);
+  }
+
   async function handleToggleReviewed(submissionId: string, reviewed: boolean) {
     setTogglingReview(submissionId);
     try {
@@ -325,7 +355,11 @@ export default function AdminApplicantsPage() {
                 onSendOffer={handleSendOffer}
                 onAddActivity={handleAddActivity}
                 onToggleReviewed={handleToggleReviewed}
+                onDelete={handleDeleteApplicant}
+                onStatusChange={handleStatusChange}
                 togglingReview={togglingReview === applicant.id}
+                deleting={deletingId === applicant.id}
+                changingStatus={changingStatusId === applicant.id}
                 submission={submissions.find(s => s.email === applicant.email.toLowerCase()) ?? null}
               />
             ))}
@@ -350,14 +384,19 @@ interface RowProps {
   onSendOffer: (a: ApplicantWithActivity) => void;
   onAddActivity: (applicantId: string, text: string) => void;
   onToggleReviewed: (submissionId: string, reviewed: boolean) => void;
+  onDelete: (id: string) => void;
+  onStatusChange: (id: string, status: ApplicantStatus) => void;
   togglingReview: boolean;
+  deleting: boolean;
+  changingStatus: boolean;
   submission: TrialSubmission | null;
 }
 
-function ApplicantRow({ applicant, sending, justSent, error, onSendBooking, onSendOffer, onAddActivity, onToggleReviewed, togglingReview, submission }: RowProps) {
+function ApplicantRow({ applicant, sending, justSent, error, onSendBooking, onSendOffer, onAddActivity, onToggleReviewed, onDelete, onStatusChange, togglingReview, deleting, changingStatus, submission }: RowProps) {
   const [expanded, setExpanded] = useState(false);
   const [noteText, setNoteText] = useState('');
   const [addingNote, setAddingNote] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const canSendBooking = applicant.verdict === 'booking' && applicant.status === 'pending';
   const canSendOffer = applicant.status === 'screened';
   const alreadySent = applicant.status !== 'pending';
@@ -468,12 +507,48 @@ function ApplicantRow({ applicant, sending, justSent, error, onSendBooking, onSe
           {error && (
             <span className="text-[11px] text-red-400">{error}</span>
           )}
+          {/* Delete */}
+          <div className="mt-1 flex justify-end">
+            {confirmDelete ? (
+              <button
+                onClick={() => { setConfirmDelete(false); onDelete(applicant.id); }}
+                disabled={deleting}
+                className="flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20 disabled:opacity-50 transition-colors"
+              >
+                {deleting ? <Loader2 size={10} className="animate-spin" /> : <Trash2 size={10} />}
+                Confirm delete
+              </button>
+            ) : (
+              <button
+                onClick={() => setConfirmDelete(true)}
+                className="p-1.5 rounded-lg text-zinc-700 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+                title="Delete applicant"
+              >
+                <Trash2 size={12} />
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
       {/* Expanded details */}
       {expanded && (
         <div className="px-5 pb-4 border-t border-zinc-800 pt-3 space-y-2">
+          {/* Status change */}
+          <div className="flex items-center gap-3 pb-2 border-b border-zinc-800/60" onClick={(e) => e.stopPropagation()}>
+            <span className="text-[10px] text-zinc-500 uppercase tracking-wider font-semibold">Status</span>
+            <select
+              value={applicant.status}
+              onChange={(e) => onStatusChange(applicant.id, e.target.value as ApplicantStatus)}
+              disabled={changingStatus}
+              className="bg-zinc-800 border border-zinc-700 rounded-lg px-2.5 py-1 text-xs text-white focus:outline-none focus:border-zinc-500 cursor-pointer disabled:opacity-50"
+            >
+              {(Object.keys(STATUS_LABELS) as ApplicantStatus[]).map((key) => (
+                <option key={key} value={key}>{STATUS_LABELS[key]}</option>
+              ))}
+            </select>
+            {changingStatus && <Loader2 size={10} className="animate-spin text-zinc-500" />}
+          </div>
           {applicant.keyStrength && (
             <p className="text-xs text-zinc-300">
               <span className="text-zinc-500 uppercase tracking-wider text-[10px] font-semibold mr-2">Strength</span>

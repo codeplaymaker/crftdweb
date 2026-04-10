@@ -98,3 +98,16 @@ export async function PATCH(req: NextRequest) {
   await adminDb.collection('applicants').doc(id).set(updates, { merge: true });
   return NextResponse.json({ success: true });
 }
+
+// DELETE /api/admin/applicants?id=xxx — remove an applicant
+export async function DELETE(req: NextRequest) {
+  if (!isAdmin(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+  const id = new URL(req.url).searchParams.get('id');
+  if (!id || typeof id !== 'string') {
+    return NextResponse.json({ error: 'Missing id' }, { status: 400 });
+  }
+
+  await adminDb.collection('applicants').doc(id).delete();
+  return NextResponse.json({ success: true });
+}
