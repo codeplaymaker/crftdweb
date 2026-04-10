@@ -5,6 +5,8 @@ import { type TemplateType } from '@/lib/telegram/templates';
 import { transcribeVoice, textToSpeech } from '@/lib/telegram/voice';
 import { runAssistant } from '@/lib/telegram/assistant';
 
+export const maxDuration = 60;
+
 // Verify the webhook is from Telegram (optional secret token)
 const WEBHOOK_SECRET = process.env.TELEGRAM_WEBHOOK_SECRET;
 
