@@ -219,37 +219,32 @@ async function executeTool(name: string, args: Record<string, unknown>): Promise
       case 'send_no_show_email': {
         const { sendCustomEmail } = await import('@/app/actions/sendCustomEmail');
         const n = args.name as string;
+        const firstName = n.split(' ')[0];
         const html = `<!DOCTYPE html>
 <html lang="en">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>CrftdWeb — We missed you</title></head>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
 <body style="margin:0;padding:0;background:#f4f4f4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:40px 20px;">
-    <tr><td align="center">
-      <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
-        <tr><td align="center" style="background:#000000;border-radius:12px 12px 0 0;padding:32px 40px;">
-          <img src="https://crftdweb.com/CW-logo-white.png" alt="CrftdWeb" width="160" style="display:block;border:0;border-radius:8px;" />
-        </td></tr>
-        <tr><td style="background:#ffffff;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 12px 12px;padding:40px;">
-          <p style="margin:0 0 20px;font-size:16px;color:#111;line-height:1.6;font-weight:600;">Hi ${n},</p>
-          <p style="margin:0 0 20px;font-size:15px;color:#444;line-height:1.7;">We noticed you missed your scheduled screening call. No worries — these things happen.</p>
-          <p style="margin:0 0 28px;font-size:15px;color:#444;line-height:1.7;">Just reply to this email and we'll find a new time that works for you. We're still interested and looking forward to speaking soon.</p>
-          <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;"><tr><td style="border-top:1px solid #e8e8e8;"></td></tr></table>
-          <table cellpadding="0" cellspacing="0"><tr><td>
-            <img src="https://crftdweb.com/CW-logo.png" alt="CrftdWeb" width="48" style="display:block;border:0;margin-bottom:8px;" />
-            <p style="margin:0;font-size:13px;color:#999;">crftdweb.com &middot; admin@crftdweb.com</p>
-          </td></tr></table>
-        </td></tr>
-        <tr><td align="center" style="padding-top:24px;">
-          <p style="margin:0;font-size:11px;color:#aaa;">admin@crftdweb.com &middot; crftdweb.com &middot; Bristol, UK</p>
-        </td></tr>
-      </table>
-    </td></tr>
-  </table>
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:40px 20px;"><tr><td align="center">
+    <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+      <tr><td align="center" style="background:#000000;border-radius:12px 12px 0 0;padding:32px 40px;">
+        <img src="https://crftdweb.com/CW-logo-white.png" alt="CrftdWeb" width="160" style="display:block;border:0;border-radius:8px;" />
+      </td></tr>
+      <tr><td style="background:#ffffff;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 12px 12px;padding:40px;">
+        <p style="margin:0 0 16px;font-size:16px;color:#111;font-weight:600;">Hi ${firstName},</p>
+        <p style="margin:0 0 16px;font-size:15px;color:#444;line-height:1.7;">It looks like we missed each other on the call earlier today.</p>
+        <p style="margin:0 0 24px;font-size:15px;color:#444;line-height:1.7;">Happy to reschedule if you're still interested — just reply and let me know a time that works, or use the link below to pick a new slot.</p>
+        <p style="margin:0 0 24px;font-size:13px;color:#999;line-height:1.6;">If you're no longer looking, no worries — just let me know and I'll close your application.</p>
+        <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;"><tr><td style="border-top:1px solid #e8e8e8;"></td></tr></table>
+        <img src="https://crftdweb.com/CW-logo.png" alt="CrftdWeb" width="48" style="display:block;border:0;margin-bottom:8px;" />
+        <p style="margin:0;font-size:13px;color:#999;">crftdweb.com &middot; admin@crftdweb.com</p>
+      </td></tr>
+    </table>
+  </td></tr></table>
 </body></html>`;
         const result = await sendCustomEmail(
           args.name as string,
           args.email as string,
-          'CrftdWeb — We missed you',
+          'CrftdWeb — Missed call',
           html,
         );
         return result.success ? `No-show email sent to ${args.name}.` : `Failed: ${result.error}`;
@@ -258,37 +253,32 @@ async function executeTool(name: string, args: Record<string, unknown>): Promise
       case 'send_offer_reminder': {
         const { sendCustomEmail } = await import('@/app/actions/sendCustomEmail');
         const n = args.name as string;
+        const firstName = n.split(' ')[0];
         const html = `<!DOCTYPE html>
 <html lang="en">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>CrftdWeb — Your offer expires soon</title></head>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
 <body style="margin:0;padding:0;background:#f4f4f4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:40px 20px;">
-    <tr><td align="center">
-      <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
-        <tr><td align="center" style="background:#000000;border-radius:12px 12px 0 0;padding:32px 40px;">
-          <img src="https://crftdweb.com/CW-logo-white.png" alt="CrftdWeb" width="160" style="display:block;border:0;border-radius:8px;" />
-        </td></tr>
-        <tr><td style="background:#ffffff;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 12px 12px;padding:40px;">
-          <p style="margin:0 0 20px;font-size:16px;color:#111;line-height:1.6;font-weight:600;">Hi ${n},</p>
-          <p style="margin:0 0 20px;font-size:15px;color:#444;line-height:1.7;">Just a quick heads up — your CrftdWeb offer expires in <strong style="color:#111;">24 hours</strong>.</p>
-          <p style="margin:0 0 28px;font-size:15px;color:#444;line-height:1.7;">Check your inbox for the original offer email and click <strong style="color:#111;">Accept Offer</strong> before it expires. If you have any questions, just reply here.</p>
-          <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;"><tr><td style="border-top:1px solid #e8e8e8;"></td></tr></table>
-          <table cellpadding="0" cellspacing="0"><tr><td>
-            <img src="https://crftdweb.com/CW-logo.png" alt="CrftdWeb" width="48" style="display:block;border:0;margin-bottom:8px;" />
-            <p style="margin:0;font-size:13px;color:#999;">crftdweb.com &middot; admin@crftdweb.com</p>
-          </td></tr></table>
-        </td></tr>
-        <tr><td align="center" style="padding-top:24px;">
-          <p style="margin:0;font-size:11px;color:#aaa;">admin@crftdweb.com &middot; crftdweb.com &middot; Bristol, UK</p>
-        </td></tr>
-      </table>
-    </td></tr>
-  </table>
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:40px 20px;"><tr><td align="center">
+    <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+      <tr><td align="center" style="background:#000000;border-radius:12px 12px 0 0;padding:32px 40px;">
+        <img src="https://crftdweb.com/CW-logo-white.png" alt="CrftdWeb" width="160" style="display:block;border:0;border-radius:8px;" />
+      </td></tr>
+      <tr><td style="background:#ffffff;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 12px 12px;padding:40px;">
+        <p style="margin:0 0 16px;font-size:16px;color:#111;font-weight:600;">Hi ${firstName},</p>
+        <p style="margin:0 0 16px;font-size:15px;color:#444;line-height:1.7;">Just checking you received the offer email I sent — the link expires soon, so wanted to make sure it didn't land in your spam.</p>
+        <p style="margin:0 0 24px;font-size:15px;color:#444;line-height:1.7;">If you have any questions before accepting, just reply and I'll answer them directly.</p>
+        <p style="margin:0 0 24px;font-size:13px;color:#999;line-height:1.6;">If you'd like to pass, no problem — just let me know so I can move forward with other candidates.</p>
+        <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;"><tr><td style="border-top:1px solid #e8e8e8;"></td></tr></table>
+        <img src="https://crftdweb.com/CW-logo.png" alt="CrftdWeb" width="48" style="display:block;border:0;margin-bottom:8px;" />
+        <p style="margin:0;font-size:13px;color:#999;">crftdweb.com &middot; admin@crftdweb.com</p>
+      </td></tr>
+    </table>
+  </td></tr></table>
 </body></html>`;
         const result = await sendCustomEmail(
           args.name as string,
           args.email as string,
-          'CrftdWeb — Your offer expires soon',
+          'Re: CrftdWeb offer — just checking in',
           html,
         );
         return result.success ? `Offer reminder sent to ${args.name}.` : `Failed: ${result.error}`;
@@ -297,37 +287,32 @@ async function executeTool(name: string, args: Record<string, unknown>): Promise
       case 'send_trial_reminder': {
         const { sendCustomEmail } = await import('@/app/actions/sendCustomEmail');
         const n = args.name as string;
+        const firstName = n.split(' ')[0];
         const html = `<!DOCTYPE html>
 <html lang="en">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>CrftdWeb — Trial task reminder</title></head>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
 <body style="margin:0;padding:0;background:#f4f4f4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:40px 20px;">
-    <tr><td align="center">
-      <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
-        <tr><td align="center" style="background:#000000;border-radius:12px 12px 0 0;padding:32px 40px;">
-          <img src="https://crftdweb.com/CW-logo-white.png" alt="CrftdWeb" width="160" style="display:block;border:0;border-radius:8px;" />
-        </td></tr>
-        <tr><td style="background:#ffffff;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 12px 12px;padding:40px;">
-          <p style="margin:0 0 20px;font-size:16px;color:#111;line-height:1.6;font-weight:600;">Hi ${n},</p>
-          <p style="margin:0 0 20px;font-size:15px;color:#444;line-height:1.7;">Just checking in — your trial task submission is due soon.</p>
-          <p style="margin:0 0 28px;font-size:15px;color:#444;line-height:1.7;">Log in to complete and submit it at <a href="https://crftdweb.com/rep/signin" style="color:#111;font-weight:600;">crftdweb.com/rep/signin</a>. If you have any questions, just reply to this email.</p>
-          <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;"><tr><td style="border-top:1px solid #e8e8e8;"></td></tr></table>
-          <table cellpadding="0" cellspacing="0"><tr><td>
-            <img src="https://crftdweb.com/CW-logo.png" alt="CrftdWeb" width="48" style="display:block;border:0;margin-bottom:8px;" />
-            <p style="margin:0;font-size:13px;color:#999;">crftdweb.com &middot; admin@crftdweb.com</p>
-          </td></tr></table>
-        </td></tr>
-        <tr><td align="center" style="padding-top:24px;">
-          <p style="margin:0;font-size:11px;color:#aaa;">admin@crftdweb.com &middot; crftdweb.com &middot; Bristol, UK</p>
-        </td></tr>
-      </table>
-    </td></tr>
-  </table>
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:40px 20px;"><tr><td align="center">
+    <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+      <tr><td align="center" style="background:#000000;border-radius:12px 12px 0 0;padding:32px 40px;">
+        <img src="https://crftdweb.com/CW-logo-white.png" alt="CrftdWeb" width="160" style="display:block;border:0;border-radius:8px;" />
+      </td></tr>
+      <tr><td style="background:#ffffff;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 12px 12px;padding:40px;">
+        <p style="margin:0 0 16px;font-size:16px;color:#111;font-weight:600;">Hi ${firstName},</p>
+        <p style="margin:0 0 16px;font-size:15px;color:#444;line-height:1.7;">Just a quick nudge on the trial task I sent over — are you still planning to submit?</p>
+        <p style="margin:0 0 24px;font-size:15px;color:#444;line-height:1.7;">It shouldn't take long — just 5 businesses with a bad website and one specific sentence each. There's no right or wrong, I'm just looking for how you think.</p>
+        <p style="margin:0 0 24px;font-size:13px;color:#999;line-height:1.6;">If you're no longer interested, no worries — just let me know.</p>
+        <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;"><tr><td style="border-top:1px solid #e8e8e8;"></td></tr></table>
+        <img src="https://crftdweb.com/CW-logo.png" alt="CrftdWeb" width="48" style="display:block;border:0;margin-bottom:8px;" />
+        <p style="margin:0;font-size:13px;color:#999;">crftdweb.com &middot; admin@crftdweb.com</p>
+      </td></tr>
+    </table>
+  </td></tr></table>
 </body></html>`;
         const result = await sendCustomEmail(
           args.name as string,
           args.email as string,
-          'CrftdWeb — Trial task reminder',
+          'Re: CrftdWeb trial task',
           html,
         );
         return result.success ? `Trial reminder sent to ${args.name}.` : `Failed: ${result.error}`;
