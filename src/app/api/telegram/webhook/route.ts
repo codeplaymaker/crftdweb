@@ -88,7 +88,7 @@ export async function POST(req: NextRequest) {
       await sendMessage(chatId, '🎧 Heard you — thinking...');
       try {
         const transcript = await transcribeVoice(message.voice.file_id);
-        const reply = await runAssistant(transcript);
+        const reply = await runAssistant(transcript, chatId);
         const audioBuffer = await textToSpeech(reply);
         await sendVoice(chatId, audioBuffer);
       } catch (err) {
@@ -103,7 +103,7 @@ export async function POST(req: NextRequest) {
     // ─── Natural language (non-command) text → AI assistant ───
     if (!text.startsWith('/')) {
       try {
-        const reply = await runAssistant(text);
+        const reply = await runAssistant(text, chatId);
         await sendMessage(chatId, reply);
       } catch (err) {
         console.error('[assistant] error:', err);

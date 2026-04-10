@@ -122,6 +122,22 @@ const tools: OpenAI.Chat.ChatCompletionTool[] = [
       },
     },
   },
+  {
+    type: 'function',
+    function: {
+      name: 'request_confirmation',
+      description: 'Use this BEFORE executing any action that sends an email, creates an account, or changes data. Describe clearly what you are about to do and ask the user to confirm.',
+      parameters: {
+        type: 'object',
+        properties: {
+          description: { type: 'string', description: 'Plain-English description of the action, e.g. "Send a job offer to Sarah (sarah@gmail.com)"' },
+          tool_to_run: { type: 'string', description: 'The name of the tool to run after confirmation' },
+          tool_args: { type: 'object', description: 'The arguments to pass to that tool after confirmation' },
+        },
+        required: ['description', 'tool_to_run', 'tool_args'],
+      },
+    },
+  },
 ];
 
 async function executeTool(name: string, args: Record<string, unknown>): Promise<string> {
@@ -250,6 +266,11 @@ async function executeTool(name: string, args: Record<string, unknown>): Promise
         return `Status updated to "${args.status}" for applicant ${args.applicant_id}.`;
       }
 
+      case 'request_confirmation': {
+        // Stored by runAssistant before calling executeTool — this case should not be reached directly
+        return `Confirmation requested: ${args.description}`;
+      }
+
       default:
         return `Unknown function: ${name}`;
     }
@@ -259,13 +280,64 @@ async function executeTool(name: string, args: Record<string, unknown>): Promise
   }
 }
 
-export async function runAssistant(userMessage: string): Promise<string> {
+// ─── Pending confirmation store (Firestore) ───────────────────────────────────
+
+interface PendingAction {
+  toolName: string;
+  toolArgs: Record<string, unknown>;
+  description: string;
+  expiresAt: string;
+}
+
+async function getPending(chatId: number): Promise<PendingAction | null> {
+  const doc = await adminDb.collection('telegramPending').doc(String(chatId)).get();
+  if (!doc.exists) return null;
+  const data = doc.data() as PendingAction;
+  if (new Date(data.expiresAt) < new Date()) {
+    await doc.ref.delete();
+    return null;
+  }
+  return data;
+}
+
+async function setPending(chatId: number, action: Omit<PendingAction, 'expiresAt'>): Promise<void> {
+  const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString(); // 10 min
+  await adminDb.collection('telegramPending').doc(String(chatId)).set({ ...action, expiresAt });
+}
+
+async function clearPending(chatId: number): Promise<void> {
+  await adminDb.collection('telegramPending').doc(String(chatId)).delete();
+}
+
+const CONFIRM_WORDS = /^(yes|yeah|yep|go ahead|do it|confirm|ok|okay|sure|yup|absolutely|correct|send it|do that)$/i;
+
+export async function runAssistant(userMessage: string, chatId: number): Promise<string> {
+  // ─── Check for a pending confirmation ────────────────────────────────────────
+  if (CONFIRM_WORDS.test(userMessage.trim())) {
+    const pending = await getPending(chatId);
+    if (pending) {
+      await clearPending(chatId);
+      const result = await executeTool(pending.toolName, pending.toolArgs);
+      return result;
+    }
+  }
+
+  // If user says no / cancel, clear any pending action
+  if (/^(no|nope|cancel|never mind|forget it|don't|stop)$/i.test(userMessage.trim())) {
+    const pending = await getPending(chatId);
+    if (pending) {
+      await clearPending(chatId);
+      return `OK, cancelled. ${pending.description} — not sent.`;
+    }
+  }
   const messages: OpenAI.Chat.ChatCompletionMessageParam[] = [
     {
       role: 'system',
       content: `You are an AI business assistant for CrftdWeb, a web design agency based in Bristol, UK. You help the founder Obi manage his business operations via Telegram.
 
-Be concise, friendly, and use British English. When listing data, format it clearly. When taking actions, confirm exactly what you did. If something is ambiguous, ask a clarifying question before acting.
+Be concise, friendly, and use British English. When listing data, format it clearly. If something is ambiguous, ask a clarifying question before acting.
+
+IMPORTANT — confirmation rule: Before calling any tool that sends an email, changes data, or takes an action (send_offer, send_booking_link, send_no_show_email, send_offer_reminder, send_trial_reminder, change_applicant_status), you MUST first call request_confirmation with a plain-English description of what you're about to do. NEVER call action tools directly without confirmation first. Read-only tools (get_business_summary, list_applicants, list_reps) do NOT need confirmation.
 
 Today is ${new Date().toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}.
 
@@ -289,6 +361,22 @@ The sales rep pipeline order is: pending → email_sent → booked → screened 
     for (const toolCall of aiMessage.tool_calls) {
       if (toolCall.type !== 'function') continue;
       const args = JSON.parse(toolCall.function.arguments || '{}') as Record<string, unknown>;
+
+      // Intercept request_confirmation — store the pending action instead of executing
+      if (toolCall.function.name === 'request_confirmation') {
+        await setPending(chatId, {
+          toolName: args.tool_to_run as string,
+          toolArgs: args.tool_args as Record<string, unknown>,
+          description: args.description as string,
+        });
+        messages.push({
+          role: 'tool',
+          tool_call_id: toolCall.id,
+          content: `Confirmation stored. Tell the user: "${args.description} — shall I go ahead?"`,
+        });
+        continue;
+      }
+
       const result = await executeTool(toolCall.function.name, args);
       messages.push({
         role: 'tool',
