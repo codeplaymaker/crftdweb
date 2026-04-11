@@ -5,7 +5,7 @@ import { adminDb } from '@/lib/firebase/admin';
 import { randomBytes } from 'crypto';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-const BASE_URL = 'https://crftdweb.com';
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://crftdweb.com';
 
 function buildHtml(name: string, bookingUrl: string): string {
   const firstName = name.split(' ')[0];

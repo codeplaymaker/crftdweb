@@ -85,7 +85,6 @@ I'd like to book a quick 15-minute call to have a chat. Are you free any time th
 
 Just reply with a couple of times that work for you and we'll get something in the diary.
 
-Obi
 CrftdWeb · crftdweb.com`;
 
 export async function sendScreeningInvite(name: string, email: string): Promise<{ success: boolean; error?: string }> {
@@ -101,7 +100,7 @@ export async function sendScreeningInvite(name: string, email: string): Promise<
     await resend.emails.send({
       from: 'CrftdWeb <admin@crftdweb.com>',
       to: [email],
-      subject: "CrftdWeb - Let's book a call",
+      subject: "CrftdWeb \u2014 Let's book a call",
       html: buildHtml(name),
       text: plainText(name),
     });

@@ -24,10 +24,10 @@ function buildHtml(name: string, repEmail: string, tempPassword: string): string
           <td style="background:#ffffff;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 12px 12px;padding:40px;">
             <p style="margin:0 0 16px;font-size:16px;color:#111;font-weight:600;">Hi ${firstName},</p>
             <p style="margin:0 0 16px;font-size:15px;color:#444;line-height:1.7;">
-              Great news — you've been approved as a CrftdWeb sales rep. Welcome to the team.
+              You&rsquo;re officially on the team. Welcome to <strong>CrftdWeb</strong>.
             </p>
             <p style="margin:0 0 24px;font-size:15px;color:#444;line-height:1.7;">
-              Your rep portal is ready. Log in with the credentials below, then complete the training modules before you start outreach.
+              Your rep portal is ready. Log in with the credentials below, then read the onboarding pack to get started.
             </p>
             <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 28px;">
               <tr><td style="background:#f9f9f9;border:1px solid #e8e8e8;border-radius:10px;padding:20px 24px;">
@@ -86,6 +86,7 @@ export async function sendLoginDetails(
       to: [repEmail],
       subject: `Welcome to CrftdWeb, ${name.split(' ')[0]}!`,
       html: buildHtml(name, repEmail, tempPassword),
+      text: `Hi ${name.split(' ')[0]},\n\nYou're officially on the team. Welcome to CrftdWeb.\n\nYour rep portal is ready. Log in with these credentials:\n\nEmail: ${repEmail}\nTemp password: ${tempPassword}\n\nLog in at: ${BASE_URL}/rep/signin\n\nReference Documents:\n- Onboarding Pack: ${BASE_URL}/rep-onboarding-pack.html\n- Contractor Agreement: ${BASE_URL}/docs/rep-contractor-agreement.html\n\nChange your password after your first login.\n\nCrftdWeb · crftdweb.com`,
     });
     return { success: true };
   } catch (err) {

@@ -5,7 +5,7 @@ import { adminDb } from '@/lib/firebase/admin';
 import { randomBytes } from 'crypto';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-const BASE_URL = 'https://crftdweb.com';
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://crftdweb.com';
 
 function buildHtml(name: string, bookingUrl: string): string {
   return `<!DOCTYPE html>
@@ -73,10 +73,8 @@ function buildHtml(name: string, bookingUrl: string): string {
 
 const plainText = (name: string, bookingUrl: string) => `Hi ${name},
 
-Really good work on the task — exactly the kind of thinking I'm looking for.
-
-I'd like to book a quick 15-minute call. Pick a time here:
-${bookingUrl}
+I'd like to book a quick 15-minute call to have a chat.
+Pick a time here: ${bookingUrl}
 
 If none of the times work, just reply and we'll sort something.
 

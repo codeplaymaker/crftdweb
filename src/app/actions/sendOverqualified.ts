@@ -59,8 +59,9 @@ export async function sendOverqualified(
     const { error } = await resend.emails.send({
       from: 'CrftdWeb <admin@crftdweb.com>',
       to: recipientEmail,
-      subject: `Re: CrftdWeb rep application`,
+      subject: `CrftdWeb \u2014 Your application update`,
       html: buildHtml(firstName),
+      text: `Hi ${firstName},\n\nThanks for applying \u2014 I appreciate you taking the time.\n\nWe had a high volume of applicants this round and unfortunately aren\u2019t able to move everyone forward. It\u2019s not a reflection of your ability \u2014 we just had some tough decisions to make.\n\nThanks again and best of luck with what\u2019s next.\n\nCrftdWeb \u00b7 crftdweb.com`,
     });
 
     if (error) return { success: false, error: error.message };

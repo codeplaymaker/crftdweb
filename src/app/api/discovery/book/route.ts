@@ -84,7 +84,7 @@ function adminNotifyHtml(contactName: string, contactEmail: string, label: strin
               <td style="font-size:13px;color:#666;"><strong style="color:#111;">Booked by rep:</strong> ${repName}</td>
             </tr>
           </table>
-          <p style="margin:0;font-size:13px;color:#999;">View all bookings at <a href="https://www.crftdweb.com/admin/calendar" style="color:#111;">crftdweb.com/admin/calendar</a></p>
+          <p style="margin:0;font-size:13px;color:#999;">View all bookings at <a href="https://crftdweb.com/admin/calendar" style="color:#111;">crftdweb.com/admin/calendar</a></p>
         </td></tr>
       </table>
     </td></tr>

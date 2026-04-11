@@ -10,7 +10,7 @@ import type { Business, AuditResult, Preview } from './types';
 const RESEND_API_KEY = process.env.RESEND_API_KEY || '';
 const FROM_EMAIL = process.env.OUTREACH_FROM_EMAIL || 'hello@crftdweb.com';
 const REPLY_TO = process.env.OUTREACH_REPLY_TO || 'hello@crftdweb.com';
-const CALENDLY_LINK = process.env.CALENDLY_LINK || 'https://calendly.com/crftdweb/intro';
+const BOOKING_LINK = process.env.BOOKING_LINK || 'https://crftdweb.com/#contact';
 
 function buildEmailHtml(business: Business, audit: AuditResult, preview: Preview): string {
   const firstName = business.name.split(' ')[0];
@@ -74,7 +74,7 @@ function buildEmailHtml(business: Business, audit: AuditResult, preview: Preview
 
       <p>If you like what you see, happy to jump on a quick 15-min call:</p>
       <p style="text-align: center; margin: 24px 0;">
-        <a href="${CALENDLY_LINK}" class="btn-outline">Book a Free Call</a>
+        <a href="${BOOKING_LINK}" class="btn-outline">Book a Free Call</a>
       </p>
 
       <p class="muted">
@@ -101,7 +101,7 @@ We built a free preview of what an upgraded version could look like:
 ${preview.previewUrl}
 
 If you're interested, book a free 15-min call:
-${CALENDLY_LINK}
+${BOOKING_LINK}
 
 — CrftdWeb Team
 Websites that sell, not just look good.`;
@@ -132,7 +132,7 @@ export async function sendOutreachEmail(
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      from: FROM_EMAIL,
+      from: `CrftdWeb <${FROM_EMAIL}>`,
       to: recipientEmail,
       reply_to: REPLY_TO,
       subject: `${business.name} — your site scored ${audit.performanceScore}/100 (free preview inside)`,

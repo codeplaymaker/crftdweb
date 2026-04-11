@@ -7,6 +7,10 @@ import { FieldValue } from 'firebase-admin/firestore';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+function escapeHtml(str: string): string {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
 export async function sendEmail(formData: FormData) {
   const name = formData.get('name') as string;
   const email = formData.get('email') as string;
@@ -62,19 +66,20 @@ export async function sendEmail(formData: FormData) {
 
   try {
     await resend.emails.send({
-      from: 'admin@crftdweb.com',
+      from: 'CrftdWeb <admin@crftdweb.com>',
       to: ['admin@crftdweb.com'],
       replyTo: email,
       subject: `New Contact Form Submission: ${subject || 'Website Enquiry'}${repName ? ` (Ref: ${repName})` : ''}`,
       html: `
 <h2>New Contact Form Submission</h2>
-<p><strong>Name:</strong> ${name}</p>
-<p><strong>Email:</strong> ${email}</p>
-${subject ? `<p><strong>Subject:</strong> ${subject}</p>` : ''}
-${repName ? `<p><strong>Referred by:</strong> ${repName}</p>` : ''}
+<p><strong>Name:</strong> ${escapeHtml(name)}</p>
+<p><strong>Email:</strong> ${escapeHtml(email)}</p>
+${subject ? `<p><strong>Subject:</strong> ${escapeHtml(subject)}</p>` : ''}
+${repName ? `<p><strong>Referred by:</strong> ${escapeHtml(repName)}</p>` : ''}
 <h3>Message:</h3>
-<p>${message.replace(/\n/g, '<br>')}</p>
+<p>${escapeHtml(message).replace(/\n/g, '<br>')}</p>
       `,
+      text: `New Contact Form Submission\n\nName: ${name}\nEmail: ${email}\n${subject ? `Subject: ${subject}\n` : ''}${repName ? `Referred by: ${repName}\n` : ''}\nMessage:\n${message}`,
     });
 
     return { success: true };
