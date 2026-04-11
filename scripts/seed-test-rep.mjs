@@ -63,6 +63,7 @@ async function run() {
     tier: 'rep',
     careerRank: 'silver',
     commissionRate: 0,
+    refSlug: 'testrep',
     notes: 'Test rep account — delete after review',
     joinedAt: FieldValue.serverTimestamp(),
   });

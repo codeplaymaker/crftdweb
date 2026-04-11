@@ -371,6 +371,7 @@ export interface RepProfile {
   phone: string;
   status: 'active' | 'inactive';
   tier?: RepTier;
+  refSlug?: string; // e.g. 'jordan' — used in referral links
   careerRank?: CareerRank; // Bronze→Dragon (7-rank system)
   commissionRate: number; // percentage e.g. 15 — legacy fallback
   joinedAt: Timestamp;

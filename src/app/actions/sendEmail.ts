@@ -25,16 +25,23 @@ export async function sendEmail(formData: FormData) {
 
   if (repRef) {
     try {
-      const repDoc = await adminDb.collection('reps').doc(repRef).get();
-      if (repDoc.exists) {
+      // Try slug lookup first, fall back to UID for legacy links
+      const slugSnap = await adminDb.collection('reps').where('refSlug', '==', repRef).limit(1).get();
+      let repDoc = slugSnap.docs[0] ?? null;
+      if (!repDoc) {
+        const uidDoc = await adminDb.collection('reps').doc(repRef).get();
+        if (uidDoc.exists) repDoc = uidDoc as typeof slugSnap.docs[0];
+      }
+      if (repDoc?.exists) {
         const repData = repDoc.data();
         repName = repData?.name || '';
+        const repUid = repData?.uid || repDoc.id;
 
         // Auto-create lead for the rep
         const leadRef = adminDb.collection('repLeads').doc();
         await leadRef.set({
           id: leadRef.id,
-          repId: repRef,
+          repId: repUid,
           repName,
           businessName: '',
           contactName: name,

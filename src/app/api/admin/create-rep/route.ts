@@ -28,6 +28,18 @@ export async function POST(req: NextRequest) {
 
     const uid = userRecord.uid;
 
+    // Generate unique refSlug from first name
+    const firstName = name.split(' ')[0].toLowerCase().replace(/[^a-z]/g, '');
+    let refSlug = firstName;
+    const existing = await adminDb.collection('reps').where('refSlug', '==', refSlug).get();
+    if (!existing.empty) {
+      let counter = 2;
+      while (!(await adminDb.collection('reps').where('refSlug', '==', `${firstName}${counter}`).get()).empty) {
+        counter++;
+      }
+      refSlug = `${firstName}${counter}`;
+    }
+
     // Create rep profile in Firestore
     await adminDb.collection('reps').doc(uid).set({
       uid,
@@ -37,6 +49,7 @@ export async function POST(req: NextRequest) {
       status: 'active',
       careerRank: 'bronze',
       commissionRate: 0,
+      refSlug,
       notes: notes || '',
       joinedAt: FieldValue.serverTimestamp(),
     });

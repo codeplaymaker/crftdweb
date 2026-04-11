@@ -14,9 +14,9 @@ export function middleware(request: NextRequest) {
     }
   }
 
-  // Capture rep referral param
+  // Capture rep referral param (supports slug like 'jordan' or legacy uid)
   const ref = searchParams.get('ref');
-  if (ref && /^[a-zA-Z0-9]{10,40}$/.test(ref)) {
+  if (ref && /^[a-zA-Z0-9]{2,40}$/.test(ref)) {
     const response = NextResponse.next();
     response.cookies.set('rep_ref', ref, {
       maxAge: 60 * 60 * 24 * 30, // 30 days

@@ -34,7 +34,9 @@ export default function RepDashboard() {
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  const referralLink = user ? `https://www.crftdweb.com?ref=${user.uid}` : '';
+  const referralLink = profile?.refSlug
+    ? `https://www.crftdweb.com?ref=${profile.refSlug}`
+    : user ? `https://www.crftdweb.com?ref=${user.uid}` : '';
 
   useEffect(() => {
     if (!user) return;

@@ -37,7 +37,7 @@ export const CAREER_RANKS: Record<CareerRank, RankInfo> = {
     key: 'gold',
     label: 'Gold',
     emoji: '🥇',
-    requirement: '1 booked call + 2 weeks activity',
+    requirement: '1 booked discovery call',
     unlock: 'Warm inbound leads',
     commissionRates: { starter: 22, launch: 17, growth: 14, scale: 12 },
   },

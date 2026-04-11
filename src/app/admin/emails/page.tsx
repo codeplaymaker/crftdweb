@@ -203,17 +203,16 @@ function buildOfferHtml(name: string): string {
       <tr><td style="background:#ffffff;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 12px 12px;padding:40px;">
         <p style="margin:0 0 16px;font-size:16px;color:#111;font-weight:600;">Hi ${firstName},</p>
         <p style="margin:0 0 16px;font-size:15px;color:#444;line-height:1.7;">Great news &mdash; we&rsquo;d like to offer you a position as a <strong style="color:#111;">CrftdWeb Sales Representative</strong>.</p>
-        <p style="margin:0 0 24px;font-size:15px;color:#444;line-height:1.7;">Before you accept, please review the documents below so you know exactly how the role works:</p>
+        <p style="margin:0 0 24px;font-size:15px;color:#444;line-height:1.7;">Before you accept, please review the contractor agreement so you know exactly how the role works:</p>
         <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px;"><tr><td style="background:#f9f9f9;border:1px solid #e8e8e8;border-radius:10px;padding:20px 24px;">
           <p style="margin:0 0 12px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#999;">Review Before Accepting</p>
-          <p style="margin:4px 0;"><a href="https://crftdweb.com/rep-onboarding-pack.html" style="font-size:14px;color:#111;font-weight:600;text-decoration:none;">📋 Onboarding Pack</a> <span style="font-size:13px;color:#888;"> &mdash; role, commission, career progression</span></p>
           <p style="margin:4px 0;"><a href="https://crftdweb.com/docs/rep-contractor-agreement.html" style="font-size:14px;color:#111;font-weight:600;text-decoration:none;">📄 Contractor Agreement</a> <span style="font-size:13px;color:#888;"> &mdash; legal terms, commission structure</span></p>
         </td></tr></table>
         <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 12px;"><tr><td style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:16px 20px;">
           <p style="margin:0 0 4px;font-size:12px;color:#166534;font-weight:700;">Commission Structure</p>
-          <p style="margin:0;font-size:13px;color:#15803d;line-height:1.6;">Rank-based commission from 10&ndash;35% per closed deal. You start at Bronze (trial) and unlock Silver (10&ndash;20%) after your first close. Full breakdown in the Onboarding Pack.</p>
+          <p style="margin:0;font-size:13px;color:#15803d;line-height:1.6;">Commission ranges from 10&ndash;35% per closed deal, based on your career rank. Complete training to activate your first earning tier &mdash; full breakdown provided once you&rsquo;re onboard.</p>
         </td></tr></table>
-        <p style="margin:0 0 28px;font-size:14px;color:#666;line-height:1.7;">By clicking <strong>Accept</strong>, you confirm you&rsquo;ve read both documents and agree to the contractor agreement terms.</p>
+        <p style="margin:0 0 28px;font-size:14px;color:#666;line-height:1.7;">By clicking <strong>Accept</strong>, you confirm you&rsquo;ve read the contractor agreement and agree to its terms.</p>
         <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 28px;"><tr><td align="center">
           <table cellpadding="0" cellspacing="0"><tr>
             <td style="background:#111;border-radius:8px;"><a href="${acceptUrl}" style="display:inline-block;padding:14px 32px;font-size:15px;font-weight:700;color:#ffffff;text-decoration:none;">Accept Offer &rarr;</a></td>
@@ -290,7 +289,7 @@ const EMAIL_SEND_TEMPLATES = [
     id: 'offer',
     label: 'Job Offer',
     subject: "CrftdWeb — You've been selected",
-    description: 'Sends the 72h accept/decline offer email with onboarding pack and contractor agreement links.',
+    description: 'Sends the 72h accept/decline offer email with contractor agreement link.',
     color: 'border-amber-500/30 bg-amber-500/5',
     activeColor: 'border-amber-500 bg-amber-500/15',
     labelColor: 'text-amber-400',

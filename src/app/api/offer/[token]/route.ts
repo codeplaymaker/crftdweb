@@ -28,7 +28,7 @@ function buildOnboardingEmail(name: string, email: string, tempPassword: string)
               You&rsquo;re officially on the team. Welcome to CrftdWeb.
             </p>
             <p style="margin:0 0 24px;font-size:15px;color:#444;line-height:1.7;">
-              Your rep portal is ready. Log in with the credentials below, complete the training modules, then start your outreach.
+              Your rep portal is ready. Log in with the credentials below, then read the onboarding pack to get started.
             </p>
             <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 28px;">
               <tr><td style="background:#f9f9f9;border:1px solid #e8e8e8;border-radius:10px;padding:20px 24px;">
@@ -37,12 +37,31 @@ function buildOnboardingEmail(name: string, email: string, tempPassword: string)
                 <p style="margin:0;font-size:14px;color:#444;"><strong style="color:#111;">Temp password:</strong> <span style="font-family:monospace;font-size:15px;letter-spacing:1px;color:#111;">${tempPassword}</span></p>
               </td></tr>
             </table>
-            <table cellpadding="0" cellspacing="0" style="margin:0 0 28px;">
+            <table cellpadding="0" cellspacing="0" style="margin:0 0 20px;">
               <tr>
                 <td style="background:#111;border-radius:8px;">
                   <a href="${loginUrl}" style="display:inline-block;padding:14px 28px;font-size:15px;font-weight:700;color:#ffffff;text-decoration:none;">Log in to your portal &rarr;</a>
                 </td>
               </tr>
+            </table>
+            <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 28px;">
+              <tr><td style="background:#f9f9f9;border:1px solid #e8e8e8;border-radius:10px;padding:20px 24px;">
+                <p style="margin:0 0 12px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#999;">Reference Documents</p>
+                <table cellpadding="0" cellspacing="0" style="margin:0;">
+                  <tr>
+                    <td style="padding:4px 0;">
+                      <a href="${BASE_URL}/rep-onboarding-pack.html" style="font-size:14px;color:#111;font-weight:600;text-decoration:none;">📋 Onboarding Pack</a>
+                      <span style="font-size:13px;color:#888;"> &mdash; role, commission, scripts, Day 1 schedule</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding:4px 0;">
+                      <a href="${BASE_URL}/docs/rep-contractor-agreement.html" style="font-size:14px;color:#111;font-weight:600;text-decoration:none;">📄 Contractor Agreement</a>
+                      <span style="font-size:13px;color:#888;"> &mdash; legal terms</span>
+                    </td>
+                  </tr>
+                </table>
+              </td></tr>
             </table>
             <p style="margin:0 0 24px;font-size:13px;color:#999;line-height:1.6;">
               Change your password after your first login. Reply to this email if you have any questions.
@@ -144,6 +163,18 @@ export async function POST(
           displayName: data.applicantName,
         });
 
+        // Generate unique refSlug from first name
+        const firstName = data.applicantName.split(' ')[0].toLowerCase().replace(/[^a-z]/g, '');
+        let refSlug = firstName;
+        const existing = await adminDb.collection('reps').where('refSlug', '==', refSlug).get();
+        if (!existing.empty) {
+          let counter = 2;
+          while (!(await adminDb.collection('reps').where('refSlug', '==', `${firstName}${counter}`).get()).empty) {
+            counter++;
+          }
+          refSlug = `${firstName}${counter}`;
+        }
+
         await adminDb.collection('reps').doc(userRecord.uid).set({
           uid: userRecord.uid,
           name: data.applicantName,
@@ -152,6 +183,7 @@ export async function POST(
           status: 'active',
           careerRank: 'bronze',
           commissionRate: 0,
+          refSlug,
           notes: '',
           joinedAt: FieldValue.serverTimestamp(),
         });
