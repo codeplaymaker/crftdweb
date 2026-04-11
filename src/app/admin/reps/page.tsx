@@ -249,7 +249,7 @@ const steps: Step[] = [
             },
             {
               title: 'Set expectations — out loud',
-              desc: 'Commission is tiered: 20% on Starter, 15% on Launch, 12% on Growth, 10% on Scale. Paid within 7 days of client payment clearing. No retainer, no salary, no expenses. They log every prospect in the portal. If they miss a week without contact, they\'re off the team.',
+              desc: 'Commission is rank-based: Bronze (trial, 0%) → Silver (10–20%) → Gold → Diamond → Closer → Master → Dragon (22–35%). Paid within 7 days of client deposit. No retainer, no salary, no expenses. They log every prospect in the portal. If they miss a week without contact, they\'re off the team.',
               accent: 'text-rose-400',
             },
           ].map((item, i) => (

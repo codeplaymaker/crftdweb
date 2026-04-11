@@ -150,6 +150,7 @@ export async function POST(
           email: data.applicantEmail,
           phone,
           status: 'trial',
+          careerRank: 'bronze',
           commissionRate: 20,
           notes: '',
           joinedAt: FieldValue.serverTimestamp(),

@@ -55,7 +55,7 @@ function buildHtml(name: string, acceptUrl: string, declineUrl: string): string 
               <tr><td style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:16px 20px;">
                 <p style="margin:0 0 4px;font-size:12px;color:#166534;font-weight:700;">Commission Structure</p>
                 <p style="margin:0;font-size:13px;color:#15803d;line-height:1.6;">
-                  20% on Starter (£997) · 15% on Launch (£2,497) · 12% on Growth (£4,997) · 10% on Scale (£9,997+)
+                  Rank-based commission from 10&ndash;35% per closed deal. You start at Bronze (trial) and unlock Silver (10&ndash;20%) after your first close. Full breakdown in the Onboarding Pack.
                 </p>
               </td></tr>
             </table>
@@ -113,7 +113,7 @@ Before you accept, please review:
 1. Onboarding Pack — ${BASE_URL}/rep-onboarding-pack.html
 2. Contractor Agreement — ${BASE_URL}/docs/rep-contractor-agreement.html
 
-Commission: 20% on Starter (£997) · 15% on Launch (£2,497) · 12% on Growth (£4,997) · 10% on Scale (£9,997+)
+Commission: Rank-based, 10-35% per closed deal. You start at Bronze (trial) and unlock Silver (10-20%) after your first close. Full breakdown in the Onboarding Pack.
 
 Accept: ${acceptUrl}
 Decline: ${declineUrl}

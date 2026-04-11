@@ -211,7 +211,7 @@ function buildOfferHtml(name: string): string {
         </td></tr></table>
         <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 12px;"><tr><td style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:16px 20px;">
           <p style="margin:0 0 4px;font-size:12px;color:#166534;font-weight:700;">Commission Structure</p>
-          <p style="margin:0;font-size:13px;color:#15803d;line-height:1.6;">20% on Starter (£997) · 15% on Launch (£2,497) · 12% on Growth (£4,997) · 10% on Scale (£9,997+)</p>
+          <p style="margin:0;font-size:13px;color:#15803d;line-height:1.6;">Rank-based commission from 10&ndash;35% per closed deal. You start at Bronze (trial) and unlock Silver (10&ndash;20%) after your first close. Full breakdown in the Onboarding Pack.</p>
         </td></tr></table>
         <p style="margin:0 0 28px;font-size:14px;color:#666;line-height:1.7;">By clicking <strong>Accept</strong>, you confirm you&rsquo;ve read both documents and agree to the contractor agreement terms.</p>
         <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 28px;"><tr><td align="center">
