@@ -130,7 +130,7 @@ const SOURCING_CHANNELS = [
     steps: [
       'Open Google Maps. Search "[industry] near [city]", e.g. "restaurants near Bristol", "barbers near Leeds", "dentists near Manchester".',,
       'Click each result. Check their website link. If it\'s slow, ugly, not mobile-friendly, or missing entirely, they\'re a prospect.',
-      'Run their URL through Google PageSpeed Insights (pagespeed.web.dev). Screenshot the score, you\'ll use this in your outreach.',
+      'Run their URL through the Site Audit tool in your portal (or Google PageSpeed at pagespeed.web.dev). Screenshot the score — you\'ll use this in your outreach.',
       'Note down: business name, phone number, website URL, owner name (check "About" page or Google listing).',
       'Call them directly using the cold call script, or find their Instagram/Facebook for a DM approach.',
     ],
@@ -287,10 +287,10 @@ Worth a quick chat? No pressure either way.`,
 
 const DAILY_ROUTINE = [
   { time: '30 mins', task: 'Source 20 prospects', detail: 'Google Maps + Instagram. Build your list for the day. Name, phone/DM, website URL, notes.' },
-  { time: '60 mins', task: 'Outreach block 1: Calls', detail: '10-15 cold calls from your list. Use the script. Log every call in the portal immediately.' },
+  { time: '60 mins', task: 'Outreach block 1: Calls', detail: '10-15 cold calls from your list. Use the script. Add every prospect to your leads immediately.' },
   { time: '45 mins', task: 'Outreach block 2: DMs', detail: '10-15 Instagram/Facebook DMs. Personalise each one. No copy-paste blasts.' },
   { time: '15 mins', task: 'Follow-ups', detail: 'Chase yesterday\'s warm leads. Second touch converts more than first. Send the follow-up email template.' },
-  { time: '10 mins', task: 'Log and review', detail: 'Update all leads in the portal. Check your numbers: 20 outreaches hit? Calls booked? Notes added?' },
+  { time: '10 mins', task: 'Log and review', detail: 'Update all leads in the portal. Leads added? Calls booked? Notes updated? Keep your pipeline clean.' },
 ];
 
 function CopyButton({ text }: { text: string }) {
@@ -388,6 +388,18 @@ export default function RepResourcesPage() {
         <p className="text-sm text-white/30 mt-0.5">Everything you need to work a lead end to end.</p>
       </div>
 
+      {/* Quick links to portal tools */}
+      <div className="grid grid-cols-2 gap-3">
+        <a href="/rep/audit" className="bg-white/[0.03] border border-white/8 rounded-xl p-4 hover:bg-white/[0.05] transition-colors group">
+          <p className="text-sm font-semibold text-white/70 group-hover:text-white/90">🔍 Site Audit</p>
+          <p className="text-xs text-white/30 mt-0.5">Run a free audit on any prospect&apos;s website</p>
+        </a>
+        <a href="/rep/call" className="bg-white/[0.03] border border-white/8 rounded-xl p-4 hover:bg-white/[0.05] transition-colors group">
+          <p className="text-sm font-semibold text-white/70 group-hover:text-white/90">📞 Live Call Assistant</p>
+          <p className="text-xs text-white/30 mt-0.5">AI-powered guidance during discovery calls</p>
+        </a>
+      </div>
+
       {/* Commission calculator */}
       <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-6">
         <p className="text-xs font-bold text-white/30 uppercase tracking-widest mb-4">Commission Calculator</p>
@@ -412,8 +424,8 @@ export default function RepResourcesPage() {
       {/* Daily targets */}
       <div className="grid grid-cols-5 gap-3">
         {[
-          { num: '50', label: 'Outreaches / day' },
-          { num: '20', label: 'Calls / day' },
+          { num: '20', label: 'Prospects / day' },
+          { num: '10–15', label: 'Calls / day' },
           { num: '2–3', label: 'Booked / wk' },
           { num: '1–2', label: 'Closed / mo' },
           { num: '£199+', label: 'Commission / close' },
@@ -457,7 +469,7 @@ export default function RepResourcesPage() {
       {/* ═══ DAILY ROUTINE ═══ */}
       <div>
         <p className="text-xs font-bold text-white/30 uppercase tracking-widest mb-1">Your Daily Routine</p>
-        <p className="text-xs text-white/20 mb-5 italic">2.5 hours of focused work. Do this consistently and you&apos;ll close 1 deal/week minimum.</p>
+        <p className="text-xs text-white/20 mb-5 italic">2.5 hours of focused work. Do this consistently and you&apos;ll build a pipeline that closes deals every month.</p>
         <div className="space-y-2">
           {DAILY_ROUTINE.map((item, i) => (
             <div key={i} className="flex items-start gap-4 bg-white/[0.02] border border-white/8 rounded-xl p-4">
@@ -472,7 +484,7 @@ export default function RepResourcesPage() {
           ))}
           <div className="bg-emerald-500/5 border border-emerald-500/15 rounded-xl p-4 mt-2">
             <p className="text-xs text-emerald-400/70 leading-relaxed">
-              <span className="font-bold text-emerald-400">The maths:</span> 50 outreaches/day × 5 days = 250/week. 20 calls/day = 100 calls/week. At a 2–3% booking rate = 2–3 booked calls. Convert 1 in 2 → 1–2 closed clients/month. One Starter deal = £199 commission. Consistency beats intensity.
+              <span className="font-bold text-emerald-400">The maths:</span> 20 prospects/day × 5 days = 100/week. 10–15 calls/day + 10–15 DMs/day. At a 2–3% booking rate = 2–3 booked calls/week. Convert 1 in 2 → 1–2 closed clients/month. One Starter deal = £199 commission. Consistency beats intensity.
             </p>
           </div>
         </div>
