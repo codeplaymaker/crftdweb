@@ -92,7 +92,7 @@ export default function RepLeadsPage() {
         const avg = stats?.averageScore ?? 0;
         const sessions = stats?.totalSessions ?? 0;
         setLockInfo({ avgScore: avg, totalSessions: sessions });
-        setTrainingLocked(!(avg >= 60 && sessions >= 10));
+        setTrainingLocked(!(Math.round(avg) >= 60 && sessions >= 10));
       })
       .catch(console.error)
       .finally(() => setLoading(false));
