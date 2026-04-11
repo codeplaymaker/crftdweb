@@ -103,7 +103,7 @@ function RepLayoutInner({ children }: { children: React.ReactNode }) {
             <p className="text-xs font-semibold text-white/80 truncate">{user?.displayName ?? 'Rep'}</p>
             <p className="text-[10px] text-white/30 truncate">{user?.email}</p>
             {repProfile && (() => {
-              const rank = (repProfile as Record<string, unknown>).careerRank as CareerRank | undefined;
+              const rank = repProfile.careerRank;
               const info = CAREER_RANKS[rank || 'bronze'];
               return (
                 <p className="text-[10px] mt-1 font-medium truncate text-emerald-400">
@@ -151,7 +151,7 @@ function RepLayoutInner({ children }: { children: React.ReactNode }) {
             <LogOut className="w-4 h-4" />
             Sign out
             {repProfile && (() => {
-              const rank = (repProfile as Record<string, unknown>).careerRank as CareerRank | undefined;
+              const rank = repProfile.careerRank;
               const info = CAREER_RANKS[rank || 'bronze'];
               return (
                 <span className="ml-auto text-[10px] font-medium text-emerald-400">

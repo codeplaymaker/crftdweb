@@ -1004,16 +1004,16 @@ function ManagementTab() {
                       </select>
                     </span>
                     <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
-                      (rep as Record<string, unknown>).careerRank === 'dragon' ? 'text-red-400 bg-red-500/10 border-red-500/20' :
-                      (rep as Record<string, unknown>).careerRank === 'master' ? 'text-orange-400 bg-orange-500/10 border-orange-500/20' :
-                      (rep as Record<string, unknown>).careerRank === 'closer' ? 'text-purple-400 bg-purple-500/10 border-purple-500/20' :
-                      (rep as Record<string, unknown>).careerRank === 'diamond' ? 'text-cyan-400 bg-cyan-500/10 border-cyan-500/20' :
-                      (rep as Record<string, unknown>).careerRank === 'gold' ? 'text-yellow-400 bg-yellow-500/10 border-yellow-500/20' :
-                      (rep as Record<string, unknown>).careerRank === 'silver' ? 'text-slate-300 bg-slate-400/10 border-slate-400/20' :
+                      rep.careerRank === 'dragon' ? 'text-red-400 bg-red-500/10 border-red-500/20' :
+                      rep.careerRank === 'master' ? 'text-orange-400 bg-orange-500/10 border-orange-500/20' :
+                      rep.careerRank === 'closer' ? 'text-purple-400 bg-purple-500/10 border-purple-500/20' :
+                      rep.careerRank === 'diamond' ? 'text-cyan-400 bg-cyan-500/10 border-cyan-500/20' :
+                      rep.careerRank === 'gold' ? 'text-yellow-400 bg-yellow-500/10 border-yellow-500/20' :
+                      rep.careerRank === 'silver' ? 'text-slate-300 bg-slate-400/10 border-slate-400/20' :
                       'text-amber-600 bg-amber-500/10 border-amber-500/20'
                     }`}>
                       <select
-                        value={((rep as Record<string, unknown>).careerRank as string) ?? 'bronze'}
+                        value={rep.careerRank ?? 'bronze'}
                         onChange={e => handleUpdateRep(rep.uid, 'careerRank', e.target.value)}
                         className="bg-transparent border-none outline-none cursor-pointer text-inherit text-[10px] font-bold"
                       >
