@@ -151,7 +151,7 @@ export async function POST(
           phone,
           status: 'trial',
           careerRank: 'bronze',
-          commissionRate: 20,
+          commissionRate: 0,
           notes: '',
           joinedAt: FieldValue.serverTimestamp(),
         });

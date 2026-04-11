@@ -523,24 +523,32 @@ PRICING PACKAGES
 All packages: 100% money-back guarantee, custom code (no WordPress/templates), free SSL, Vercel hosting, full client ownership.
 Payment: 50% deposit to start, 50% on launch. Site does not go live until final payment received.
 
-COMMISSION STRUCTURE (Tier 1 — Rep)
-- Starter (£997): 20% = £199 per deal
-- Launch (£2,497): 15% = £374 per deal
-- Growth (£4,997): 12% = £599 per deal
-- Scale (£9,997+): 10% = £999+ per deal
+COMMISSION STRUCTURE (rank-based)
+Commission depends on the rep's career rank and the package tier:
+- Bronze (trial): 0% — must complete training before earning commission
+- Silver: 20% Starter / 15% Launch / 12% Growth / 10% Scale
+- Gold: 22% / 17% / 14% / 12%
+- Diamond: 25% / 20% / 17% / 15%
+- Closer: 27% / 22% / 19% / 17%
+- Master: 30% / 25% / 22% / 20%
+- Dragon: 35% / 30% / 25% / 22%
 - Paid within 7 days of client deposit clearing, via bank transfer
 - Full commission paid even on payment plans; if client cancels before work starts, commission returned
 - No cap on commissions
 
-CAREER TIERS
-- Tier 1 Rep 🌱: Prospect, qualify, book calls. Commission 10–20% tiered.
-- Tier 2 Senior Rep 🏆: Handle warm leads, mentor reps. Commission 15–25%. Requires 3+ closed deals, consistent activity, 60+ training scores.
-- Tier 3 Closer 🦈: Full sales cycle, direct client contact. Commission 20–30%. Invite only.
-Progression is based on results, not time served. Some reps reach Senior in 4–6 weeks.
+CAREER RANKS (7 ranks)
+- 🥉 Bronze: Trial period. Complete training, prove activity. 0% commission.
+- 🥈 Silver: First closed deal. Commission 10–20%.
+- 🥇 Gold: 3+ closed deals, consistent activity. Commission 12–22%.
+- 💎 Diamond: 5+ deals, mentoring others. Commission 15–25%.
+- 🎯 Closer: 10+ deals, handles full sales cycle. Commission 17–27%.
+- 🔥 Master: 20+ deals, team leader. Commission 20–30%.
+- 🐉 Dragon: 50+ deals, £50k+ revenue generated. Commission 22–35%.
+Progression is based on results, not time served.
 
 REP SALES PIPELINE (statuses in order)
 pending → email_sent → booked → screened → offered → accepted
-After accepted: status = 'trial', commissionRate = 20 by default.
+After accepted: status = 'trial', careerRank = 'bronze' (0% commission until training complete).
 
 REP ROLE
 - Core job: Find businesses that need websites, qualify them, book 15-min discovery calls with CrftdWeb. Obi closes the deal.

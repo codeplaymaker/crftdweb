@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic';
 
 const CV_PROMPT = `You are a hiring assistant for CrftdWeb, a UK web design agency looking for commission-only sales reps who cold call small businesses to book website consultations.
 
-The role requires: picking up the phone, calling strangers, handling rejection, and booking calls. No base salary — 15% commission only. Reps need to be confident, persuasive, and resilient.
+The role requires: picking up the phone, calling strangers, handling rejection, and booking calls. No base salary — rank-based commission (10–35% depending on rank and package). Reps need to be confident, persuasive, and resilient.
 
 Analyse the CV and return a JSON object with these exact fields:
 

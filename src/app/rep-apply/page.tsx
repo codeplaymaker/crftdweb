@@ -97,12 +97,12 @@ export default function RepApplyPage() {
                 Apply to become a CrftdWeb Rep
               </h1>
               <p className="text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed">
-                Remote, commission-based, no ceiling. Sell high-quality websites and earn up to 20% per deal.
+                Remote, commission-based, no ceiling. Sell high-quality websites and earn up to 35% per deal.
               </p>
               <div className="flex flex-wrap justify-center gap-4 mt-6 text-sm text-muted-foreground">
                 <span>🏠 Fully remote</span>
-                <span>💸 20% commission on Starter</span>
-                <span>📈 Career progression</span>
+                <span>💸 Up to 35% commission</span>
+                <span>📈 7-rank career progression</span>
               </div>
             </div>
 
@@ -111,7 +111,7 @@ export default function RepApplyPage() {
               <ul className="space-y-1.5 text-sm text-muted-foreground">
                 <li className="flex items-start gap-2"><span className="mt-1 w-1 h-1 rounded-full bg-muted-foreground/50 shrink-0" />Reaching out to small businesses and startups that need a better website</li>
                 <li className="flex items-start gap-2"><span className="mt-1 w-1 h-1 rounded-full bg-muted-foreground/50 shrink-0" />Qualifying leads and booking them in for a discovery call</li>
-                <li className="flex items-start gap-2"><span className="mt-1 w-1 h-1 rounded-full bg-muted-foreground/50 shrink-0" />Earning commission on every project you close — from £199 to £999+</li>
+                <li className="flex items-start gap-2"><span className="mt-1 w-1 h-1 rounded-full bg-muted-foreground/50 shrink-0" />Earning commission on every project you close — from £199 to £2,199+</li>
               </ul>
             </div>
 
