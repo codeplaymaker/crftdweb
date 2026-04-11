@@ -389,7 +389,7 @@ export default function RepResourcesPage() {
     if (user) getRepProfile(user.uid).then(setProfile).catch(console.error);
   }, [user]);
 
-  const rank: CareerRank = (profile?.careerRank as CareerRank) || 'silver';
+  const rank: CareerRank = (profile?.careerRank as CareerRank) || 'bronze';
   const rankInfo = CAREER_RANKS[rank];
 
   const getCommissionRate = (val: number) => getCommissionRateForRank(rank, val) / 100;
@@ -432,7 +432,7 @@ export default function RepResourcesPage() {
           </div>
           <div className="text-right">
             <p className="text-2xl font-bold text-emerald-400">{commission !== null ? `£${commission.amount.toLocaleString()}` : '£—'}</p>
-            <p className="text-[10px] text-white/30">{commission !== null ? `${rankInfo.emoji} ${rankInfo.label} · ${commission.rate}%` : `${rankInfo.emoji} ${rankInfo.label} · ${rankInfo.commissionRates.scale}–${rankInfo.commissionRates.starter}%`}</p>
+            <p className="text-[10px] text-white/30">{rank === 'bronze' ? `${rankInfo.emoji} ${rankInfo.label} · In training` : `${rankInfo.emoji} ${rankInfo.label} · ${rankInfo.commissionRates.scale}–${rankInfo.commissionRates.starter}%`}</p>
           </div>
         </div>
       </div>

@@ -97,7 +97,8 @@ export default function RepDashboard() {
         <p className="text-sm text-white/40 mt-1">
           {new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' })}
           {' · '}{(() => {
-            const rank: CareerRank = (profile?.careerRank as CareerRank) || 'silver';
+            const rank: CareerRank = (profile?.careerRank as CareerRank) || 'bronze';
+            if (rank === 'bronze') return 'In training';
             const r = CAREER_RANKS[rank].commissionRates;
             return `${r.scale}–${r.starter}% commission`;
           })()} · paid within 7 days of deposit
@@ -124,11 +125,12 @@ export default function RepDashboard() {
 
       {/* Career Rank */}
       {(() => {
-        const rank: CareerRank = (profile?.careerRank as CareerRank) || 'silver';
+        const rank: CareerRank = (profile?.careerRank as CareerRank) || 'bronze';
         const rankInfo = CAREER_RANKS[rank];
         const nextRankKey = getNextRank(rank);
         const nextRank = nextRankKey ? CAREER_RANKS[nextRankKey] : null;
         const currentIdx = RANK_ORDER.indexOf(rank);
+        const isBronze = rank === 'bronze';
 
         return (
           <div className="bg-white/[0.03] border border-white/8 rounded-2xl p-5">
@@ -150,7 +152,7 @@ export default function RepDashboard() {
                 <p className="text-lg font-bold text-white">{rankInfo.label}</p>
                 <p className="text-xs text-white/40 mt-0.5">{rankInfo.unlock}</p>
                 <p className="text-[10px] text-white/25 mt-1">
-                  Commission: {rankInfo.commissionRates.starter}% Starter · {rankInfo.commissionRates.launch}% Launch · {rankInfo.commissionRates.growth}% Growth · {rankInfo.commissionRates.scale}% Scale
+                  {isBronze ? 'Complete training to unlock commission' : `Commission: ${rankInfo.commissionRates.starter}% Starter · ${rankInfo.commissionRates.launch}% Launch · ${rankInfo.commissionRates.growth}% Growth · ${rankInfo.commissionRates.scale}% Scale`}
                 </p>
               </div>
             </div>
@@ -183,11 +185,11 @@ export default function RepDashboard() {
         <p className="text-xs font-bold uppercase tracking-widest text-white/30 mb-3">Daily Target</p>
         <div className="grid grid-cols-5 gap-3 text-center">
           <div>
-            <p className="text-2xl font-bold text-white">50</p>
-            <p className="text-[11px] text-white/30 mt-0.5">Outreaches / day</p>
+            <p className="text-2xl font-bold text-white">20</p>
+            <p className="text-[11px] text-white/30 mt-0.5">Prospects / day</p>
           </div>
           <div>
-            <p className="text-2xl font-bold text-white">20</p>
+            <p className="text-2xl font-bold text-white">10–15</p>
             <p className="text-[11px] text-white/30 mt-0.5">Calls / day</p>
           </div>
           <div>
