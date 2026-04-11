@@ -134,16 +134,16 @@ export default function RepDashboard() {
         <p className="text-xs font-bold uppercase tracking-widest text-white/30 mb-3">Daily Target</p>
         <div className="grid grid-cols-3 gap-3 text-center">
           <div>
-            <p className="text-2xl font-bold text-white">10</p>
+            <p className="text-2xl font-bold text-white">20</p>
             <p className="text-[11px] text-white/30 mt-0.5">Calls / day</p>
           </div>
           <div>
-            <p className="text-2xl font-bold text-white">2–3</p>
+            <p className="text-2xl font-bold text-white">3–5</p>
             <p className="text-[11px] text-white/30 mt-0.5">Booked calls / week</p>
           </div>
           <div>
-            <p className="text-2xl font-bold text-emerald-400">1</p>
-            <p className="text-[11px] text-white/30 mt-0.5">Closed client / week</p>
+            <p className="text-2xl font-bold text-emerald-400">1–2</p>
+            <p className="text-[11px] text-white/30 mt-0.5">Closed clients / month</p>
           </div>
         </div>
       </div>
