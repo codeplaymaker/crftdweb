@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { adminAuth, adminDb } from '@/lib/firebase/admin';
 import { FieldValue } from 'firebase-admin/firestore';
 import { Resend } from 'resend';
+import { randomBytes } from 'crypto';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://crftdweb.com';
@@ -152,8 +153,8 @@ export async function POST(
       const phone = applicantDoc?.exists ? (applicantDoc.data()?.phone ?? '') : '';
 
       const tempPassword =
-        Math.random().toString(36).slice(-8) +
-        Math.random().toString(36).slice(-4).toUpperCase() +
+        randomBytes(6).toString('base64url') +
+        randomBytes(3).toString('base64url').toUpperCase() +
         '!7';
 
       try {
@@ -188,12 +189,23 @@ export async function POST(
           joinedAt: FieldValue.serverTimestamp(),
         });
 
-        await resend.emails.send({
+        const onboardingResult = await resend.emails.send({
           from: 'CrftdWeb <admin@crftdweb.com>',
           to: [data.applicantEmail],
           subject: `Welcome to CrftdWeb, ${data.applicantName.split(' ')[0]}!`,
           html: buildOnboardingEmail(data.applicantName, data.applicantEmail, tempPassword),
-        }).catch(() => {});
+          text: `Hi ${data.applicantName.split(' ')[0]},\n\nYou're officially on the team. Welcome to CrftdWeb.\n\nYour rep portal is ready. Log in with these credentials:\n\nEmail: ${data.applicantEmail}\nTemp password: ${tempPassword}\n\nLog in at: ${BASE_URL}/rep/signin\n\nReference Documents:\n- Onboarding Pack: ${BASE_URL}/rep-onboarding-pack.html\n- Contractor Agreement: ${BASE_URL}/docs/rep-contractor-agreement.html\n\nChange your password after your first login.\n\nCrftdWeb · crftdweb.com`,
+        }).catch((err: unknown) => {
+          console.error('Failed to send onboarding email:', err);
+          // Notify admin that the onboarding email failed so they can resend manually
+          resend.emails.send({
+            from: 'CrftdWeb <admin@crftdweb.com>',
+            to: ['admin@crftdweb.com'],
+            subject: `⚠️ Onboarding email failed for ${data.applicantName}`,
+            html: `<p>The onboarding email to <strong>${data.applicantName}</strong> (${data.applicantEmail}) failed to send.</p><p>Their account was created with temp password: <code>${tempPassword}</code></p><p>Please resend their login details manually from the Admin Emails page.</p>`,
+          }).catch(() => {});
+          return null;
+        });
       } catch {
         // Account may already exist — don't fail the response
       }

@@ -149,9 +149,23 @@ export async function sendOffer(
       text: plainText(name, acceptUrl, declineUrl),
     });
 
-    // Update applicant status to 'offered' only if we have an ID
-    if (applicantId) {
-      await adminDb.collection('applicants').doc(applicantId).set(
+    // Update applicant status to 'offered' — look up by email if no ID provided
+    let resolvedApplicantId = applicantId ?? null;
+    if (!resolvedApplicantId) {
+      const snap = await adminDb.collection('applicants')
+        .where('email', '==', email.trim().toLowerCase())
+        .limit(1)
+        .get();
+      if (!snap.empty) {
+        resolvedApplicantId = snap.docs[0].id;
+      }
+    }
+    if (resolvedApplicantId) {
+      // Also update the token doc so acceptance route can find the applicant
+      await adminDb.collection('offerTokens').doc(token).update({
+        applicantId: resolvedApplicantId,
+      });
+      await adminDb.collection('applicants').doc(resolvedApplicantId).set(
         { status: 'offered', offerSentAt: new Date().toISOString(), offerToken: token },
         { merge: true },
       );

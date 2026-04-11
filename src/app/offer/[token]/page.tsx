@@ -185,7 +185,7 @@ export default function OfferPage() {
                   <div className="text-4xl mb-4">🎉</div>
                   <p className="text-lg font-bold text-white mb-2">Welcome to CrftdWeb</p>
                   <p className="text-sm text-zinc-400 leading-relaxed">
-                    You&apos;re in. You&apos;ll receive your login details within 24 hours with access to your rep portal, training, and everything you need to get started.
+                    You&apos;re in. Check your inbox — your login details and portal access have been sent. If you don&apos;t see the email, check your spam folder.
                   </p>
                 </>
               ) : (
