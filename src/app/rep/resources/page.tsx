@@ -303,7 +303,7 @@ Worth a quick chat? No pressure either way.`,
 
 const DAILY_ROUTINE = [
   { time: '30 mins', task: 'Source 20 prospects', detail: 'Google Maps + Instagram. Build your list for the day. Name, phone/DM, website URL, notes.' },
-  { time: '60 mins', task: 'Outreach block 1: Calls', detail: '10-15 cold calls from your list. Use the script. Add every prospect to your leads immediately.' },
+  { time: '60 mins', task: 'Outreach block 1: Calls', detail: '15 cold calls from your list. Use the script. Add every prospect to your leads immediately.' },
   { time: '45 mins', task: 'Outreach block 2: DMs & Emails', detail: '10-15 Instagram/Facebook DMs + 3-5 cold emails. Personalise each one. No copy-paste blasts. Use the templates below.' },
   { time: '15 mins', task: 'Follow-ups', detail: 'Chase yesterday\'s warm leads. Second touch converts more than first. Send the follow-up email template.' },
   { time: '10 mins', task: 'Log and review', detail: 'Update all leads in the portal. Leads added? Calls booked? Notes updated? Keep your pipeline clean.' },
@@ -440,8 +440,8 @@ export default function RepResourcesPage() {
       {/* Daily targets */}
       <div className="grid grid-cols-5 gap-3">
         {[
-          { num: '20', label: 'Prospects / day' },
-          { num: '10–15', label: 'Calls / day' },
+          { num: '30', label: 'Outreaches / day' },
+          { num: '15', label: 'Calls / day' },
           { num: '2–3', label: 'Booked / wk' },
           { num: '1–2', label: 'Closed / mo' },
           { num: '£199+', label: 'Commission / close' },
@@ -500,7 +500,7 @@ export default function RepResourcesPage() {
           ))}
           <div className="bg-emerald-500/5 border border-emerald-500/15 rounded-xl p-4 mt-2">
             <p className="text-xs text-emerald-400/70 leading-relaxed">
-              <span className="font-bold text-emerald-400">The maths:</span> 20 prospects/day × 5 days = 100/week. 10–15 calls/day + 10–15 DMs/day. At a 2–3% booking rate = 2–3 booked calls/week. Convert 1 in 2 → 1–2 closed clients/month. One Starter deal = £199 commission. Consistency beats intensity.
+              <span className="font-bold text-emerald-400">The maths:</span> 30 outreaches/day × 5 days = 150/week. 15 calls/day + 10–15 DMs/day. At a 2–3% booking rate = 3–4 booked calls/week. Convert 1 in 2 → 1–2 closed clients/month. One Starter deal = £199 commission. Consistency beats intensity.
             </p>
           </div>
         </div>

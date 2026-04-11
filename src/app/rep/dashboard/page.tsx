@@ -185,11 +185,11 @@ export default function RepDashboard() {
         <p className="text-xs font-bold uppercase tracking-widest text-white/30 mb-3">Daily Target</p>
         <div className="grid grid-cols-5 gap-3 text-center">
           <div>
-            <p className="text-2xl font-bold text-white">20</p>
-            <p className="text-[11px] text-white/30 mt-0.5">Prospects / day</p>
+            <p className="text-2xl font-bold text-white">30</p>
+            <p className="text-[11px] text-white/30 mt-0.5">Outreaches / day</p>
           </div>
           <div>
-            <p className="text-2xl font-bold text-white">10–15</p>
+            <p className="text-2xl font-bold text-white">15</p>
             <p className="text-[11px] text-white/30 mt-0.5">Calls / day</p>
           </div>
           <div>
