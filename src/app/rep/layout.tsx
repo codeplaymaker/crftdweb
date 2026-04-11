@@ -5,6 +5,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { AuthProvider, useAuth } from '@/lib/firebase/AuthContext';
 import { getRepProfile, RepProfile } from '@/lib/firebase/firestore';
+import { CAREER_RANKS, type CareerRank } from '@/lib/types/repRanks';
 import { LayoutDashboard, Users, BookOpen, GraduationCap, Phone, Search, LogOut, Menu, X } from 'lucide-react';
 
 const navItems = [
@@ -101,11 +102,15 @@ function RepLayoutInner({ children }: { children: React.ReactNode }) {
           <div className="px-3 py-2">
             <p className="text-xs font-semibold text-white/80 truncate">{user?.displayName ?? 'Rep'}</p>
             <p className="text-[10px] text-white/30 truncate">{user?.email}</p>
-            {repProfile && (
-              <p className="text-[10px] mt-1 font-medium truncate text-emerald-400">
-                {repProfile.tier === 'closer' ? '🦈 Closer' : repProfile.tier === 'senior_rep' ? '🏆 Senior Rep' : '🎯 Rep'}
-              </p>
-            )}
+            {repProfile && (() => {
+              const rank = (repProfile as Record<string, unknown>).careerRank as CareerRank | undefined;
+              const info = CAREER_RANKS[rank || 'bronze'];
+              return (
+                <p className="text-[10px] mt-1 font-medium truncate text-emerald-400">
+                  {info.emoji} {info.label}
+                </p>
+              );
+            })()}
           </div>
           <button
             onClick={signOut}
@@ -145,11 +150,15 @@ function RepLayoutInner({ children }: { children: React.ReactNode }) {
           <button onClick={signOut} className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-white/30 mt-auto">
             <LogOut className="w-4 h-4" />
             Sign out
-            {repProfile && (
-              <span className="ml-auto text-[10px] font-medium text-emerald-400">
-                {repProfile.tier === 'closer' ? '🦈 Closer' : repProfile.tier === 'senior_rep' ? '🏆 Senior Rep' : '🎯 Rep'}
-              </span>
-            )}
+            {repProfile && (() => {
+              const rank = (repProfile as Record<string, unknown>).careerRank as CareerRank | undefined;
+              const info = CAREER_RANKS[rank || 'bronze'];
+              return (
+                <span className="ml-auto text-[10px] font-medium text-emerald-400">
+                  {info.emoji} {info.label}
+                </span>
+              );
+            })()}
           </button>
         </div>
       )}
