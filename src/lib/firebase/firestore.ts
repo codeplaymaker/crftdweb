@@ -1080,3 +1080,23 @@ export async function getDeliverable(deliverableId: string): Promise<Deliverable
   const snap = await getDoc(doc(db, 'deliverables', deliverableId));
   return snap.exists() ? (snap.data() as Deliverable) : null;
 }
+
+// ─── Announcement Bar ───
+export interface Announcement {
+  text: string;
+  enabled: boolean;
+  updatedAt: Timestamp;
+}
+
+export async function getAnnouncement(): Promise<Announcement | null> {
+  const snap = await getDoc(doc(db, 'settings', 'announcement'));
+  return snap.exists() ? (snap.data() as Announcement) : null;
+}
+
+export async function updateAnnouncement(text: string, enabled: boolean) {
+  await setDoc(doc(db, 'settings', 'announcement'), {
+    text,
+    enabled,
+    updatedAt: serverTimestamp(),
+  });
+}

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/lib/firebase/AuthContext';
-import { getRepLeads, getRepCommissions, getRepProfile, updateRepProfile, RepLead, RepCommission, RepProfile } from '@/lib/firebase/firestore';
+import { getRepLeads, getRepCommissions, getRepProfile, updateRepProfile, getAnnouncement, RepLead, RepCommission, RepProfile } from '@/lib/firebase/firestore';
 import { CAREER_RANKS, RANK_ORDER, getNextRank, type CareerRank } from '@/lib/types/repRanks';
 import Link from 'next/link';
 import { ArrowRight, TrendingUp, Phone, PoundSterling, Clock, Copy, Check, Lock } from 'lucide-react';
@@ -33,6 +33,7 @@ export default function RepDashboard() {
   const [profile, setProfile] = useState<RepProfile | null>(null);
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [announcement, setAnnouncement] = useState<string | null>(null);
 
   const referralLink = profile?.refSlug
     ? `https://www.crftdweb.com?ref=${profile.refSlug}`
@@ -51,6 +52,9 @@ export default function RepDashboard() {
       setProfile(p);
     }).catch(console.error).finally(() => {
       setLoading(false);
+    });
+    getAnnouncement().then((a) => {
+      if (a?.enabled && a.text) setAnnouncement(a.text);
     });
   }, [user]);
 
@@ -104,6 +108,13 @@ export default function RepDashboard() {
           })()} · paid within 7 days of deposit
         </p>
       </div>
+
+      {/* Announcement Bar */}
+      {announcement && (
+        <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-2xl px-5 py-3 text-sm text-center font-medium text-emerald-400">
+          {announcement}
+        </div>
+      )}
 
       {/* Referral Link */}
       <div className="bg-white/[0.03] border border-white/8 rounded-2xl p-4 flex items-center gap-3">
