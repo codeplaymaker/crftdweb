@@ -990,7 +990,6 @@ function ManagementTab() {
                     )}
                     <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
                       rep.status === 'active' ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' :
-                      rep.status === 'trial' ? 'text-yellow-400 bg-yellow-500/10 border-yellow-500/20' :
                       'text-white/30 bg-white/5 border-white/10'
                     }`}>
                       <select
@@ -998,7 +997,6 @@ function ManagementTab() {
                         onChange={e => handleUpdateRep(rep.uid, 'status', e.target.value)}
                         className="bg-transparent border-none outline-none cursor-pointer text-inherit text-[10px] font-bold"
                       >
-                        <option value="trial">trial</option>
                         <option value="active">active</option>
                         <option value="inactive">inactive</option>
                       </select>

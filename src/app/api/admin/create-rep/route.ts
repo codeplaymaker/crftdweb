@@ -34,8 +34,9 @@ export async function POST(req: NextRequest) {
       name,
       email,
       phone: phone || '',
-      status: 'trial',
-      commissionRate: 15,
+      status: 'active',
+      careerRank: 'bronze',
+      commissionRate: 0,
       notes: notes || '',
       joinedAt: FieldValue.serverTimestamp(),
     });

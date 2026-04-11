@@ -548,7 +548,7 @@ Progression is based on results, not time served.
 
 REP SALES PIPELINE (statuses in order)
 pending → email_sent → booked → screened → offered → accepted
-After accepted: status = 'trial', careerRank = 'bronze' (0% commission until training complete).
+After accepted: status = 'active', careerRank = 'bronze' (0% commission until training complete).
 
 REP ROLE
 - Core job: Find businesses that need websites, qualify them, book 15-min discovery calls with CrftdWeb. Obi closes the deal.

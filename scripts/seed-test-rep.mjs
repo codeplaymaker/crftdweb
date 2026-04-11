@@ -61,7 +61,8 @@ async function run() {
     phone: '07700 000000',
     status: 'active',
     tier: 'rep',
-    commissionRate: 20,
+    careerRank: 'silver',
+    commissionRate: 0,
     notes: 'Test rep account — delete after review',
     joinedAt: FieldValue.serverTimestamp(),
   });

@@ -80,7 +80,7 @@ Get the rep portal to a 10/10 production-ready state. That means:
 
 ## Firestore Collections
 
-- `reps` — Rep profiles (uid, name, email, status: active/trial/inactive, commissionRate: default 20)
+- `reps` — Rep profiles (uid, name, email, status: active/inactive, careerRank: bronze→dragon, commissionRate: legacy)
 - `repLeads` — Leads per rep (repId, businessName, status pipeline, dealValue, source)
 - `repCommissions` — Commissions (repId, leadId, dealValue, commissionAmount, status: pending/paid)
 - `repTrainingSessions` — Training session history

@@ -369,7 +369,7 @@ export interface RepProfile {
   name: string;
   email: string;
   phone: string;
-  status: 'active' | 'trial' | 'inactive';
+  status: 'active' | 'inactive';
   tier?: RepTier;
   careerRank?: CareerRank; // Bronze→Dragon (7-rank system)
   commissionRate: number; // percentage e.g. 15 — legacy fallback

@@ -149,7 +149,7 @@ export async function POST(
           name: data.applicantName,
           email: data.applicantEmail,
           phone,
-          status: 'trial',
+          status: 'active',
           careerRank: 'bronze',
           commissionRate: 0,
           notes: '',

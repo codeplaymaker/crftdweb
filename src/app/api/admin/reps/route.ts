@@ -21,7 +21,7 @@ export async function PATCH(req: NextRequest) {
   if (!uid) return NextResponse.json({ error: 'Missing uid' }, { status: 400 });
 
   const updates: Record<string, string> = {};
-  const validStatuses = ['active', 'trial', 'inactive'];
+  const validStatuses = ['active', 'inactive'];
   const validTiers = ['rep', 'senior_rep', 'closer'];
   const validRanks = ['bronze', 'silver', 'gold', 'diamond', 'closer', 'master', 'dragon'];
 
