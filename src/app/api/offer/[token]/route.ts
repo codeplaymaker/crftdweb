@@ -186,6 +186,7 @@ export async function POST(
           commissionRate: 0,
           refSlug,
           notes: '',
+          applicantId: data.applicantId ?? null,
           joinedAt: FieldValue.serverTimestamp(),
         });
 
@@ -206,8 +207,18 @@ export async function POST(
           }).catch(() => {});
           return null;
         });
-      } catch {
-        // Account may already exist — don't fail the response
+      } catch (createErr: unknown) {
+        console.error('Failed to create rep account:', createErr);
+        // Notify admin so they can intervene manually
+        if (process.env.RESEND_API_KEY) {
+          const errMsg = createErr instanceof Error ? createErr.message : String(createErr);
+          await resend.emails.send({
+            from: 'CrftdWeb <admin@crftdweb.com>',
+            to: ['admin@crftdweb.com'],
+            subject: `⚠️ Rep account creation failed for ${data.applicantName}`,
+            html: `<p>The offer was accepted but account creation failed for <strong>${data.applicantName}</strong> (${data.applicantEmail}).</p><p>Error: <code>${errMsg}</code></p><p>Please create their account manually from the Admin panel.</p>`,
+          }).catch(() => {});
+        }
       }
     }
 
