@@ -29,7 +29,7 @@ export const CAREER_RANKS: Record<CareerRank, RankInfo> = {
     key: 'silver',
     label: 'Silver',
     emoji: '🥈',
-    requirement: 'Training complete (60+), first outreach',
+    requirement: 'Training complete (60+)',
     unlock: 'Active rep, base commission',
     commissionRates: { starter: 20, launch: 15, growth: 12, scale: 10 },
   },
