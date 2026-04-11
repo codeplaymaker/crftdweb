@@ -26,7 +26,7 @@ function buildOnboardingEmail(name: string, email: string, tempPassword: string)
           <td style="background:#ffffff;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 12px 12px;padding:40px;">
             <p style="margin:0 0 16px;font-size:16px;color:#111;font-weight:600;">Hi ${firstName},</p>
             <p style="margin:0 0 16px;font-size:15px;color:#444;line-height:1.7;">
-              You&rsquo;re officially on the team. Welcome to CrftdWeb.
+              You&rsquo;re officially on the team. Welcome to <strong>CrftdWeb</strong>.
             </p>
             <p style="margin:0 0 24px;font-size:15px;color:#444;line-height:1.7;">
               Your rep portal is ready. Log in with the credentials below, then read the onboarding pack to get started.
