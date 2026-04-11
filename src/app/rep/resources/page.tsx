@@ -88,6 +88,22 @@ If anything looks relevant to what you're after, I can get you a free 15-minute 
 
 [Your name]`,
   },
+  {
+    label: 'Cold Outreach (First Contact)',
+    subject: 'Quick question about [business name]',
+    body: `Hi [Name],
+
+I came across [business name] and had a look at your website. Honestly, I think it could be doing a lot more for you — especially when it comes to getting enquiries from people searching online.
+
+I work with a developer who builds custom websites for [their industry] businesses. Fast, mobile-friendly, designed to convert visitors into customers. Starting from £997.
+
+Would you be open to a free 15-minute consultation? No pitch, just a straight assessment of what's working and what's not.
+
+Either way, no pressure.
+
+[Your name]
+CrftdWeb Rep`,
+  },
 ];
 
 const FAQS = [
