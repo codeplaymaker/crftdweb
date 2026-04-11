@@ -7,6 +7,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { adminAuth, adminDb } from '@/lib/firebase/admin';
 import { FieldValue } from 'firebase-admin/firestore';
+import { getCommissionRateForRank, type CareerRank } from '@/lib/types/repRanks';
 
 export async function POST(req: NextRequest) {
   // Verify Firebase ID token from Authorization header
@@ -38,9 +39,11 @@ export async function POST(req: NextRequest) {
 
   const lead = leadDoc.data()!;
 
-  // Fetch the rep profile to get commissionRate
+  // Fetch the rep profile to get careerRank (or fallback commissionRate)
   const repDoc = await adminDb.collection('reps').doc(uid).get();
-  const commissionRate: number = repDoc.exists ? (repDoc.data()?.commissionRate ?? 15) : 15;
+  const repData = repDoc.data();
+  const careerRank: CareerRank = (repData?.careerRank as CareerRank) || 'silver';
+  const commissionRate = getCommissionRateForRank(careerRank, dealValue);
 
   const commissionAmount = Math.round((dealValue * commissionRate) / 100);
 

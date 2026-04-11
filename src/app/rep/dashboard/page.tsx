@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/lib/firebase/AuthContext';
 import { getRepLeads, getRepCommissions, getRepProfile, updateRepProfile, RepLead, RepCommission, RepProfile } from '@/lib/firebase/firestore';
+import { CAREER_RANKS, RANK_ORDER, getNextRank, type CareerRank } from '@/lib/types/repRanks';
 import Link from 'next/link';
 import { ArrowRight, TrendingUp, Phone, PoundSterling, Clock, Copy, Check, Lock } from 'lucide-react';
 import { getAuth, updatePassword, EmailAuthProvider, reauthenticateWithCredential } from 'firebase/auth';
@@ -93,7 +94,11 @@ export default function RepDashboard() {
         </h1>
         <p className="text-sm text-white/40 mt-1">
           {new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' })}
-          {' · '}10–20% commission · paid within 7 days of deposit
+          {' · '}{(() => {
+            const rank: CareerRank = (profile?.careerRank as CareerRank) || 'silver';
+            const r = CAREER_RANKS[rank].commissionRates;
+            return `${r.scale}–${r.starter}% commission`;
+          })()} · paid within 7 days of deposit
         </p>
       </div>
 
@@ -114,6 +119,48 @@ export default function RepDashboard() {
           {copied ? <><Check className="w-3 h-3 text-green-400" /> Copied</> : <><Copy className="w-3 h-3" /> Copy</>}
         </button>
       </div>
+
+      {/* Career Rank */}
+      {(() => {
+        const rank: CareerRank = (profile?.careerRank as CareerRank) || 'silver';
+        const rankInfo = CAREER_RANKS[rank];
+        const nextRankKey = getNextRank(rank);
+        const nextRank = nextRankKey ? CAREER_RANKS[nextRankKey] : null;
+        const currentIdx = RANK_ORDER.indexOf(rank);
+
+        return (
+          <div className="bg-white/[0.03] border border-white/8 rounded-2xl p-5">
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-xs font-bold uppercase tracking-widest text-white/30">Career Rank</p>
+              <div className="flex items-center gap-1.5">
+                {RANK_ORDER.map((r, i) => (
+                  <div
+                    key={r}
+                    className={`w-2 h-2 rounded-full ${i <= currentIdx ? 'bg-white' : 'bg-white/10'}`}
+                    title={CAREER_RANKS[r].label}
+                  />
+                ))}
+              </div>
+            </div>
+            <div className="flex items-center gap-4">
+              <span className="text-4xl">{rankInfo.emoji}</span>
+              <div className="flex-1">
+                <p className="text-lg font-bold text-white">{rankInfo.label}</p>
+                <p className="text-xs text-white/40 mt-0.5">{rankInfo.unlock}</p>
+                <p className="text-[10px] text-white/25 mt-1">
+                  Commission: {rankInfo.commissionRates.starter}% Starter · {rankInfo.commissionRates.launch}% Launch · {rankInfo.commissionRates.growth}% Growth · {rankInfo.commissionRates.scale}% Scale
+                </p>
+              </div>
+            </div>
+            {nextRank && (
+              <div className="mt-4 pt-3 border-t border-white/6">
+                <p className="text-[10px] text-white/30 mb-1">Next rank: {nextRank.emoji} {nextRank.label}</p>
+                <p className="text-[10px] text-white/20">{nextRank.requirement}</p>
+              </div>
+            )}
+          </div>
+        );
+      })()}
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">

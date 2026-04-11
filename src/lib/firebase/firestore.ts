@@ -362,6 +362,8 @@ export async function deductCredits(uid: string, amount: number): Promise<boolea
 
 export type RepTier = 'rep' | 'senior_rep' | 'closer';
 
+import type { CareerRank } from '@/lib/types/repRanks';
+
 export interface RepProfile {
   uid: string;
   name: string;
@@ -369,7 +371,8 @@ export interface RepProfile {
   phone: string;
   status: 'active' | 'trial' | 'inactive';
   tier?: RepTier;
-  commissionRate: number; // percentage e.g. 15
+  careerRank?: CareerRank; // Bronze→Dragon (7-rank system)
+  commissionRate: number; // percentage e.g. 15 — legacy fallback
   joinedAt: Timestamp;
   notes: string;
   bankDetails?: {
@@ -398,6 +401,9 @@ export interface RepLead {
   updatedAt: Timestamp;
   lastEmailedAt?: Timestamp | null;
   lastRepliedAt?: Timestamp | null;
+  bookingLinkSentAt?: string | null;
+  discoveryCallSlot?: string | null;
+  discoveryCallDateTime?: string | null;
 }
 
 export interface RepCommission {

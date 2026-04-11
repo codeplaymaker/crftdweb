@@ -13,11 +13,26 @@ const RESEND_API_KEY = process.env.RESEND_API_KEY || '';
 const FROM_EMAIL = process.env.OUTREACH_FROM_EMAIL || 'hello@crftdweb.com';
 const DEFAULT_MAX_EMAILS_PER_DAY = 20;
 
+/**
+ * Strip HTML tags from user-provided body text to prevent XSS/phishing.
+ * Only allows plain text content — HTML entities are escaped.
+ */
+function sanitizeBody(text: string): string {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
 function buildHtml(bodyText: string, repName: string, contactName: string): string {
-  const greeting = contactName.trim()
-    ? `<p style="margin:0 0 20px;font-size:16px;color:#111;font-weight:600;">Hi ${contactName.trim()},</p>`
+  const safeContact = sanitizeBody(contactName.trim());
+  const safeRep = sanitizeBody(repName);
+  const greeting = safeContact
+    ? `<p style="margin:0 0 20px;font-size:16px;color:#111;font-weight:600;">Hi ${safeContact},</p>`
     : '';
-  const bodyHtml = bodyText
+  const bodyHtml = sanitizeBody(bodyText)
     .split('\n\n')
     .map(p => `<p style="margin:0 0 16px;font-size:15px;color:#444;line-height:1.7;">${p.replace(/\n/g, '<br/>')}</p>`)
     .join('');
@@ -39,7 +54,7 @@ function buildHtml(bodyText: string, repName: string, contactName: string): stri
             ${greeting}${bodyHtml}
             <table width="100%" cellpadding="0" cellspacing="0" style="margin:24px 0 0;">
               <tr><td style="border-top:1px solid #e8e8e8;padding-top:20px;">
-                <p style="margin:0 0 2px;font-size:14px;font-weight:600;color:#111;">${repName}</p>
+                <p style="margin:0 0 2px;font-size:14px;font-weight:600;color:#111;">${safeRep}</p>
                 <p style="margin:0 0 8px;font-size:13px;color:#999;">Sales Rep &middot; CrftdWeb</p>
                 <img src="https://crftdweb.com/CW-logo.png" alt="CrftdWeb" width="40" style="display:block;border:0;margin-bottom:6px;" />
                 <a href="https://crftdweb.com" style="font-size:12px;color:#999;text-decoration:none;">crftdweb.com</a>
@@ -48,7 +63,10 @@ function buildHtml(bodyText: string, repName: string, contactName: string): stri
           </td>
         </tr>
         <tr><td align="center" style="padding-top:24px;">
-          <p style="margin:0;font-size:11px;color:#aaa;">CrftdWeb &middot; crftdweb.com</p>
+          <p style="margin:0;font-size:11px;color:#aaa;">CrftdWeb &middot; Bristol, UK &middot; crftdweb.com</p>
+          <p style="margin:4px 0 0;font-size:10px;color:#ccc;">
+            <a href="mailto:admin@crftdweb.com?subject=Unsubscribe" style="color:#ccc;text-decoration:underline;">Unsubscribe</a>
+          </p>
         </td></tr>
       </table>
     </td></tr>
@@ -169,6 +187,10 @@ export async function POST(req: NextRequest) {
         subject,
         text: body,
         html,
+        headers: {
+          'List-Unsubscribe': '<mailto:admin@crftdweb.com?subject=Unsubscribe>',
+          'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+        },
       }),
     });
 

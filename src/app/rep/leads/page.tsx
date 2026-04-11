@@ -11,6 +11,7 @@ import { getAuth } from 'firebase/auth';
 import Link from 'next/link';
 import EmailComposeModal from '@/components/rep/EmailComposeModal';
 import { sendDiscoveryBookingLink } from '@/app/actions/sendDiscoveryBookingLink';
+import { getCommissionRateForRank, CAREER_RANKS, type CareerRank } from '@/lib/types/repRanks';
 import { Plus, ChevronDown, ChevronUp, Trash2, Edit2, Check, X, PoundSterling, Lock, GraduationCap, Mail, Reply, CalendarCheck } from 'lucide-react';
 
 const PIPELINE: { key: LeadStatus; label: string; color: string }[] = [
@@ -290,10 +291,12 @@ export default function RepLeadsPage() {
               />
               {wonDealValue && Number(wonDealValue) > 0 && (() => {
                 const v = Number(wonDealValue);
-                const rate = v <= 997 ? 20 : v <= 2497 ? 15 : v <= 4997 ? 12 : 10;
+                const rank: CareerRank = (profile?.careerRank as CareerRank) || 'silver';
+                const rankInfo = CAREER_RANKS[rank];
+                const rate = getCommissionRateForRank(rank, v);
                 return (
                   <p className="text-xs text-emerald-400 mt-1.5">
-                    Commission ({rate}%): £{Math.round(v * rate / 100).toLocaleString()}
+                    {rankInfo.emoji} {rankInfo.label} commission ({rate}%): £{Math.round(v * rate / 100).toLocaleString()}
                   </p>
                 );
               })()}
@@ -480,6 +483,22 @@ export default function RepLeadsPage() {
                       <p className="text-xs text-white/60 leading-relaxed">{lead.notes}</p>
                     </div>
                   )}
+                  {/* Discovery call slot */}
+                  {lead.discoveryCallSlot && (
+                    <div className="bg-emerald-500/5 border border-emerald-500/15 rounded-lg p-3 flex items-center gap-2">
+                      <CalendarCheck className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                      <div>
+                        <p className="text-xs font-medium text-emerald-400">Discovery call booked</p>
+                        <p className="text-xs text-white/50 mt-0.5">{lead.discoveryCallSlot}</p>
+                      </div>
+                    </div>
+                  )}
+                  {lead.bookingLinkSentAt && !lead.discoveryCallSlot && (
+                    <div className="bg-yellow-500/5 border border-yellow-500/15 rounded-lg p-3 flex items-center gap-2">
+                      <CalendarCheck className="w-4 h-4 text-yellow-400 flex-shrink-0" />
+                      <p className="text-xs text-yellow-400/80">Booking link sent — waiting for prospect to pick a time</p>
+                    </div>
+                  )}
                   {/* Status update */}
                   <div>
                     <p className="text-[10px] text-white/30 uppercase tracking-widest mb-2">Move to stage</p>
@@ -500,13 +519,13 @@ export default function RepLeadsPage() {
                     <button onClick={() => setEmailLead(lead)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-blue-400/60 hover:text-blue-400 bg-white/5 hover:bg-blue-500/10 transition-colors">
                       <Mail className="w-3 h-3" /> Follow up
                     </button>
-                    {lead.contactEmail && lead.status !== 'won' && lead.status !== 'lost' && (
+                    {lead.contactEmail && lead.status !== 'won' && lead.status !== 'lost' && !lead.discoveryCallSlot && (
                       <button
                         onClick={() => handleSendBookingLink(lead)}
                         disabled={sendingBookingId === lead.id}
                         className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-emerald-400/60 hover:text-emerald-400 bg-white/5 hover:bg-emerald-500/10 transition-colors disabled:opacity-40"
                       >
-                        <CalendarCheck className="w-3 h-3" /> {sendingBookingId === lead.id ? 'Sending...' : 'Send Booking Link'}
+                        <CalendarCheck className="w-3 h-3" /> {sendingBookingId === lead.id ? 'Sending...' : lead.bookingLinkSentAt ? 'Resend Booking Link' : 'Send Booking Link'}
                       </button>
                     )}
                     <button onClick={() => startEdit(lead)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-white/40 hover:text-white/70 bg-white/5 hover:bg-white/10 transition-colors">

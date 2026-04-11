@@ -1,6 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useAuth } from '@/lib/firebase/AuthContext';
+import { getRepProfile, RepProfile } from '@/lib/firebase/firestore';
+import { getCommissionRateForRank, CAREER_RANKS, type CareerRank } from '@/lib/types/repRanks';
 import { ChevronDown, ChevronUp, Copy, Check, Search, MapPin, Instagram, MessageCircle, Globe, Phone, Mail, Zap, Linkedin } from 'lucide-react';
 
 const CALL_SCRIPT = [
@@ -94,7 +97,7 @@ const FAQS = [
   },
   {
     q: 'When do I get paid?',
-    a: 'Within 7 days of the client paying their deposit. Commission is tiered: 20% on Starter (£997), 15% on Launch (£2,497), 12% on Growth (£4,997), 10% on Scale (£9,997+). So a £2,497 Launch site = £374 to you.',
+    a: 'Within 7 days of the client paying their deposit. Commission is rank-based — check the calculator below or your dashboard for your current rates. Higher rank = higher percentage.',
   },
   {
     q: 'What if they ask technical questions?',
@@ -362,13 +365,18 @@ function ChannelCard({ channel, icon }: { channel: typeof SOURCING_CHANNELS[numb
 }
 
 export default function RepResourcesPage() {
+  const { user } = useAuth();
+  const [profile, setProfile] = useState<RepProfile | null>(null);
   const [dealValue, setDealValue] = useState('');
-  const getCommissionRate = (val: number) => {
-    if (val <= 997) return 0.20;
-    if (val <= 2497) return 0.15;
-    if (val <= 4997) return 0.12;
-    return 0.10;
-  };
+
+  useEffect(() => {
+    if (user) getRepProfile(user.uid).then(setProfile).catch(console.error);
+  }, [user]);
+
+  const rank: CareerRank = (profile?.careerRank as CareerRank) || 'silver';
+  const rankInfo = CAREER_RANKS[rank];
+
+  const getCommissionRate = (val: number) => getCommissionRateForRank(rank, val) / 100;
   const commission = dealValue && Number(dealValue) > 0
     ? { amount: Math.round(Number(dealValue) * getCommissionRate(Number(dealValue))), rate: Math.round(getCommissionRate(Number(dealValue)) * 100) }
     : null;
@@ -396,7 +404,7 @@ export default function RepResourcesPage() {
           </div>
           <div className="text-right">
             <p className="text-2xl font-bold text-emerald-400">{commission !== null ? `£${commission.amount.toLocaleString()}` : '£—'}</p>
-            <p className="text-[10px] text-white/30">{commission !== null ? `your ${commission.rate}%` : 'your 10–20%'}</p>
+            <p className="text-[10px] text-white/30">{commission !== null ? `${rankInfo.emoji} ${rankInfo.label} · ${commission.rate}%` : `${rankInfo.emoji} ${rankInfo.label} · ${rankInfo.commissionRates.scale}–${rankInfo.commissionRates.starter}%`}</p>
           </div>
         </div>
       </div>
