@@ -278,6 +278,21 @@ export class RepTrainingService {
       unlockedAt: stats.unlockedAt ? Timestamp.fromDate(stats.unlockedAt) : null,
     });
 
+    // Auto-promote Bronze → Silver when training unlocks
+    if (!wasUnlocked && nowUnlocked) {
+      try {
+        const repDoc = await getDoc(doc(db, 'reps', userId));
+        if (repDoc.exists()) {
+          const data = repDoc.data();
+          if (!data.careerRank || data.careerRank === 'bronze') {
+            await updateDoc(doc(db, 'reps', userId), { careerRank: 'silver' });
+          }
+        }
+      } catch (e) {
+        console.error('Auto-promote to silver failed:', e);
+      }
+    }
+
     return stats;
   }
 

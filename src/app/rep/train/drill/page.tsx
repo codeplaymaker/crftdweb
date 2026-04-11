@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/lib/firebase/AuthContext';
+import { getAuth } from 'firebase/auth';
 import { RepTrainingService } from '@/lib/services/repTrainingService';
 import { DRILL_PROMPTS, buildDrillSystemPrompt } from '@/lib/services/repKnowledgeBase';
 import { DrillType, DrillPrompt, DrillRound } from '@/lib/types/repTraining';
@@ -40,6 +41,11 @@ function DrillContent() {
   const searchParams = useSearchParams();
   const { user } = useAuth();
   const drillType = (searchParams?.get('type') as DrillType) || null;
+
+  const getAuthHeaders = useCallback(async (): Promise<Record<string, string>> => {
+    const token = await getAuth().currentUser?.getIdToken();
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  }, []);
 
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [prompts, setPrompts] = useState<DrillPrompt[]>([]);
@@ -83,7 +89,7 @@ function DrillContent() {
       const systemPrompt = buildDrillSystemPrompt();
       const res = await fetch('/api/rep/train/drill', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...await getAuthHeaders() },
         body: JSON.stringify({
           systemPrompt,
           drillType,
