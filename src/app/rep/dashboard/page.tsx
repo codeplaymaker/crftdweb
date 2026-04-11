@@ -132,18 +132,26 @@ export default function RepDashboard() {
       {/* Today's goal */}
       <div className="bg-white/[0.02] border border-white/8 rounded-2xl p-5">
         <p className="text-xs font-bold uppercase tracking-widest text-white/30 mb-3">Daily Target</p>
-        <div className="grid grid-cols-3 gap-3 text-center">
+        <div className="grid grid-cols-5 gap-3 text-center">
+          <div>
+            <p className="text-2xl font-bold text-white">50</p>
+            <p className="text-[11px] text-white/30 mt-0.5">Outreaches / day</p>
+          </div>
           <div>
             <p className="text-2xl font-bold text-white">20</p>
             <p className="text-[11px] text-white/30 mt-0.5">Calls / day</p>
           </div>
           <div>
-            <p className="text-2xl font-bold text-white">3–5</p>
-            <p className="text-[11px] text-white/30 mt-0.5">Booked calls / week</p>
+            <p className="text-2xl font-bold text-white">2–3</p>
+            <p className="text-[11px] text-white/30 mt-0.5">Booked / week</p>
           </div>
           <div>
             <p className="text-2xl font-bold text-emerald-400">1–2</p>
-            <p className="text-[11px] text-white/30 mt-0.5">Closed clients / month</p>
+            <p className="text-[11px] text-white/30 mt-0.5">Closed / month</p>
+          </div>
+          <div>
+            <p className="text-2xl font-bold text-emerald-400">£199+</p>
+            <p className="text-[11px] text-white/30 mt-0.5">Commission / close</p>
           </div>
         </div>
       </div>

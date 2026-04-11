@@ -402,11 +402,12 @@ export default function RepResourcesPage() {
       </div>
 
       {/* Daily targets */}
-      <div className="grid grid-cols-4 gap-3">
+      <div className="grid grid-cols-5 gap-3">
         {[
+          { num: '50', label: 'Outreaches / day' },
           { num: '20', label: 'Calls / day' },
-          { num: '2–3', label: 'Booked calls / wk' },
-          { num: '1–2', label: 'Closed clients / mo' },
+          { num: '2–3', label: 'Booked / wk' },
+          { num: '1–2', label: 'Closed / mo' },
           { num: '£199+', label: 'Commission / close' },
         ].map(t => (
           <div key={t.label} className="bg-white/[0.03] border border-white/8 rounded-xl p-4 text-center">
@@ -463,7 +464,7 @@ export default function RepResourcesPage() {
           ))}
           <div className="bg-emerald-500/5 border border-emerald-500/15 rounded-xl p-4 mt-2">
             <p className="text-xs text-emerald-400/70 leading-relaxed">
-              <span className="font-bold text-emerald-400">The maths:</span> 20 calls/day × 5 days = 100/week. At a 2–3% booking rate = 2–3 booked calls. Convert 1 in 2 → 1–2 closed clients/month. One Starter deal = £199 commission. Consistency beats intensity.
+              <span className="font-bold text-emerald-400">The maths:</span> 50 outreaches/day × 5 days = 250/week. 20 calls/day = 100 calls/week. At a 2–3% booking rate = 2–3 booked calls. Convert 1 in 2 → 1–2 closed clients/month. One Starter deal = £199 commission. Consistency beats intensity.
             </p>
           </div>
         </div>
