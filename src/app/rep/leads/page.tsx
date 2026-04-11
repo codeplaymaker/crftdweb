@@ -10,7 +10,8 @@ import { RepTrainingService } from '@/lib/services/repTrainingService';
 import { getAuth } from 'firebase/auth';
 import Link from 'next/link';
 import EmailComposeModal from '@/components/rep/EmailComposeModal';
-import { Plus, ChevronDown, ChevronUp, Trash2, Edit2, Check, X, PoundSterling, Lock, GraduationCap, Mail, Reply } from 'lucide-react';
+import { sendDiscoveryBookingLink } from '@/app/actions/sendDiscoveryBookingLink';
+import { Plus, ChevronDown, ChevronUp, Trash2, Edit2, Check, X, PoundSterling, Lock, GraduationCap, Mail, Reply, CalendarCheck } from 'lucide-react';
 
 const PIPELINE: { key: LeadStatus; label: string; color: string }[] = [
   { key: 'contacted', label: 'Contacted', color: 'border-t-white/20' },
@@ -74,6 +75,7 @@ export default function RepLeadsPage() {
   const [wonSaving, setWonSaving] = useState(false);
   const [wonError, setWonError] = useState('');
   const [emailLead, setEmailLead] = useState<RepLead | null>(null);
+  const [sendingBookingId, setSendingBookingId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user) return;
@@ -235,6 +237,23 @@ export default function RepLeadsPage() {
     setEditingId(lead.id);
     setShowForm(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  async function handleSendBookingLink(lead: RepLead) {
+    if (!lead.contactEmail || !profile) return;
+    setSendingBookingId(lead.id);
+    try {
+      const result = await sendDiscoveryBookingLink(lead.id, lead.contactName, lead.contactEmail, profile.name);
+      if (result.success) {
+        setLeads(prev => prev.map(l => l.id === lead.id ? { ...l, status: 'call_booked' as LeadStatus } : l));
+      } else {
+        alert(result.error || 'Failed to send booking link');
+      }
+    } catch {
+      alert('Network error — please try again');
+    } finally {
+      setSendingBookingId(null);
+    }
   }
 
   if (loading) {
@@ -477,10 +496,19 @@ export default function RepLeadsPage() {
                       ))}
                     </div>
                   </div>
-                  <div className="flex gap-2 pt-1">
+                  <div className="flex flex-wrap gap-2 pt-1">
                     <button onClick={() => setEmailLead(lead)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-blue-400/60 hover:text-blue-400 bg-white/5 hover:bg-blue-500/10 transition-colors">
                       <Mail className="w-3 h-3" /> Follow up
                     </button>
+                    {lead.contactEmail && lead.status !== 'won' && lead.status !== 'lost' && (
+                      <button
+                        onClick={() => handleSendBookingLink(lead)}
+                        disabled={sendingBookingId === lead.id}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-emerald-400/60 hover:text-emerald-400 bg-white/5 hover:bg-emerald-500/10 transition-colors disabled:opacity-40"
+                      >
+                        <CalendarCheck className="w-3 h-3" /> {sendingBookingId === lead.id ? 'Sending...' : 'Send Booking Link'}
+                      </button>
+                    )}
                     <button onClick={() => startEdit(lead)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-white/40 hover:text-white/70 bg-white/5 hover:bg-white/10 transition-colors">
                       <Edit2 className="w-3 h-3" /> Edit
                     </button>
