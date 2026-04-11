@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { AuthProvider, useAuth } from '@/lib/firebase/AuthContext';
 import { getRepProfile, RepProfile } from '@/lib/firebase/firestore';
 import { CAREER_RANKS, type CareerRank } from '@/lib/types/repRanks';
-import { LayoutDashboard, Users, BookOpen, GraduationCap, Phone, Search, LogOut, Menu, X } from 'lucide-react';
+import { LayoutDashboard, Users, BookOpen, GraduationCap, Phone, Search, PoundSterling, LogOut, Menu, X } from 'lucide-react';
 
 const navItems = [
   { href: '/rep/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -14,6 +14,7 @@ const navItems = [
   { href: '/rep/train', label: 'Training', icon: GraduationCap },
   { href: '/rep/call', label: 'Live Call', icon: Phone },
   { href: '/rep/audit', label: 'Site Audit', icon: Search },
+  { href: '/rep/commissions', label: 'Commissions', icon: PoundSterling },
   { href: '/rep/resources', label: 'Resources', icon: BookOpen },
 ];
 
