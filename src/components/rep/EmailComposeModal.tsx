@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react';
 import { RepLead, RepEmailLog, RepEmailReply, getLeadEmails, getLeadReplies } from '@/lib/firebase/firestore';
 import { EMAIL_TEMPLATES, EmailTemplateKey } from '@/lib/types/repEmail';
 import { getAuth } from 'firebase/auth';
-import { X, Send, Loader2, Mail, ChevronDown, ChevronUp, Check, AlertCircle, Reply, Inbox, Eye, EyeOff } from 'lucide-react';
+import { getScreeningSlots } from '@/app/actions/getScreeningSlots';
+import { X, Send, Loader2, Mail, ChevronDown, ChevronUp, Check, AlertCircle, Reply, Inbox, Eye, EyeOff, Calendar } from 'lucide-react';
 
 interface EmailComposeModalProps {
   lead: RepLead;
@@ -73,6 +74,9 @@ export default function EmailComposeModal({ lead, repName, repEmail, onClose, on
   const [replies, setReplies] = useState<RepEmailReply[]>([]);
   const [expandedReplyId, setExpandedReplyId] = useState<string | null>(null);
 
+  // Available slots
+  const [availableSlots, setAvailableSlots] = useState<number | null>(null);
+
   const vars = {
     contactName: lead.contactName.split(' ')[0],
     repName,
@@ -106,6 +110,10 @@ export default function EmailComposeModal({ lead, repName, repEmail, onClose, on
       })
       .catch(console.error)
       .finally(() => setLoadingHistory(false));
+    getScreeningSlots().then(slots => {
+      const now = new Date().toISOString();
+      setAvailableSlots(slots.filter(s => s.available && s.dateTime > now).length);
+    });
   }, [lead.id, lead.repId]);
 
   async function handleMarkReplied(emailId: string) {
@@ -222,9 +230,21 @@ export default function EmailComposeModal({ lead, repName, repEmail, onClose, on
           <div className="flex items-start gap-2 bg-blue-500/8 border border-blue-500/15 rounded-xl p-3">
             <AlertCircle className="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5" />
             <p className="text-[11px] text-blue-400/80 leading-relaxed">
-              Only email leads you&apos;ve personally spoken to or who&apos;ve shown interest. For cold outreach, use your own personal email. Misuse will result in account removal.
+              Only email leads you&apos;ve personally spoken to or who&apos;ve shown interest. For cold outreach, use your own personal email.
             </p>
           </div>
+
+          {/* Available slots indicator */}
+          {availableSlots !== null && (
+            <div className={`flex items-center gap-2 rounded-xl p-3 ${availableSlots > 0 ? 'bg-emerald-500/5 border border-emerald-500/15' : 'bg-amber-500/5 border border-amber-500/15'}`}>
+              <Calendar className={`w-4 h-4 flex-shrink-0 ${availableSlots > 0 ? 'text-emerald-400' : 'text-amber-400'}`} />
+              <p className={`text-[11px] leading-relaxed ${availableSlots > 0 ? 'text-emerald-400/80' : 'text-amber-400/80'}`}>
+                {availableSlots > 0
+                  ? `${availableSlots} consultation slot${availableSlots === 1 ? '' : 's'} available — use "Send Booking Link" on the lead to book a discovery call.`
+                  : 'No consultation slots available right now. Ask admin to add slots before sending booking links.'}
+              </p>
+            </div>
+          )}
 
           {/* No email warning */}
           {!lead.contactEmail && (

@@ -7,6 +7,9 @@ export type EmailTemplateKey =
   | 'call_booked'
   | 'follow_up_no_reply'
   | 'after_portfolio'
+  | 'nudge_to_book'
+  | 'proposal_follow_up'
+  | 'soft_check_in'
   | 'custom';
 
 export interface EmailTemplate {
@@ -71,5 +74,35 @@ Worth it?`,
 The process is quick, most sites are live in 2 to 5 weeks. Starting from £997 for a landing page.
 
 If anything looks relevant to what you're after, I can get you a free 15-minute consultation this week.`,
+  },
+  {
+    key: 'nudge_to_book',
+    label: 'Nudge to Book Call',
+    subject: 'Free 15-min call this week?',
+    body: `You mentioned you were interested in sorting the website out — just wanted to make it easy.
+
+I've set aside a few 15-minute slots this week for a free consultation. No pitch, just a straight look at what's working and what could be better.
+
+Worth a quick chat?`,
+  },
+  {
+    key: 'proposal_follow_up',
+    label: 'Proposal Follow-up',
+    subject: 'Re: your proposal from CrftdWeb',
+    body: `Just checking in — did you get a chance to look over the proposal?
+
+Happy to jump on a quick call if anything needs clarifying. No rush, but I'd rather you had all the info before making a decision.
+
+Let me know either way.`,
+  },
+  {
+    key: 'soft_check_in',
+    label: 'Soft Check-in',
+    subject: 'Quick one about {{businessName}}',
+    body: `It's been a little while since we last spoke — just wanted to check in.
+
+If the website is still on your radar, we're here. If the timing isn't right, no problem at all — just reply whenever you're ready and we'll pick up where we left off.
+
+Either way, hope business is going well.`,
   },
 ];
