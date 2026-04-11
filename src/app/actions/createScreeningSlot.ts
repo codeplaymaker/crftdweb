@@ -12,6 +12,7 @@ export interface ScreeningSlot {
   bookedByName: string | null;
   bookedAt: string | null;
   outcome: 'approved' | 'rejected' | null;
+  bookingType?: 'discovery' | null;
   createdAt: string;
 }
 

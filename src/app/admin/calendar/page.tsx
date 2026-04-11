@@ -259,7 +259,7 @@ export default function CalendarPage() {
               <CalendarDays className="w-5 h-5 text-sky-400" />
               Calendar
             </h1>
-            <p className="text-xs text-white/30 mt-0.5">Screening slots, bookings &amp; pipeline to-dos</p>
+            <p className="text-xs text-white/30 mt-0.5">Screening &amp; discovery slots, bookings &amp; pipeline to-dos</p>
           </div>
           {upcomingBooked.length > 0 && (
             <div className="hidden md:flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-4 py-2.5">
@@ -308,7 +308,8 @@ export default function CalendarPage() {
                   const isToday = dateStr === todayStr;
                   const isSelected = dateStr === selectedDate;
                   const hasAvailable = daySlots.some((s) => s.available);
-                  const hasBooked = daySlots.some((s) => !s.available);
+                  const hasScreening = daySlots.some((s) => !s.available && s.bookingType !== 'discovery');
+                  const hasDiscovery = daySlots.some((s) => !s.available && s.bookingType === 'discovery');
 
                   return (
                     <button
@@ -330,8 +331,11 @@ export default function CalendarPage() {
                         {date.getDate()}
                       </span>
                       <div className="flex gap-0.5 flex-wrap justify-center">
-                        {hasBooked && (
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" title="Booked" />
+                        {hasScreening && (
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" title="Screening" />
+                        )}
+                        {hasDiscovery && (
+                          <span className="w-1.5 h-1.5 rounded-full bg-purple-400" title="Discovery" />
                         )}
                         {hasAvailable && (
                           <span className="w-1.5 h-1.5 rounded-full bg-sky-400" title="Available" />
@@ -350,7 +354,11 @@ export default function CalendarPage() {
                 </div>
                 <div className="flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                  <span className="text-[10px] text-white/30">Booked</span>
+                  <span className="text-[10px] text-white/30">Screening</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-purple-400" />
+                  <span className="text-[10px] text-white/30">Discovery</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-sky-500" />
@@ -525,17 +533,30 @@ export default function CalendarPage() {
                       className={`flex items-center justify-between px-3 py-2.5 rounded-xl border ${
                         slot.available
                           ? 'bg-sky-500/5 border-sky-500/15'
+                          : slot.bookingType === 'discovery'
+                          ? 'bg-purple-500/5 border-purple-500/15'
                           : 'bg-emerald-500/5 border-emerald-500/15'
                       }`}
                     >
                       <div className="flex items-center gap-2 min-w-0">
-                        <Clock className={`w-3.5 h-3.5 flex-shrink-0 ${slot.available ? 'text-sky-400' : 'text-emerald-400'}`} />
+                        <Clock className={`w-3.5 h-3.5 flex-shrink-0 ${slot.available ? 'text-sky-400' : slot.bookingType === 'discovery' ? 'text-purple-400' : 'text-emerald-400'}`} />
                         <div className="min-w-0">
-                          <p className={`text-xs font-medium ${slot.available ? 'text-sky-200' : 'text-emerald-200'}`}>
-                            {formatTime(slot.dateTime)}
-                          </p>
+                          <div className="flex items-center gap-1.5">
+                            <p className={`text-xs font-medium ${slot.available ? 'text-sky-200' : slot.bookingType === 'discovery' ? 'text-purple-200' : 'text-emerald-200'}`}>
+                              {formatTime(slot.dateTime)}
+                            </p>
+                            {!slot.available && (
+                              <span className={`text-[9px] font-semibold px-1.5 py-0.5 rounded-full ${
+                                slot.bookingType === 'discovery'
+                                  ? 'bg-purple-500/20 text-purple-300'
+                                  : 'bg-emerald-500/20 text-emerald-300'
+                              }`}>
+                                {slot.bookingType === 'discovery' ? 'Discovery' : 'Screening'}
+                              </span>
+                            )}
+                          </div>
                           {!slot.available && slot.bookedByName && (
-                            <p className="text-[10px] text-emerald-400/70 mt-0.5">{slot.bookedByName}</p>
+                            <p className={`text-[10px] mt-0.5 ${slot.bookingType === 'discovery' ? 'text-purple-400/70' : 'text-emerald-400/70'}`}>{slot.bookedByName}</p>
                           )}
                           {slot.available && (
                             <p className="text-[10px] text-sky-400/50 mt-0.5">Available</p>
@@ -574,13 +595,21 @@ export default function CalendarPage() {
                   {scheduledCalls.map((slot) => {
                     const resolved = outcomes[slot.id] ?? slot.outcome;
                     const isPast = slot.dateTime < new Date().toISOString();
+                    const isDiscovery = slot.bookingType === 'discovery';
                     return (
-                      <div key={slot.id} className="px-3 py-2.5 rounded-xl bg-emerald-500/5 border border-emerald-500/15">
+                      <div key={slot.id} className={`px-3 py-2.5 rounded-xl ${isDiscovery ? 'bg-purple-500/5 border border-purple-500/15' : 'bg-emerald-500/5 border border-emerald-500/15'}`}>
                         <div className="flex items-start gap-3">
-                          <div className="w-1 min-h-[28px] rounded-full bg-emerald-500/40 flex-shrink-0 mt-0.5" />
+                          <div className={`w-1 min-h-[28px] rounded-full flex-shrink-0 mt-0.5 ${isDiscovery ? 'bg-purple-500/40' : 'bg-emerald-500/40'}`} />
                           <div className="min-w-0 flex-1">
-                            <p className="text-xs text-emerald-200 font-medium">{slot.bookedByName ?? 'Unknown'}</p>
-                            <p className="text-[10px] text-emerald-400/60 mt-0.5">{slot.label}</p>
+                            <div className="flex items-center gap-1.5">
+                              <p className={`text-xs font-medium ${isDiscovery ? 'text-purple-200' : 'text-emerald-200'}`}>{slot.bookedByName ?? 'Unknown'}</p>
+                              <span className={`text-[9px] font-semibold px-1.5 py-0.5 rounded-full ${
+                                isDiscovery ? 'bg-purple-500/20 text-purple-300' : 'bg-emerald-500/20 text-emerald-300'
+                              }`}>
+                                {isDiscovery ? 'Discovery' : 'Screening'}
+                              </span>
+                            </div>
+                            <p className={`text-[10px] mt-0.5 ${isDiscovery ? 'text-purple-400/60' : 'text-emerald-400/60'}`}>{slot.label}</p>
                             <a
                               href="https://meet.google.com/sht-kzhd-yxg"
                               target="_blank"
@@ -598,7 +627,7 @@ export default function CalendarPage() {
                             </span>
                           )}
                         </div>
-                        {isPast && !resolved && (
+                        {isPast && !resolved && !isDiscovery && (
                           <div className="flex gap-1.5 mt-2 pl-4">
                             <button
                               onClick={() => handleResolve(slot, 'approved')}

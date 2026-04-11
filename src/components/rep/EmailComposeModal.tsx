@@ -5,6 +5,7 @@ import { RepLead, RepEmailLog, RepEmailReply, getLeadEmails, getLeadReplies } fr
 import { EMAIL_TEMPLATES, EmailTemplateKey } from '@/lib/types/repEmail';
 import { getAuth } from 'firebase/auth';
 import { getScreeningSlots } from '@/app/actions/getScreeningSlots';
+import { sendDiscoveryBookingLink } from '@/app/actions/sendDiscoveryBookingLink';
 import { X, Send, Loader2, Mail, ChevronDown, ChevronUp, Check, AlertCircle, Reply, Inbox, Eye, EyeOff, Calendar } from 'lucide-react';
 
 interface EmailComposeModalProps {
@@ -76,6 +77,9 @@ export default function EmailComposeModal({ lead, repName, repEmail, onClose, on
 
   // Available slots
   const [availableSlots, setAvailableSlots] = useState<number | null>(null);
+
+  // Attach booking link
+  const [attachBooking, setAttachBooking] = useState(false);
 
   const vars = {
     contactName: lead.contactName.split(' ')[0],
@@ -178,6 +182,11 @@ export default function EmailComposeModal({ lead, repName, repEmail, onClose, on
         const data = await res.json();
         setError(data.error || 'Failed to send email');
         return;
+      }
+
+      // Also send booking link if checked
+      if (attachBooking && lead.contactEmail) {
+        await sendDiscoveryBookingLink(lead.id, lead.contactName, lead.contactEmail, repName);
       }
 
       setSent(true);
@@ -313,6 +322,21 @@ export default function EmailComposeModal({ lead, repName, repEmail, onClose, on
               className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 resize-none leading-relaxed"
             />
           </div>
+
+          {/* Attach booking link checkbox */}
+          {lead.contactEmail && !lead.discoveryCallSlot && availableSlots !== null && availableSlots > 0 && (
+            <label className="flex items-center gap-2.5 cursor-pointer group">
+              <input
+                type="checkbox"
+                checked={attachBooking}
+                onChange={e => setAttachBooking(e.target.checked)}
+                className="w-4 h-4 rounded border-white/20 bg-white/5 text-emerald-500 focus:ring-emerald-500/30 focus:ring-offset-0"
+              />
+              <span className="text-xs text-white/50 group-hover:text-white/70 transition-colors">
+                Also send a booking link (separate email with available slots)
+              </span>
+            </label>
+          )}
 
           {/* Preview toggle */}
           <div>
