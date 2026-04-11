@@ -778,7 +778,7 @@ function ManagementTab() {
     setMarkingPaid(null);
   }
 
-  async function handleUpdateRep(uid: string, field: 'status' | 'tier', value: string) {
+  async function handleUpdateRep(uid: string, field: 'status' | 'tier' | 'careerRank', value: string) {
     await fetch('/api/admin/reps', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -1003,15 +1003,27 @@ function ManagementTab() {
                         <option value="inactive">inactive</option>
                       </select>
                     </span>
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full border text-emerald-400 bg-emerald-500/10 border-emerald-500/20">
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
+                      (rep as Record<string, unknown>).careerRank === 'dragon' ? 'text-red-400 bg-red-500/10 border-red-500/20' :
+                      (rep as Record<string, unknown>).careerRank === 'master' ? 'text-orange-400 bg-orange-500/10 border-orange-500/20' :
+                      (rep as Record<string, unknown>).careerRank === 'closer' ? 'text-purple-400 bg-purple-500/10 border-purple-500/20' :
+                      (rep as Record<string, unknown>).careerRank === 'diamond' ? 'text-cyan-400 bg-cyan-500/10 border-cyan-500/20' :
+                      (rep as Record<string, unknown>).careerRank === 'gold' ? 'text-yellow-400 bg-yellow-500/10 border-yellow-500/20' :
+                      (rep as Record<string, unknown>).careerRank === 'silver' ? 'text-slate-300 bg-slate-400/10 border-slate-400/20' :
+                      'text-amber-600 bg-amber-500/10 border-amber-500/20'
+                    }`}>
                       <select
-                        value={rep.tier ?? 'rep'}
-                        onChange={e => handleUpdateRep(rep.uid, 'tier', e.target.value)}
+                        value={((rep as Record<string, unknown>).careerRank as string) ?? 'bronze'}
+                        onChange={e => handleUpdateRep(rep.uid, 'careerRank', e.target.value)}
                         className="bg-transparent border-none outline-none cursor-pointer text-inherit text-[10px] font-bold"
                       >
-                        <option value="rep">🎯 Rep</option>
-                        <option value="senior_rep">🏆 Senior</option>
-                        <option value="closer">🦈 Closer</option>
+                        <option value="bronze">🥉 Bronze</option>
+                        <option value="silver">🥈 Silver</option>
+                        <option value="gold">🥇 Gold</option>
+                        <option value="diamond">💎 Diamond</option>
+                        <option value="closer">🎯 Closer</option>
+                        <option value="master">🔥 Master</option>
+                        <option value="dragon">🐉 Dragon</option>
                       </select>
                     </span>
                   </div>
