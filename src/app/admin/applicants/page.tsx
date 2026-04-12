@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { Loader2, Mail, ArrowLeft, AlertTriangle, CheckCircle2, Star, MapPin, Phone, ExternalLink, ClipboardCheck, Plus, X, Send, Clock, Trash2 } from 'lucide-react';
+import { Loader2, Mail, ArrowLeft, AlertTriangle, CheckCircle2, Star, MapPin, Phone, ExternalLink, ClipboardCheck, Plus, X, Send, Clock, Trash2, LayoutGrid, List } from 'lucide-react';
 import Link from 'next/link';
 import { sendBookingLink } from '@/app/actions/sendBookingLink';
 import { sendOffer } from '@/app/actions/sendOffer';
@@ -113,6 +113,7 @@ export default function AdminApplicantsPage() {
   const [togglingReview, setTogglingReview] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [changingStatusId, setChangingStatusId] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<'list' | 'pipeline'>('pipeline');
 
   useEffect(() => {
     Promise.all([
@@ -313,13 +314,31 @@ export default function AdminApplicantsPage() {
             <h1 className="text-2xl font-bold tracking-tight">Applicants</h1>
             <p className="text-sm text-zinc-500 mt-0.5">Sales rep hiring pipeline · {applicants.length} total</p>
           </div>
-          <button
-            onClick={() => setShowAddForm(true)}
-            className="flex items-center gap-1.5 bg-white text-zinc-900 text-xs font-semibold px-3.5 py-2 rounded-lg hover:bg-zinc-100 transition-colors"
-          >
-            <Plus size={14} />
-            Add Applicant
-          </button>
+          <div className="flex items-center gap-2">
+            <div className="flex gap-0.5 bg-zinc-900 rounded-lg p-0.5">
+              <button
+                onClick={() => setViewMode('pipeline')}
+                className={`p-1.5 rounded-md transition-all ${viewMode === 'pipeline' ? 'bg-zinc-700 text-white' : 'text-zinc-500 hover:text-zinc-300'}`}
+                title="Pipeline view"
+              >
+                <LayoutGrid size={14} />
+              </button>
+              <button
+                onClick={() => setViewMode('list')}
+                className={`p-1.5 rounded-md transition-all ${viewMode === 'list' ? 'bg-zinc-700 text-white' : 'text-zinc-500 hover:text-zinc-300'}`}
+                title="List view"
+              >
+                <List size={14} />
+              </button>
+            </div>
+            <button
+              onClick={() => setShowAddForm(true)}
+              className="flex items-center gap-1.5 bg-white text-zinc-900 text-xs font-semibold px-3.5 py-2 rounded-lg hover:bg-zinc-100 transition-colors"
+            >
+              <Plus size={14} />
+              Add Applicant
+            </button>
+          </div>
         </div>
 
         {/* Add Applicant Modal */}
@@ -331,25 +350,27 @@ export default function AdminApplicantsPage() {
           />
         )}
 
-        {/* Tabs */}
-        <div className="flex gap-1 mb-6 bg-zinc-900 rounded-lg p-1 w-fit">
-          {TABS.map(({ key, label }) => (
-            <button
-              key={key}
-              onClick={() => setTab(key)}
-              className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
-                tab === key
-                  ? 'bg-zinc-700 text-white'
-                  : 'text-zinc-500 hover:text-zinc-300'
-              }`}
-            >
-              {label}
-              <span className={`ml-2 text-xs ${tab === key ? 'text-zinc-400' : 'text-zinc-600'}`}>
-                {counts[key]}
-              </span>
-            </button>
-          ))}
-        </div>
+        {/* Tabs — list mode only */}
+        {viewMode === 'list' && (
+          <div className="flex gap-1 mb-6 bg-zinc-900 rounded-lg p-1 w-fit">
+            {TABS.map(({ key, label }) => (
+              <button
+                key={key}
+                onClick={() => setTab(key)}
+                className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
+                  tab === key
+                    ? 'bg-zinc-700 text-white'
+                    : 'text-zinc-500 hover:text-zinc-300'
+                }`}
+              >
+                {label}
+                <span className={`ml-2 text-xs ${tab === key ? 'text-zinc-400' : 'text-zinc-600'}`}>
+                  {counts[key]}
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* Content */}
         {loading ? (
@@ -357,7 +378,7 @@ export default function AdminApplicantsPage() {
             <Loader2 size={18} className="animate-spin" />
             <span className="text-sm">Loading applicants…</span>
           </div>
-        ) : (
+        ) : viewMode === 'list' ? (
           <div className="space-y-3">
             {filtered.map((applicant) => (
               <ApplicantRow
@@ -382,6 +403,14 @@ export default function AdminApplicantsPage() {
               <p className="text-zinc-600 text-sm py-10 text-center">No applicants in this category.</p>
             )}
           </div>
+        ) : (
+          <PipelineView
+            applicants={applicants}
+            submissions={submissions}
+            sending={sending}
+            onSendBooking={handleSendBooking}
+            onSendOffer={handleSendOffer}
+          />
         )}
       </div>
     </div>
@@ -685,6 +714,208 @@ function ApplicantRow({ applicant, sending, justSent, error, onSendBooking, onSe
             </div>
           </div>
         </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Pipeline View ─────────────────────────────────────────────────────────
+
+const PIPELINE_STAGES: { key: ApplicantStatus; label: string; dotColor: string }[] = [
+  { key: 'pending', label: 'New', dotColor: 'bg-zinc-500' },
+  { key: 'trial_sent', label: 'Trial Sent', dotColor: 'bg-teal-500' },
+  { key: 'email_sent', label: 'Booking Sent', dotColor: 'bg-sky-500' },
+  { key: 'booked', label: 'Call Booked', dotColor: 'bg-blue-500' },
+  { key: 'screened', label: 'Screened', dotColor: 'bg-purple-500' },
+  { key: 'offered', label: 'Offer Sent', dotColor: 'bg-amber-500' },
+  { key: 'accepted', label: 'Hired', dotColor: 'bg-emerald-500' },
+];
+
+const DROPPED_STATUSES: ApplicantStatus[] = ['declined', 'rejected', 'no_show'];
+
+function PipelineView({
+  applicants,
+  submissions,
+  sending,
+  onSendBooking,
+  onSendOffer,
+}: {
+  applicants: ApplicantWithActivity[];
+  submissions: TrialSubmission[];
+  sending: string | null;
+  onSendBooking: (a: ApplicantWithActivity) => void;
+  onSendOffer: (a: ApplicantWithActivity) => void;
+}) {
+  const columns = PIPELINE_STAGES.map((stage) => ({
+    ...stage,
+    items: applicants
+      .filter((a) => a.status === stage.key)
+      .sort((a, b) => b.rating - a.rating),
+  }));
+
+  const dropped = applicants
+    .filter((a) => DROPPED_STATUSES.includes(a.status))
+    .sort((a, b) => b.rating - a.rating);
+
+  return (
+    <div>
+      <div className="flex gap-3 overflow-x-auto pb-4 -mx-6 px-6">
+        {columns.map((col) => (
+          <div key={col.key} className="min-w-[220px] w-[220px] flex-shrink-0">
+            <div className="flex items-center gap-2 mb-3 px-1">
+              <div className={`w-2 h-2 rounded-full ${col.dotColor}`} />
+              <span className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">
+                {col.label}
+              </span>
+              <span className="text-[10px] text-zinc-600 font-medium">
+                {col.items.length}
+              </span>
+            </div>
+            <div className="space-y-2">
+              {col.items.map((applicant) => (
+                <PipelineCard
+                  key={applicant.id}
+                  applicant={applicant}
+                  sending={sending === applicant.id}
+                  onSendBooking={onSendBooking}
+                  onSendOffer={onSendOffer}
+                  submission={
+                    submissions.find(
+                      (s) => s.email === applicant.email.toLowerCase()
+                    ) ?? null
+                  }
+                />
+              ))}
+              {col.items.length === 0 && (
+                <div className="border border-dashed border-zinc-800 rounded-lg py-6 text-center">
+                  <p className="text-[10px] text-zinc-700">Empty</p>
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {dropped.length > 0 && (
+        <div className="mt-6 pt-4 border-t border-zinc-800">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="w-2 h-2 rounded-full bg-red-500" />
+            <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">
+              Dropped
+            </span>
+            <span className="text-[10px] text-zinc-600 font-medium">
+              {dropped.length}
+            </span>
+          </div>
+          <div className="flex gap-2 flex-wrap">
+            {dropped.map((applicant) => (
+              <div
+                key={applicant.id}
+                className="flex items-center gap-2 bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2"
+              >
+                <span className="text-xs text-zinc-400">{applicant.name}</span>
+                <span
+                  className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${STATUS_STYLES[applicant.status]}`}
+                >
+                  {STATUS_LABELS[applicant.status]}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function PipelineCard({
+  applicant,
+  sending,
+  onSendBooking,
+  onSendOffer,
+  submission,
+}: {
+  applicant: ApplicantWithActivity;
+  sending: boolean;
+  onSendBooking: (a: ApplicantWithActivity) => void;
+  onSendOffer: (a: ApplicantWithActivity) => void;
+  submission: TrialSubmission | null;
+}) {
+  const canSendBooking =
+    applicant.verdict === 'booking' && applicant.status === 'pending';
+  const canSendOffer = applicant.status === 'screened';
+
+  return (
+    <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-3 space-y-2 hover:border-zinc-700 transition-colors">
+      <div className="flex items-start justify-between gap-2">
+        <div className="min-w-0">
+          <p className="text-sm font-medium text-white truncate">
+            {applicant.name}
+          </p>
+          <Stars count={applicant.rating} />
+        </div>
+        <span
+          className={`shrink-0 px-1.5 py-0.5 rounded text-[10px] font-medium ${VERDICT_STYLES[applicant.verdict]}`}
+        >
+          {VERDICT_LABELS[applicant.verdict]}
+        </span>
+      </div>
+
+      {applicant.location && (
+        <p className="text-[11px] text-zinc-500 flex items-center gap-1 truncate">
+          <MapPin size={10} className="shrink-0" />
+          {applicant.location}
+        </p>
+      )}
+
+      {submission && (
+        <span
+          className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium ${
+            submission.reviewed
+              ? 'bg-emerald-500/10 text-emerald-400'
+              : 'bg-violet-500/10 text-violet-400'
+          }`}
+        >
+          <ClipboardCheck size={9} />
+          {submission.reviewed ? 'Reviewed' : 'Submitted'}
+        </span>
+      )}
+
+      {applicant.indeedEmail && (
+        <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-orange-500/10 text-orange-400">
+          <AlertTriangle size={9} />
+          Indeed email
+        </span>
+      )}
+
+      {canSendBooking && (
+        <button
+          onClick={() => onSendBooking(applicant)}
+          disabled={sending}
+          className="w-full flex items-center justify-center gap-1.5 bg-white text-zinc-900 text-[11px] font-semibold px-2 py-1.5 rounded-lg hover:bg-zinc-100 disabled:opacity-50 transition-colors"
+        >
+          {sending ? (
+            <Loader2 size={10} className="animate-spin" />
+          ) : (
+            <Mail size={10} />
+          )}
+          Send Booking
+        </button>
+      )}
+
+      {canSendOffer && (
+        <button
+          onClick={() => onSendOffer(applicant)}
+          disabled={sending}
+          className="w-full flex items-center justify-center gap-1.5 bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[11px] font-semibold px-2 py-1.5 rounded-lg hover:bg-amber-500/20 disabled:opacity-50 transition-colors"
+        >
+          {sending ? (
+            <Loader2 size={10} className="animate-spin" />
+          ) : (
+            <Send size={10} />
+          )}
+          Send Offer
+        </button>
       )}
     </div>
   );
