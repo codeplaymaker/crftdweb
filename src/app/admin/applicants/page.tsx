@@ -71,15 +71,18 @@ function Stars({ count }: { count: number }) {
   );
 }
 
-type FilterTab = 'all' | Verdict | 'no_show' | 'screened';
+type FilterTab = 'all' | Verdict | 'no_show' | 'screened' | 'offered' | 'accepted' | 'rejected';
 
 const TABS: { key: FilterTab; label: string }[] = [
   { key: 'all', label: 'All' },
   { key: 'booking', label: 'Booking' },
   { key: 'trial', label: 'Trial Task' },
-  { key: 'no_show', label: 'No Show' },
   { key: 'screened', label: 'Screened' },
+  { key: 'offered', label: 'Offered' },
+  { key: 'accepted', label: 'Accepted' },
+  { key: 'no_show', label: 'No Show' },
   { key: 'decline', label: 'Decline' },
+  { key: 'rejected', label: 'Rejected' },
 ];
 
 // ─── Types ─────────────────────────────────────────────────────────────────
@@ -130,10 +133,8 @@ export default function AdminApplicantsPage() {
     let base;
     if (tab === 'all') {
       base = applicants;
-    } else if (tab === 'no_show') {
-      base = applicants.filter((a) => a.status === 'no_show');
-    } else if (tab === 'screened') {
-      base = applicants.filter((a) => a.status === 'screened');
+    } else if (['no_show', 'screened', 'offered', 'accepted', 'rejected'].includes(tab)) {
+      base = applicants.filter((a) => a.status === tab);
     } else {
       base = applicants.filter((a) => a.verdict === tab);
     }
@@ -146,7 +147,10 @@ export default function AdminApplicantsPage() {
     trial: applicants.filter((a) => a.verdict === 'trial').length,
     no_show: applicants.filter((a) => a.status === 'no_show').length,
     screened: applicants.filter((a) => a.status === 'screened').length,
+    offered: applicants.filter((a) => a.status === 'offered').length,
+    accepted: applicants.filter((a) => a.status === 'accepted').length,
     decline: applicants.filter((a) => a.verdict === 'decline').length,
+    rejected: applicants.filter((a) => a.status === 'rejected').length,
   }), [applicants]);
 
   async function handleSendBooking(applicant: ApplicantWithActivity) {
