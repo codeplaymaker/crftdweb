@@ -31,7 +31,7 @@ function buildTrialTaskHtml(name: string): string {
             <p style="margin:0;font-size:15px;color:#fff;line-height:1.7;">Find <strong>5 UK businesses</strong> with a bad website and write <strong>one specific sentence</strong> for each explaining why it needs a redesign.</p>
           </td></tr>
         </table>
-        <p style="margin:0 0 12px;font-size:14px;color:#888;line-height:1.7;">Not just <em>“it looks old”</em> — something specific like: <em>“No mobile version — the site breaks on any phone”</em></p>
+        <p style="margin:0 0 12px;font-size:14px;color:#888;line-height:1.7;">Not just <em>“it looks old”</em> — something specific like: <em>“No clear call-to-action — visitors land on the page with no way to enquire or book”</em></p>
         <p style="margin:0 0 28px;font-size:15px;color:#444;line-height:1.7;">No formatting required — submit your list using the button below within <strong style="color:#111;">48 hours</strong>.</p>
         <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;"><tr><td style="border-top:1px solid #e8e8e8;"></td></tr></table>
         <img src="https://crftdweb.com/CW-logo.png" alt="CrftdWeb" width="48" style="display:block;border:0;margin-bottom:8px;" />

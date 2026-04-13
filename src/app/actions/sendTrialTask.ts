@@ -61,9 +61,9 @@ function buildHtml(name: string, email: string): string {
               <!-- Examples -->
               <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 28px;">
                 ${[
-                  'No mobile version — the site breaks on any phone',
-                  'No contact number visible above the fold',
-                  "The site hasn't been updated since 2018",
+                  'No clear call-to-action — visitors land on the page with no way to enquire or book',
+                  'Hero section is a blurry stock photo with no headline — you can\'t tell what they sell',
+                  'Contact form is buried three clicks deep — nobody\'s filling that out',
                 ].map(ex => `
                 <tr>
                   <td style="padding:5px 0;">
@@ -135,7 +135,7 @@ Thanks for applying — your background looks interesting.
 
 Before we book a call, I'd like to see how you think.
 
-Your task: Find 5 UK businesses with a bad website and write one specific sentence for each explaining why it needs a redesign — not just "it looks old", but something like "no mobile version" or "no contact number visible above the fold" or "the site hasn't been updated since 2018".
+Your task: Find 5 UK businesses with a bad website and write one specific sentence for each explaining why it needs a redesign — not just "it looks old", but something like "no clear call-to-action" or "hero section is a blurry stock photo with no headline" or "contact form is buried three clicks deep".
 
 When you're ready, click below to submit your list — it takes 2 minutes:
 ${BASE_URL}/apply/trial

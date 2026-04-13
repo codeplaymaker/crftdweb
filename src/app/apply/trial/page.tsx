@@ -78,9 +78,9 @@ export default function TrialTaskPage() {
           <div className="bg-white/[0.04] border border-white/10 rounded-xl px-5 py-4 space-y-2">
             <p className="text-[10px] text-white/30 uppercase tracking-widest font-semibold mb-3">Good examples</p>
             {[
-              'No mobile version — the site breaks completely on any phone',
-              'No contact number visible above the fold despite being a service business',
-              "Built in Flash — the site hasn't been accessible since 2020",
+              'No clear call-to-action — visitors land on the page with no way to enquire or book',
+              'Hero section is a blurry stock photo with no headline — you can\'t tell what they sell',
+              'Contact form is buried three clicks deep — nobody\'s filling that out',
             ].map((ex, i) => (
               <div key={i} className="flex gap-3 text-sm text-white/50">
                 <span className="text-white/20 shrink-0">→</span>

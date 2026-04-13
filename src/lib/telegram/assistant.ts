@@ -560,7 +560,7 @@ REP ROLE
 TRIAL TASK
 - Find 5 UK businesses with bad websites; for each write one specific sentence explaining why it needs a redesign.
 - Bad example: "it looks old" — NOT accepted.
-- Good examples: "No mobile version — the site breaks on any phone." / "No contact number visible above the fold despite being a service business."
+- Good examples: "No clear call-to-action — visitors land on the page with no way to enquire or book" / "Hero section is a blurry stock photo with no headline — you can't tell what they sell."
 - Submission form: crftdweb.com/apply/trial
 - Time limit: 48 hours
 - Pass rate: ~20%
