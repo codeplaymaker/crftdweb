@@ -11,6 +11,8 @@ interface CVResult {
   salesSignals: string[];
   reasons: string[];
   redFlags: string[];
+  education: string;
+  location: string;
 }
 
 const verdictConfig = {
@@ -45,8 +47,8 @@ function ScoreBar({ score }: { score: number }) {
 
 function ResultCard({ result, onSendTask, onSendBooking }: {
   result: CVResult;
-  onSendTask: (email: string, name: string) => Promise<{ success: boolean; alreadySent?: boolean }>;
-  onSendBooking: (email: string, name: string) => Promise<{ success: boolean }>;
+  onSendTask: (email: string, name: string, cvData: CVResult) => Promise<{ success: boolean; alreadySent?: boolean }>;
+  onSendBooking: (email: string, name: string, cvData: CVResult) => Promise<{ success: boolean }>;
 }) {
   const [expanded, setExpanded] = useState(true);
   const cfg = verdictConfig[result.verdict];
@@ -66,7 +68,7 @@ function ResultCard({ result, onSendTask, onSendBooking }: {
     setSendError(false);
     try {
       if (result.verdict === 'Book Screening Call') {
-        const res = await onSendBooking(email, result.name);
+        const res = await onSendBooking(email, result.name, result);
         if (res.success) {
           localStorage.setItem(storageKey, 'sent');
           setActionSent(true);
@@ -75,7 +77,7 @@ function ResultCard({ result, onSendTask, onSendBooking }: {
           setSendError(true);
         }
       } else {
-        const res = await onSendTask(email, result.name);
+        const res = await onSendTask(email, result.name, result);
         if (res.success) {
           localStorage.setItem(storageKey, 'sent');
           setActionSent(true);
@@ -257,13 +259,19 @@ export default function CVReviewPage() {
     await analyseFromApi(formData);
   };
 
-  const handleSendTask = async (email: string, name: string): Promise<{ success: boolean; alreadySent?: boolean }> => {
+  const handleSendTask = async (email: string, name: string, cvData: CVResult): Promise<{ success: boolean; alreadySent?: boolean }> => {
     if (!email) return { success: false };
     try {
       const res = await fetch('/api/admin/send-trial-task', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, name: name.split(' ')[0] }),
+        body: JSON.stringify({
+          email, name: name.split(' ')[0],
+          score: cvData.score, salesSignals: cvData.salesSignals,
+          redFlags: cvData.redFlags, reasons: cvData.reasons,
+          education: cvData.education, location: cvData.location,
+          cvVerdict: cvData.verdict,
+        }),
       });
       const data = await res.json();
       return { success: res.ok && data.success, alreadySent: data.alreadySent };
@@ -272,13 +280,19 @@ export default function CVReviewPage() {
     }
   };
 
-  const handleSendBooking = async (email: string, name: string): Promise<{ success: boolean }> => {
+  const handleSendBooking = async (email: string, name: string, cvData: CVResult): Promise<{ success: boolean }> => {
     if (!email) return { success: false };
     try {
       const res = await fetch('/api/admin/send-booking-link', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, name }),
+        body: JSON.stringify({
+          email, name,
+          score: cvData.score, salesSignals: cvData.salesSignals,
+          redFlags: cvData.redFlags, reasons: cvData.reasons,
+          education: cvData.education, location: cvData.location,
+          cvVerdict: cvData.verdict,
+        }),
       });
       const data = await res.json();
       return { success: res.ok && data.success };

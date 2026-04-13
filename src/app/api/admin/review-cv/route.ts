@@ -60,6 +60,8 @@ Analyse this CV and return a JSON object with these exact fields:
 - salesSignals: Array of up to 3 short strings highlighting relevant experience (cold calling, outreach, sales, customer-facing persuasion). Empty array if none.
 - reasons: Array of exactly 2-3 short bullet point strings explaining the verdict
 - redFlags: Array of short strings for any concerns (gaps, no UK experience, wrong industry, etc). Empty array if none.
+- education: Highest qualification or most relevant education (e.g. "BSc Business Management, University of Leeds"). Empty string if not found.
+- location: Candidate's city/area in the UK (e.g. "Manchester", "East London"). Empty string if not found.
 
 Rules:
 - Be direct and honest — this is a small agency needing results fast
@@ -92,6 +94,11 @@ Return ONLY valid JSON, no markdown.`;
       email: result.email || '',
       verdict: result.verdict || '',
       score: result.score || 0,
+      salesSignals: result.salesSignals || [],
+      reasons: result.reasons || [],
+      redFlags: result.redFlags || [],
+      education: result.education || '',
+      location: result.location || '',
       reviewedAt: new Date(),
     }).catch((e: unknown) => console.error('Firestore log error:', e));
 

@@ -145,7 +145,17 @@ Use this email address on the form so we can match it to your application.
 CrftdWeb
 crftdweb.com`;
 
-export async function sendTrialTask(name: string, email: string): Promise<{ success: boolean; error?: string; alreadySent?: boolean }> {
+interface CVData {
+  score?: number;
+  salesSignals?: string[];
+  redFlags?: string[];
+  reasons?: string[];
+  education?: string;
+  location?: string;
+  cvVerdict?: string;
+}
+
+export async function sendTrialTask(name: string, email: string, cvData?: CVData): Promise<{ success: boolean; error?: string; alreadySent?: boolean }> {
   if (!process.env.RESEND_API_KEY) {
     return { success: false, error: 'Email configuration error' };
   }
@@ -192,9 +202,12 @@ export async function sendTrialTask(name: string, email: string): Promise<{ succ
     if (applicantSnap.empty) {
       await adminDb.collection('applicants').add({
         name, email: normalised, status: 'trial_sent',
-        phone: '', location: '', rating: 3,
-        verdict: 'trial', salesSignals: '', education: '',
-        keyStrength: '', indeedEmail: false, notes: '',
+        phone: '', location: cvData?.location || '', rating: cvData?.score || 3,
+        verdict: 'trial', salesSignals: cvData?.salesSignals?.join(', ') || '',
+        education: cvData?.education || '',
+        keyStrength: cvData?.reasons?.[0] || '', indeedEmail: false,
+        notes: cvData?.redFlags?.length ? `Red flags: ${cvData.redFlags.join(', ')}` : '',
+        cvVerdict: cvData?.cvVerdict || '',
         emailSentAt: new Date().toISOString(), bookedAt: null,
         activityLog: [], createdAt: new Date().toISOString(), source: 'cv_review',
       });

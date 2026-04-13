@@ -3,11 +3,11 @@ import { sendTrialTask } from '@/app/actions/sendTrialTask';
 
 export async function POST(req: NextRequest) {
   try {
-    const { email, name } = await req.json();
+    const { email, name, score, salesSignals, redFlags, reasons, education, location, cvVerdict } = await req.json();
     if (!email || !name) {
       return NextResponse.json({ error: 'Missing email or name' }, { status: 400 });
     }
-    const result = await sendTrialTask(name, email);
+    const result = await sendTrialTask(name, email, { score, salesSignals, redFlags, reasons, education, location, cvVerdict });
     if (result.alreadySent) {
       return NextResponse.json({ success: false, alreadySent: true, error: result.error }, { status: 409 });
     }

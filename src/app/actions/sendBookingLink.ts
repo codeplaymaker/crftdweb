@@ -80,9 +80,20 @@ If none of the times work, just reply and we'll sort something.
 
 CrftdWeb · crftdweb.com`;
 
+interface CVData {
+  score?: number;
+  salesSignals?: string[];
+  redFlags?: string[];
+  reasons?: string[];
+  education?: string;
+  location?: string;
+  cvVerdict?: string;
+}
+
 export async function sendBookingLink(
   name: string,
   email: string,
+  cvData?: CVData,
 ): Promise<{ success: boolean; error?: string }> {
   if (!process.env.RESEND_API_KEY) return { success: false, error: 'Email config error' };
   if (!name || !email || !email.includes('@')) return { success: false, error: 'Valid name and email required' };
@@ -123,9 +134,12 @@ export async function sendBookingLink(
     if (applicantSnap.empty) {
       await adminDb.collection('applicants').add({
         name, email: emailKey, status: 'email_sent',
-        phone: '', location: '', rating: 3,
-        verdict: 'booking', salesSignals: '', education: '',
-        keyStrength: '', indeedEmail: false, notes: '',
+        phone: '', location: cvData?.location || '', rating: cvData?.score || 3,
+        verdict: 'booking', salesSignals: cvData?.salesSignals?.join(', ') || '',
+        education: cvData?.education || '',
+        keyStrength: cvData?.reasons?.[0] || '', indeedEmail: false,
+        notes: cvData?.redFlags?.length ? `Red flags: ${cvData.redFlags.join(', ')}` : '',
+        cvVerdict: cvData?.cvVerdict || '',
         emailSentAt: new Date().toISOString(), bookedAt: null,
         activityLog: [], createdAt: new Date().toISOString(), source: 'cv_review',
       });
