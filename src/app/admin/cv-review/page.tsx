@@ -57,31 +57,41 @@ function ResultCard({ result, onSendTask, onSendBooking }: {
   const [manualEmail, setManualEmail] = useState('');
   const [enteringEmail, setEnteringEmail] = useState(false);
   const [sending, setSending] = useState(false);
+  const [sendError, setSendError] = useState(false);
 
   const handleSend = async () => {
     const email = result.email || manualEmail;
     if (!email) { setEnteringEmail(true); return; }
     setSending(true);
-    if (result.verdict === 'Book Screening Call') {
-      const res = await onSendBooking(email, result.name);
-      setSending(false);
-      if (res.success) {
-        localStorage.setItem(storageKey, 'sent');
-        setActionSent(true);
-        setEnteringEmail(false);
+    setSendError(false);
+    try {
+      if (result.verdict === 'Book Screening Call') {
+        const res = await onSendBooking(email, result.name);
+        if (res.success) {
+          localStorage.setItem(storageKey, 'sent');
+          setActionSent(true);
+          setEnteringEmail(false);
+        } else {
+          setSendError(true);
+        }
+      } else {
+        const res = await onSendTask(email, result.name);
+        if (res.success) {
+          localStorage.setItem(storageKey, 'sent');
+          setActionSent(true);
+          setEnteringEmail(false);
+        } else if (res.alreadySent) {
+          localStorage.setItem(storageKey, 'sent');
+          setActionSent(true);
+          setAlreadySentWarning(true);
+        } else {
+          setSendError(true);
+        }
       }
-    } else {
-      const res = await onSendTask(email, result.name);
+    } catch {
+      setSendError(true);
+    } finally {
       setSending(false);
-      if (res.success) {
-        localStorage.setItem(storageKey, 'sent');
-        setActionSent(true);
-        setEnteringEmail(false);
-      } else if (res.alreadySent) {
-        localStorage.setItem(storageKey, 'sent');
-        setActionSent(true);
-        setAlreadySentWarning(true);
-      }
     }
   };
 
@@ -129,10 +139,10 @@ function ResultCard({ result, onSendTask, onSendBooking }: {
               <button
                 onClick={handleSend}
                 disabled={sending}
-                className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/30 text-purple-300 transition-all disabled:opacity-40"
+                className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg transition-all disabled:opacity-40 ${sendError ? 'bg-red-600/20 hover:bg-red-600/30 border border-red-500/30 text-red-300' : 'bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/30 text-purple-300'}`}
               >
-                {sending ? <Loader2 className="w-3 h-3 animate-spin" /> : <Send className="w-3 h-3" />}
-                {result.verdict === 'Book Screening Call' ? 'Send Booking Link' : 'Send Trial Task'}
+                {sending ? <Loader2 className="w-3 h-3 animate-spin" /> : sendError ? <XCircle className="w-3 h-3" /> : <Send className="w-3 h-3" />}
+                {sendError ? 'Retry' : result.verdict === 'Book Screening Call' ? 'Send Booking Link' : 'Send Trial Task'}
               </button>
             )
           )}
@@ -203,7 +213,6 @@ export default function CVReviewPage() {
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<CVResult[]>([]);
   const [error, setError] = useState('');
-  const [sendingFor, setSendingFor] = useState<string | null>(null);
   const [inputMode, setInputMode] = useState<'paste' | 'upload'>('paste');
   const [dragOver, setDragOver] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -250,7 +259,6 @@ export default function CVReviewPage() {
 
   const handleSendTask = async (email: string, name: string): Promise<{ success: boolean; alreadySent?: boolean }> => {
     if (!email) return { success: false };
-    setSendingFor(name);
     try {
       const res = await fetch('/api/admin/send-trial-task', {
         method: 'POST',
@@ -261,14 +269,11 @@ export default function CVReviewPage() {
       return { success: res.ok && data.success, alreadySent: data.alreadySent };
     } catch {
       return { success: false };
-    } finally {
-      setSendingFor(null);
     }
   };
 
   const handleSendBooking = async (email: string, name: string): Promise<{ success: boolean }> => {
     if (!email) return { success: false };
-    setSendingFor(name);
     try {
       const res = await fetch('/api/admin/send-booking-link', {
         method: 'POST',
@@ -279,8 +284,6 @@ export default function CVReviewPage() {
       return { success: res.ok && data.success };
     } catch {
       return { success: false };
-    } finally {
-      setSendingFor(null);
     }
   };
 
