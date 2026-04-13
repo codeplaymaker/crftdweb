@@ -52,9 +52,7 @@ function ResultCard({ result, onSendTask, onSendBooking }: {
 }) {
   const [expanded, setExpanded] = useState(true);
   const cfg = verdictConfig[result.verdict];
-  const storageKey = `cv-task-sent-v2-${result.name.replace(/\s+/g, '-').toLowerCase()}`;
-  const wasSent = typeof window !== 'undefined' && localStorage.getItem(storageKey) === 'sent';
-  const [actionSent, setActionSent] = useState(wasSent);
+  const [actionSent, setActionSent] = useState(false);
   const [alreadySentWarning, setAlreadySentWarning] = useState(false);
   const [manualEmail, setManualEmail] = useState('');
   const [enteringEmail, setEnteringEmail] = useState(false);
@@ -70,7 +68,6 @@ function ResultCard({ result, onSendTask, onSendBooking }: {
       if (result.verdict === 'Book Screening Call') {
         const res = await onSendBooking(email, result.name, result);
         if (res.success) {
-          localStorage.setItem(storageKey, 'sent');
           setActionSent(true);
           setEnteringEmail(false);
         } else {
@@ -79,11 +76,9 @@ function ResultCard({ result, onSendTask, onSendBooking }: {
       } else {
         const res = await onSendTask(email, result.name, result);
         if (res.success) {
-          localStorage.setItem(storageKey, 'sent');
           setActionSent(true);
           setEnteringEmail(false);
         } else if (res.alreadySent) {
-          localStorage.setItem(storageKey, 'sent');
           setActionSent(true);
           setAlreadySentWarning(true);
         } else {
