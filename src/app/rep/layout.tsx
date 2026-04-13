@@ -74,7 +74,7 @@ function RepLayoutInner({ children }: { children: React.ReactNode }) {
 
   // Render portal immediately — effect redirects if auth fails
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white flex">
+    <div className="min-h-screen bg-[#0a0a0a] text-white flex overflow-x-hidden">
       {/* Sidebar — desktop */}
       <aside className="hidden md:flex flex-col w-56 border-r border-white/8 px-4 py-6 gap-1 fixed h-full z-20">
         <div className="px-2 mb-8">
@@ -165,7 +165,7 @@ function RepLayoutInner({ children }: { children: React.ReactNode }) {
       )}
 
       {/* Main content */}
-      <main className="flex-1 md:ml-56 p-6 md:p-8 pt-20 md:pt-8">
+      <main className="flex-1 min-w-0 md:ml-56 px-4 py-6 md:p-8 pt-20 md:pt-8">
         {children}
       </main>
     </div>

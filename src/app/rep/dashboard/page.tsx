@@ -159,7 +159,7 @@ export default function RepDashboard() {
             </div>
             <div className="flex items-center gap-4">
               <span className="text-4xl">{rankInfo.emoji}</span>
-              <div className="flex-1">
+              <div className="flex-1 min-w-0">
                 <p className="text-lg font-bold text-white">{rankInfo.label}</p>
                 <p className="text-xs text-white/40 mt-0.5">{rankInfo.unlock}</p>
                 <p className="text-[10px] text-white/25 mt-1">
@@ -194,7 +194,7 @@ export default function RepDashboard() {
       {/* Today's goal */}
       <div className="bg-white/[0.02] border border-white/8 rounded-2xl p-5">
         <p className="text-xs font-bold uppercase tracking-widest text-white/30 mb-3">Daily Target</p>
-        <div className="grid grid-cols-5 gap-3 text-center">
+        <div className="grid grid-cols-3 sm:grid-cols-5 gap-3 text-center">
           <div>
             <p className="text-2xl font-bold text-white">30</p>
             <p className="text-[11px] text-white/30 mt-0.5">Outreaches / day</p>
