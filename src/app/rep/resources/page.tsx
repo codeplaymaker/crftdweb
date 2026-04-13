@@ -438,9 +438,8 @@ export default function RepResourcesPage() {
       </div>
 
       {/* Daily targets */}
-      <div className="grid grid-cols-5 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
-          { num: '30', label: 'Outreaches / day' },
           { num: '15', label: 'Calls / day' },
           { num: '2–3', label: 'Booked / wk' },
           { num: '1–2', label: 'Closed / mo' },
@@ -500,7 +499,7 @@ export default function RepResourcesPage() {
           ))}
           <div className="bg-emerald-500/5 border border-emerald-500/15 rounded-xl p-4 mt-2">
             <p className="text-xs text-emerald-400/70 leading-relaxed">
-              <span className="font-bold text-emerald-400">The maths:</span> 30 outreaches/day × 5 days = 150/week. 15 calls/day + 10–15 DMs/day. At a 2–3% booking rate = 3–4 booked calls/week. Convert 1 in 2 → 1–2 closed clients/month. One Starter deal = £199 commission. Consistency beats intensity.
+              <span className="font-bold text-emerald-400">The maths:</span> 15 calls/day + 10–15 DMs/day × 5 days = 125+ touches/week. At a 2–3% booking rate = 3–4 booked calls/week. Convert 1 in 2 → 1–2 closed clients/month. One Starter deal = £199 commission. Consistency beats intensity.
             </p>
           </div>
         </div>

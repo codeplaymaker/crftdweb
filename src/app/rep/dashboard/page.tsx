@@ -194,11 +194,7 @@ export default function RepDashboard() {
       {/* Today's goal */}
       <div className="bg-white/[0.02] border border-white/8 rounded-2xl p-5">
         <p className="text-xs font-bold uppercase tracking-widest text-white/30 mb-3">Daily Target</p>
-        <div className="grid grid-cols-3 sm:grid-cols-5 gap-3 text-center">
-          <div>
-            <p className="text-2xl font-bold text-white">30</p>
-            <p className="text-[11px] text-white/30 mt-0.5">Outreaches / day</p>
-          </div>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
           <div>
             <p className="text-2xl font-bold text-white">15</p>
             <p className="text-[11px] text-white/30 mt-0.5">Calls / day</p>
