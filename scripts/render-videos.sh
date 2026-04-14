@@ -4,7 +4,7 @@ set -e
 OUTDIR="out/videos"
 mkdir -p "$OUTDIR"
 
-COMPOSITIONS=("PainPoint" "BeforeAfter" "HotTake" "DmResults")
+COMPOSITIONS=("PainPoint" "BeforeAfter" "HotTake" "DmResults" "NobodyCares")
 
 for comp in "${COMPOSITIONS[@]}"; do
   echo "🎬 Rendering ${comp}..."
