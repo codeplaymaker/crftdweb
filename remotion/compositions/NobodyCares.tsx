@@ -1,8 +1,7 @@
 import React from 'react';
-import { AbsoluteFill, Sequence } from 'remotion';
+import { AbsoluteFill, Sequence, useCurrentFrame, interpolate } from 'remotion';
 import {
   baseStyle,
-  safeZone,
   colors,
   useSlideUp,
   useFadeIn,
@@ -11,162 +10,243 @@ import {
 } from './brand';
 
 // ─── PAS Video 5: "Nobody Cares What You Do" ──────
-// P: Your website talks about YOU, not your customer
-// A: Real examples of self-centred copy vs customer-centred
-// S: CrftdWeb builds sites that speak to the customer's problem
+// P: Punchy hook — nobody cares
+// A: Phone mockup showing bad vs good hero, then 2 tight comparisons
+// S: Specific CrftdWeb solve
 
-const CompareRow: React.FC<{
-  bad: string;
-  good: string;
+// Phone mockup showing a website hero section
+const PhoneMockup: React.FC<{
+  headline: string;
+  subline: string;
+  cta: string;
+  isBad: boolean;
   delay: number;
-}> = ({ bad, good, delay }) => {
-  const style = useSlideUp(delay);
+}> = ({ headline, subline, cta, isBad, delay }) => {
+  const style = useSlideUp(delay, 18);
+  const accent = isBad ? colors.red : colors.green;
   return (
     <div style={{
       ...style,
-      display: 'flex',
-      flexDirection: 'column',
-      gap: 10,
-      marginBottom: 20,
+      width: 520,
+      margin: '0 auto',
+      borderRadius: 36,
+      border: `2px solid ${isBad ? 'rgba(239,68,68,0.4)' : 'rgba(16,185,129,0.4)'}`,
+      backgroundColor: isBad ? 'rgba(239,68,68,0.04)' : 'rgba(16,185,129,0.04)',
+      overflow: 'hidden',
     }}>
+      {/* Status bar */}
       <div style={{
-        backgroundColor: 'rgba(239,68,68,0.08)',
-        border: `1px solid rgba(239,68,68,0.25)`,
-        borderRadius: 14,
-        padding: '18px 24px',
+        padding: '12px 24px',
         display: 'flex',
-        alignItems: 'flex-start',
-        gap: 14,
+        justifyContent: 'space-between',
+        fontSize: 14,
+        color: colors.muted,
       }}>
-        <span style={{ fontSize: 22, color: colors.red, fontWeight: 700, flexShrink: 0 }}>✗</span>
-        <span style={{ fontSize: 23, color: colors.red, fontWeight: 500, lineHeight: 1.35 }}>{bad}</span>
+        <span>{isBad ? '✗' : '✓'} {isBad ? 'their-site.co.uk' : 'their-site.co.uk'}</span>
+        <span style={{ color: accent, fontWeight: 700 }}>{isBad ? 'BEFORE' : 'AFTER'}</span>
       </div>
-      <div style={{
-        backgroundColor: 'rgba(16,185,129,0.08)',
-        border: `1px solid rgba(16,185,129,0.25)`,
-        borderRadius: 14,
-        padding: '18px 24px',
-        display: 'flex',
-        alignItems: 'flex-start',
-        gap: 14,
-      }}>
-        <span style={{ fontSize: 22, color: colors.green, fontWeight: 700, flexShrink: 0 }}>✓</span>
-        <span style={{ fontSize: 23, color: colors.green, fontWeight: 500, lineHeight: 1.35 }}>{good}</span>
+      {/* Hero content */}
+      <div style={{ padding: '28px 32px 36px' }}>
+        <div style={{
+          fontSize: 32,
+          fontWeight: 800,
+          lineHeight: 1.2,
+          color: colors.white,
+          marginBottom: 12,
+        }}>
+          {headline}
+        </div>
+        <div style={{
+          fontSize: 20,
+          color: colors.muted,
+          lineHeight: 1.4,
+          marginBottom: 24,
+        }}>
+          {subline}
+        </div>
+        <div style={{
+          display: 'inline-flex',
+          padding: '14px 28px',
+          borderRadius: 10,
+          backgroundColor: accent,
+          color: isBad ? colors.white : '#000',
+          fontSize: 18,
+          fontWeight: 700,
+        }}>
+          {cta}
+        </div>
       </div>
     </div>
   );
 };
 
 export const NobodyCares: React.FC = () => {
+  const frame = useCurrentFrame();
+
+  // Shake effect on the "bad" phone at frame ~110
+  const shake = frame >= 95 && frame <= 105
+    ? interpolate(frame, [95, 97, 99, 101, 103, 105], [0, -6, 5, -4, 3, 0], {
+        extrapolateLeft: 'clamp',
+        extrapolateRight: 'clamp',
+      })
+    : 0;
+
+  const safe: React.CSSProperties = {
+    paddingTop: 150,
+    paddingBottom: 480,
+    paddingLeft: 60,
+    paddingRight: 60,
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+  };
+
   return (
     <AbsoluteFill style={baseStyle}>
-      <div style={safeZone}>
+      <div style={safe}>
 
         {/* ── P: PROBLEM (0–3s) ── */}
         <Sequence layout="none" from={0} durationInFrames={90}>
-          <div style={useSlideUp(8)}>
+          <div style={useSlideUp(5)}>
             <div style={{
-              fontSize: 22,
-              fontWeight: 600,
-              color: colors.red,
-              textTransform: 'uppercase',
-              letterSpacing: '0.15em',
-              marginBottom: 20,
+              fontSize: 60,
+              fontWeight: 800,
+              lineHeight: 1.08,
+              letterSpacing: '-0.03em',
             }}>
-              Hard truth
+              Nobody cares
             </div>
             <div style={{
               fontSize: 60,
               fontWeight: 800,
-              lineHeight: 1.1,
+              lineHeight: 1.08,
               letterSpacing: '-0.03em',
+              color: colors.red,
             }}>
-              Nobody cares what you do.
+              what you do.
             </div>
+          </div>
+
+          <div style={useSlideUp(25)}>
             <div style={{
-              fontSize: 42,
+              fontSize: 44,
               fontWeight: 800,
               lineHeight: 1.15,
-              color: colors.muted,
-              marginTop: 16,
+              marginTop: 28,
             }}>
-              They care what you can do{' '}
-              <span style={{ color: colors.green }}>for them.</span>
+              Everyone cares what you
+            </div>
+            <div style={{
+              fontSize: 44,
+              fontWeight: 800,
+              lineHeight: 1.15,
+              color: colors.green,
+            }}>
+              can do for them.
             </div>
           </div>
         </Sequence>
 
-        {/* ── A: AGITATE (3–7.5s) ── */}
+        {/* ── A: AGITATE — bad phone mockup (3–5.5s) ── */}
         <Sequence layout="none" from={90}>
           <div style={useSlideUp(92)}>
             <div style={{
-              fontSize: 26,
+              fontSize: 24,
               fontWeight: 600,
-              color: colors.white,
-              marginBottom: 24,
+              color: colors.muted,
+              textAlign: 'center',
+              marginBottom: 20,
             }}>
-              Your homepage probably says:
+              This is what most business websites say:
             </div>
           </div>
 
-          <CompareRow
-            bad={`"We are a leading provider of digital solutions"`}
-            good={`"Get 3x more enquiries from your website in 30 days"`}
-            delay={110}
-          />
-          <CompareRow
-            bad={`"Our team has 15 years of experience"`}
-            good={`"Your customers find you on Google — not your competitors"`}
-            delay={140}
-          />
-          <CompareRow
-            bad={`"We offer web design, SEO, and branding"`}
-            good={`"A website that works while you sleep"`}
-            delay={170}
-          />
+          <div style={{ transform: `translateX(${shake}px)` }}>
+            <PhoneMockup
+              headline="Welcome to Smith & Sons Plumbing Ltd"
+              subline="We are a family-run plumbing company with over 15 years of experience serving the local area."
+              cta="Learn More"
+              isBad={true}
+              delay={98}
+            />
+          </div>
 
-          <div style={useSlideUp(200)}>
+          <div style={useSlideUp(120)}>
             <div style={{
-              fontSize: 28,
-              fontWeight: 600,
-              color: colors.white,
+              fontSize: 30,
+              fontWeight: 700,
+              color: colors.red,
               textAlign: 'center',
-              marginTop: 16,
-              lineHeight: 1.4,
+              marginTop: 24,
             }}>
-              Your visitor doesn't care about you.{'\n'}
-              They care about their problem.
+              Nobody's calling from that.
             </div>
           </div>
         </Sequence>
 
-        {/* ── S: SOLVE (7.5–10s) ── */}
-        <Sequence layout="none" from={225}>
-          <div style={{ ...useSlideUp(228), marginTop: 36 }}>
+        {/* ── A→S: FLIP — good phone mockup (5.5–8s) ── */}
+        <Sequence layout="none" from={165}>
+          <div style={useSlideUp(167)}>
             <div style={{
-              fontSize: 36,
-              fontWeight: 300,
-              fontStyle: 'italic',
+              fontSize: 24,
+              fontWeight: 600,
               color: colors.muted,
               textAlign: 'center',
-              marginBottom: 14,
+              marginBottom: 20,
             }}>
-              We build websites that speak to them.
+              This is what it should say:
             </div>
+          </div>
+
+          <PhoneMockup
+            headline="Burst pipe at 2am? We're there in 30 minutes."
+            subline="Emergency plumbing across Bristol. Fixed pricing. No call-out fee."
+            cta="Call Now — Free Quote"
+            isBad={false}
+            delay={172}
+          />
+
+          <div style={useSlideUp(195)}>
             <div style={{
-              fontSize: 40,
+              fontSize: 30,
+              fontWeight: 700,
+              color: colors.green,
+              textAlign: 'center',
+              marginTop: 24,
+            }}>
+              That gets the phone ringing.
+            </div>
+          </div>
+        </Sequence>
+
+        {/* ── S: SOLVE (8–10s) ── */}
+        <Sequence layout="none" from={240}>
+          <div style={{ ...useSlideUp(242), marginTop: 32 }}>
+            <div style={{
+              fontSize: 34,
               fontWeight: 800,
               textAlign: 'center',
-              lineHeight: 1.3,
+              lineHeight: 1.35,
+              marginBottom: 10,
+            }}>
+              We rewrite your site around
+            </div>
+            <div style={{
+              fontSize: 34,
+              fontWeight: 800,
+              textAlign: 'center',
+              lineHeight: 1.35,
+              color: colors.green,
               marginBottom: 28,
             }}>
-              Conversion-first copy.{' '}
-              <span style={{ color: colors.green }}>Customer-first design.</span>
+              what your customer is actually searching for.
             </div>
-            <div style={{ opacity: useFadeIn(248) }}>
+            <div style={{ opacity: useFadeIn(260) }}>
               <CtaBadge text="Free site audit — crftdweb.com" />
             </div>
-            <div style={{ opacity: useFadeIn(258), marginTop: 18 }}>
+            <div style={{ opacity: useFadeIn(270), marginTop: 16 }}>
               <Logo size={28} style={{ textAlign: 'center', margin: '0 auto' }} />
             </div>
           </div>
