@@ -13,6 +13,7 @@ export const concepts: Concept[] = [
     shortDescription: 'A design philosophy where every decision on the page exists to move visitors toward a specific action.',
     body: [
       'Most web design agencies build beautiful websites. Conversion-first design builds websites that work. One gets you awards. The other gets you clients.',
+      'The distinction sounds obvious. In practice, most websites are built the wrong way around. The designer starts with mood boards. The developer starts with components. Nobody starts with the question: what action do we need visitors to take, and what is stopping them?',
       'Conversion-first design starts with one question before any visual work begins: what is the single most important action a visitor should take on this page? Every decision that follows serves that answer. Layout, copy, imagery, spacing. All of it.',
       'One primary CTA per page. Multiple options create decision paralysis. Pick the action that matters most and design the whole page toward it.',
       'Value above the fold. Visitors decide in three seconds. Your headline, sub-headline, and CTA must all appear before they touch the scroll.',
@@ -36,10 +37,12 @@ export const concepts: Concept[] = [
     shortDescription: 'Google\'s three performance metrics that measure how fast and stable your site feels to users — and affect your rankings.',
     body: [
       'Core Web Vitals are three real-world performance metrics that Google uses to measure the user experience of a web page. They became a ranking signal in Google\'s Page Experience update and directly affect how high your pages appear in search results.',
-      'The three metrics are:',
+      'The three metrics are Largest Contentful Paint, Interaction to Next Paint, and Cumulative Layout Shift. Each one measures a different aspect of how the page feels to a real person. Not a lab test. Not a synthetic benchmark. Observed experience.',
       'Largest Contentful Paint (LCP) measures loading speed. How long does it take for the largest visible element to render? Target: under 2.5 seconds. Slow LCPs are usually caused by render-blocking JavaScript, large unoptimised images, or slow server response times.',
       'Interaction to Next Paint (INP) measures interactivity. How quickly does the page respond when someone clicks, taps, or types? Target: under 200ms. A high INP is usually heavy JavaScript blocking the main thread.',
       'Cumulative Layout Shift (CLS) measures visual stability. Does the page move unexpectedly while loading? Target: below 0.1. Layout shifts are caused by images without set dimensions, late-loading ads, or dynamically injected content.',
+      'Why do Core Web Vitals matter beyond rankings? Because they measure real friction. A page that shifts while someone is trying to tap a button loses the tap. A page that takes 4 seconds to load loses the visitor. A page that doesn\'t respond to input loses trust. Google is measuring what users already know and feel.',
+      'Most businesses do not know their Core Web Vitals scores. The businesses that do, and that consistently score in the "Good" range, have a compounding advantage: lower bounce rates, better rankings, and higher conversion rates. All from the same investment.',
       'Measure your Core Web Vitals with Google PageSpeed Insights, Google Search Console, or Chrome DevTools. All three metrics must be in the "Good" range to pass the assessment. Custom Next.js sites consistently achieve this. WordPress sites with plugins often do not.',
     ],
     relatedPages: [
@@ -132,10 +135,13 @@ export const concepts: Concept[] = [
     shortDescription: 'Why modern service businesses should use Next.js instead of WordPress — the technical case in plain English.',
     body: [
       'Next.js is a React-based web framework developed by Vercel. It has become the leading technology choice for high-performance business websites because it solves the three biggest problems with traditional website platforms: speed, SEO, and maintainability.',
+      'Most business owners think about websites in terms of design. How it looks. Whether it is modern. Whether it matches the brand. These things matter. But they are visible to the visitor after the page loads. Speed determines whether the visitor sees the page at all.',
       'Speed: Next.js generates pages as static HTML at build time, served from a global CDN. No database query. No PHP execution. No plugin overhead. A Next.js page loads in under 100ms from cache. A WordPress page with 15 plugins can take 2-5 seconds. Speed is not a user experience issue. It is a conversion issue. Each additional second of load time costs around 7% of your conversions.',
       'SEO: Next.js supports server-side rendering and static generation. Every page arrives at the browser as complete HTML. Search engine crawlers read the full content immediately, without executing JavaScript. WordPress with client-rendered plugins can send crawlers empty shells. Next.js integrates natively with schema markup, sitemap generation, and the Metadata API.',
       'Maintainability: A Next.js codebase is version-controlled, typed with TypeScript, and component-based. No plugin ecosystem to patch. No admin login page to brute-force. Deploy via Git. No compatibility matrix to manage.',
+      'Security is a structural advantage, not a feature. WordPress has a massive plugin ecosystem. Every plugin is a potential attack vector. Every plugin author is a potential weak link. 90% of hacked CMS sites run WordPress. Next.js static sites have no database, no admin panel, no plugin layer. There is nothing to exploit.',
       'The tradeoff: Next.js requires a developer to build and maintain. You cannot drag-and-drop content like WordPress. For businesses that update content frequently, a headless CMS like Sanity or Contentful connects to Next.js and gives you a content editing interface without giving up any of the performance.',
+      'For businesses that want their website to rank, convert, and stay fast over time, Next.js is the right tool. Templates and page builders trade performance for convenience. The cost shows up in your rankings and your bounce rate.',
     ],
     relatedPages: [
       { label: 'Next.js', href: '/glossary/next-js' },

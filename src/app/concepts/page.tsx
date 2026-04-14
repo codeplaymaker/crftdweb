@@ -37,6 +37,18 @@ export default function ConceptsPage() {
               </p>
             </div>
 
+            <div className="max-w-2xl mx-auto mb-16 space-y-4 text-muted-foreground leading-relaxed">
+              <p>
+                Most websites fail for the same reasons. Too many goals. No clear hierarchy. Copy written about the business instead of the visitor. Design that looks good in a mockup and converts poorly in the real world.
+              </p>
+              <p>
+                These concepts are the thinking behind every project we build. Not rules. Not a checklist. A way of making decisions that puts results first.
+              </p>
+              <p>
+                Conversion-first design, trust engineering, Core Web Vitals, site architecture — each concept connects to the others. A fast site that doesn&apos;t convert is a waste of performance. A beautiful site with no trust signals is a missed opportunity. Great web design is all of these things working together.
+              </p>
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {concepts.map((concept) => (
                 <Link
