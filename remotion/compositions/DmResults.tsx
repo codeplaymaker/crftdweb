@@ -54,7 +54,7 @@ export const DmResults: React.FC = () => {
       <div style={safeZone}>
 
         {/* ── P: PROBLEM (0–2s) ── */}
-        <Sequence from={0}>
+        <Sequence layout="none" from={0}>
           <div style={useSlideUp(5)}>
             <div style={{
               fontSize: 22,
@@ -79,7 +79,7 @@ export const DmResults: React.FC = () => {
         </Sequence>
 
         {/* Chat header */}
-        <Sequence from={40}>
+        <Sequence layout="none" from={40}>
           <div style={{
             ...useSlideUp(42),
             textAlign: 'center',
@@ -94,24 +94,24 @@ export const DmResults: React.FC = () => {
         </Sequence>
 
         {/* ── A: AGITATE — the before pain (2–5s) ── */}
-        <Sequence from={60}>
+        <Sequence layout="none" from={60}>
           <Bubble text="Honestly? Our Wix site was embarrassing. Maybe 1 enquiry every few months." isClient={true} delay={0} />
         </Sequence>
-        <Sequence from={90}>
+        <Sequence layout="none" from={90}>
           <Bubble text="What was the biggest issue?" isClient={false} delay={0} />
         </Sequence>
-        <Sequence from={115}>
+        <Sequence layout="none" from={115}>
           <Bubble text="Speed was terrible. Nobody could find us on Google. The contact form was buried 3 clicks deep." isClient={true} delay={0} />
         </Sequence>
-        <Sequence from={145}>
+        <Sequence layout="none" from={145}>
           <Bubble text="So basically invisible to your customers." isClient={false} delay={0} />
         </Sequence>
-        <Sequence from={165}>
+        <Sequence layout="none" from={165}>
           <Bubble text="Exactly. We were paying for a site that did nothing." isClient={true} delay={0} />
         </Sequence>
 
         {/* ── S: SOLVE — the after results (5–10s) ── */}
-        <Sequence from={200}>
+        <Sequence layout="none" from={200}>
           <div style={{
             ...useSlideUp(202),
             textAlign: 'center',
@@ -129,21 +129,21 @@ export const DmResults: React.FC = () => {
             </span>
           </div>
         </Sequence>
-        <Sequence from={215}>
+        <Sequence layout="none" from={215}>
           <Bubble text="Quick update — we hit 14 enquiries this month through the new site 🙌" isClient={true} delay={0} />
         </Sequence>
-        <Sequence from={245}>
+        <Sequence layout="none" from={245}>
           <Bubble text="Page speed went from 38 to 98 👀" isClient={true} delay={0} />
         </Sequence>
-        <Sequence from={270}>
+        <Sequence layout="none" from={270}>
           <Bubble text="Custom code hits different. Google actually knows you exist now 😄" isClient={false} delay={0} />
         </Sequence>
-        <Sequence from={295}>
+        <Sequence layout="none" from={295}>
           <Bubble text="I've already referred two other businesses to you btw" isClient={true} delay={0} />
         </Sequence>
 
         {/* CTA */}
-        <Sequence from={310}>
+        <Sequence layout="none" from={310}>
           <div style={{ opacity: ctaFade, marginTop: 24 }}>
             <CtaBadge text="Real code. Real results. → crftdweb.com" />
             <Logo size={26} style={{ textAlign: 'center', margin: '16px auto 0' }} />

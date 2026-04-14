@@ -25,7 +25,7 @@ export const PainPoint: React.FC = () => {
       <div style={safeZone}>
 
         {/* ── P: PROBLEM (0–2.5s) ── */}
-        <Sequence from={0} durationInFrames={75}>
+        <Sequence layout="none" from={0} durationInFrames={75}>
           <div style={useSlideUp(8)}>
             <div style={{
               fontSize: 22,
@@ -59,7 +59,7 @@ export const PainPoint: React.FC = () => {
         </Sequence>
 
         {/* ── A: AGITATE (2.5–6s) ── */}
-        <Sequence from={75}>
+        <Sequence layout="none" from={75}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
             <div style={useSlideUp(90 - 75)}>
               <div style={{
@@ -125,7 +125,7 @@ export const PainPoint: React.FC = () => {
         </Sequence>
 
         {/* ── S: SOLVE (6–8s) ── */}
-        <Sequence from={180}>
+        <Sequence layout="none" from={180}>
           <div style={{ ...useSlideUp(180), marginTop: 40 }}>
             <div style={{
               fontSize: 36,

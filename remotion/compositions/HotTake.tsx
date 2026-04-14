@@ -28,7 +28,7 @@ export const HotTake: React.FC = () => {
       <div style={safeZone}>
 
         {/* ── P: PROBLEM (0–2s) ── */}
-        <Sequence from={0}>
+        <Sequence layout="none" from={0}>
           <div style={useSlideUp(8)}>
             <span style={{
               fontSize: 18,
@@ -45,7 +45,7 @@ export const HotTake: React.FC = () => {
           </div>
         </Sequence>
 
-        <Sequence from={15}>
+        <Sequence layout="none" from={15}>
           <div style={{ ...useSlideUp(18), marginTop: 32 }}>
             <div style={{
               fontSize: 56,
@@ -70,7 +70,7 @@ export const HotTake: React.FC = () => {
         </Sequence>
 
         {/* ── A: AGITATE (2–4.5s) ── */}
-        <Sequence from={60}>
+        <Sequence layout="none" from={60}>
           <div style={{
             marginTop: 40,
             display: 'flex',
@@ -98,7 +98,7 @@ export const HotTake: React.FC = () => {
         </Sequence>
 
         {/* ── S: SOLVE (4.5–7s) ── */}
-        <Sequence from={135}>
+        <Sequence layout="none" from={135}>
           <div style={{ ...useSlideUp(138), marginTop: 48 }}>
             <div style={{
               fontSize: 56,
