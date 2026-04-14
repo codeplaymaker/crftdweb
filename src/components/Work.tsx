@@ -24,7 +24,7 @@ const projects = [
     image: "/life-lab.jpg",
     category: "Lifestyle & Brand",
     href: "https://thelifelabhq.com",
-    tags: ["AI-Powered", "Membership Platform", "UX Redesign"],
+    tags: ["Conversion-Focused", "Membership Platform", "UX Redesign"],
   },
   {
     title: "MPM Trading Platform",

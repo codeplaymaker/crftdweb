@@ -8,6 +8,27 @@ import Work from '@/components/Work';
 export default function WorkPage() {
   return (
     <main className="pt-20">
+      <section className="py-16 border-b border-black/[0.06]">
+        <div className="container max-w-4xl">
+          <div className="text-center mb-10">
+            <span className="text-xs font-semibold tracking-[0.2em] uppercase text-muted-foreground mb-6 block">
+              OUR WORK
+            </span>
+            <h1 className="text-4xl md:text-6xl font-bold mb-5 tracking-tight leading-tight">Real projects. Real results.</h1>
+          </div>
+          <div className="max-w-2xl mx-auto space-y-4 text-muted-foreground leading-relaxed">
+            <p>
+              Every project starts with a problem. A business with great science and a website that looks like a student built it. A platform with real content and visitors who leave without signing up. A trader who needs a tool that actually fits how they work.
+            </p>
+            <p>
+              The build comes second. First is understanding who arrives, what they need to believe, and what stops them from taking action.
+            </p>
+            <p>
+              These are the projects we have built. Each one is custom-coded from scratch — no templates, no page builders, no shortcuts that cost you performance later. The results below are from real clients, not projections.
+            </p>
+          </div>
+        </div>
+      </section>
       <section className="py-32">
         <div className="container">
           <Work />

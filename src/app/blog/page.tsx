@@ -43,6 +43,17 @@ export default function BlogPage() {
             <p className="text-white/50 text-lg leading-relaxed max-w-2xl mx-auto">
               Honest web design advice, real client results, and guides that actually help you grow your business online.
             </p>
+            <div className="mt-10 max-w-2xl mx-auto space-y-4 text-white/40 text-base leading-relaxed text-left">
+              <p>
+                Most web design content is written to rank, not to help. Vague listicles about &quot;the importance of mobile-first design.&quot; Agency blogs that tell you what you want to hear instead of what you need to know.
+              </p>
+              <p>
+                This blog is different. Case studies show what we actually built and why. Guides explain real decisions with real tradeoffs. Comparisons give you the numbers without the spin.
+              </p>
+              <p>
+                If you are trying to decide whether to rebuild your site, which platform to use, how much it should cost, or what actually drives leads online — start here.
+              </p>
+            </div>
           </div>
         </section>
 
