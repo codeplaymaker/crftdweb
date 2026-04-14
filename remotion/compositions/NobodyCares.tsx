@@ -150,7 +150,7 @@ export const NobodyCares: React.FC = () => {
         </Sequence>
 
         {/* ── A: AGITATE — bad phone mockup (3–5.5s) ── */}
-        <Sequence layout="none" from={90}>
+        <Sequence layout="none" from={90} durationInFrames={75}>
           <div style={useSlideUp(92)}>
             <div style={{
               fontSize: 24,
@@ -187,7 +187,7 @@ export const NobodyCares: React.FC = () => {
         </Sequence>
 
         {/* ── A→S: FLIP — good phone mockup (5.5–8s) ── */}
-        <Sequence layout="none" from={165}>
+        <Sequence layout="none" from={165} durationInFrames={75}>
           <div style={useSlideUp(167)}>
             <div style={{
               fontSize: 24,
