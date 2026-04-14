@@ -3,6 +3,9 @@ import Features from "@/components/Features";
 import Work from "@/components/Work";
 import Industries from "@/components/Industries";
 import BlogHighlights from "@/components/BlogHighlights";
+import ConceptsHighlights from "@/components/ConceptsHighlights";
+import GlossaryHighlights from "@/components/GlossaryHighlights";
+import AnswersHighlights from "@/components/AnswersHighlights";
 import CTA from "@/components/CTA";
 import Paths from "@/components/Paths";
 import LoadingScreen from "@/components/LoadingScreen";
@@ -16,6 +19,9 @@ export default function Home() {
       <Work />
       <Industries />
       <BlogHighlights />
+      <ConceptsHighlights />
+      <GlossaryHighlights />
+      <AnswersHighlights />
       <Paths />
       <CTA />
     </main>

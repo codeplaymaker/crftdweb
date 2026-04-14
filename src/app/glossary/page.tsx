@@ -28,10 +28,12 @@ export default function GlossaryIndexPage() {
                 GLOSSARY
               </span>
               <h1 className="text-4xl md:text-6xl font-bold mb-5 tracking-tight leading-tight">
-                Web Design Glossary
+                Understand the words.
+                <br className="hidden md:block" />
+                <span className="text-muted-foreground">Own the outcome.</span>
               </h1>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-                Plain English definitions of the web design and development terms you need to know.
+                Jargon is a barrier. Definitions are a weapon.
               </p>
             </div>
 
@@ -54,15 +56,15 @@ export default function GlossaryIndexPage() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <Link href="/answers" className="p-5 border rounded-xl hover:border-black/30 transition-colors">
                   <h3 className="font-semibold mb-2">Answers</h3>
-                  <p className="text-sm text-muted-foreground">Direct answers to common web design questions.</p>
+                  <p className="text-sm text-muted-foreground">Questions asked. Answered directly.</p>
                 </Link>
                 <Link href="/concepts" className="p-5 border rounded-xl hover:border-black/30 transition-colors">
                   <h3 className="font-semibold mb-2">Concepts</h3>
-                  <p className="text-sm text-muted-foreground">Deep dives into web design strategy and methodology.</p>
+                  <p className="text-sm text-muted-foreground">The ideas behind sites that work.</p>
                 </Link>
                 <Link href="/blog" className="p-5 border rounded-xl hover:border-black/30 transition-colors">
                   <h3 className="font-semibold mb-2">Blog</h3>
-                  <p className="text-sm text-muted-foreground">Case studies and guides from real projects.</p>
+                  <p className="text-sm text-muted-foreground">Real projects. Real results.</p>
                 </Link>
               </div>
             </div>

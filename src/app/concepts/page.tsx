@@ -28,10 +28,12 @@ export default function ConceptsPage() {
                 CONCEPTS
               </span>
               <h1 className="text-4xl md:text-6xl font-bold mb-5 tracking-tight leading-tight">
-                Web Design Concepts
+                The ideas behind
+                <br className="hidden md:block" />
+                <span className="text-muted-foreground">high-performing sites.</span>
               </h1>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-                Deep dives into the ideas behind high-performing websites.
+                Strategy first. Design second. Tools last.
               </p>
             </div>
 
@@ -54,15 +56,15 @@ export default function ConceptsPage() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <Link href="/glossary" className="p-5 border rounded-xl hover:border-black/30 transition-colors">
                   <h3 className="font-semibold mb-2">Glossary</h3>
-                  <p className="text-sm text-muted-foreground">Definitions of key terms.</p>
+                  <p className="text-sm text-muted-foreground">Understand the words. Own the outcome.</p>
                 </Link>
                 <Link href="/answers" className="p-5 border rounded-xl hover:border-black/30 transition-colors">
                   <h3 className="font-semibold mb-2">Answers</h3>
-                  <p className="text-sm text-muted-foreground">Direct answers to common questions.</p>
+                  <p className="text-sm text-muted-foreground">Questions asked. Answered directly.</p>
                 </Link>
                 <Link href="/blog" className="p-5 border rounded-xl hover:border-black/30 transition-colors">
                   <h3 className="font-semibold mb-2">Blog</h3>
-                  <p className="text-sm text-muted-foreground">Case studies and guides.</p>
+                  <p className="text-sm text-muted-foreground">Real projects. Real results.</p>
                 </Link>
               </div>
             </div>

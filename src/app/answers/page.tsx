@@ -28,10 +28,12 @@ export default function AnswersPage() {
                 ANSWERS
               </span>
               <h1 className="text-4xl md:text-6xl font-bold mb-5 tracking-tight leading-tight">
-                Web Design Questions, Answered
+                Real questions.
+                <br className="hidden md:block" />
+                <span className="text-muted-foreground">Real answers.</span>
               </h1>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-                Direct answers to the questions business owners actually ask.
+                No pitch. No waffle. Just the thing you came to know.
               </p>
             </div>
 
@@ -54,15 +56,15 @@ export default function AnswersPage() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <Link href="/faq" className="p-5 border rounded-xl hover:border-black/30 transition-colors">
                   <h3 className="font-semibold mb-2">FAQ</h3>
-                  <p className="text-sm text-muted-foreground">Frequently asked questions about working with us.</p>
+                  <p className="text-sm text-muted-foreground">Working with us. How it goes.</p>
                 </Link>
                 <Link href="/glossary" className="p-5 border rounded-xl hover:border-black/30 transition-colors">
                   <h3 className="font-semibold mb-2">Glossary</h3>
-                  <p className="text-sm text-muted-foreground">Definitions of web design and development terms.</p>
+                  <p className="text-sm text-muted-foreground">Understand the words. Own the outcome.</p>
                 </Link>
                 <Link href="/concepts" className="p-5 border rounded-xl hover:border-black/30 transition-colors">
                   <h3 className="font-semibold mb-2">Concepts</h3>
-                  <p className="text-sm text-muted-foreground">Deep dives into web design strategy.</p>
+                  <p className="text-sm text-muted-foreground">The ideas behind sites that work.</p>
                 </Link>
               </div>
             </div>

@@ -8,7 +8,7 @@ const paths = [
   {
     tag: 'FOR SERVICE PROVIDERS',
     title: 'Learn the Framework',
-    description: 'The 6-stage methodology to go from trading time for money to building scalable products.',
+    description: 'Time for money is the trap. The Playbook is the exit.',
     href: '/playbook',
     cta: 'Explore Playbook',
     gradient: 'from-emerald-500/10 to-teal-500/10',
@@ -17,7 +17,7 @@ const paths = [
   {
     tag: 'FOR COACHES & AGENCIES',
     title: 'Use the AI System',
-    description: 'Launch, sell, and automate high-ticket offers with AI-powered content, funnels, and agents.',
+    description: 'AI-powered content, funnels, and agents. Built for high-ticket offers.',
     href: '/engine',
     cta: 'Explore Engine',
     gradient: 'from-purple-500/10 to-violet-500/10',
@@ -26,7 +26,7 @@ const paths = [
   {
     tag: 'NEED A WEBSITE?',
     title: 'Hire Our Studio',
-    description: 'You need a site that brings in clients, not just looks good on a business card.',
+    description: 'A site that brings in clients. Not just sits on a business card.',
     href: '/contact',
     cta: 'Start a Project',
     gradient: 'from-black/5 to-black/5',
@@ -48,10 +48,11 @@ export default function Paths() {
             THREE WAYS TO WORK WITH US
           </span>
           <h2 className="text-3xl md:text-5xl font-bold tracking-tight leading-tight mb-5">
-            Choose Your Path
+            Three ways in.{' '}
+            <span className="text-muted-foreground">One standard.</span>
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed">
-            Whether you want to learn, automate, or hire — we&apos;ve built something for you.
+            Learn the framework. Use the system. Hire the studio.
           </p>
         </motion.div>
 

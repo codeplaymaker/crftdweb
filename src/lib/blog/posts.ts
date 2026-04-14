@@ -29,9 +29,9 @@ export interface BlogSection {
 export const blogPosts: BlogPost[] = [
   {
     slug: 'microbiome-design-case-study',
-    title: 'How We Rebuilt a Science Company\'s Website and Transformed Their Online Presence',
+    title: 'Great Science. Amateur Website. Here\'s What Changed.',
     description:
-      'Microbiome Design had groundbreaking science but a website that looked like a student project. Here\'s how we fixed it.',
+      'Real science. Student-project website. One of those had to change.',
     date: '2026-03-20',
     category: 'Case Study',
     readTime: '5 min read',
@@ -45,28 +45,36 @@ export const blogPosts: BlogPost[] = [
       },
       {
         type: 'paragraph',
-        text: 'Microbiome Design is a cutting-edge company doing real science in the microbiome space. They work with researchers, investors, and partners — but their website looked like a student project. Investors weren\'t taking them seriously, and the site did nothing to communicate the quality of their work.',
+        text: 'Real science. Free template website. That\'s the gap investors saw first.',
       },
       {
         type: 'paragraph',
-        text: 'Their existing site was built on a free template with generic stock imagery, slow load times, and no clear path for visitors to take action. For a company seeking investment and research partnerships, this was costing them credibility every single day.',
+        text: 'Researchers, investors, partners — all arriving at a site that looked made in an afternoon. Slow. Generic. No clear action to take.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Every day the site stayed up, it cost them credibility they couldn\'t see.',
       },
       {
         type: 'heading',
-        text: 'Our Approach',
+        text: 'The Approach',
       },
       {
         type: 'paragraph',
-        text: 'We started with a full discovery session to understand their three core audiences: researchers, investors, and potential partners. Each group has different questions and different trust signals they need to see.',
+        text: 'Three audiences. Three sets of questions. One site to answer all of them.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Researchers want proof. Investors want confidence. Partners want clarity. The old site gave none of the above.',
       },
       {
         type: 'list',
         items: [
-          'Mapped the decision journey for each audience segment',
-          'Rebuilt the site around credibility signals and clear value propositions',
-          'Designed a conversion-focused layout that guides visitors to specific CTAs',
-          'Custom-coded in Next.js for sub-1.5s load times',
-          'Added proper SEO foundations and structured data',
+          'Mapped what each audience needs to trust first',
+          'Built credibility before the scroll',
+          'One goal per page. One action per section',
+          'Custom-coded in Next.js. Sub-1.5s load. No templates',
+          'SEO foundations built in, not bolted on',
         ],
       },
       {
@@ -83,7 +91,11 @@ export const blogPosts: BlogPost[] = [
       },
       {
         type: 'paragraph',
-        text: 'The new site matches the quality of their science. It gives investors confidence from the first click, clearly communicates their research capabilities, and provides clear paths for each audience to take the next step.',
+        text: 'The site now matches the science.',
+      },
+      {
+        type: 'paragraph',
+        text: 'First click: confidence. Next step: clear. Every audience gets what they came for.',
       },
       {
         type: 'quote',
@@ -99,9 +111,9 @@ export const blogPosts: BlogPost[] = [
   },
   {
     slug: 'life-lab-hq-case-study',
-    title: 'How The Life Lab HQ Turned Casual Browsers Into Engaged Members',
+    title: 'Visitors Browsed. Nobody Signed Up. Here\'s What Changed.',
     description:
-      'The Life Lab HQ had great content but visitors left without signing up. We rebuilt their conversion funnel from scratch.',
+      'Great content. No conversions. The funnel didn\'t exist.',
     date: '2026-03-18',
     category: 'Case Study',
     readTime: '4 min read',
@@ -115,28 +127,36 @@ export const blogPosts: BlogPost[] = [
       },
       {
         type: 'paragraph',
-        text: 'The Life Lab HQ is a lifestyle and wellness brand with expertise, content, and a loyal audience. But their website had one major issue: people browsed and left without ever signing up. The site didn\'t guide anyone to take action.',
+        text: 'Good content. Loyal audience. Zero sign-ups.',
       },
       {
         type: 'paragraph',
-        text: 'There was no clear conversion funnel. Visitors landed on the homepage, read a few things, and bounced. The membership sign-up was buried three clicks deep with no compelling reason to commit.',
+        text: 'Visitors arrived, read, and left. No funnel. No reason to stay. The sign-up was three clicks deep with nothing pulling them towards it.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Traffic without conversion is just noise.',
       },
       {
         type: 'heading',
-        text: 'Our Approach',
+        text: 'The Approach',
       },
       {
         type: 'paragraph',
-        text: 'We mapped the entire customer journey from first visit to sign-up. Every page was rebuilt around a single conversion goal with friction removed at each decision point.',
+        text: 'One question: what stops someone signing up?',
+      },
+      {
+        type: 'paragraph',
+        text: 'Mapped every step from first visit to member. Found friction at each one. Removed it.',
       },
       {
         type: 'list',
         items: [
-          'Redesigned the homepage with a clear value proposition above the fold',
-          'Added trust signals (testimonials, social proof) at every decision point',
-          'Built a frictionless sign-up flow — 3 clicks from landing to member',
-          'Integrated AI-powered content recommendations to increase engagement',
-          'Mobile-first responsive design for the 68% of traffic from phones',
+          'Value proposition above the fold. Not buried',
+          'Trust signals at every decision point',
+          '3 clicks from landing to member',
+          'AI content recommendations to keep people exploring',
+          'Mobile-first. 68% of their traffic is from phones',
         ],
       },
       {
@@ -153,7 +173,15 @@ export const blogPosts: BlogPost[] = [
       },
       {
         type: 'paragraph',
-        text: 'The platform now turns casual visitors into engaged members. The clear path from landing to sign-up, combined with strategic trust signals, transformed the business\'s online revenue.',
+        text: 'Browsers became members.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Clear path. Removed friction. Right trust signals in the right place.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The audience didn\'t change. The funnel did.',
       },
       {
         type: 'cta',
@@ -163,9 +191,9 @@ export const blogPosts: BlogPost[] = [
   },
   {
     slug: 'wordpress-vs-custom-coded-website',
-    title: 'WordPress vs Custom-Coded Website: Which Is Right for Your Business in 2026?',
+    title: 'WordPress vs Custom Code: The Honest Comparison No One Gives You',
     description:
-      'An honest comparison of WordPress and custom-coded websites. Speed, cost, SEO, security, and long-term ROI — no bias, just data.',
+      'Speed, cost, SEO, security. No bias. Just the numbers.',
     date: '2026-03-15',
     category: 'Comparison',
     readTime: '7 min read',
@@ -179,19 +207,31 @@ export const blogPosts: BlogPost[] = [
       },
       {
         type: 'paragraph',
-        text: 'WordPress powers 43% of the web. It\'s the most popular CMS in the world. But popular doesn\'t always mean best. The right choice depends entirely on what your website needs to DO for your business.',
+        text: '43% of the web runs on WordPress. Popular isn\'t the same as right.',
       },
       {
         type: 'paragraph',
-        text: 'This isn\'t a hit piece on WordPress — it\'s a genuine comparison based on real data. We\'ve built sites on both platforms and have seen what works (and what doesn\'t) for different types of businesses.',
+        text: 'The choice isn\'t about platforms. It\'s about what your site needs to do.',
+      },
+      {
+        type: 'paragraph',
+        text: 'This isn\'t a hit piece. It\'s a comparison based on building both.',
       },
       {
         type: 'heading',
-        text: 'Speed & Performance',
+        text: 'Speed',
       },
       {
         type: 'paragraph',
-        text: 'This is where the gap is largest. The average WordPress site loads in 4.7 seconds on mobile. A custom-coded Next.js site loads in under 1.5 seconds. That\'s not a marginal difference — Google\'s research shows 53% of mobile visitors leave a site that takes longer than 3 seconds to load.',
+        text: 'Average WordPress site: 4.7 seconds. Average custom Next.js site: 1.2 seconds.',
+      },
+      {
+        type: 'paragraph',
+        text: 'That\'s not a small gap. Google says 53% of visitors leave after 3 seconds.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Speed isn\'t a feature. It\'s the product.',
       },
       {
         type: 'stat',
@@ -203,22 +243,26 @@ export const blogPosts: BlogPost[] = [
       },
       {
         type: 'paragraph',
-        text: 'WordPress is slow because of its architecture: every page request hits a PHP server, queries a MySQL database, loads 20-50 plugins, and renders the page dynamically. Custom-coded sites can be pre-rendered at build time and served from a CDN edge — no server processing at all.',
-      },
-      {
-        type: 'heading',
-        text: 'Cost Comparison',
+        text: 'WordPress: database request, PHP render, 20–50 plugins, dynamic load. Every time.',
       },
       {
         type: 'paragraph',
-        text: 'WordPress seems cheaper upfront, but the total cost of ownership tells a different story:',
+        text: 'Custom code: pre-built, served from a CDN edge. No server. No wait.',
+      },
+      {
+        type: 'heading',
+        text: 'Cost',
+      },
+      {
+        type: 'paragraph',
+        text: 'WordPress looks cheaper. The bill comes later.',
       },
       {
         type: 'list',
         items: [
-          'WordPress: £1,000-5,000 build + £50-200/month hosting + £100-500/year plugins + £50-200/month maintenance = £3,000-8,000 in year one',
-          'Custom-coded: £2,500-10,000 build + £0/month hosting (Vercel free tier) + £0/year plugins + £0/month maintenance = £2,500-10,000 total, with near-zero ongoing costs',
-          'By year 2, the custom site is cheaper. By year 3, it\'s significantly cheaper.',
+          'WordPress: £3,000–8,000 in year one once you add hosting, plugins, and maintenance',
+          'Custom code: build cost only. Hosting free. Plugins none. Maintenance near zero',
+          'By year two, custom is cheaper. By year three, it\'s not close',
         ],
       },
       {
@@ -227,11 +271,15 @@ export const blogPosts: BlogPost[] = [
       },
       {
         type: 'paragraph',
-        text: 'Google uses Core Web Vitals as a direct ranking signal. These measure loading speed (LCP), interactivity (INP), and visual stability (CLS). Custom-coded sites consistently score 90-100 on these metrics. WordPress sites average 50-70 — and that\'s a meaningful ranking disadvantage.',
+        text: 'Core Web Vitals are a direct Google ranking signal.',
       },
       {
         type: 'paragraph',
-        text: 'Both platforms can implement proper meta tags, structured data, and sitemaps. The difference is in the performance metrics that Google actually measures.',
+        text: 'Custom sites: 90–100. WordPress average: 50–70.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Both handle meta tags and sitemaps. Only one passes the performance test.',
       },
       {
         type: 'heading',
@@ -239,37 +287,41 @@ export const blogPosts: BlogPost[] = [
       },
       {
         type: 'paragraph',
-        text: 'WordPress is the #1 target for hackers because of its popularity and plugin ecosystem. 90% of hacked CMS sites in 2025 were WordPress. Plugins are the main attack vector — each one is a potential vulnerability that needs regular updates.',
+        text: '90% of hacked CMS sites in 2025 were WordPress. Popularity is the vulnerability.',
       },
       {
         type: 'paragraph',
-        text: 'Custom-coded static sites have virtually zero attack surface. There\'s no database to hack, no admin panel to brute-force, and no plugins to exploit. The site is just HTML, CSS, and JavaScript served from a CDN.',
+        text: 'Each plugin is an attack surface. Each update is a potential break.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Custom static sites have no database, no admin panel, no plugins. Nothing to hack.',
       },
       {
         type: 'heading',
-        text: 'When to Use WordPress',
+        text: 'Use WordPress When',
       },
       {
         type: 'list',
         items: [
-          'You need to publish content daily and want non-technical staff to edit it',
-          'You need e-commerce with 1,000+ products (WooCommerce)',
-          'Budget is under £2,000 and you need something functional fast',
-          'You need a specific plugin that doesn\'t exist elsewhere',
+          'Non-technical staff need to publish content daily',
+          '1,000+ product e-commerce (WooCommerce)',
+          'Budget under £2,000 and speed of launch matters more than performance',
+          'You need a specific plugin that exists nowhere else',
         ],
       },
       {
         type: 'heading',
-        text: 'When to Go Custom',
+        text: 'Go Custom When',
       },
       {
         type: 'list',
         items: [
-          'Your website is your primary source of leads or customers',
-          'Speed and Google ranking matter to your business',
-          'You want a site that stands out from competitors using the same templates',
+          'Your site is your primary source of leads',
+          'Speed and search ranking are competitive advantages',
+          'Your competitors are using the same template as you',
           'You\'re tired of plugin updates breaking things',
-          'You want minimal ongoing costs and maximum long-term value',
+          'Ongoing costs close to zero',
         ],
       },
       {
@@ -278,7 +330,15 @@ export const blogPosts: BlogPost[] = [
       },
       {
         type: 'paragraph',
-        text: 'WordPress is a great tool for certain use cases. But for most service businesses where the website needs to generate leads and build credibility, a custom-coded site delivers better performance, better SEO, lower long-term costs, and zero security headaches.',
+        text: 'WordPress works. For the right use case.',
+      },
+      {
+        type: 'paragraph',
+        text: 'For service businesses where the site needs to generate leads: faster performance, better ranking, lower long-term cost, nothing to hack.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Custom wins on every metric that matters.',
       },
       {
         type: 'cta',

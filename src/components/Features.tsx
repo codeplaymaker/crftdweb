@@ -7,7 +7,7 @@ const features = [
   {
     icon: <Target className="w-8 h-8" />,
     title: "Conversion-First Design",
-    description: "Every section answers one question in the buyer's mind. We don't just make it pretty. We make it sell."
+    description: "Every section answers one question in the buyer's mind. Pretty doesn't convert. Intent does."
   },
   {
     icon: <Code2 className="w-8 h-8" />,
@@ -22,7 +22,7 @@ const features = [
   {
     icon: <Shield className="w-8 h-8" />,
     title: "Trust at Every Touchpoint",
-    description: "We engineer credibility into your site. Social proof, clear process, risk reversal. So visitors feel safe buying."
+    description: "Credibility is engineered, not assumed. Social proof, clear process, risk reversal. Built in from day one."
   }
 ];
 
@@ -65,8 +65,7 @@ export default function Features() {
             {' '}<span className="text-muted-foreground">if it doesn&apos;t convert.</span>
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed">
-            We build websites that look exceptional <em>and</em> drive real business results.
-            Here&apos;s how.
+            Looking good doesn&apos;t pay. Results do. Here&apos;s what makes the difference.
           </p>
         </motion.div>
 

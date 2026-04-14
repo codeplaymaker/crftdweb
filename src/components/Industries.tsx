@@ -7,33 +7,39 @@ import { ArrowRight } from 'lucide-react';
 const industries = [
   {
     title: 'Restaurants',
-    description: 'Online bookings, mobile menus, local SEO.',
+    description: 'Empty tables cost money. A bad website fills them.',
     href: '/services/web-design-for-restaurants',
     icon: '🍽️',
   },
   {
     title: 'Dentists',
-    description: 'Patient booking, treatment pages, GDPR-compliant.',
+    description: 'Patients choose the practice that looks trustworthy first.',
     href: '/services/web-design-for-dentists',
     icon: '🦷',
   },
   {
     title: 'Salons',
-    description: 'Booking integration, galleries, team profiles.',
+    description: 'Your work is beautiful. Your website should prove it.',
     href: '/services/web-design-for-salons',
     icon: '💇',
   },
   {
     title: 'Gyms',
-    description: 'Member sign-ups, class schedules, lead capture.',
+    description: 'Members sign up online or not at all.',
     href: '/services/web-design-for-gyms',
     icon: '🏋️',
   },
   {
     title: 'Estate Agents',
-    description: 'Property listings, valuation tools, area guides.',
+    description: 'Buyers judge the agent before they judge the property.',
     href: '/services/web-design-for-real-estate',
     icon: '🏠',
+  },
+  {
+    title: 'Price Guide',
+    description: 'Transparent pricing. No surprises. No sales calls required.',
+    href: '/services/website-cost',
+    icon: '💷',
   },
 ];
 
@@ -51,17 +57,15 @@ export default function Industries() {
             INDUSTRIES WE SERVE
           </span>
           <h2 className="text-3xl md:text-5xl font-bold tracking-tight leading-tight mb-5">
-            Built for your industry.
-            <br className="hidden md:block" />
-            <span className="text-muted-foreground">Not a generic template.</span>
+            Your industry.{' '}
+            <span className="text-muted-foreground">Your customers. Your site.</span>
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed">
-            Every industry has different customers, different pain points, and different conversion triggers.
-            We build websites tailored to how <em>your</em> customers buy.
+            Generic templates convert generically. Industry-specific sites convert specifically.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {industries.map((industry, index) => (
             <motion.div
               key={industry.title}

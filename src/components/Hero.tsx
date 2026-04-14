@@ -56,8 +56,8 @@ export default function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
           >
-            Most websites look fine but don&apos;t convert. We build custom-coded sites
-            designed around your customers, your goals, and what actually makes them buy.
+            Most sites look fine. Most sites don&apos;t convert.
+            Yours should do both.
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 20 }}

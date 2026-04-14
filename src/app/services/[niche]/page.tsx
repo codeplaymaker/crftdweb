@@ -23,9 +23,9 @@ const niches: Record<string, NicheData> = {
     slug: 'web-design-for-restaurants',
     industry: 'Restaurants & Hospitality',
     headline: 'Web Design for Restaurants',
-    subheadline: 'Stop losing bookings to a slow, outdated website.',
+    subheadline: 'Slow sites lose bookings. Fast sites fill tables.',
     heroDescription:
-      'Custom-coded websites built specifically for restaurants, cafés, and hospitality businesses. Online reservations, menu management, and Google Maps integration — all optimised to convert hungry visitors into paying customers.',
+      'Custom-coded restaurant sites built to fill seats. Reservations, mobile menus, and local SEO — live in 14 days.',
     painPoints: [
       'Your current site takes 5+ seconds to load — guests leave before seeing the menu',
       'No online booking — you\'re losing reservations to competitors on OpenTable',
@@ -76,9 +76,9 @@ const niches: Record<string, NicheData> = {
     slug: 'web-design-for-dentists',
     industry: 'Dental Practices',
     headline: 'Web Design for Dentists',
-    subheadline: 'Turn website visitors into booked appointments.',
+    subheadline: 'Patients judge the practice before they visit.',
     heroDescription:
-      'Custom websites for dental practices that build trust, showcase treatments, and make booking effortless. GDPR-compliant forms, patient testimonials, and local SEO that puts you on page one.',
+      'Custom dental websites that earn trust and book patients. Treatment pages, online booking, GDPR-compliant — built in 14 days.',
     painPoints: [
       'Your website looks dated — patients choose the modern-looking competitor instead',
       'Booking requires a phone call — you\'re losing the 60% who prefer to book online',
@@ -129,9 +129,9 @@ const niches: Record<string, NicheData> = {
     slug: 'web-design-for-salons',
     industry: 'Hair & Beauty Salons',
     headline: 'Web Design for Salons',
-    subheadline: 'Your salon is stunning — your website should be too.',
+    subheadline: 'Your work sells itself. Your site should too.',
     heroDescription:
-      'Beautifully crafted websites for salons, spas, and beauty businesses. Online booking, treatment menus, and gallery showcases built to turn browsers into booked clients.',
+      'Bespoke salon sites that showcase your work and fill your books. Online booking, galleries, treatment menus — live in 14 days.',
     painPoints: [
       'Your website doesn\'t reflect the quality of your salon — first impressions lost online',
       'Clients can\'t book online — they call, get voicemail, then book with someone else',
@@ -181,9 +181,9 @@ const niches: Record<string, NicheData> = {
     slug: 'web-design-for-gyms',
     industry: 'Gyms & Fitness Studios',
     headline: 'Web Design for Gyms',
-    subheadline: 'Convert visitors into members — automatically.',
+    subheadline: 'Visitors browse. Members join. Your site decides which.',
     heroDescription:
-      'High-performance websites for gyms, PT studios, and fitness brands. Class schedules, membership sign-ups, and lead capture — built to convert traffic into members 24/7.',
+      'High-performance gym sites that convert traffic into memberships. Class schedules, sign-up flows, and lead capture — live in 14 days.',
     painPoints: [
       'Your website is a brochure — it doesn\'t actually sign anyone up',
       'Class schedule is a static image or PDF that\'s always out of date',
@@ -236,7 +236,7 @@ const niches: Record<string, NicheData> = {
     headline: 'Web Design for Estate Agents',
     subheadline: 'Win more instructions. Close more sales.',
     heroDescription:
-      'Premium websites for estate agents, lettings agencies, and property developers. Property listings, valuation forms, and market area pages — built to generate vendor and landlord leads.',
+      'Premium estate agent sites built to generate vendor and landlord leads. Property listings, valuation tools, and area pages — live in 14 days.',
     painPoints: [
       'Your website looks like every other Rightmove clone — no differentiation',
       'Vendor leads go to the portals, not your site — you\'re renting your business',
@@ -387,7 +387,7 @@ export default async function NichePage({
               Sound familiar?
             </h2>
             <p className="text-white/40 text-center mb-16 max-w-2xl mx-auto">
-              These are the problems we solve for {niche.industry.toLowerCase()} businesses every week.
+              One of these is costing you money right now.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {niche.painPoints.map((pain, i) => (
@@ -411,10 +411,10 @@ export default async function NichePage({
         <section className="py-24 border-t border-white/[0.06]">
           <div className="container mx-auto px-4 max-w-5xl">
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">
-              Here&apos;s what we build for you.
+              What you get.
             </h2>
             <p className="text-white/40 text-center mb-16 max-w-2xl mx-auto">
-              Every feature is tailored to {niche.industry.toLowerCase()} — not a generic template.
+              Built for your industry. Not borrowed from a template.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {niche.solutions.map((sol, i) => (
@@ -438,7 +438,7 @@ export default async function NichePage({
         <section className="py-24 border-t border-white/[0.06]">
           <div className="container mx-auto px-4 max-w-4xl">
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-16">
-              Results that speak for themselves.
+              The numbers.
             </h2>
             <div className="grid grid-cols-3 gap-8">
               {niche.stats.map((stat, i) => (
@@ -474,11 +474,11 @@ export default async function NichePage({
         <section className="py-24 border-t border-white/[0.06]">
           <div className="container mx-auto px-4 text-center max-w-3xl">
             <h2 className="text-3xl md:text-4xl font-bold mb-6">
-              Ready to transform your online presence?
+              Your site should work as hard as you do.
             </h2>
             <p className="text-white/40 mb-10 leading-relaxed">
-              Get a free, no-obligation quote tailored to your {niche.industry.toLowerCase()} business.
-              14-day delivery. 100% money-back guarantee.
+              Tell us what you need. We&apos;ll tell you exactly what it&apos;ll take.
+              14 days. Fixed price. No surprises.
             </p>
             <a
               href="/contact"
@@ -496,15 +496,15 @@ export default async function NichePage({
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <a href="/answers" className="block p-5 rounded-xl border border-white/[0.06] hover:border-white/20 transition-colors">
                 <p className="text-xs text-purple-400 mb-1 uppercase tracking-wider">Answers</p>
-                <p className="text-sm text-white/70">Quick answers to common web design questions</p>
+                <p className="text-sm text-white/70">Questions asked. Answered directly.</p>
               </a>
               <a href="/concepts" className="block p-5 rounded-xl border border-white/[0.06] hover:border-white/20 transition-colors">
                 <p className="text-xs text-purple-400 mb-1 uppercase tracking-wider">Concepts</p>
-                <p className="text-sm text-white/70">Deep dives into design and performance concepts</p>
+                <p className="text-sm text-white/70">The ideas behind sites that work.</p>
               </a>
               <a href="/faq" className="block p-5 rounded-xl border border-white/[0.06] hover:border-white/20 transition-colors">
                 <p className="text-xs text-purple-400 mb-1 uppercase tracking-wider">FAQ</p>
-                <p className="text-sm text-white/70">Everything you need to know before you start</p>
+                <p className="text-sm text-white/70">Before you ask. Already answered.</p>
               </a>
             </div>
           </div>

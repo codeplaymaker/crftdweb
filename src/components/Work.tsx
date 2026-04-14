@@ -77,7 +77,7 @@ export default function Work() {
             <span className="text-muted-foreground">Real problems solved.</span>
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed">
-            Every engagement starts with a real business problem. Here&apos;s what we found, what we built, and what changed.
+            Problem first. Build second. Results third.
           </p>
         </motion.div>
 
