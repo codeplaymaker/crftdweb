@@ -66,6 +66,11 @@ const niches: Record<string, NicheData> = {
         answer:
           'Every site includes local SEO foundations: schema markup, optimised meta tags, Google Business integration, and 95+ PageSpeed scores. These are direct ranking signals Google uses.',
       },
+      {
+        question: 'Why not just use a booking platform like OpenTable directly?',
+        answer:
+          'Platforms like OpenTable drive bookings — but they own the customer relationship, not you. Your own website captures direct bookings with no commission and no dependency on a third party. We integrate with booking platforms where useful while making sure your own site is the primary traffic and conversion destination.',
+      },
     ],
     metaTitle: 'Web Design for Restaurants | Custom Websites That Get Bookings',
     metaDescription:
@@ -119,6 +124,11 @@ const niches: Record<string, NicheData> = {
         answer:
           'Every site includes SEO foundations: dental-specific schema markup, individual treatment pages targeting keywords, local SEO structure, and 95+ PageSpeed. These are the building blocks for ranking.',
       },
+      {
+        question: 'What is the difference between a custom site and a WordPress theme?',
+        answer:
+          'A WordPress theme is someone else\'s decisions applied to your practice. Custom code is built around how your patients think and what makes them book. No shared templates, no plugin overhead slowing you down. Custom dental sites consistently load 3x faster than WordPress equivalents — and faster sites rank higher and convert better.',
+      },
     ],
     metaTitle: 'Web Design for Dentists | Patient-Focused Websites That Convert',
     metaDescription:
@@ -170,6 +180,11 @@ const niches: Record<string, NicheData> = {
       {
         question: 'How long does it take?',
         answer: '14 days from brief to launch. We send you designs to approve in the first week and build in the second.',
+      },
+      {
+        question: 'Why not just use Wix or Squarespace?',
+        answer:
+          'Wix and Squarespace are built for everyone, which means they are optimised for no one. A custom-coded salon site loads 3-4x faster, ranks higher in local search, and reflects your brand instead of a shared template. By year two, a custom site is cheaper — no monthly subscriptions, no per-feature fees, no paying for things you do not use.',
       },
     ],
     metaTitle: 'Web Design for Salons | Beautiful Websites That Book Clients',
@@ -224,6 +239,11 @@ const niches: Record<string, NicheData> = {
         answer:
           'Every gym site includes local SEO structure, Google Business setup guidance, fitness-specific schema markup, and 95+ PageSpeed scores. We target keywords like "gym [your area]" and "personal trainer near me".',
       },
+      {
+        question: 'What makes a gym website convert visitors into members?',
+        answer:
+          'A clear offer above the fold. A free trial or taster session with one click to sign up. Trust signals — real member results, not stock photography. A class schedule that loads fast and is always up to date. And a mobile experience built for thumbs, not a desktop layout squeezed down. Most gym sites fail at all of these. We fix all of them.',
+      },
     ],
     metaTitle: 'Web Design for Gyms | Websites That Convert Visitors to Members',
     metaDescription:
@@ -276,6 +296,11 @@ const niches: Record<string, NicheData> = {
         question: 'How do area guide pages help with SEO?',
         answer:
           'Each area page targets "[town] estate agent" or "houses for sale in [area]" — these are high-intent searches. One page per area you serve, each optimised to rank. This is how independent agents beat the corporates online.',
+      },
+      {
+        question: 'How long does it take to see SEO results from a new site?',
+        answer:
+          'Technical SEO improvements — PageSpeed, schema markup, structured URLs — show up in rankings within 4-8 weeks. Content-led results from area pages and answer pages take 3-6 months to compound. Most clients see meaningful organic traffic growth within 90 days of launch. The compounding advantage comes from building a site that improves over time rather than one that needs replacing every three years.',
       },
     ],
     metaTitle: 'Web Design for Estate Agents | Property Websites That Win Instructions',
