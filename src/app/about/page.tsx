@@ -51,6 +51,23 @@ export default function AboutPage() {
                   No surprises. No scope creep. You know what you&apos;re getting before we write a single line of code.
                 </p>
               </div>
+              <div>
+                <h2 className="text-2xl font-semibold mb-4 tracking-tight">What we believe</h2>
+                <p className="text-muted-foreground mb-4 leading-relaxed">
+                  A website that looks good but does not generate leads is a cost, not an asset.
+                  Most businesses are paying for the first kind. We build the second.
+                </p>
+                <p className="text-muted-foreground mb-4 leading-relaxed">
+                  Speed is not optional. Core Web Vitals scores above 90 are not a nice-to-have.
+                  They are the difference between ranking and not ranking. Between a visitor staying
+                  and leaving before your page has loaded.
+                </p>
+                <p className="text-muted-foreground leading-relaxed">
+                  Templates are not custom. A WordPress theme with your logo is not a custom website.
+                  It is someone else&apos;s decisions applied to your business. Every site we build
+                  starts from zero — designed and coded for the specific business, not adapted from a theme.
+                </p>
+              </div>
             </div>
 
             {/* Ecosystem */}
@@ -134,14 +151,14 @@ export default function AboutPage() {
 const ecosystem = [
   {
     title: "The Studio",
-    description: "Hand-coded websites that convert. No templates, no page builders."
+    description: "Hand-coded in Next.js, TypeScript, and React. Designed for speed, search engines, and conversion. No templates, no page builders."
   },
   {
     title: "The Playbook",
-    description: "Our proven framework for turning agency expertise into a scalable, productized business."
+    description: "The methodology behind every project we build — documented and packaged so other agency owners can use it to grow their own business."
   },
   {
     title: "Engine",
-    description: "AI-powered tools that help agencies create content, manage clients, and grow faster."
+    description: "Tools for agency owners. Content generation, client management, and business growth — without the overhead of hiring a full team."
   }
 ];

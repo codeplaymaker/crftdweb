@@ -123,6 +123,50 @@ export default function ContactPage() {
           </motion.div>
         </div>
       </section>
+
+      {/* What happens next */}
+      <section className="py-20 border-t border-black/[0.06]">
+        <div className="container max-w-3xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+            <div>
+              <h2 className="text-xl font-bold mb-6 tracking-tight">What happens next</h2>
+              <ol className="space-y-5 text-sm text-muted-foreground">
+                <li>
+                  <span className="font-medium text-foreground block mb-1">1. We read your message</span>
+                  Every enquiry is reviewed directly. Not an automated system. Not a sales team.
+                </li>
+                <li>
+                  <span className="font-medium text-foreground block mb-1">2. We reply within 24 hours</span>
+                  Usually faster. You get a real response with direct questions or a call invite.
+                </li>
+                <li>
+                  <span className="font-medium text-foreground block mb-1">3. We scope the project together</span>
+                  Free 30-minute call. We define the problem, the deliverables, and the timeline.
+                </li>
+                <li>
+                  <span className="font-medium text-foreground block mb-1">4. You receive a fixed-price quote</span>
+                  No surprises. No hourly billing. A clear scope and a clear price before any work starts.
+                </li>
+              </ol>
+            </div>
+            <div>
+              <h2 className="text-xl font-bold mb-6 tracking-tight">Who this is for</h2>
+              <ul className="space-y-3 text-sm text-muted-foreground mb-8">
+                <li>Service businesses with a website that does not generate leads</li>
+                <li>Startups that need to look credible before they feel credible</li>
+                <li>Local businesses competing with national brands online</li>
+                <li>Anyone paying a monthly retainer for a WordPress site that performs like a template</li>
+              </ul>
+              <h3 className="font-semibold mb-3 text-sm">Not the right fit:</h3>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li>E-commerce stores needing a Shopify build</li>
+                <li>Businesses wanting a website under £1,000</li>
+                <li>Projects without a clear brief or timeline</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
   );
 }

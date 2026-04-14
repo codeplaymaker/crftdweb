@@ -79,7 +79,39 @@ export const blogPosts: BlogPost[] = [
       },
       {
         type: 'heading',
-        text: 'The Results',
+        text: 'What We Built',
+      },
+      {
+        type: 'paragraph',
+        text: 'The homepage leads with the science, not the company story. Hero anchored on the core research claim. Credibility visible before any scroll: university affiliations, published research count, key institutional partners.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Three separate audience sections, one site. Researchers get methodology and peer-reviewed citations. Investors get traction metrics and market context. Partners get integration pathways and contact routes. Same domain. Three entry points.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Mobile load time was the first fix. The original site loaded at 8.3 seconds on mobile. Not a UX problem. A first impression problem. Most investors open links on their phone.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Credibility is not just design. It is signal density. How many reasons to trust appear in the first viewport? For Microbiome Design: research institution name, publication count, a photo of the actual lab, and a headline that states the real claim. Four trust signals before the scroll.',
+      },
+      {
+        type: 'paragraph',
+        text: 'SEO foundations built into the structure, not added after. Meta descriptions written for each page. Schema markup for the organisation and research context. Internal links between the science pages, the team page, and investor materials.',
+      },
+      {
+        type: 'heading',
+        text: 'What Changed',
+      },
+      {
+        type: 'paragraph',
+        text: 'Before: a template site that looked like a student project. After: a site that looked like serious science.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The science did not change. The way the world sees it did.',
       },
       {
         type: 'stat',
@@ -155,9 +187,45 @@ export const blogPosts: BlogPost[] = [
           'Value proposition above the fold. Not buried',
           'Trust signals at every decision point',
           '3 clicks from landing to member',
-          'AI content recommendations to keep people exploring',
+          'Content recommendations to keep people exploring',
           'Mobile-first. 68% of their traffic is from phones',
         ],
+      },
+      {
+        type: 'heading',
+        text: 'What We Changed',
+      },
+      {
+        type: 'paragraph',
+        text: 'Step one was not redesigning the homepage. It was starting over. The old homepage was a content library with a hidden sign-up button. The new one is a sign-up page with supporting content.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The value proposition moved from the footer to the first fold. Before: buried five scrolls down. After: three lines, above the first image, readable in under four seconds.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The sign-up form went from a separate page to an inline section. Three fields: name, email, and how they found the platform. Reduced from seven clicks to two. Conversion doubled in week one.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Trust signals were missing from every decision point. The pricing page had no testimonials. The sign-up confirmation had no onboarding context. Members were joining without knowing what they were joining. We added specificity to every step: what you get, when you get it, what to do first.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Mobile was rebuilt from scratch. The original site was a desktop layout resized down. That is not responsive design. Responsive means designed for mobile first, then expanded. 68% of the audience is on mobile. That is not a secondary consideration. It is the primary one.',
+      },
+      {
+        type: 'heading',
+        text: 'The Lesson',
+      },
+      {
+        type: 'paragraph',
+        text: 'A good product with a broken funnel looks like a bad product.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Traffic was never the problem. The path from traffic to member was.',
       },
       {
         type: 'heading',
