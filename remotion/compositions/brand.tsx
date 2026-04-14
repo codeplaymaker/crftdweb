@@ -1,5 +1,5 @@
 import React from 'react';
-import { interpolate, useCurrentFrame } from 'remotion';
+import { interpolate, useCurrentFrame, staticFile, Img } from 'remotion';
 
 // ─── BRAND COLORS ──────────────────────────────────
 export const colors = {
@@ -75,14 +75,16 @@ export const Logo: React.FC<{ size?: number; style?: React.CSSProperties }> = ({
 }) => (
   <div
     style={{
-      fontSize: size,
-      fontWeight: 800,
-      letterSpacing: '-0.03em',
-      color: colors.white,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
       ...style,
     }}
   >
-    CrftdWeb
+    <Img
+      src={staticFile('CW-logo-white.png')}
+      style={{ height: size * 2, objectFit: 'contain' }}
+    />
   </div>
 );
 
