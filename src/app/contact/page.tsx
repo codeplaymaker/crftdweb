@@ -167,6 +167,21 @@ export default function ContactPage() {
           </div>
         </div>
       </section>
+
+      {/* Closing note */}
+      <section className="py-16 border-t border-black/[0.06]">
+        <div className="container max-w-2xl mx-auto text-center">
+          <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+            We do not take on every project. We take on the right ones. That means we ask hard questions before we quote, and we are honest when we think a different solution would serve you better.
+          </p>
+          <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+            Most of our clients come from referrals. They come back because the work performs, not because of a clever sales pitch.
+          </p>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            If your website is currently invisible, or brings visitors who do not convert, there is a reason for both. We will find it, explain it plainly, and fix it properly.
+          </p>
+        </div>
+      </section>
     </main>
   );
 }
