@@ -112,6 +112,30 @@ export const answers: Answer[] = [
     relatedAnswers: ['what-is-ui-ux-design', 'do-i-need-seo', 'what-is-a-good-pagespeed-score'],
     relatedPages: [{ label: 'Responsive Design', href: '/glossary/responsive-design' }, { label: 'Mobile-First', href: '/glossary/mobile-first' }],
   },
+  {
+    slug: 'what-is-a-landing-page',
+    question: 'What is a landing page?',
+    shortAnswer: 'A landing page is a standalone web page designed with a single goal — to convert visitors into leads or customers.',
+    fullAnswer: 'A landing page is a dedicated web page created specifically to convert visitors into leads or customers. Unlike regular website pages that encourage exploration, a landing page has a single focused call-to-action (CTA) — such as booking a call, signing up for a newsletter, or purchasing a product. Landing pages remove navigation distractions, focus on benefits over features, use social proof to build credibility, and guide the visitor toward one specific action. They are typically used in paid advertising campaigns (Google Ads, Facebook Ads) or email marketing to maximise conversion rates from traffic.',
+    relatedAnswers: ['what-should-a-homepage-include', 'how-much-does-a-website-cost', 'how-to-get-more-leads-from-your-website'],
+    relatedPages: [{ label: 'Landing Page', href: '/glossary/landing-page' }, { label: 'Conversion Rate', href: '/glossary/conversion-rate' }, { label: 'Conversion-First Design', href: '/concepts/conversion-first-design' }],
+  },
+  {
+    slug: 'should-i-use-wordpress-or-custom-code',
+    question: 'Should I use WordPress or a custom-coded website?',
+    shortAnswer: 'WordPress is easier to manage yourself, but custom code is faster, more secure, and better for conversion.',
+    fullAnswer: 'The right choice depends on your priorities. WordPress is a popular CMS that powers 43% of websites — it is easy to manage, has thousands of plugins, and allows non-technical users to update content. However, WordPress sites are frequently slower (due to plugin bloat), more vulnerable to security attacks, and rely on themes that limit custom design. Custom-coded websites (built with frameworks like Next.js) load significantly faster (which improves SEO and conversion rates), are built exactly to your design requirements, and have no plugin dependency vulnerabilities. At CrftdWeb, we build custom-coded websites in Next.js — resulting in 95+ PageSpeed scores that WordPress templates cannot match. For most businesses focused on performance and conversion, custom code is the better long-term investment.',
+    relatedAnswers: ['how-much-does-a-website-cost', 'how-long-does-it-take-to-build-a-website', 'what-is-a-good-pagespeed-score'],
+    relatedPages: [{ label: 'Next.js', href: '/glossary/next-js' }, { label: 'WordPress vs Custom-Coded Website', href: '/blog/wordpress-vs-custom-coded-website' }, { label: 'Next.js for Business Websites', href: '/concepts/nextjs-for-business-websites' }],
+  },
+  {
+    slug: 'how-do-i-improve-my-google-rankings',
+    question: 'How do I improve my Google rankings?',
+    shortAnswer: 'Improve page speed, add schema markup, create quality content, build backlinks, and fix technical SEO issues.',
+    fullAnswer: 'Improving Google rankings requires addressing three areas: technical SEO, on-page SEO, and off-page SEO. Technical SEO means ensuring your site loads fast (Core Web Vitals), is mobile-friendly, uses HTTPS, has a clean URL structure, proper XML sitemap, and schema markup. On-page SEO means creating high-quality, relevant content that targets specific keywords in your titles, headings, and meta descriptions. Off-page SEO means earning backlinks from reputable websites in your industry. For local businesses, Google Business Profile optimisation and local citations are also critical. A well-built website handles the technical foundation automatically — letting you focus on creating content that answers your customers\' questions.',
+    relatedAnswers: ['do-i-need-seo', 'what-is-technical-seo', 'what-is-a-good-pagespeed-score'],
+    relatedPages: [{ label: 'SEO', href: '/glossary/seo' }, { label: 'Technical SEO', href: '/glossary/technical-seo' }, { label: 'Schema Markup', href: '/glossary/schema-markup' }],
+  },
 ];
 
 export function getAnswerBySlug(slug: string): Answer | undefined {
