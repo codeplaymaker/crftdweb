@@ -113,9 +113,9 @@ export const answers: Answer[] = [
     relatedPages: [{ label: 'Responsive Design', href: '/glossary/responsive-design' }, { label: 'Mobile-First', href: '/glossary/mobile-first' }],
   },
   {
-    slug: 'what-is-a-landing-page',
-    question: 'What is a landing page?',
-    shortAnswer: 'A landing page is a standalone web page designed with a single goal — to convert visitors into leads or customers.',
+    slug: 'what-is-a-landing-page-guide',
+    question: 'What makes a good landing page?',
+    shortAnswer: 'A good landing page has one clear goal, a compelling headline, focused copy, social proof, and a single strong CTA.',
     fullAnswer: 'A landing page is a dedicated web page created specifically to convert visitors into leads or customers. Unlike regular website pages that encourage exploration, a landing page has a single focused call-to-action (CTA) — such as booking a call, signing up for a newsletter, or purchasing a product. Landing pages remove navigation distractions, focus on benefits over features, use social proof to build credibility, and guide the visitor toward one specific action. They are typically used in paid advertising campaigns (Google Ads, Facebook Ads) or email marketing to maximise conversion rates from traffic.',
     relatedAnswers: ['what-should-a-homepage-include', 'how-much-does-a-website-cost', 'how-to-get-more-leads-from-your-website'],
     relatedPages: [{ label: 'Landing Page', href: '/glossary/landing-page' }, { label: 'Conversion Rate', href: '/glossary/conversion-rate' }, { label: 'Conversion-First Design', href: '/concepts/conversion-first-design' }],
