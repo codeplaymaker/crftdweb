@@ -23,6 +23,21 @@ const tools: OpenAI.Chat.ChatCompletionTool[] = [
   {
     type: 'function',
     function: {
+      name: 'list_leads',
+      description: 'List all rep leads across all reps — shows business name, contact, status, rep name, and source. Optionally filter by status or rep name.',
+      parameters: {
+        type: 'object',
+        properties: {
+          status: { type: 'string', description: 'Filter by lead status (contacted, interested, call_booked, proposal_sent, won, lost). Omit for all.' },
+          rep_name: { type: 'string', description: 'Filter by rep name (partial match). Omit for all reps.' },
+        },
+        required: [],
+      },
+    },
+  },
+  {
+    type: 'function',
+    function: {
       name: 'list_reps',
       description: 'List all sales reps with their name, email, pipeline status, and commission rate',
       parameters: { type: 'object', properties: {}, required: [] },
@@ -205,6 +220,28 @@ async function executeTool(name: string, args: Record<string, unknown>): Promise
           return `• ${a.name} (${a.email}) | ${a.status} | rating ${a.rating}/5 | ID: ${d.id}`;
         });
         return `${snap.size} applicant${snap.size !== 1 ? 's' : ''}:\n${rows.join('\n')}`;
+      }
+
+      case 'list_leads': {
+        let leadsQuery = adminDb.collection('repLeads').orderBy('updatedAt', 'desc');
+        const statusFilter = args.status as string | undefined;
+        if (statusFilter) {
+          leadsQuery = leadsQuery.where('status', '==', statusFilter);
+        }
+        const leadsSnap = await leadsQuery.limit(30).get();
+        if (leadsSnap.empty) return 'No leads found.';
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        let leads: any[] = leadsSnap.docs.map(d => ({ ...d.data(), id: d.id }));
+        const repFilter = args.rep_name as string | undefined;
+        if (repFilter) {
+          const lower = repFilter.toLowerCase();
+          leads = leads.filter(l => (l.repName || '').toLowerCase().includes(lower));
+        }
+        if (leads.length === 0) return 'No leads match that filter.';
+        const rows = leads.map(l =>
+          `• ${l.businessName} (${l.contactName}) | ${l.status} | Rep: ${l.repName || 'unknown'} | ${l.source?.replace('_', ' ') || 'n/a'}`
+        );
+        return `${leads.length} lead${leads.length !== 1 ? 's' : ''}:\n${rows.join('\n')}`;
       }
 
       case 'list_reps': {
@@ -497,7 +534,7 @@ Be concise, friendly, and use British English. When listing data, format it clea
 
 You can send emails to anyone Obi asks — personal, professional, or follow-up. Use send_custom_message for any email that isn't covered by the other templates. Never refuse an email request on the grounds that it isn't "business-related" — Obi is the founder and decides what's relevant.
 
-IMPORTANT — confirmation rule: Before calling any tool that sends an email, changes data, or takes an action (send_offer, send_booking_link, send_no_show_email, send_offer_reminder, send_trial_reminder, send_custom_message, change_applicant_status), you MUST first call request_confirmation. Always populate the email_preview field for email actions with the subject line, recipient email, and a 2–3 sentence plain-text summary of what the email says. NEVER call action tools directly without confirmation first. Read-only tools (get_business_summary, list_applicants, list_reps) do NOT need confirmation.
+IMPORTANT — confirmation rule: Before calling any tool that sends an email, changes data, or takes an action (send_offer, send_booking_link, send_no_show_email, send_offer_reminder, send_trial_reminder, send_custom_message, change_applicant_status), you MUST first call request_confirmation. Always populate the email_preview field for email actions with the subject line, recipient email, and a 2–3 sentence plain-text summary of what the email says. NEVER call action tools directly without confirmation first. Read-only tools (get_business_summary, list_applicants, list_reps, list_leads) do NOT need confirmation.
 
 Today is ${new Date().toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}.
 
@@ -537,13 +574,13 @@ Commission depends on the rep's career rank and the package tier:
 - No cap on commissions
 
 CAREER RANKS (7 ranks)
-- 🥉 Bronze: Trial period. Complete training, prove activity. 0% commission.
-- 🥈 Silver: First closed deal. Commission 10–20%.
-- 🥇 Gold: 3+ closed deals, consistent activity. Commission 12–22%.
-- 💎 Diamond: 5+ deals, mentoring others. Commission 15–25%.
-- 🎯 Closer: 10+ deals, handles full sales cycle. Commission 17–27%.
-- 🔥 Master: 20+ deals, team leader. Commission 20–30%.
-- 🐉 Dragon: 50+ deals, £50k+ revenue generated. Commission 22–35%.
+- 🥉 Bronze: Joined, in training. 0% commission.
+- 🥈 Silver: Training complete (60+). Commission 10–20%.
+- 🥇 Gold: 1 booked discovery call. Commission 12–22%.
+- 💎 Diamond: 2 closed deals. Commission 15–25%.
+- 🎯 Closer: 5 closes, £5k+ revenue. Commission 17–27%.
+- 🔥 Master: 10 closes, £15k+ revenue. Commission 20–30%.
+- 🐉 Dragon: 20+ closes or £30k+, invite confirmed. Commission 22–35%.
 Progression is based on results, not time served.
 
 REP SALES PIPELINE (statuses in order)
@@ -560,7 +597,7 @@ REP ROLE
 TRIAL TASK
 - Find 5 UK businesses with bad websites; for each write one specific sentence explaining why it needs a redesign.
 - Bad example: "it looks old" — NOT accepted.
-- Good examples: "No clear call-to-action — visitors land on the page with no way to enquire or book" / "Hero section is a blurry stock photo with no headline — you can't tell what they sell."
+- Good examples: "No clear call-to-action — visitors land on the page with no way to enquire or book" / "Hero section is a blurry stock photo with no headline — you can't tell what they sell." / "Contact form is buried three clicks deep — nobody's filling that out."
 - Submission form: crftdweb.com/apply/trial
 - Time limit: 48 hours
 - Pass rate: ~20%
