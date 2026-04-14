@@ -178,7 +178,7 @@ export default function ContactPage() {
             Most of our clients come from referrals. They come back because the work performs, not because of a clever sales pitch.
           </p>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            If your website is currently invisible, or brings visitors who do not convert, there is a reason for both. We will find it, explain it plainly, and fix it properly.
+            If your website is currently invisible, or brings visitors who do not convert, there is a reason for both. We will find it, explain it plainly, and fix it properly. That is what we do.
           </p>
         </div>
       </section>
