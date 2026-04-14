@@ -83,9 +83,10 @@ const PhoneMockup: React.FC<{
 export const NobodyCares: React.FC = () => {
   const frame = useCurrentFrame();
 
-  // Shake effect on the "bad" phone at frame ~110
-  const shake = frame >= 95 && frame <= 105
-    ? interpolate(frame, [95, 97, 99, 101, 103, 105], [0, -6, 5, -4, 3, 0], {
+  // Shake effect on the "bad" phone (relative to sequence at frame 90)
+  const innerBadFrame = Math.max(0, frame - 90);
+  const shake = innerBadFrame >= 5 && innerBadFrame <= 15
+    ? interpolate(innerBadFrame, [5, 7, 9, 11, 13, 15], [0, -6, 5, -4, 3, 0], {
         extrapolateLeft: 'clamp',
         extrapolateRight: 'clamp',
       })
@@ -151,7 +152,7 @@ export const NobodyCares: React.FC = () => {
 
         {/* ── A: AGITATE — bad phone mockup (3–5.5s) ── */}
         <Sequence layout="none" from={90} durationInFrames={75}>
-          <div style={useSlideUp(92)}>
+          <div style={useSlideUp(2)}>
             <div style={{
               fontSize: 24,
               fontWeight: 600,
@@ -169,11 +170,11 @@ export const NobodyCares: React.FC = () => {
               subline="We are a family-run plumbing company with over 15 years of experience serving the local area."
               cta="Learn More"
               isBad={true}
-              delay={98}
+              delay={8}
             />
           </div>
 
-          <div style={useSlideUp(120)}>
+          <div style={useSlideUp(30)}>
             <div style={{
               fontSize: 30,
               fontWeight: 700,
@@ -188,7 +189,7 @@ export const NobodyCares: React.FC = () => {
 
         {/* ── A→S: FLIP — good phone mockup (5.5–8s) ── */}
         <Sequence layout="none" from={165} durationInFrames={75}>
-          <div style={useSlideUp(167)}>
+          <div style={useSlideUp(2)}>
             <div style={{
               fontSize: 24,
               fontWeight: 600,
@@ -205,10 +206,10 @@ export const NobodyCares: React.FC = () => {
             subline="Emergency plumbing across Bristol. Fixed pricing. No call-out fee."
             cta="Call Now — Free Quote"
             isBad={false}
-            delay={172}
+            delay={7}
           />
 
-          <div style={useSlideUp(195)}>
+          <div style={useSlideUp(30)}>
             <div style={{
               fontSize: 30,
               fontWeight: 700,
@@ -223,7 +224,7 @@ export const NobodyCares: React.FC = () => {
 
         {/* ── S: SOLVE (8–10s) ── */}
         <Sequence layout="none" from={240}>
-          <div style={{ ...useSlideUp(242), marginTop: 32 }}>
+          <div style={{ ...useSlideUp(2), marginTop: 32 }}>
             <div style={{
               fontSize: 34,
               fontWeight: 800,
@@ -243,10 +244,10 @@ export const NobodyCares: React.FC = () => {
             }}>
               what your customer is actually searching for.
             </div>
-            <div style={{ opacity: useFadeIn(260) }}>
+            <div style={{ opacity: useFadeIn(20) }}>
               <CtaBadge text="Free site audit — crftdweb.com" />
             </div>
-            <div style={{ opacity: useFadeIn(270), marginTop: 16 }}>
+            <div style={{ opacity: useFadeIn(30), marginTop: 16 }}>
               <Logo size={28} style={{ textAlign: 'center', margin: '0 auto' }} />
             </div>
           </div>
