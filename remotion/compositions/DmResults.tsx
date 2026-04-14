@@ -10,162 +10,143 @@ import {
   CtaBadge,
 } from './brand';
 
-// ─── DM Results Video ──────────────────────────────
-// Fake iMessage-style conversation showing client results
-// Blue bubbles = client, white bubbles = CrftdWeb
+// ─── PAS Video 4: "DM Proof" ──────────────────────
+// P: "Most agencies promise results. Few deliver."
+// A: iMessage thread showing the BEFORE pain
+// S: Same thread showing the AFTER — CrftdWeb results
 
 const Bubble: React.FC<{
   text: string;
   isClient: boolean;
   delay: number;
 }> = ({ text, isClient, delay }) => {
-  const style = useSlideUp(delay, 12);
+  const style = useSlideUp(delay, 10);
   return (
-    <div
-      style={{
-        ...style,
-        display: 'flex',
-        justifyContent: isClient ? 'flex-start' : 'flex-end',
-        marginBottom: 16,
-      }}
-    >
-      <div
-        style={{
-          maxWidth: '78%',
-          padding: '20px 28px',
-          borderRadius: 22,
-          borderBottomLeftRadius: isClient ? 4 : 22,
-          borderBottomRightRadius: isClient ? 22 : 4,
-          backgroundColor: isClient ? colors.blue : 'rgba(255,255,255,0.12)',
-          fontSize: 26,
-          lineHeight: 1.45,
-          fontWeight: 400,
-          color: colors.white,
-        }}
-      >
+    <div style={{
+      ...style,
+      display: 'flex',
+      justifyContent: isClient ? 'flex-start' : 'flex-end',
+      marginBottom: 14,
+    }}>
+      <div style={{
+        maxWidth: '80%',
+        padding: '18px 26px',
+        borderRadius: 22,
+        borderBottomLeftRadius: isClient ? 4 : 22,
+        borderBottomRightRadius: isClient ? 22 : 4,
+        backgroundColor: isClient ? colors.blue : 'rgba(255,255,255,0.12)',
+        fontSize: 25,
+        lineHeight: 1.4,
+        fontWeight: 400,
+        color: colors.white,
+      }}>
         {text}
       </div>
     </div>
   );
 };
 
-const TypingIndicator: React.FC<{ delay: number }> = ({ delay }) => {
-  const fade = useFadeIn(delay, 8);
-  return (
-    <div style={{ opacity: fade, display: 'flex', justifyContent: 'flex-end', marginBottom: 16 }}>
-      <div
-        style={{
-          padding: '20px 28px',
-          borderRadius: 22,
-          borderBottomRightRadius: 4,
-          backgroundColor: 'rgba(255,255,255,0.12)',
-          fontSize: 26,
-          color: colors.muted,
-        }}
-      >
-        typing...
-      </div>
-    </div>
-  );
-};
-
 export const DmResults: React.FC = () => {
-  const headerFade = useFadeIn(0, 10);
-  const ctaFade = useFadeIn(300);
+  const ctaFade = useFadeIn(310);
 
   return (
     <AbsoluteFill style={baseStyle}>
       <div style={safeZone}>
-        {/* Chat header */}
+
+        {/* ── P: PROBLEM (0–2s) ── */}
         <Sequence from={0}>
-          <div
-            style={{
-              opacity: headerFade,
-              textAlign: 'center',
-              marginBottom: 40,
-              paddingBottom: 24,
-              borderBottom: `1px solid ${colors.border}`,
-            }}
-          >
-            <div
-              style={{ fontSize: 20, color: colors.muted, marginBottom: 6 }}
-            >
-              iMessage
+          <div style={useSlideUp(5)}>
+            <div style={{
+              fontSize: 22,
+              fontWeight: 600,
+              color: colors.red,
+              textTransform: 'uppercase',
+              letterSpacing: '0.15em',
+              marginBottom: 12,
+            }}>
+              Real conversation
             </div>
-            <div style={{ fontSize: 30, fontWeight: 700 }}>Sarah — Bloom Studio</div>
-            <div style={{ fontSize: 18, color: colors.muted, marginTop: 4 }}>
-              Client since March 2026
+            <div style={{
+              fontSize: 44,
+              fontWeight: 800,
+              lineHeight: 1.15,
+              letterSpacing: '-0.02em',
+              marginBottom: 8,
+            }}>
+              "Our old site got us zero leads."
             </div>
           </div>
         </Sequence>
 
-        {/* Conversation */}
-        <div style={{ flex: 1 }}>
-          <Sequence from={20}>
-            <Bubble
-              text="Hey! Quick update — we hit 14 enquiries this month through the new site 🙌"
-              isClient={true}
-              delay={0}
-            />
-          </Sequence>
+        {/* Chat header */}
+        <Sequence from={40}>
+          <div style={{
+            ...useSlideUp(42),
+            textAlign: 'center',
+            paddingTop: 20,
+            paddingBottom: 16,
+            borderBottom: `1px solid ${colors.border}`,
+            marginBottom: 20,
+          }}>
+            <div style={{ fontSize: 28, fontWeight: 700 }}>Sarah — Bloom Studio</div>
+            <div style={{ fontSize: 16, color: colors.muted, marginTop: 4 }}>Client since March 2026</div>
+          </div>
+        </Sequence>
 
-          <Sequence from={60}>
-            <Bubble
-              text="That's amazing — up from zero before launch right?"
-              isClient={false}
-              delay={0}
-            />
-          </Sequence>
+        {/* ── A: AGITATE — the before pain (2–5s) ── */}
+        <Sequence from={60}>
+          <Bubble text="Honestly? Our Wix site was embarrassing. Maybe 1 enquiry every few months." isClient={true} delay={0} />
+        </Sequence>
+        <Sequence from={90}>
+          <Bubble text="What was the biggest issue?" isClient={false} delay={0} />
+        </Sequence>
+        <Sequence from={115}>
+          <Bubble text="Speed was terrible. Nobody could find us on Google. The contact form was buried 3 clicks deep." isClient={true} delay={0} />
+        </Sequence>
+        <Sequence from={145}>
+          <Bubble text="So basically invisible to your customers." isClient={false} delay={0} />
+        </Sequence>
+        <Sequence from={165}>
+          <Bubble text="Exactly. We were paying for a site that did nothing." isClient={true} delay={0} />
+        </Sequence>
 
-          <Sequence from={100}>
-            <Bubble
-              text="Literally zero. Our old Wix site got maybe 1 enquiry every few months"
-              isClient={true}
-              delay={0}
-            />
-          </Sequence>
-
-          <Sequence from={140}>
-            <Bubble
-              text="And the page speed score went from 38 to 98 👀"
-              isClient={true}
-              delay={0}
-            />
-          </Sequence>
-
-          <Sequence from={180}>
-            <Bubble
-              text="Custom code hits different. Google actually knows you exist now 😄"
-              isClient={false}
-              delay={0}
-            />
-          </Sequence>
-
-          <Sequence from={220}>
-            <Bubble
-              text="I've already referred two other businesses to you btw"
-              isClient={true}
-              delay={0}
-            />
-          </Sequence>
-
-          <Sequence from={260}>
-            <Bubble
-              text="Legend. Let's catch up this week — might be time for the Growth upgrade 🚀"
-              isClient={false}
-              delay={0}
-            />
-          </Sequence>
-        </div>
+        {/* ── S: SOLVE — the after results (5–10s) ── */}
+        <Sequence from={200}>
+          <div style={{
+            ...useSlideUp(202),
+            textAlign: 'center',
+            padding: '12px 0',
+            margin: '8px 0',
+          }}>
+            <span style={{
+              fontSize: 16,
+              fontWeight: 600,
+              color: colors.green,
+              textTransform: 'uppercase',
+              letterSpacing: '0.15em',
+            }}>
+              After CrftdWeb rebuild
+            </span>
+          </div>
+        </Sequence>
+        <Sequence from={215}>
+          <Bubble text="Quick update — we hit 14 enquiries this month through the new site 🙌" isClient={true} delay={0} />
+        </Sequence>
+        <Sequence from={245}>
+          <Bubble text="Page speed went from 38 to 98 👀" isClient={true} delay={0} />
+        </Sequence>
+        <Sequence from={270}>
+          <Bubble text="Custom code hits different. Google actually knows you exist now 😄" isClient={false} delay={0} />
+        </Sequence>
+        <Sequence from={295}>
+          <Bubble text="I've already referred two other businesses to you btw" isClient={true} delay={0} />
+        </Sequence>
 
         {/* CTA */}
-        <Sequence from={300}>
-          <div style={{ opacity: ctaFade, marginTop: 32 }}>
-            <CtaBadge text="Real results. Real code. →" />
-            <Logo
-              size={28}
-              style={{ textAlign: 'center', margin: '20px auto 0' }}
-            />
+        <Sequence from={310}>
+          <div style={{ opacity: ctaFade, marginTop: 24 }}>
+            <CtaBadge text="Real code. Real results. → crftdweb.com" />
+            <Logo size={26} style={{ textAlign: 'center', margin: '16px auto 0' }} />
           </div>
         </Sequence>
       </div>

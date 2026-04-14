@@ -10,134 +10,126 @@ import {
   CtaBadge,
 } from './brand';
 
-// ─── Hot Take Video ────────────────────────────────
-// Contrarian hook → builds argument → CTA
-// "Your website doesn't need a redesign. It needs rebuilding from scratch."
+// ─── PAS Video 3: "Redesign vs Rebuild" ───────────
+// P: "Your website doesn't need a redesign"
+// A: Strikethrough + why redesigns fail
+// S: "It needs rebuilding from scratch" — CrftdWeb
 
 export const HotTake: React.FC = () => {
   const frame = useCurrentFrame();
 
-  const line1 = useSlideUp(10);
-  const line2 = useSlideUp(50);
-  const strikethrough = interpolate(frame, [80, 100], [0, 100], {
+  const strikethrough = interpolate(frame, [70, 90], [0, 100], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
-  const line3 = useSlideUp(105);
-  const bulletsFade = useFadeIn(130);
-  const ctaFade = useFadeIn(165);
 
   return (
     <AbsoluteFill style={baseStyle}>
       <div style={safeZone}>
-        {/* Hot take badge */}
+
+        {/* ── P: PROBLEM (0–2s) ── */}
         <Sequence from={0}>
-          <div style={{ ...useSlideUp(0), marginBottom: 32 }}>
-            <span
-              style={{
-                fontSize: 20,
-                fontWeight: 700,
-                color: colors.red,
-                textTransform: 'uppercase',
-                letterSpacing: '0.2em',
-                padding: '8px 20px',
-                border: `1px solid ${colors.red}`,
-                borderRadius: 6,
-              }}
-            >
+          <div style={useSlideUp(8)}>
+            <span style={{
+              fontSize: 18,
+              fontWeight: 700,
+              color: colors.red,
+              textTransform: 'uppercase',
+              letterSpacing: '0.2em',
+              padding: '8px 18px',
+              border: `1px solid ${colors.red}`,
+              borderRadius: 6,
+            }}>
               Hot Take
             </span>
           </div>
         </Sequence>
 
-        {/* Main statement */}
-        <Sequence from={10}>
-          <div style={line1}>
-            <div
-              style={{
-                fontSize: 56,
-                fontWeight: 800,
-                lineHeight: 1.2,
-                letterSpacing: '-0.02em',
-                marginBottom: 16,
-              }}
-            >
+        <Sequence from={15}>
+          <div style={{ ...useSlideUp(18), marginTop: 32 }}>
+            <div style={{
+              fontSize: 56,
+              fontWeight: 800,
+              lineHeight: 1.15,
+              letterSpacing: '-0.02em',
+            }}>
               Your website doesn't need a{' '}
               <span style={{ position: 'relative', display: 'inline' }}>
                 <span>redesign.</span>
-                <span
-                  style={{
-                    position: 'absolute',
-                    left: 0,
-                    top: '55%',
-                    height: 4,
-                    width: `${strikethrough}%`,
-                    backgroundColor: colors.red,
-                  }}
-                />
+                <span style={{
+                  position: 'absolute',
+                  left: 0,
+                  top: '55%',
+                  height: 4,
+                  width: `${strikethrough}%`,
+                  backgroundColor: colors.red,
+                }} />
               </span>
             </div>
           </div>
         </Sequence>
 
-        <Sequence from={50}>
-          <div style={line2}>
-            <div
-              style={{
-                fontSize: 56,
-                fontWeight: 800,
-                lineHeight: 1.2,
-                letterSpacing: '-0.02em',
-                color: colors.green,
-              }}
-            >
-              It needs rebuilding from scratch.
-            </div>
-          </div>
-        </Sequence>
-
-        {/* Supporting bullets */}
-        <Sequence from={110}>
-          <div
-            style={{
-              opacity: bulletsFade,
-              marginTop: 48,
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 20,
-            }}
-          >
+        {/* ── A: AGITATE (2–4.5s) ── */}
+        <Sequence from={60}>
+          <div style={{
+            marginTop: 40,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 18,
+          }}>
             {[
               'A redesign puts new paint on a broken foundation.',
-              'Templates can\'t rank, can\'t convert, can\'t scale.',
-              'Custom code. Every line written for your business.',
+              'Templates can\'t rank. Can\'t convert. Can\'t scale.',
+              'You keep paying. Nothing changes.',
             ].map((text, i) => (
-              <div
-                key={i}
-                style={{
-                  ...useSlideUp(130 + i * 12),
-                  fontSize: 26,
-                  color: i === 2 ? colors.white : colors.muted,
-                  fontWeight: i === 2 ? 600 : 400,
-                  lineHeight: 1.5,
-                  paddingLeft: 24,
-                  borderLeft: `3px solid ${i === 2 ? colors.green : colors.border}`,
-                }}
-              >
+              <div key={i} style={{
+                ...useSlideUp(70 + i * 15),
+                fontSize: 26,
+                color: colors.muted,
+                fontWeight: 400,
+                lineHeight: 1.5,
+                paddingLeft: 24,
+                borderLeft: `3px solid ${colors.red}`,
+              }}>
                 {text}
               </div>
             ))}
           </div>
         </Sequence>
 
-        {/* CTA */}
-        <Sequence from={160}>
-          <div style={{ opacity: ctaFade, marginTop: 48 }}>
-            <CtaBadge text="No templates. No shortcuts. →" />
-            <Logo
-              size={28}
-              style={{ textAlign: 'center', margin: '20px auto 0' }}
-            />
+        {/* ── S: SOLVE (4.5–7s) ── */}
+        <Sequence from={135}>
+          <div style={{ ...useSlideUp(138), marginTop: 48 }}>
+            <div style={{
+              fontSize: 56,
+              fontWeight: 800,
+              lineHeight: 1.15,
+              letterSpacing: '-0.02em',
+              color: colors.green,
+              marginBottom: 24,
+            }}>
+              It needs rebuilding from scratch.
+            </div>
+
+            <div style={{
+              ...useSlideUp(160),
+              fontSize: 26,
+              color: colors.white,
+              fontWeight: 500,
+              lineHeight: 1.5,
+              paddingLeft: 24,
+              borderLeft: `3px solid ${colors.green}`,
+              marginBottom: 36,
+            }}>
+              Custom code. Every line written for your business.
+            </div>
+
+            <div style={{ opacity: useFadeIn(170) }}>
+              <CtaBadge text="No templates. No shortcuts. →" />
+            </div>
+            <div style={{ opacity: useFadeIn(180), marginTop: 18 }}>
+              <Logo size={28} style={{ textAlign: 'center', margin: '0 auto' }} />
+            </div>
           </div>
         </Sequence>
       </div>
