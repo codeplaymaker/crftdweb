@@ -8,7 +8,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/admin', '/api/', '/engine/dashboard', '/preview/'],
+        disallow: ['/admin', '/api/', '/engine/dashboard', '/preview/', '/_next/'],
       },
       // Allow citation crawlers
       { userAgent: 'GPTBot', allow: '/' },
