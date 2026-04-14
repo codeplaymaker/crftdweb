@@ -1,0 +1,2551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CrftdWeb — Content Playbook</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    @page {
+      size: A4;
+      margin: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, 'Helvetica Neue', Arial, sans-serif;
+      background: #fff;
+      color: #111;
+      font-size: 13px;
+      line-height: 1.7;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    .page {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 50px 48px;
+      page-break-after: always;
+      min-height: 100vh;
+    }
+
+    .page:last-child { page-break-after: auto; }
+
+    /* ── Cover ── */
+    .cover {
+      background: #0a0a0a;
+      color: #fff;
+      padding: 60px 48px;
+      max-width: 820px;
+      margin: 0 auto;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      page-break-after: always;
+    }
+
+    .cover-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .cover .brand {
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      color: #fff;
+    }
+
+    .cover .version {
+      font-size: 11px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.4);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .cover-middle { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+
+    .cover h1 {
+      font-size: 48px;
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -2px;
+      margin-bottom: 16px;
+    }
+
+    .cover h1 .accent { color: #ef4444; }
+
+    .cover .subtitle {
+      font-size: 16px;
+      font-weight: 400;
+      color: rgba(255,255,255,0.5);
+      line-height: 1.6;
+      max-width: 480px;
+    }
+
+    .cover-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding-top: 24px;
+    }
+
+    .cover-bottom .meta { font-size: 11px; color: rgba(255,255,255,0.35); }
+    .cover-bottom .meta strong { color: rgba(255,255,255,0.6); font-weight: 600; }
+
+    /* ── Section Headers ── */
+    .section-num {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #ef4444;
+      margin-bottom: 6px;
+    }
+
+    h2 {
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      line-height: 1.1;
+      margin-bottom: 6px;
+    }
+
+    .section-lead {
+      font-size: 14px;
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 28px;
+      max-width: 560px;
+    }
+
+    h3 {
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      margin-top: 28px;
+      margin-bottom: 10px;
+    }
+
+    h4 {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-top: 22px;
+      margin-bottom: 8px;
+      color: #333;
+    }
+
+    p { margin-bottom: 12px; line-height: 1.7; }
+
+    /* ── Divider ── */
+    .divider {
+      border: none;
+      border-top: 1px solid #e5e5e5;
+      margin: 32px 0;
+    }
+
+    .divider-dark {
+      border: none;
+      border-top: 2px solid #0a0a0a;
+      margin: 32px 0 28px 0;
+    }
+
+    /* ── Rule Cards ── */
+    .rule-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin: 16px 0;
+    }
+
+    .rule-card {
+      border: 1px solid #e5e5e5;
+      border-radius: 10px;
+      padding: 18px 16px;
+    }
+
+    .rule-card .rule-num {
+      font-size: 10px;
+      font-weight: 800;
+      color: #ef4444;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .rule-card .rule-title {
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      margin-bottom: 6px;
+    }
+
+    .rule-card .rule-desc {
+      font-size: 12px;
+      color: #555;
+      line-height: 1.6;
+    }
+
+    /* ── Do / Don't ── */
+    .do-dont {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin: 14px 0;
+    }
+
+    .do-box, .dont-box {
+      border-radius: 10px;
+      padding: 16px;
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .do-box {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+    }
+
+    .dont-box {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+    }
+
+    .do-box .label {
+      font-size: 10px;
+      font-weight: 800;
+      color: #10b981;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .dont-box .label {
+      font-size: 10px;
+      font-weight: 800;
+      color: #ef4444;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .do-box code, .dont-box code {
+      display: block;
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      margin-bottom: 4px;
+    }
+
+    /* ── Framework Box ── */
+    .framework-box {
+      background: #0a0a0a;
+      color: #fff;
+      border-radius: 12px;
+      padding: 28px 24px;
+      margin: 18px 0;
+    }
+
+    .framework-box h3 {
+      color: #fff;
+      margin-top: 0;
+      font-size: 18px;
+    }
+
+    .framework-steps {
+      display: flex;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .framework-step {
+      flex: 1;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 8px;
+      padding: 16px;
+    }
+
+    .framework-step .step-label {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .framework-step .step-label.red { color: #ef4444; }
+    .framework-step .step-label.amber { color: #f59e0b; }
+    .framework-step .step-label.green { color: #10b981; }
+
+    .framework-step .step-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .framework-step .step-desc {
+      font-size: 11px;
+      color: rgba(255,255,255,0.5);
+      line-height: 1.5;
+    }
+
+    /* ── Pillar Cards ── */
+    .pillar-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin: 16px 0;
+    }
+
+    .pillar-card {
+      border: 1px solid #e5e5e5;
+      border-radius: 10px;
+      padding: 20px 16px;
+      position: relative;
+    }
+
+    .pillar-card .pillar-icon {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    .pillar-card .pillar-name {
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      margin-bottom: 4px;
+    }
+
+    .pillar-card .pillar-desc {
+      font-size: 12px;
+      color: #555;
+      line-height: 1.6;
+      margin-bottom: 8px;
+    }
+
+    .pillar-card .pillar-examples {
+      font-size: 11px;
+      color: #888;
+      line-height: 1.5;
+    }
+
+    .pillar-card .pillar-examples strong {
+      color: #555;
+    }
+
+    /* ── Template Box ── */
+    .template-box {
+      background: #fafafa;
+      border: 1px solid #e5e5e5;
+      border-radius: 10px;
+      padding: 20px;
+      margin: 14px 0;
+      font-size: 12px;
+    }
+
+    .template-box .template-label {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #888;
+      margin-bottom: 10px;
+    }
+
+    .template-box .line {
+      padding: 4px 0;
+      line-height: 1.6;
+    }
+
+    .template-box .line .placeholder {
+      background: #e5e5e5;
+      border-radius: 3px;
+      padding: 1px 6px;
+      font-size: 11px;
+      color: #666;
+      font-weight: 500;
+    }
+
+    .template-box .line .instruction {
+      color: #888;
+      font-style: italic;
+      font-size: 11px;
+    }
+
+    /* ── Cadence Table ── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0;
+      font-size: 12px;
+    }
+
+    thead th {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #888;
+      text-align: left;
+      padding: 8px 12px;
+      border-bottom: 2px solid #0a0a0a;
+    }
+
+    tbody td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #eee;
+      vertical-align: top;
+    }
+
+    tbody td:first-child { font-weight: 700; }
+
+    /* ── Checklist ── */
+    .checklist {
+      list-style: none;
+      padding: 0;
+      margin: 12px 0;
+    }
+
+    .checklist li {
+      padding: 6px 0 6px 24px;
+      position: relative;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .checklist li::before {
+      content: '☐';
+      position: absolute;
+      left: 0;
+      font-size: 13px;
+    }
+
+    /* ── Blockquote ── */
+    .quote-block {
+      border-left: 3px solid #0a0a0a;
+      padding: 12px 20px;
+      margin: 16px 0;
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1.5;
+      letter-spacing: -0.3px;
+    }
+
+    .quote-block .attr {
+      font-size: 11px;
+      font-weight: 400;
+      color: #888;
+      margin-top: 6px;
+    }
+
+    /* ── Visual Device Grid ── */
+    .device-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      gap: 8px;
+      margin: 14px 0;
+    }
+
+    .device-item {
+      text-align: center;
+      padding: 18px 8px 14px;
+      background: #131825;
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 10px;
+    }
+
+    .device-item .device-icon {
+      font-size: 22px;
+      margin-bottom: 10px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .device-item .device-name {
+      font-size: 10px;
+      font-weight: 700;
+      margin-bottom: 3px;
+      color: #fff;
+    }
+
+    .device-item .device-use {
+      font-size: 9px;
+      color: rgba(255,255,255,0.45);
+    }
+
+    /* ── Color swatches ── */
+    .swatch-row {
+      display: flex;
+      gap: 12px;
+      margin: 14px 0;
+    }
+
+    .swatch {
+      text-align: center;
+    }
+
+    .swatch .swatch-circle {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 1px solid #e5e5e5;
+      margin: 0 auto 6px auto;
+    }
+
+    .swatch .swatch-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    .swatch .swatch-hex {
+      font-size: 10px;
+      color: #888;
+    }
+
+    /* ── Stacked List ── */
+    .stacked-list {
+      list-style: none;
+      padding: 0;
+      margin: 12px 0;
+    }
+
+    .stacked-list li {
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .stacked-list li:last-child { border-bottom: none; }
+
+    .stacked-list li strong {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    /* ── Numbered Step ── */
+    .numbered-step {
+      display: flex;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .numbered-step .step-num {
+      width: 32px;
+      height: 32px;
+      background: #0a0a0a;
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    .numbered-step .step-content {
+      flex: 1;
+    }
+
+    .numbered-step .step-content strong {
+      display: block;
+      font-size: 14px;
+      font-weight: 800;
+      margin-bottom: 2px;
+    }
+
+    .numbered-step .step-content p {
+      font-size: 12px;
+      color: #555;
+      margin-bottom: 0;
+    }
+
+    /* ── Tag/Badge ── */
+    .tag {
+      display: inline-block;
+      background: #f3f4f6;
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-right: 4px;
+    }
+
+    .tag.red { background: #fef2f2; color: #ef4444; }
+    .tag.green { background: #f0fdf4; color: #10b981; }
+    .tag.blue { background: #eff6ff; color: #3b82f6; }
+
+    /* ── Post Mockup ── */
+    .post-mockup {
+      background: #0a0a0a;
+      border-radius: 14px;
+      padding: 28px 24px;
+      color: #fff;
+      margin: 14px 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .post-mockup .mockup-label {
+      position: absolute;
+      top: 12px;
+      right: 14px;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+    }
+
+    .post-mockup .mockup-logo {
+      font-size: 11px;
+      font-weight: 900;
+      color: rgba(255,255,255,0.4);
+      margin-bottom: 20px;
+      letter-spacing: -0.3px;
+    }
+
+    .post-mockup .mockup-headline {
+      font-size: 22px;
+      font-weight: 900;
+      line-height: 1.15;
+      letter-spacing: -0.5px;
+      margin-bottom: 14px;
+    }
+
+    .post-mockup .mockup-body {
+      font-size: 12px;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.7;
+      margin-bottom: 14px;
+    }
+
+    .post-mockup .mockup-metric {
+      display: inline-block;
+      margin-right: 16px;
+      margin-bottom: 8px;
+    }
+
+    .post-mockup .mockup-metric .metric-value {
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+    }
+
+    .post-mockup .mockup-metric .metric-label {
+      font-size: 10px;
+      color: rgba(255,255,255,0.4);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .post-mockup .mockup-cta {
+      display: inline-block;
+      background: #fff;
+      color: #0a0a0a;
+      border-radius: 20px;
+      padding: 8px 20px;
+      font-size: 11px;
+      font-weight: 700;
+      margin-top: 8px;
+    }
+
+    .post-mockup .mockup-check {
+      font-size: 12px;
+      line-height: 2;
+    }
+
+    .post-mockup .mockup-check .fail { color: #ef4444; }
+    .post-mockup .mockup-check .pass { color: #10b981; }
+
+    /* ── Flywheel Diagram ── */
+    .flywheel {
+      position: relative;
+      width: 380px;
+      height: 380px;
+      margin: 20px auto;
+    }
+
+    .flywheel-center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      z-index: 2;
+    }
+
+    .flywheel-center .fc-icon {
+      font-size: 28px;
+      margin-bottom: 4px;
+    }
+
+    .flywheel-center .fc-label {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .flywheel-node {
+      position: absolute;
+      width: 100px;
+      text-align: center;
+    }
+
+    .flywheel-node .fn-num {
+      width: 28px;
+      height: 28px;
+      background: #0a0a0a;
+      color: #fff;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 800;
+      margin-bottom: 3px;
+    }
+
+    .flywheel-node .fn-label {
+      font-size: 10px;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .flywheel-ring {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 280px;
+      height: 280px;
+      border: 2px solid #e5e5e5;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .flywheel-arrow {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 280px;
+      height: 280px;
+      transform: translate(-50%, -50%);
+      border: 2px dashed #ddd;
+      border-radius: 50%;
+      border-top-color: #0a0a0a;
+      border-right-color: transparent;
+    }
+
+    /* ── Calendar Grid ── */
+    .cal-grid {
+      display: grid;
+      grid-template-columns: auto 1fr 1fr;
+      gap: 1px;
+      background: #e5e5e5;
+      border: 1px solid #e5e5e5;
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 14px 0;
+      font-size: 11px;
+    }
+
+    .cal-grid .cal-header {
+      background: #0a0a0a;
+      color: #fff;
+      padding: 8px 10px;
+      font-weight: 700;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .cal-grid .cal-day {
+      background: #fafafa;
+      padding: 8px 10px;
+      font-weight: 700;
+      font-size: 11px;
+    }
+
+    .cal-grid .cal-cell {
+      background: #fff;
+      padding: 8px 10px;
+      line-height: 1.5;
+    }
+
+    .cal-grid .cal-cell strong {
+      display: block;
+      font-size: 11px;
+      margin-bottom: 1px;
+    }
+
+    .cal-grid .cal-cell .cal-type {
+      font-size: 10px;
+      color: #888;
+    }
+
+    /* ── Repurpose Flow ── */
+    .repurpose-flow {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin: 14px 0;
+    }
+
+    .repurpose-item {
+      background: #f3f4f6;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .repurpose-item.source {
+      background: #0a0a0a;
+      color: #fff;
+    }
+
+    .repurpose-arrow {
+      font-size: 14px;
+      color: #ccc;
+      font-weight: 700;
+    }
+
+    /* ── Utility ── */
+    .mt-0 { margin-top: 0; }
+    .mb-0 { margin-bottom: 0; }
+    .text-muted { color: #888; }
+    .text-sm { font-size: 12px; }
+    .font-bold { font-weight: 700; }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════════════ -->
+<!-- COVER PAGE -->
+<!-- ════════════════════════════════════════════════════════════ -->
+<div class="cover">
+  <div class="cover-top">
+    <div class="brand">CrftdWeb</div>
+    <div class="version">Internal Playbook — V1</div>
+  </div>
+  <div class="cover-middle">
+    <h1>Content<br><span class="accent">Playbook.</span></h1>
+    <p class="subtitle">
+      The system behind every post, video, and caption. 
+      How we think, write, and design content that converts 
+      attention into clients.
+    </p>
+  </div>
+  <div class="cover-bottom">
+    <div class="meta">
+      <strong>Prepared by</strong> CrftdWeb<br>
+      April 2026
+    </div>
+    <div class="meta" style="text-align:right;">
+      <strong>Classification</strong><br>
+      Internal Use Only
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════ -->
+<!-- TABLE OF CONTENTS -->
+<!-- ════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="section-num">Contents</div>
+  <h2>What's Inside</h2>
+  <p class="section-lead">Everything you need to create content that sounds, looks, and converts like CrftdWeb.</p>
+
+  <hr class="divider-dark">
+
+  <ul class="stacked-list" style="counter-reset: toc;">
+    <li><strong>01 — Brand Positioning</strong>Who we are, who we're talking to, and the one line that drives everything.</li>
+    <li><strong>02 — Voice & Tone Rules</strong>How we sound. The words we use. The words we never use.</li>
+    <li><strong>03 — The PAS Framework</strong>Problem → Agitate → Solve. The copywriting engine behind every piece of content.</li>
+    <li><strong>04 — Content Pillars</strong>The four themes we rotate through. Every post fits one.</li>
+    <li><strong>05 — Post Formats & Templates</strong>Plug-and-play structures for each content type. Fill in the blanks.</li>
+    <li><strong>06 — Finished Post Examples</strong>See exactly what a completed post looks like. Copy the pattern.</li>
+    <li><strong>07 — Hook Bank</strong>30 scroll-stopping hooks sorted by pillar. Grab and go.</li>
+    <li><strong>08 — Visual Rules</strong>Colors, typography, layout. How every post should look.</li>
+    <li><strong>09 — Video Content (Remotion)</strong>How we build short-form video. Structure, pacing, and tooling.</li>
+    <li><strong>10 — Posting Cadence & Calendar</strong>What to post, when, where. Plus a sample week filled in.</li>
+    <li><strong>11 — The Repurposing Machine</strong>One piece of content becomes five. The workflow that multiplies your output.</li>
+    <li><strong>12 — Value Positioning</strong>Why clients pay. The 4 types of value and how to communicate them.</li>
+    <li><strong>13 — The 80/20 Rule & Organic Strategies</strong>80% give value, 20% ask. 10 strategies that cost nothing.</li>
+    <li><strong>14 — The Content Flywheel</strong>How content feeds the business system. Marketing → Proof → Loop.</li>
+    <li><strong>15 — Quotes Bank</strong>Ready-to-use one-liners for posts, captions, and video hooks.</li>
+    <li><strong>16 — Metrics & KPIs</strong>How you know the content is working. What to track and what "good" looks like.</li>
+    <li><strong>17 — Pre-Publish Checklist</strong>Run through this before every post goes live.</li>
+  </ul>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════ -->
+<!-- 01 — BRAND POSITIONING -->
+<!-- ════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="section-num">Section 01</div>
+  <h2>Brand Positioning</h2>
+  <p class="section-lead">Before you write a single word, know who you are and who you're talking to.</p>
+
+  <hr class="divider-dark">
+
+  <h3 class="mt-0">The One-Liner</h3>
+  <div class="quote-block">
+    Most business websites look fine and do nothing. We fix that.
+  </div>
+
+  <p>This is the lens for everything. Every post should make the audience feel this truth — their site isn't working, and there's a better way.</p>
+
+  <h3>Who We Are</h3>
+  <p>CrftdWeb is a one-person web studio that builds conversion-first websites from scratch. No templates. No page builders. No middlemen. Every site is hand-coded in Next.js, designed around the TRAIN system, and delivered in 2–5 weeks.</p>
+
+  <h3>Who We're Talking To</h3>
+  <div class="rule-grid">
+    <div class="rule-card">
+      <div class="rule-num">Ideal Client</div>
+      <div class="rule-title">Small business owners</div>
+      <div class="rule-desc">£50k–£5M revenue. They make decisions fast. They understand that growth costs money. They want a site that works, not one that just exists.</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-num">Their Pain</div>
+      <div class="rule-title">Invisible online</div>
+      <div class="rule-desc">Their current site is slow, outdated, or doesn't convert. They're losing clients to competitors with better web presence. They've been burned by cheap agencies before.</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-num">What They Want</div>
+      <div class="rule-title">A site that sells for them</div>
+      <div class="rule-desc">Not a brochure. A website that functions as their best salesperson. They want proof it works (metrics, case studies, speed scores).</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-num">Who We Avoid</div>
+      <div class="rule-title">"How cheap can you do it?"</div>
+      <div class="rule-desc">No budget shoppers. No "build for exposure." No micromanagers who want to approve every pixel. No projects under £997.</div>
+    </div>
+  </div>
+
+  <h3>Positioning Statement</h3>
+  <p>We're not the cheapest. We're not the biggest. We're the studio that builds websites which actually generate revenue — hand-coded, conversion-first, delivered fast.</p>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════ -->
+<!-- 02 — VOICE & TONE -->
+<!-- ════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="section-num">Section 02</div>
+  <h2>Voice & Tone Rules</h2>
+  <p class="section-lead">Sound like a sharp friend who knows what they're doing. Not a corporate brochure.</p>
+
+  <hr class="divider-dark">
+
+  <div class="rule-grid">
+    <div class="rule-card">
+      <div class="rule-num">Rule 01</div>
+      <div class="rule-title">Direct, not aggressive</div>
+      <div class="rule-desc">Say what you mean in as few words as possible. Don't soften with "just" or "maybe." But don't be a jerk about it either.</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-num">Rule 02</div>
+      <div class="rule-title">Honest, not arrogant</div>
+      <div class="rule-desc">Challenge bad thinking. Say what others won't. But back it up with proof, not ego. "We'd rather be honest" is the energy.</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-num">Rule 03</div>
+      <div class="rule-title">Specific, not vague</div>
+      <div class="rule-desc">Numbers beat adjectives. "53% of visitors leave after 3 seconds" beats "many visitors leave quickly." Use metrics. Name tools. Be concrete.</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-num">Rule 04</div>
+      <div class="rule-title">Problem-first, always</div>
+      <div class="rule-desc">Never start with "We build..." Start with "You're losing..." The audience doesn't care about you. They care about their problem.</div>
+    </div>
+  </div>
+
+  <h3>Words We Never Use</h3>
+  <div class="dont-box" style="margin: 14px 0;">
+    <div class="label">Banned Words</div>
+    <code>leverage · synergy · digital transformation · crafting excellence</code>
+    <code>world-class · elevate · revolutionary · game-changer</code>
+    <code>holistic · cutting-edge · solution-oriented · innovative</code>
+    <code>best-in-class · disrupting · empowering · ecosystem</code>
+  </div>
+
+  <h3>Copy Rules</h3>
+  <div class="do-dont">
+    <div class="do-box">
+      <div class="label">Do This</div>
+      <code>"Your website should be your best salesperson."</code>
+      <code>"We hand-code everything. No templates."</code>
+      <code>"Our last 5 projects averaged 96 PageSpeed."</code>
+      <code>"53% of visitors leave after 3 seconds."</code>
+    </div>
+    <div class="dont-box">
+      <div class="label">Not This</div>
+      <code>"We build premium bespoke websites."</code>
+      <code>"Our holistic solutions leverage cutting-edge tech."</code>
+      <code>"We're the best agency for your needs."</code>
+      <code>"Many visitors leave quickly."</code>
+    </div>
+  </div>
+
+  <h4>Formatting Rules</h4>
+  <ul class="stacked-list">
+    <li><strong>No em dashes.</strong> Use periods or commas. "We build websites. Custom coded." Not "We build websites — custom coded."</li>
+    <li><strong>One CTA per section.</strong> Don't give 5 choices. One clear next step: "See what we built."</li>
+    <li><strong>Short paragraphs.</strong> Max 3 sentences. If it looks dense, break it up.</li>
+    <li><strong>Show, don't claim.</strong> Proof beats assertions. Screenshots beat promises. Data beats opinions.</li>
+  </ul>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════ -->
+<!-- 03 — PAS FRAMEWORK -->
+<!-- ════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="section-num">Section 03</div>
+  <h2>The PAS Framework</h2>
+  <p class="section-lead">Every piece of content follows this structure. No exceptions.</p>
+
+  <hr class="divider-dark">
+
+  <div class="framework-box">
+    <h3 class="mt-0">Problem → Agitate → Solve</h3>
+    <p style="color: rgba(255,255,255,0.5); font-size: 12px; margin-bottom: 0;">The copywriting engine behind every post, video, caption, and ad.</p>
+    <div class="framework-steps">
+      <div class="framework-step">
+        <div class="step-label red">Step 1</div>
+        <div class="step-title">Problem</div>
+        <div class="step-desc">Name the pain. Be specific. Make them feel seen. "Your website loads in 6 seconds. Half your visitors are already gone."</div>
+      </div>
+      <div class="framework-step">
+        <div class="step-label amber">Step 2</div>
+        <div class="step-title">Agitate</div>
+        <div class="step-desc">Turn up the heat. Show what happens if they do nothing. "Every day that site is live, you're paying for traffic that bounces."</div>
+      </div>
+      <div class="framework-step">
+        <div class="step-label green">Step 3</div>
+        <div class="step-title">Solve</div>
+        <div class="step-desc">Present the fix. Be concrete. "We rebuilt it in 3 weeks. Load time: 1.4s. Bounce rate dropped 40%."</div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Why PAS Works</h3>
+  <p>People don't buy solutions. They buy relief from pain. PAS puts the pain first, makes it feel urgent, then positions you as the obvious fix. It works because it mirrors how people already think about their problems.</p>
+
+  <h3>PAS In Action — Short-Form Example</h3>
+  <div class="template-box">
+    <div class="template-label">Instagram / TikTok Caption</div>
+    <div class="line"><strong>P:</strong> Your website takes 6 seconds to load.</div>
+    <div class="line"><strong>A:</strong> That means 53% of your visitors never see your homepage. They leave before the logo loads. You're paying for traffic that bounces.</div>
+    <div class="line"><strong>S:</strong> We rebuilt a client's site last month. Load time went from 6.2s to 1.4s. Enquiries doubled in two weeks. Link in bio for a free audit.</div>
+  </div>
+
+  <h3>PAS In Action — Video Script (15-30s)</h3>
+  <div class="template-box">
+    <div class="template-label">Short-Form Video</div>
+    <div class="line"><strong>[0-5s] Problem:</strong> Bold text on screen. Hook the viewer. "Your website is losing you money."</div>
+    <div class="line"><strong>[5-15s] Agitate:</strong> Show the data. Red metrics. Slow load. Bad mobile view. "6.2 second load time. 53% bounce rate. You're invisible on Google."</div>
+    <div class="line"><strong>[15-25s] Solve:</strong> Flip to green. Fast load. Clean design. Real metrics. "We rebuilt it. 1.4s load. 40% more enquiries."</div>
+    <div class="line"><strong>[25-30s] CTA:</strong> Logo + one line. "Free site audit. Link in bio."</div>
+  </div>
+
+  <h3>Key Principle: One Concept Per Post</h3>
+  <div class="quote-block">
+    If you can't explain the idea in one sentence, you're trying to say too much for a single post. Split it into two.
+    <div class="attr">Adapted from Jack Butcher's "Visualize Value" philosophy</div>
+  </div>
+  <p>Every post should communicate one clear idea. Not three insights packaged together. One sharp thought, visualized clearly, with a single CTA.</p>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════ -->
+<!-- 04 — CONTENT PILLARS -->
+<!-- ════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="section-num">Section 04</div>
+  <h2>Content Pillars</h2>
+  <p class="section-lead">Every post fits into one of these four categories. Rotate through them.</p>
+
+  <hr class="divider-dark">
+
+  <div class="pillar-grid">
+    <div class="pillar-card">
+      <div class="pillar-icon">🔴</div>
+      <div class="pillar-name">1. Problem Exposure</div>
+      <div class="pillar-desc">Show businesses what's broken about their website. Use data, audits, and real examples to make the pain visible.</div>
+      <div class="pillar-examples">
+        <strong>Examples:</strong><br>
+        "Your site takes 6s to load. Here's what that costs you."<br>
+        "I audited 10 local business websites. 8 failed basic SEO."<br>
+        "This is what your website looks like on mobile. Yikes."
+      </div>
+    </div>
+    <div class="pillar-card">
+      <div class="pillar-icon">🟡</div>
+      <div class="pillar-name">2. Contrarian Takes</div>
+      <div class="pillar-desc">Challenge conventional thinking. Say what agencies won't. Cross out the old way, state the real way.</div>
+      <div class="pillar-examples">
+        <strong>Examples:</strong><br>
+        "Your website doesn't need a redesign. It needs a rebuild."<br>
+        "Stop asking 'does it look good?' Start asking 'does it convert?'"<br>
+        "Templates are why your site looks like everyone else's."
+      </div>
+    </div>
+    <div class="pillar-card">
+      <div class="pillar-icon">🟢</div>
+      <div class="pillar-name">3. Process & Education</div>
+      <div class="pillar-desc">Teach how good websites work. Break down conversion thinking, design principles, and the TRAIN system.</div>
+      <div class="pillar-examples">
+        <strong>Examples:</strong><br>
+        "The 5 things every homepage needs (most have 0)."<br>
+        "Why your hero section should talk about THEM, not you."<br>
+        "Here's the exact process we use: Discover → Design → Develop → Deliver."
+      </div>
+    </div>
+    <div class="pillar-card">
+      <div class="pillar-icon">⚪</div>
+      <div class="pillar-name">4. Proof & Results</div>
+      <div class="pillar-desc">Show the work. Before/after metrics. Client conversations. PageSpeed scores. Real results, not claims.</div>
+      <div class="pillar-examples">
+        <strong>Examples:</strong><br>
+        "Client site went from 6.2s → 1.4s load time. Here's the rebuild."<br>
+        "PageSpeed: 23 → 96. Same content. Different build."<br>
+        "This client got 3x more enquiries after we rebuilt their site."
+      </div>
+    </div>
+  </div>
+
+  <h3>Pillar Rotation</h3>
+  <p>Don't post the same type three times in a row. Rotate through pillars to keep the feed balanced. A good rhythm:</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Day</th>
+        <th>Pillar</th>
+        <th>Why</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Mon</td>
+        <td><span class="tag red">Problem Exposure</span></td>
+        <td>Start the week by making the pain visible</td>
+      </tr>
+      <tr>
+        <td>Wed</td>
+        <td><span class="tag">Contrarian Take</span></td>
+        <td>Mid-week engagement driver (hot takes spark comments)</td>
+      </tr>
+      <tr>
+        <td>Fri</td>
+        <td><span class="tag green">Proof & Results</span></td>
+        <td>End the week with credibility. People research on weekends.</td>
+      </tr>
+      <tr>
+        <td>Sun (optional)</td>
+        <td><span class="tag blue">Education</span></td>
+        <td>Position as expert. Build trust for the Monday sell.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════ -->
+<!-- 05 — POST FORMATS & TEMPLATES -->
+<!-- ════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="section-num">Section 05</div>
+  <h2>Post Formats & Templates</h2>
+  <p class="section-lead">Plug-and-play structures. Pick a format, fill in the blanks, post.</p>
+
+  <hr class="divider-dark">
+
+  <h3 class="mt-0">Format 1: The Audit Post</h3>
+  <p><span class="tag red">Problem Exposure</span> Best for showing broken websites and missed opportunities.</p>
+  <div class="template-box">
+    <div class="template-label">Template</div>
+    <div class="line">⚠️ <span class="placeholder">INDUSTRY</span> Website Audit</div>
+    <div class="line" style="margin-top: 8px;">I checked <span class="placeholder">NUMBER</span> <span class="placeholder">INDUSTRY</span> websites in <span class="placeholder">CITY</span>.</div>
+    <div class="line">Here's what I found:</div>
+    <div class="line" style="margin-top: 8px;">✗ <span class="placeholder">PROBLEM 1 + STAT</span></div>
+    <div class="line">✗ <span class="placeholder">PROBLEM 2 + STAT</span></div>
+    <div class="line">✗ <span class="placeholder">PROBLEM 3 + STAT</span></div>
+    <div class="line" style="margin-top: 8px;">Every one of these is costing you clients.</div>
+    <div class="line" style="margin-top: 8px;"><span class="instruction">CTA: Free audit offer or "DM me your URL"</span></div>
+  </div>
+
+  <h3>Format 2: The Hot Take</h3>
+  <p><span class="tag">Contrarian Take</span> Best for engagement. Challenges what people assume is true.</p>
+  <div class="template-box">
+    <div class="template-label">Template</div>
+    <div class="line"><s><span class="placeholder">OLD THINKING</span></s></div>
+    <div class="line" style="font-weight: 700;"><span class="placeholder">NEW THINKING</span></div>
+    <div class="line" style="margin-top: 8px;">Here's why:</div>
+    <div class="line">1. <span class="placeholder">REASON WITH PROOF</span></div>
+    <div class="line">2. <span class="placeholder">REASON WITH PROOF</span></div>
+    <div class="line">3. <span class="placeholder">REASON WITH PROOF</span></div>
+    <div class="line" style="margin-top: 8px;">Most agencies won't tell you this because <span class="placeholder">REASON</span>.</div>
+    <div class="line" style="margin-top: 8px;"><span class="instruction">CTA: "See what a rebuild looks like →" or "DM me"</span></div>
+  </div>
+
+  <h3>Format 3: The Before / After</h3>
+  <p><span class="tag green">Proof & Results</span> Best for credibility. Show the transformation with real numbers.</p>
+  <div class="template-box">
+    <div class="template-label">Template</div>
+    <div class="line" style="font-weight: 700;">Before → After</div>
+    <div class="line" style="margin-top: 8px; color: #ef4444;">❌ Load time: <span class="placeholder">BEFORE METRIC</span></div>
+    <div class="line" style="color: #10b981;">✅ Load time: <span class="placeholder">AFTER METRIC</span></div>
+    <div class="line" style="margin-top: 4px; color: #ef4444;">❌ Bounce rate: <span class="placeholder">BEFORE</span></div>
+    <div class="line" style="color: #10b981;">✅ Bounce rate: <span class="placeholder">AFTER</span></div>
+    <div class="line" style="margin-top: 4px; color: #ef4444;">❌ Monthly enquiries: <span class="placeholder">BEFORE</span></div>
+    <div class="line" style="color: #10b981;">✅ Monthly enquiries: <span class="placeholder">AFTER</span></div>
+    <div class="line" style="margin-top: 8px;">Same business. Same audience. Different website.</div>
+    <div class="line" style="margin-top: 8px;"><span class="instruction">CTA: "Want to see what yours could look like?"</span></div>
+  </div>
+
+  <h3>Format 4: The One-Liner Insight</h3>
+  <p><span class="tag blue">Education</span> One sharp thought. Minimal design. Maximum impact.</p>
+  <div class="template-box">
+    <div class="template-label">Template</div>
+    <div class="line" style="font-size: 15px; font-weight: 800; letter-spacing: -0.3px;"><span class="placeholder">ONE POWERFUL SENTENCE</span></div>
+    <div class="line" style="margin-top: 8px; color: #888; font-size: 11px;"><span class="instruction">Black background, white text, centered. Logo bottom-left. That's it.</span></div>
+  </div>
+  <p class="text-sm text-muted">Inspired by Visualize Value. These work because they're fast to consume, easy to share, and impossible to misunderstand. Examples: "Your website should be your best salesperson." / "Nobody cares what you do. Everyone cares what you can do for them."</p>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════ -->
+<!-- 05b — MORE TEMPLATES -->
+<!-- ════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="section-num">Section 05 (continued)</div>
+  <h2>More Formats</h2>
+
+  <hr class="divider-dark">
+
+  <h3 class="mt-0">Format 5: The DM Conversation</h3>
+  <p><span class="tag green">Proof & Results</span> Simulated or real client messages showing the transformation story.</p>
+  <div class="template-box">
+    <div class="template-label">Template</div>
+    <div class="line" style="color: #888;">💬 <span class="placeholder">CLIENT</span>: "Our website hasn't brought in a single lead in months."</div>
+    <div class="line" style="color: #888;">💬 You: "Send me the URL. Let me take a look."</div>
+    <div class="line" style="color: #888;"><span class="instruction">[Show diagnosis]</span></div>
+    <div class="line" style="color: #888;">💬 You: "<span class="placeholder">SPECIFIC PROBLEM FOUND</span>"</div>
+    <div class="line" style="color: #888;"><span class="instruction">[Time skip: "3 weeks later"]</span></div>
+    <div class="line" style="color: #888;">💬 <span class="placeholder">CLIENT</span>: "We got <span class="placeholder">RESULT</span> in the first week. This is insane."</div>
+    <div class="line" style="margin-top: 8px;"><span class="instruction">CTA: "DM your URL for a free audit."</span></div>
+  </div>
+
+  <h3>Format 6: The Process Breakdown</h3>
+  <p><span class="tag blue">Education</span> Show how you work. Transparency builds trust.</p>
+  <div class="template-box">
+    <div class="template-label">Template</div>
+    <div class="line" style="font-weight: 700;">How we build a website in <span class="placeholder">X</span> weeks:</div>
+    <div class="line" style="margin-top: 8px;">1. <strong>Discover</strong> — We learn your business, audience, and goals.</div>
+    <div class="line">2. <strong>Design</strong> — We design around your customer's problems, not your logo.</div>
+    <div class="line">3. <strong>Develop</strong> — Hand-coded. No templates. 90+ PageSpeed.</div>
+    <div class="line">4. <strong>Deliver</strong> — Live on your domain with 2 weeks of post-launch support.</div>
+    <div class="line" style="margin-top: 8px;"><span class="instruction">CTA: "Book a free discovery call."</span></div>
+  </div>
+
+  <h3>Format 7: The "Nobody Cares" Post</h3>
+  <p><span class="tag">Contrarian Take</span> The most important content lesson: talk about THEM, not you.</p>
+  <div class="template-box">
+    <div class="template-label">Template</div>
+    <div class="line"><strong>Your hero section right now:</strong></div>
+    <div class="line" style="color: #ef4444;">"We are a <span class="placeholder">TYPE</span> company providing <span class="placeholder">SERVICE</span> solutions."</div>
+    <div class="line" style="margin-top: 8px;"><strong>What it should say:</strong></div>
+    <div class="line" style="color: #10b981;">"<span class="placeholder">OUTCOME YOUR CUSTOMER WANTS</span>. In <span class="placeholder">TIMEFRAME</span>."</div>
+    <div class="line" style="margin-top: 8px;">Nobody cares what you do. Everyone cares what you can do for them.</div>
+  </div>
+
+  <hr class="divider">
+
+  <h3>Caption Formula (All Formats)</h3>
+  <p>Every social caption follows this exact structure:</p>
+
+  <div class="numbered-step">
+    <div class="step-num">1</div>
+    <div class="step-content">
+      <strong>Hook (Line 1)</strong>
+      <p>Stop the scroll. Bold claim, shocking stat, or provocative question. This line decides if they read the rest.</p>
+    </div>
+  </div>
+  <div class="numbered-step">
+    <div class="step-num">2</div>
+    <div class="step-content">
+      <strong>Body (Lines 2–6)</strong>
+      <p>PAS structure. Problem → Agitate → Solve. Keep paragraphs to 1–2 sentences. Use line breaks aggressively.</p>
+    </div>
+  </div>
+  <div class="numbered-step">
+    <div class="step-num">3</div>
+    <div class="step-content">
+      <strong>CTA (Last Line)</strong>
+      <p>One clear action. "DM me your URL." "Link in bio." "See what we built →" Never more than one.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════ -->
+<!-- 06 — FINISHED POST EXAMPLES -->
+<!-- ════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="section-num">Section 06</div>
+  <h2>Finished Post Examples</h2>
+  <p class="section-lead">Stop guessing. Here's exactly what a completed CrftdWeb post looks like. Copy the pattern.</p>
+
+  <hr class="divider-dark">
+
+  <h3 class="mt-0">Example 1: The Audit Post</h3>
+  <span class="tag red">Problem Exposure</span>
+  <div class="post-mockup">
+    <div class="mockup-label">1080 × 1080</div>
+    <div class="mockup-logo">CW</div>
+    <div class="mockup-headline">⚠️ Plumber Website Audit</div>
+    <div class="mockup-body">I checked 10 plumber websites in Birmingham. Here's what I found:</div>
+    <div class="mockup-check">
+      <div class="fail">✗ 8 out of 10 take over 5 seconds to load</div>
+      <div class="fail">✗ 6 out of 10 aren't mobile-friendly</div>
+      <div class="fail">✗ 9 out of 10 have zero SEO setup</div>
+      <div class="fail">✗ 7 out of 10 have no clear call-to-action</div>
+    </div>
+    <div style="margin-top: 14px; font-size: 13px; font-weight: 600;">Every one of these is costing you clients.</div>
+    <div class="mockup-cta">Free Site Audit →</div>
+  </div>
+  <div class="template-box" style="margin-top: 0;">
+    <div class="template-label">Caption</div>
+    <div class="line"><strong>Hook:</strong> I audited 10 plumber websites in Birmingham. 8 of them are losing clients every day.</div>
+    <div class="line" style="margin-top: 4px;"><strong>Body:</strong> Slow load speeds. No mobile design. Zero SEO. These aren't small problems. 53% of visitors leave after 3 seconds. If your site takes 5+, you're invisible.</div>
+    <div class="line" style="margin-top: 4px;"><strong>CTA:</strong> DM me your URL. I'll tell you the one thing that's costing you the most.</div>
+    <div class="line" style="margin-top: 4px; color: #888; font-size: 10px;">#webdesign #plumberwebsite #birminghambusiness #websiteaudit #smallbusiness</div>
+  </div>
+
+  <h3>Example 2: The One-Liner Insight</h3>
+  <span class="tag blue">Education</span>
+  <div class="post-mockup" style="text-align: center; padding: 40px 24px;">
+    <div class="mockup-label">1080 × 1080</div>
+    <div class="mockup-logo" style="text-align: left;">CW</div>
+    <div class="mockup-headline" style="font-size: 26px; max-width: 400px; margin: 40px auto 0;">Your website should be your best salesperson.</div>
+    <div style="margin-top: 40px; font-size: 10px; color: rgba(255,255,255,0.25); letter-spacing: 0.15em; text-transform: uppercase;">crftdweb.com</div>
+  </div>
+  <div class="template-box" style="margin-top: 0;">
+    <div class="template-label">Caption</div>
+    <div class="line"><strong>Hook:</strong> If your website isn't generating enquiries, it's not doing its job.</div>
+    <div class="line" style="margin-top: 4px;"><strong>Body:</strong> Most business websites are digital brochures. They look fine but do nothing. Your site should be working 24/7 — qualifying leads, building trust, booking calls. If it's not, the problem isn't traffic. It's the site.</div>
+    <div class="line" style="margin-top: 4px;"><strong>CTA:</strong> Free audit. Link in bio.</div>
+  </div>
+
+  <h3>Example 3: The Before / After</h3>
+  <span class="tag green">Proof & Results</span>
+  <div class="post-mockup">
+    <div class="mockup-label">1080 × 1080</div>
+    <div class="mockup-logo">CW</div>
+    <div class="mockup-headline">Before → After</div>
+    <div style="display: flex; gap: 20px; margin-top: 10px;">
+      <div style="flex: 1;">
+        <div style="font-size: 10px; font-weight: 700; color: #ef4444; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px;">Before</div>
+        <div class="mockup-metric"><div class="metric-value" style="color: #ef4444;">6.2s</div><div class="metric-label">Load Time</div></div>
+        <div class="mockup-metric"><div class="metric-value" style="color: #ef4444;">23</div><div class="metric-label">PageSpeed</div></div>
+        <div class="mockup-metric"><div class="metric-value" style="color: #ef4444;">72%</div><div class="metric-label">Bounce Rate</div></div>
+      </div>
+      <div style="flex: 1;">
+        <div style="font-size: 10px; font-weight: 700; color: #10b981; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px;">After</div>
+        <div class="mockup-metric"><div class="metric-value" style="color: #10b981;">1.4s</div><div class="metric-label">Load Time</div></div>
+        <div class="mockup-metric"><div class="metric-value" style="color: #10b981;">96</div><div class="metric-label">PageSpeed</div></div>
+        <div class="mockup-metric"><div class="metric-value" style="color: #10b981;">31%</div><div class="metric-label">Bounce Rate</div></div>
+      </div>
+    </div>
+    <div style="margin-top: 14px; font-size: 12px; color: rgba(255,255,255,0.5);">Same business. Same audience. Different website.</div>
+    <div class="mockup-cta">See The Rebuild →</div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════ -->
+<!-- 07 — HOOK BANK -->
+<!-- ════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="section-num">Section 07</div>
+  <h2>Hook Bank</h2>
+  <p class="section-lead">30 scroll-stopping first lines sorted by pillar. Grab one, write the PAS body, post.</p>
+
+  <hr class="divider-dark">
+
+  <h3 class="mt-0">🔴 Problem Exposure Hooks</h3>
+  <ul class="stacked-list">
+    <li>I audited 10 <span class="tag" style="font-size: 9px;">INDUSTRY</span> websites in <span class="tag" style="font-size: 9px;">CITY</span>. 8 of them are losing clients daily.</li>
+    <li>Your website takes 6 seconds to load. Here's what that's costing you.</li>
+    <li>This is what your website looks like on mobile. No really, look.</li>
+    <li>I Googled "<span class="tag" style="font-size: 9px;">THEIR SERVICE</span> near me." Your competitor showed up. You didn't.</li>
+    <li>53% of your visitors leave before your homepage loads. Here's why.</li>
+    <li>Your website has zero calls-to-action. Where are people supposed to go?</li>
+    <li>I can tell in 3 seconds if a website was built on a template. So can your clients.</li>
+    <li>Your contact page has 12 form fields. Nobody's filling that out.</li>
+  </ul>
+
+  <h3>🟡 Contrarian Take Hooks</h3>
+  <ul class="stacked-list">
+    <li>Your website doesn't need a redesign. It needs to be rebuilt from scratch.</li>
+    <li>Stop asking "does it look good?" Start asking "does it convert?"</li>
+    <li>Squarespace is why your site looks like every other site in your industry.</li>
+    <li>The best marketing strategy? A website that actually works.</li>
+    <li>"We're a family-run business with 20 years of experience." Nobody cares. Here's what to say instead.</li>
+    <li>Your hero section talks about you. It should talk about them.</li>
+    <li>Hiring the cheapest web designer is the most expensive decision you'll make.</li>
+    <li>Your website isn't a brochure. It's a machine. Build it like one.</li>
+  </ul>
+
+  <h3>🟢 Proof & Results Hooks</h3>
+  <ul class="stacked-list">
+    <li>This client went from 2 enquiries/month to 14. We only changed one thing.</li>
+    <li>PageSpeed: 23 → 96. Same content. Same business. Different build.</li>
+    <li>We rebuilt this site in 3 weeks. Load time dropped from 6.2s to 1.4s.</li>
+    <li>"We got 3 new clients in the first week." Here's what we changed.</li>
+    <li>Before: template site, 72% bounce rate. After: custom build, 31% bounce rate.</li>
+    <li>This plumber's website went from invisible to the first page of Google in 6 weeks.</li>
+  </ul>
+
+  <h3>🔵 Education Hooks</h3>
+  <ul class="stacked-list">
+    <li>The 5 things every homepage needs (most have zero).</li>
+    <li>Here's exactly how we build a website in 3 weeks. Step by step.</li>
+    <li>Your website has 3 seconds to make a first impression. Here's how to use them.</li>
+    <li>One design change that increased conversions by 40%. (It's not what you think.)</li>
+    <li>The difference between a website that "looks nice" and one that makes money.</li>
+    <li>Nobody cares what you do. Everyone cares what you can do for them.</li>
+    <li>Why every business website should score 90+ on PageSpeed. And how to get there.</li>
+    <li>Your website should answer one question in 3 seconds: "Am I in the right place?"</li>
+  </ul>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════ -->
+<!-- 06 — VISUAL RULES (renumbered to 08) -->
+<!-- ════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="section-num">Section 08</div>
+  <h2>Visual Rules</h2>
+  <p class="section-lead">Every post should be instantly recognizable as CrftdWeb before they read a word.</p>
+
+  <hr class="divider-dark">
+
+  <h3 class="mt-0">Color Palette</h3>
+  <div class="swatch-row">
+    <div class="swatch">
+      <div class="swatch-circle" style="background: #0a0a0a;"></div>
+      <div class="swatch-label">Background</div>
+      <div class="swatch-hex">#0a0a0a</div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-circle" style="background: #ffffff;"></div>
+      <div class="swatch-label">Primary</div>
+      <div class="swatch-hex">#ffffff</div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-circle" style="background: #ef4444; border-color: #ef4444;"></div>
+      <div class="swatch-label">Problem</div>
+      <div class="swatch-hex">#ef4444</div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-circle" style="background: #10b981; border-color: #10b981;"></div>
+      <div class="swatch-label">Solution</div>
+      <div class="swatch-hex">#10b981</div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-circle" style="background: #f59e0b; border-color: #f59e0b;"></div>
+      <div class="swatch-label">Warning</div>
+      <div class="swatch-hex">#f59e0b</div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-circle" style="background: #3b82f6; border-color: #3b82f6;"></div>
+      <div class="swatch-label">Info</div>
+      <div class="swatch-hex">#3b82f6</div>
+    </div>
+  </div>
+
+  <h4>Color Rules</h4>
+  <ul class="stacked-list">
+    <li><strong>Max 2–3 colors per post.</strong> Dark background + white text + one accent. That's it.</li>
+    <li><strong>Red = problems.</strong> Slow load times, broken things, what's wrong. Always #ef4444.</li>
+    <li><strong>Green = solutions.</strong> Fast loads, conversions, results. Always #10b981.</li>
+    <li><strong>Never use color for decoration.</strong> Every color communicates something.</li>
+  </ul>
+
+  <h3>Typography</h3>
+  <div class="rule-grid">
+    <div class="rule-card">
+      <div class="rule-num">Primary Font</div>
+      <div class="rule-title">Inter</div>
+      <div class="rule-desc">All body text, captions, and UI elements. Weights: 400 (body), 600 (emphasis), 700 (subheads), 900 (headlines).</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-num">Logo Font</div>
+      <div class="rule-title">Classicismo</div>
+      <div class="rule-desc">Used exclusively for the CrftdWeb logo mark. Never for body text or headlines.</div>
+    </div>
+  </div>
+
+  <h4>Type Rules</h4>
+  <ul class="stacked-list">
+    <li><strong>Headlines: Inter 900, tight tracking.</strong> Big, bold, minimal. Let the weight do the work.</li>
+    <li><strong>Max 2 font families.</strong> Never introduce a third typeface. Ever.</li>
+    <li><strong>Uppercase labels only.</strong> Small caps with wide letter-spacing (0.2em) for category labels, section names, and tags.</li>
+    <li><strong>Body text stays at 400 weight.</strong> Don't bold entire paragraphs. Bold individual words for emphasis.</li>
+  </ul>
+
+  <h3>Layout — The TRAIN System</h3>
+  <div class="device-grid">
+    <div class="device-item">
+      <div class="device-icon"><svg width="44" height="44" viewBox="0 0 44 44" fill="none"><text x="4" y="16" font-family="Inter,sans-serif" font-size="14" font-weight="900" fill="#fff" letter-spacing="-0.5">Aa</text><line x1="4" y1="22" x2="40" y2="22" stroke="rgba(255,255,255,0.15)" stroke-width="1"/><text x="4" y="34" font-family="Inter,sans-serif" font-size="9" font-weight="400" fill="rgba(255,255,255,0.5)">Aa Bb Cc</text><rect x="30" y="6" width="10" height="3" rx="1" fill="#ef4444"/><rect x="30" y="11" width="7" height="2" rx="1" fill="rgba(255,255,255,0.25)"/><rect x="30" y="15" width="9" height="2" rx="1" fill="rgba(255,255,255,0.15)"/></svg></div>
+      <div class="device-name">Typography</div>
+      <div class="device-use">Max 2 fonts. Weight = hierarchy.</div>
+    </div>
+    <div class="device-item">
+      <div class="device-icon"><svg width="44" height="44" viewBox="0 0 44 44" fill="none"><circle cx="12" cy="18" r="7" fill="#ef4444"/><circle cx="24" cy="18" r="7" fill="#0a0a0a" stroke="rgba(255,255,255,0.3)" stroke-width="1.2"/><circle cx="36" cy="18" r="4" fill="#fff" opacity=".2"/><line x1="4" y1="32" x2="40" y2="32" stroke="rgba(255,255,255,0.1)" stroke-width="1"/><line x1="4" y1="32" x2="14" y2="32" stroke="#ef4444" stroke-width="2" stroke-linecap="round"/></svg></div>
+      <div class="device-name">Restraint</div>
+      <div class="device-use">2–3 colors max. Less = more.</div>
+    </div>
+    <div class="device-item">
+      <div class="device-icon"><svg width="44" height="44" viewBox="0 0 44 44" fill="none"><line x1="4" y1="4" x2="4" y2="40" stroke="rgba(255,255,255,0.08)" stroke-width="1"/><line x1="14" y1="4" x2="14" y2="40" stroke="rgba(255,255,255,0.08)" stroke-width="1"/><line x1="24" y1="4" x2="24" y2="40" stroke="rgba(255,255,255,0.08)" stroke-width="1"/><line x1="34" y1="4" x2="34" y2="40" stroke="rgba(255,255,255,0.08)" stroke-width="1"/><line x1="4" y1="14" x2="40" y2="14" stroke="rgba(255,255,255,0.08)" stroke-width="1"/><line x1="4" y1="24" x2="40" y2="24" stroke="rgba(255,255,255,0.08)" stroke-width="1"/><line x1="4" y1="34" x2="40" y2="34" stroke="rgba(255,255,255,0.08)" stroke-width="1"/><rect x="4" y="4" width="20" height="10" rx="1.5" stroke="#10b981" stroke-width="1.3" fill="none"/><rect x="4" y="18" width="10" height="6" rx="1" stroke="rgba(255,255,255,0.3)" stroke-width="1" fill="none"/><rect x="16" y="18" width="18" height="6" rx="1" stroke="rgba(255,255,255,0.3)" stroke-width="1" fill="none"/></svg></div>
+      <div class="device-name">Alignment</div>
+      <div class="device-use">Grids. Precision = trust.</div>
+    </div>
+    <div class="device-item">
+      <div class="device-icon"><svg width="44" height="44" viewBox="0 0 44 44" fill="none"><rect x="4" y="6" width="16" height="14" rx="2" stroke="#fff" stroke-width="1.2" fill="none"/><rect x="24" y="6" width="16" height="14" rx="2" stroke="#fff" stroke-width="1.2" fill="none"/><rect x="4" y="24" width="16" height="14" rx="2" stroke="#fff" stroke-width="1.2" fill="none"/><rect x="24" y="24" width="16" height="14" rx="2" stroke="#fff" stroke-width="1.2" fill="none"/><circle cx="12" cy="13" r="3" stroke="#3b82f6" stroke-width="1" fill="none"/><circle cx="32" cy="13" r="3" stroke="#3b82f6" stroke-width="1" fill="none"/><circle cx="12" cy="31" r="3" stroke="#3b82f6" stroke-width="1" fill="none"/><circle cx="32" cy="31" r="3" stroke="#3b82f6" stroke-width="1" fill="none"/></svg></div>
+      <div class="device-name">Image</div>
+      <div class="device-use">Consistent treatment. Same filter/crop.</div>
+    </div>
+    <div class="device-item">
+      <div class="device-icon"><svg width="44" height="44" viewBox="0 0 44 44" fill="none"><rect x="6" y="6" width="32" height="32" rx="3" stroke="rgba(255,255,255,0.12)" stroke-width="1" fill="none"/><rect x="10" y="10" width="10" height="4" rx="1" fill="#fff"/><rect x="10" y="18" width="20" height="2" rx="1" fill="rgba(255,255,255,0.2)"/><rect x="10" y="22" width="17" height="2" rx="1" fill="rgba(255,255,255,0.12)"/></svg></div>
+      <div class="device-name">Negative Space</div>
+      <div class="device-use">Space frames ideas. Let it breathe.</div>
+    </div>
+    <div class="device-item">
+      <div class="device-icon"><svg width="44" height="44" viewBox="0 0 44 44" fill="none"><path d="M8 22 L18 14 L28 22 L38 14" stroke="#10b981" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 30 L18 22 L28 30 L38 22" stroke="#ef4444" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="38" cy="14" r="2.5" fill="#10b981"/><circle cx="38" cy="22" r="2.5" fill="#ef4444"/></svg></div>
+      <div class="device-name">Applied</div>
+      <div class="device-use">Every visual. Every post. Every build.</div>
+    </div>
+  </div>
+
+  <h3>The 12 Visual Devices</h3>
+  <p>Use these to communicate any concept visually. Every post should use at least one.</p>
+  <div class="device-grid">
+    <div class="device-item">
+      <div class="device-icon"><svg width="44" height="44" viewBox="0 0 44 44" fill="none"><rect x="4" y="24" width="8" height="16" rx="1.5" fill="rgba(255,255,255,0.2)"/><rect x="18" y="14" width="8" height="26" rx="1.5" fill="rgba(255,255,255,0.4)"/><rect x="32" y="4" width="8" height="36" rx="1.5" fill="#ef4444"/></svg></div>
+      <div class="device-name">Scale</div>
+      <div class="device-use">Size = significance</div>
+    </div>
+    <div class="device-item">
+      <div class="device-icon"><svg width="44" height="44" viewBox="0 0 44 44" fill="none"><rect x="2" y="8" width="18" height="28" rx="2.5" stroke="#ef4444" stroke-width="1.4" fill="none"/><rect x="24" y="8" width="18" height="28" rx="2.5" stroke="#10b981" stroke-width="1.4" fill="none"/><line x1="6" y1="16" x2="16" y2="16" stroke="#ef4444" stroke-width="1" opacity=".5"/><line x1="6" y1="20" x2="14" y2="20" stroke="#ef4444" stroke-width="1" opacity=".3"/><line x1="28" y1="16" x2="38" y2="16" stroke="#10b981" stroke-width="1" opacity=".5"/><line x1="28" y1="20" x2="36" y2="20" stroke="#10b981" stroke-width="1" opacity=".3"/></svg></div>
+      <div class="device-name">Comparison</div>
+      <div class="device-use">Side-by-side contrast</div>
+    </div>
+    <div class="device-item">
+      <div class="device-icon"><svg width="44" height="44" viewBox="0 0 44 44" fill="none"><polygon points="22,4 40,34 4,34" stroke="#f59e0b" stroke-width="1.5" fill="none" stroke-linejoin="round"/><circle cx="22" cy="22" r="6" stroke="#fff" stroke-width="1" fill="none" opacity=".35"/><circle cx="22" cy="22" r="2" fill="#f59e0b"/></svg></div>
+      <div class="device-name">Metaphor</div>
+      <div class="device-use">Abstract made tangible</div>
+    </div>
+    <div class="device-item">
+      <div class="device-icon"><svg width="44" height="44" viewBox="0 0 44 44" fill="none"><circle cx="10" cy="10" r="3" stroke="#3b82f6" stroke-width="1.2" fill="none"/><circle cx="22" cy="10" r="3" stroke="#3b82f6" stroke-width="1.2" fill="none"/><circle cx="34" cy="10" r="3" stroke="#3b82f6" stroke-width="1.2" fill="none"/><circle cx="10" cy="22" r="3" stroke="#3b82f6" stroke-width="1.2" fill="none"/><circle cx="22" cy="22" r="3" fill="#3b82f6"/><circle cx="34" cy="22" r="3" stroke="#3b82f6" stroke-width="1.2" fill="none"/><circle cx="10" cy="34" r="3" stroke="#3b82f6" stroke-width="1.2" fill="none"/><circle cx="22" cy="34" r="3" stroke="#3b82f6" stroke-width="1.2" fill="none"/><circle cx="34" cy="34" r="3" stroke="#3b82f6" stroke-width="1.2" fill="none"/></svg></div>
+      <div class="device-name">Pattern Recognition</div>
+      <div class="device-use">Visual patterns decoded fast</div>
+    </div>
+    <div class="device-item">
+      <div class="device-icon"><svg width="44" height="44" viewBox="0 0 44 44" fill="none"><circle cx="6" cy="22" r="3" stroke="#fff" stroke-width="1.2" fill="none"/><line x1="9" y1="22" x2="15" y2="22" stroke="rgba(255,255,255,0.3)" stroke-width="1.2"/><circle cx="18" cy="22" r="3" stroke="#fff" stroke-width="1.2" fill="none"/><line x1="21" y1="22" x2="27" y2="22" stroke="rgba(255,255,255,0.3)" stroke-width="1.2"/><circle cx="30" cy="22" r="3" stroke="#10b981" stroke-width="1.4" fill="none"/><line x1="33" y1="22" x2="36" y2="22" stroke="#10b981" stroke-width="1.3"/><polyline points="35,19 38,22 35,25" stroke="#10b981" stroke-width="1.3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="device-name">Flow</div>
+      <div class="device-use">Sequential A → B progression</div>
+    </div>
+    <div class="device-item">
+      <div class="device-icon"><svg width="44" height="44" viewBox="0 0 44 44" fill="none"><polygon points="8,30 22,22 36,30 22,38" stroke="rgba(255,255,255,0.2)" stroke-width="1.2" fill="none"/><polygon points="8,23 22,15 36,23 22,31" stroke="rgba(255,255,255,0.4)" stroke-width="1.2" fill="none"/><polygon points="8,16 22,8 36,16 22,24" stroke="#ef4444" stroke-width="1.4" fill="none"/></svg></div>
+      <div class="device-name">Stacking</div>
+      <div class="device-use">Layered accumulation</div>
+    </div>
+    <div class="device-item">
+      <div class="device-icon"><svg width="44" height="44" viewBox="0 0 44 44" fill="none"><line x1="4" y1="22" x2="40" y2="22" stroke="rgba(255,255,255,0.1)" stroke-width="2"/><circle cx="8" cy="22" r="3.5" stroke="rgba(255,255,255,0.25)" stroke-width="1.2" fill="none"/><circle cx="18" cy="22" r="3.5" stroke="rgba(255,255,255,0.4)" stroke-width="1.2" fill="none"/><circle cx="28" cy="22" r="3.5" stroke="#f59e0b" stroke-width="1.3" fill="none"/><circle cx="38" cy="22" r="3.5" fill="#f59e0b"/></svg></div>
+      <div class="device-name">Continuum</div>
+      <div class="device-use">Position along a range</div>
+    </div>
+    <div class="device-item">
+      <div class="device-icon"><svg width="44" height="44" viewBox="0 0 44 44" fill="none"><circle cx="16" cy="22" r="11" stroke="#ef4444" stroke-width="1.4" fill="none" opacity=".7"/><circle cx="28" cy="22" r="11" stroke="#3b82f6" stroke-width="1.4" fill="none" opacity=".7"/></svg></div>
+      <div class="device-name">Venn Diagram</div>
+      <div class="device-use">Overlapping factors</div>
+    </div>
+    <div class="device-item">
+      <div class="device-icon"><svg width="44" height="44" viewBox="0 0 44 44" fill="none"><rect x="14" y="4" width="16" height="8" rx="2" stroke="#fff" stroke-width="1.3" fill="none"/><line x1="22" y1="12" x2="22" y2="17" stroke="rgba(255,255,255,0.4)" stroke-width="1.2"/><line x1="22" y1="17" x2="10" y2="23" stroke="rgba(255,255,255,0.4)" stroke-width="1.2"/><line x1="22" y1="17" x2="34" y2="23" stroke="rgba(255,255,255,0.4)" stroke-width="1.2"/><rect x="2" y="23" width="14" height="6" rx="1.5" stroke="#10b981" stroke-width="1.2" fill="none"/><rect x="28" y="23" width="14" height="6" rx="1.5" stroke="#10b981" stroke-width="1.2" fill="none"/><rect x="0" y="34" width="10" height="5" rx="1" stroke="rgba(255,255,255,0.25)" stroke-width="1" fill="none"/><rect x="12" y="34" width="10" height="5" rx="1" stroke="rgba(255,255,255,0.25)" stroke-width="1" fill="none"/><rect x="28" y="34" width="10" height="5" rx="1" stroke="rgba(255,255,255,0.25)" stroke-width="1" fill="none"/><line x1="9" y1="29" x2="5" y2="34" stroke="rgba(255,255,255,0.3)" stroke-width="1"/><line x1="9" y1="29" x2="17" y2="34" stroke="rgba(255,255,255,0.3)" stroke-width="1"/><line x1="35" y1="29" x2="33" y2="34" stroke="rgba(255,255,255,0.3)" stroke-width="1"/></svg></div>
+      <div class="device-name">Hierarchy</div>
+      <div class="device-use">Top-to-bottom structure</div>
+    </div>
+    <div class="device-item">
+      <div class="device-icon"><svg width="44" height="44" viewBox="0 0 44 44" fill="none"><line x1="6" y1="38" x2="6" y2="6" stroke="rgba(255,255,255,0.3)" stroke-width="1.3" stroke-linecap="round"/><line x1="6" y1="38" x2="38" y2="38" stroke="rgba(255,255,255,0.3)" stroke-width="1.3" stroke-linecap="round"/><circle cx="14" cy="30" r="2.5" fill="#ef4444" opacity=".5"/><circle cx="20" cy="24" r="2.5" fill="#f59e0b" opacity=".6"/><circle cx="26" cy="18" r="2.5" fill="#f59e0b" opacity=".8"/><circle cx="32" cy="12" r="2.5" fill="#10b981"/></svg></div>
+      <div class="device-name">Cartesian Plot</div>
+      <div class="device-use">Two-axis relationships</div>
+    </div>
+    <div class="device-item">
+      <div class="device-icon"><svg width="44" height="44" viewBox="0 0 44 44" fill="none"><path d="M28 12 A12 12 0 1 0 26 34" stroke="#10b981" stroke-width="1.6" fill="none" stroke-linecap="round"/><polyline points="31,10 28,14 24,11" stroke="#10b981" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="device-name">Loops</div>
+      <div class="device-use">Cyclical feedback processes</div>
+    </div>
+    <div class="device-item">
+      <div class="device-icon"><svg width="44" height="44" viewBox="0 0 44 44" fill="none"><line x1="4" y1="22" x2="40" y2="22" stroke="rgba(255,255,255,0.08)" stroke-width="6" stroke-linecap="round"/><line x1="4" y1="22" x2="40" y2="22" stroke="url(#cwSpec)" stroke-width="4" stroke-linecap="round"/><defs><linearGradient id="cwSpec" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#ef4444"/><stop offset="50%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#10b981"/></linearGradient></defs></svg></div>
+      <div class="device-name">Spectrum</div>
+      <div class="device-use">Range between extremes</div>
+    </div>
+  </div>
+
+  <h4>Post Dimensions</h4>
+  <table>
+    <thead><tr><th>Format</th><th>Size</th><th>Use</th></tr></thead>
+    <tbody>
+      <tr><td>Vertical Video</td><td>1080 × 1920px (9:16)</td><td>TikTok, Reels, Shorts</td></tr>
+      <tr><td>Square Post</td><td>1080 × 1080px</td><td>Instagram Feed, LinkedIn</td></tr>
+      <tr><td>Carousel Slide</td><td>1080 × 1350px (4:5)</td><td>Instagram Carousel</td></tr>
+      <tr><td>Story</td><td>1080 × 1920px</td><td>Instagram/Facebook Stories</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════ -->
+<!-- 07 — VIDEO CONTENT -->
+<!-- ════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="section-num">Section 09</div>
+  <h2>Video Content</h2>
+  <p class="section-lead">Short-form video built with Remotion. Programmatic, consistent, on-brand every time.</p>
+
+  <hr class="divider-dark">
+
+  <h3 class="mt-0">Tooling</h3>
+  <p>All CrftdWeb videos are generated programmatically using <strong>Remotion</strong> (React-based video framework). This ensures every video is pixel-perfect, on-brand, and reproducible.</p>
+
+  <table>
+    <thead><tr><th>Tool</th><th>Purpose</th></tr></thead>
+    <tbody>
+      <tr><td>Remotion</td><td>Video composition framework (React + TypeScript)</td></tr>
+      <tr><td>remotion/compositions/</td><td>Individual video files (one per composition)</td></tr>
+      <tr><td>remotion/compositions/brand.tsx</td><td>Shared brand config (colors, animations, Logo, CtaBadge)</td></tr>
+      <tr><td>npm run remotion:preview</td><td>Opens Remotion Studio for previewing</td></tr>
+      <tr><td>npm run remotion:render</td><td>Renders all videos to out/videos/</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Video Structure (PAS)</h3>
+  <p>Every video follows the same timing arc:</p>
+
+  <div class="numbered-step">
+    <div class="step-num">P</div>
+    <div class="step-content">
+      <strong>Problem (0–5 seconds)</strong>
+      <p>Bold text, dark background. Hook the viewer immediately. One line max.</p>
+    </div>
+  </div>
+  <div class="numbered-step">
+    <div class="step-num">A</div>
+    <div class="step-content">
+      <strong>Agitate (5–15 seconds)</strong>
+      <p>Red accents, data points, visual proof of the problem. Animated metrics, checkmarks, phone mockups. Make them feel the pain.</p>
+    </div>
+  </div>
+  <div class="numbered-step">
+    <div class="step-num">S</div>
+    <div class="step-content">
+      <strong>Solve (15–25 seconds)</strong>
+      <p>Green accents, flipped metrics, clean design. Show the transformation. Concrete results.</p>
+    </div>
+  </div>
+  <div class="numbered-step">
+    <div class="step-num" style="background: #666;">→</div>
+    <div class="step-content">
+      <strong>CTA (Last 3–5 seconds)</strong>
+      <p>Logo + "Free site audit" badge. Clean, simple, no clutter.</p>
+    </div>
+  </div>
+
+  <h3>Current Video Library</h3>
+  <table>
+    <thead><tr><th>Composition</th><th>Pillar</th><th>Duration</th><th>Hook</th></tr></thead>
+    <tbody>
+      <tr><td>PainPoint</td><td><span class="tag red">Problem</span></td><td>8s</td><td>"Your website looks fine. So why isn't it working?"</td></tr>
+      <tr><td>BeforeAfter</td><td><span class="tag green">Proof</span></td><td>10s</td><td>Before/After metrics flip</td></tr>
+      <tr><td>HotTake</td><td><span class="tag">Contrarian</span></td><td>7s</td><td>"Your site doesn't need a redesign. It needs a rebuild."</td></tr>
+      <tr><td>DmResults</td><td><span class="tag green">Proof</span></td><td>12s</td><td>iMessage conversation showing client results</td></tr>
+      <tr><td>NobodyCares</td><td><span class="tag">Contrarian</span></td><td>10s</td><td>"Nobody cares what you do."</td></tr>
+    </tbody>
+  </table>
+
+  <h4>Animation Conventions</h4>
+  <ul class="stacked-list">
+    <li><strong>Fade-in from below</strong> — Default entrance for text. 12 frames (0.4s) duration.</li>
+    <li><strong>Count-up</strong> — For metrics (23 → 96). Adds energy to numbers.</li>
+    <li><strong>Red → Green color transition</strong> — Problem state flips to solution state.</li>
+    <li><strong>Shake animation</strong> — Used on "bad" examples (broken websites, slow metrics).</li>
+    <li><strong>Safe zones</strong> — Top 150px and bottom 480px are reserved for platform UI (TikTok, Reels).</li>
+  </ul>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════ -->
+<!-- 08 — POSTING CADENCE -->
+<!-- ════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="section-num">Section 10</div>
+  <h2>Posting Cadence & Calendar</h2>
+  <p class="section-lead">Consistency beats volume. Show up regularly with quality. Here's the system and a real week filled in.</p>
+
+  <hr class="divider-dark">
+
+  <h3 class="mt-0">Weekly Schedule</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Day</th>
+        <th>Platform</th>
+        <th>Format</th>
+        <th>Pillar</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Monday</td>
+        <td>TikTok + Reels</td>
+        <td>Short-form video</td>
+        <td><span class="tag red">Problem Exposure</span></td>
+      </tr>
+      <tr>
+        <td>Tuesday</td>
+        <td>Instagram Feed</td>
+        <td>Static image / carousel</td>
+        <td><span class="tag blue">Education</span></td>
+      </tr>
+      <tr>
+        <td>Wednesday</td>
+        <td>TikTok + Reels</td>
+        <td>Short-form video</td>
+        <td><span class="tag">Contrarian Take</span></td>
+      </tr>
+      <tr>
+        <td>Thursday</td>
+        <td>Instagram Feed</td>
+        <td>Before/After image</td>
+        <td><span class="tag green">Proof</span></td>
+      </tr>
+      <tr>
+        <td>Friday</td>
+        <td>TikTok + Reels</td>
+        <td>Short-form video</td>
+        <td><span class="tag green">Proof / DM Results</span></td>
+      </tr>
+      <tr>
+        <td>Weekend</td>
+        <td>Stories</td>
+        <td>Behind-the-scenes / Polls</td>
+        <td>Casual engagement</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Platform Notes</h3>
+  <div class="rule-grid">
+    <div class="rule-card">
+      <div class="rule-num">TikTok</div>
+      <div class="rule-title">Primary growth channel</div>
+      <div class="rule-desc">Short-form vertical video. Hook in first 2 seconds. Trending audio optional but not required (text-based content works). Post 3–5x per week minimum.</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-num">Instagram Reels</div>
+      <div class="rule-title">Cross-post everything</div>
+      <div class="rule-desc">Same video as TikTok, just remove watermark. Reels get 2x reach vs. feed posts. Always use relevant hashtags (5–10 max).</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-num">Instagram Feed</div>
+      <div class="rule-title">Portfolio & proof</div>
+      <div class="rule-desc">Carousels and static images. Before/after posts, one-liner insights, process breakdowns. Feed should look cohesive (dark theme).</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-num">LinkedIn</div>
+      <div class="rule-title">B2B positioning</div>
+      <div class="rule-desc">Text posts + one image. Problem-solution format. Professional tone (slightly less provocative). Share process and business insights.</div>
+    </div>
+  </div>
+
+  <h3>Hashtag Strategy</h3>
+  <div class="template-box">
+    <div class="template-label">Standard Hashtag Set (Pick 5–10)</div>
+    <div class="line"><strong>Core:</strong> #webdesign #websitedesign #smallbusinesswebsite #webdeveloper #uxdesign</div>
+    <div class="line"><strong>Niche:</strong> #conversionrateoptimization #webdesignagency #customwebsite #pagespeed</div>
+    <div class="line"><strong>Business:</strong> #smallbusiness #businessowner #entrepreneurlife #growthmarketing</div>
+    <div class="line"><strong>Location:</strong> #londonwebdesign #ukwebdesigner #<span class="placeholder">YOUR-CITY</span>business</div>
+  </div>
+
+  <h3>Sample Week — Filled In</h3>
+  <p>Here's what an actual week looks like. No guessing, no blank stares at your phone.</p>
+
+  <div class="cal-grid">
+    <div class="cal-header">Day</div>
+    <div class="cal-header">Post</div>
+    <div class="cal-header">Platform</div>
+
+    <div class="cal-day">Mon</div>
+    <div class="cal-cell"><strong>"I audited 10 plumber websites in Birmingham. 8 are losing clients."</strong><div class="cal-type"><span class="tag red" style="margin: 0;">Problem</span> Audit Post</div></div>
+    <div class="cal-cell">TikTok + Reels<br><span class="cal-type">Video (15s)</span></div>
+
+    <div class="cal-day">Tue</div>
+    <div class="cal-cell"><strong>"5 things every homepage needs (most have zero)."</strong><div class="cal-type"><span class="tag blue" style="margin: 0;">Education</span> Carousel (5 slides)</div></div>
+    <div class="cal-cell">Instagram Feed<br><span class="cal-type">1080×1350 slides</span></div>
+
+    <div class="cal-day">Wed</div>
+    <div class="cal-cell"><strong>"Your website doesn't need a redesign. It needs a rebuild."</strong><div class="cal-type"><span class="tag" style="margin: 0;">Contrarian</span> Hot Take Video</div></div>
+    <div class="cal-cell">TikTok + Reels<br><span class="cal-type">Video (10s)</span></div>
+
+    <div class="cal-day">Thu</div>
+    <div class="cal-cell"><strong>"PageSpeed: 23 → 96. Same content. Different build."</strong><div class="cal-type"><span class="tag green" style="margin: 0;">Proof</span> Before/After Image</div></div>
+    <div class="cal-cell">Instagram Feed<br><span class="cal-type">1080×1080</span></div>
+
+    <div class="cal-day">Fri</div>
+    <div class="cal-cell"><strong>"This client got 3x more enquiries after we rebuilt their site."</strong><div class="cal-type"><span class="tag green" style="margin: 0;">Proof</span> DM Results Video</div></div>
+    <div class="cal-cell">TikTok + Reels<br><span class="cal-type">Video (12s)</span></div>
+
+    <div class="cal-day">Sat</div>
+    <div class="cal-cell"><strong>Behind-the-scenes: "Building a landing page for a landscaping company"</strong><div class="cal-type">Story / Casual video</div></div>
+    <div class="cal-cell">Stories<br><span class="cal-type">Informal</span></div>
+
+    <div class="cal-day">Sun</div>
+    <div class="cal-cell"><strong>"Your website should be your best salesperson."</strong><div class="cal-type"><span class="tag blue" style="margin: 0;">Education</span> One-Liner Post</div></div>
+    <div class="cal-cell">Instagram + LinkedIn<br><span class="cal-type">1080×1080</span></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════ -->
+<!-- 11 — THE REPURPOSING MACHINE -->
+<!-- ════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="section-num">Section 11</div>
+  <h2>The Repurposing Machine</h2>
+  <p class="section-lead">One piece of content becomes five. Never create from scratch when you can multiply.</p>
+
+  <hr class="divider-dark">
+
+  <h3 class="mt-0">The 1 → 5 Workflow</h3>
+  <p>Every video you create should produce at least 4 more assets. Here's the exact flow:</p>
+
+  <div class="repurpose-flow">
+    <div class="repurpose-item source">📹 TikTok Video</div>
+    <div class="repurpose-arrow">→</div>
+    <div class="repurpose-item">📱 Instagram Reel</div>
+    <div class="repurpose-arrow">→</div>
+    <div class="repurpose-item">🎴 Quote Card</div>
+    <div class="repurpose-arrow">→</div>
+    <div class="repurpose-item">📝 LinkedIn Post</div>
+    <div class="repurpose-arrow">→</div>
+    <div class="repurpose-item">🧵 Twitter Thread</div>
+  </div>
+
+  <h3>Repurposing Matrix</h3>
+  <table>
+    <thead><tr><th>Source</th><th>Becomes</th><th>How</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>Short-form video</strong></td>
+        <td>Instagram Reel</td>
+        <td>Remove TikTok watermark, re-upload natively</td>
+      </tr>
+      <tr>
+        <td><strong>Short-form video</strong></td>
+        <td>Quote card (image)</td>
+        <td>Screenshot the hook text frame → post as 1080×1080 static</td>
+      </tr>
+      <tr>
+        <td><strong>Short-form video</strong></td>
+        <td>LinkedIn post</td>
+        <td>Write out the PAS script as a text post. Add the key screenshot.</td>
+      </tr>
+      <tr>
+        <td><strong>Short-form video</strong></td>
+        <td>Twitter/X thread</td>
+        <td>Break PAS into 3-4 tweets. Hook → Problem → Solution → CTA.</td>
+      </tr>
+      <tr>
+        <td><strong>Instagram carousel</strong></td>
+        <td>Blog post</td>
+        <td>Expand each slide into a paragraph. Add SEO keywords.</td>
+      </tr>
+      <tr>
+        <td><strong>Client project</strong></td>
+        <td>5+ assets</td>
+        <td>Before/after + case study + testimonial card + audit video + process BTS</td>
+      </tr>
+      <tr>
+        <td><strong>Audit post</strong></td>
+        <td>Video</td>
+        <td>Screen-record the audit. Narrate what's wrong. Same content, new format.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>The "Content Sawdust" Rule</h3>
+  <div class="quote-block">
+    Every client project should produce a minimum of 5 pieces of content. If it doesn't, you're leaving value on the table.
+  </div>
+
+  <div class="numbered-step">
+    <div class="step-num">1</div>
+    <div class="step-content">
+      <strong>Before Screenshot</strong>
+      <p>Grab PageSpeed, mobile view, and desktop view of the old site before you touch anything.</p>
+    </div>
+  </div>
+  <div class="numbered-step">
+    <div class="step-num">2</div>
+    <div class="step-content">
+      <strong>Process Recording</strong>
+      <p>Screen-record yourself building for 30 seconds. Speed it up 4x. That's a TikTok.</p>
+    </div>
+  </div>
+  <div class="numbered-step">
+    <div class="step-num">3</div>
+    <div class="step-content">
+      <strong>After Screenshot</strong>
+      <p>New PageSpeed score, new mobile view. Put side-by-side with the before. That's a Before/After post.</p>
+    </div>
+  </div>
+  <div class="numbered-step">
+    <div class="step-num">4</div>
+    <div class="step-content">
+      <strong>Client Testimonial</strong>
+      <p>Ask for feedback systematically. Screenshot the message. That's a DM Results post.</p>
+    </div>
+  </div>
+  <div class="numbered-step">
+    <div class="step-num">5</div>
+    <div class="step-content">
+      <strong>Case Study</strong>
+      <p>Problem → Process → Result written up. That's a carousel, blog post, and portfolio piece.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════ -->
+<!-- 12 — VALUE POSITIONING -->
+<!-- ════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="section-num">Section 12</div>
+  <h2>Value Positioning</h2>
+  <p class="section-lead">Don't sell what you do. Sell the value of what you do for them. Frame everything around the client's outcome.</p>
+
+  <hr class="divider-dark">
+
+  <h3 class="mt-0">The Value Ladder</h3>
+  <p>Not all work is valued equally. Position yourself in the "Can't Do" zone. That's where premium pricing lives.</p>
+
+  <div class="rule-grid">
+    <div class="rule-card">
+      <div class="rule-num" style="color: #888;">Low Value</div>
+      <div class="rule-title">"Don't Do"</div>
+      <div class="rule-desc">Easy, non-specific tasks anyone can do. Squarespace templates. Fiverr gigs. Commodity work. The market is flooded and price is the only differentiator.</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-num" style="color: #f59e0b;">Medium Value</div>
+      <div class="rule-title">"Won't Do"</div>
+      <div class="rule-desc">Specific tasks that require commitment and consistency. Running a proper web design service. Most agencies sit here.</div>
+    </div>
+    <div class="rule-card" style="border-color: #10b981;">
+      <div class="rule-num" style="color: #10b981;">High Value</div>
+      <div class="rule-title">"Can't Do"</div>
+      <div class="rule-desc">Ultra-specific, high-expertise work. Hand-coded conversion systems. TRAIN methodology. Proprietary process. This is where CrftdWeb lives.</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-num">Content Angle</div>
+      <div class="rule-title">Show the difference</div>
+      <div class="rule-desc">Your content should constantly illustrate the gap between template sites and custom builds. Make the value visible.</div>
+    </div>
+  </div>
+
+  <h3>Four Types of Value</h3>
+  <p>Every piece of content should deliver at least one of these. The best content delivers two or three.</p>
+
+  <table>
+    <thead><tr><th>Type</th><th>What It Means</th><th>Content Example</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>💰 Monetary</td>
+        <td>Help them make money</td>
+        <td>"This website change doubled our client's enquiries in 2 weeks."</td>
+      </tr>
+      <tr>
+        <td>🔧 Functional</td>
+        <td>Help them do something better</td>
+        <td>"5 things your homepage needs (most have 0)."</td>
+      </tr>
+      <tr>
+        <td>🧠 Psychological</td>
+        <td>Help them feel better</td>
+        <td>"Your website isn't your fault. But fixing it is your responsibility."</td>
+      </tr>
+      <tr>
+        <td>🤝 Social</td>
+        <td>Help them fit in / stand out</td>
+        <td>"Your competitors' websites look like this. Yours looks like this."</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>The 10X Pricing Rule</h3>
+  <div class="quote-block">
+    At this price point, can your customer get a 10X return on investment?
+  </div>
+  <p>Use this in your content to justify pricing. Don't defend your prices. Frame the ROI.</p>
+
+  <div class="do-dont">
+    <div class="dont-box">
+      <div class="label">Defensive</div>
+      <code>"Our prices reflect the quality of work."</code>
+      <code>"We charge more because we're better."</code>
+    </div>
+    <div class="do-box">
+      <div class="label">ROI-Framed</div>
+      <code>"A £2,497 site that brings in £25k of new business. That's a 10X return."</code>
+      <code>"What's one new client worth to you? Now multiply by 12 months."</code>
+    </div>
+  </div>
+
+  <h3>The Value Gap</h3>
+  <p>Content that sells identifies the gap between where the client is and where they want to be. Your job is to make that gap obvious, then show you can close it.</p>
+
+  <div class="numbered-step">
+    <div class="step-num">1</div>
+    <div class="step-content">
+      <strong>Name the pain point</strong>
+      <p>"Your website loads in 6 seconds. You're losing 53% of visitors before they see your offer."</p>
+    </div>
+  </div>
+  <div class="numbered-step">
+    <div class="step-num">2</div>
+    <div class="step-content">
+      <strong>Quantify the cost</strong>
+      <p>"If 10 people visit daily on average, that's 5 lost leads. 150 per month. What's each lead worth?"</p>
+    </div>
+  </div>
+  <div class="numbered-step">
+    <div class="step-num">3</div>
+    <div class="step-content">
+      <strong>Show the fix is simple</strong>
+      <p>"We rebuilt a client's site in 3 weeks. Load time: 1.4s. Bounce rate dropped 40%. Enquiries doubled."</p>
+    </div>
+  </div>
+  <div class="numbered-step">
+    <div class="step-num">4</div>
+    <div class="step-content">
+      <strong>Make it impossible to say no</strong>
+      <p>"Free audit. No commitment. We'll show you exactly what's costing you money."</p>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════ -->
+<!-- 13 — THE 80/20 RULE & ORGANIC STRATEGIES -->
+<!-- ════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="section-num">Section 13</div>
+  <h2>The 80/20 Rule &<br>Organic Strategies</h2>
+  <p class="section-lead">80% of your content gives value. 20% asks for it. Get this ratio wrong and you become noise.</p>
+
+  <hr class="divider-dark">
+
+  <div class="framework-box">
+    <h3 class="mt-0">The 80/20 Reciprocity Rule</h3>
+    <div class="framework-steps">
+      <div class="framework-step" style="flex: 4;">
+        <div class="step-label green">80% — Give Value</div>
+        <div class="step-title">Build equity in the market</div>
+        <div class="step-desc">Teach. Share. Help. Create. Show your process. Give away insights. Build trust before you ever ask for anything.</div>
+      </div>
+      <div class="framework-step" style="flex: 1;">
+        <div class="step-label amber">20% — Ask</div>
+        <div class="step-title">Collect dividends</div>
+        <div class="step-desc">Sell. Promote. Launch. "Book a call." "Link in bio."</div>
+      </div>
+    </div>
+  </div>
+
+  <p>If 5 posts go out this week, 4 should be pure value (education, audits, insights, behind-the-scenes). Only 1 should directly sell.</p>
+
+  <h3>10 Organic Marketing Strategies (£0 Ad Spend)</h3>
+
+  <table>
+    <thead><tr><th>#</th><th>Strategy</th><th>How to Apply It</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>01</td>
+        <td><strong>Create Urgency</strong></td>
+        <td>"Taking 2 more projects this month." Limited availability, time-bound offers.</td>
+      </tr>
+      <tr>
+        <td>02</td>
+        <td><strong>Answer Questions in Public</strong></td>
+        <td>Turn FAQs into posts. "How much does a website cost?" becomes content.</td>
+      </tr>
+      <tr>
+        <td>03</td>
+        <td><strong>Endorsements</strong></td>
+        <td>Let clients do the marketing. Share testimonials, screenshots, results.</td>
+      </tr>
+      <tr>
+        <td>04</td>
+        <td><strong>The Reverse Pitch</strong></td>
+        <td>"If you're happy with your current site's performance, this isn't for you."</td>
+      </tr>
+      <tr>
+        <td>05</td>
+        <td><strong>Problem / Solution</strong></td>
+        <td>Specific problem → you as the answer. This IS the PAS framework.</td>
+      </tr>
+      <tr>
+        <td>06</td>
+        <td><strong>Permissionless Proof</strong></td>
+        <td>Audit random websites publicly. Redesign them without being asked. Show what you'd fix.</td>
+      </tr>
+      <tr>
+        <td>07</td>
+        <td><strong>Case Studies</strong></td>
+        <td>Before/after on social. PageSpeed scores. Enquiry numbers. Real results.</td>
+      </tr>
+      <tr>
+        <td>08</td>
+        <td><strong>Transparency</strong></td>
+        <td>Share revenue. Share failures. Share process. Openness builds trust.</td>
+      </tr>
+      <tr>
+        <td>09</td>
+        <td><strong>Behind-the-Scenes</strong></td>
+        <td>Record yourself building. Show the code. Share the design process. "Selling sawdust."</td>
+      </tr>
+      <tr>
+        <td>10</td>
+        <td><strong>Ask & Receive</strong></td>
+        <td>"Drop your URL and I'll give you one thing to fix." Engagement + lead gen.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>"Selling Sawdust"</h3>
+  <div class="quote-block">
+    Make content that points out the problem. Make products that solve it.
+  </div>
+  <p>Document everything you do. The process of building a client site IS the content. Screen recordings, design decisions, code snippets, before/after screenshots. The sawdust from your work is more valuable than most people's finished product.</p>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════ -->
+<!-- 14 — THE CONTENT FLYWHEEL -->
+<!-- ════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="section-num">Section 14</div>
+  <h2>The Content Flywheel</h2>
+  <p class="section-lead">Content isn't separate from the business. It IS the business system. Every post feeds the next sale.</p>
+
+  <hr class="divider-dark">
+
+  <h3 class="mt-0">The 7-Stage System</h3>
+  <p>Every stage feeds the next. Testimonials become marketing. Marketing drives qualifying. The flywheel never stops.</p>
+
+  <!-- Flywheel Diagram -->
+  <div class="flywheel">
+    <div class="flywheel-ring"></div>
+    <div class="flywheel-center">
+      <div class="fc-icon">🔄</div>
+      <div class="fc-label">Flywheel</div>
+    </div>
+    <div class="flywheel-node" style="top: -10px; left: 50%; transform: translateX(-50%);">
+      <div class="fn-num">1</div>
+      <div class="fn-label">Marketing</div>
+    </div>
+    <div class="flywheel-node" style="top: 55px; right: -10px;">
+      <div class="fn-num">2</div>
+      <div class="fn-label">Qualifying</div>
+    </div>
+    <div class="flywheel-node" style="top: 170px; right: -20px;">
+      <div class="fn-num">3</div>
+      <div class="fn-label">Application</div>
+    </div>
+    <div class="flywheel-node" style="bottom: 30px; right: 40px;">
+      <div class="fn-num">4</div>
+      <div class="fn-label">Onboarding</div>
+    </div>
+    <div class="flywheel-node" style="bottom: 30px; left: 40px;">
+      <div class="fn-num">5</div>
+      <div class="fn-label">Delivery</div>
+    </div>
+    <div class="flywheel-node" style="top: 170px; left: -20px;">
+      <div class="fn-num">6</div>
+      <div class="fn-label">Testimonials</div>
+    </div>
+    <div class="flywheel-node" style="top: 55px; left: -10px;">
+      <div class="fn-num">7</div>
+      <div class="fn-label">Loop →</div>
+    </div>
+  </div>
+
+  <div class="numbered-step">
+    <div class="step-num">1</div>
+    <div class="step-content">
+      <strong>Marketing</strong>
+      <p>Posts, videos, audits, articles. Assets that work 24/7. This playbook covers this stage.</p>
+    </div>
+  </div>
+  <div class="numbered-step">
+    <div class="step-num">2</div>
+    <div class="step-content">
+      <strong>Qualifying</strong>
+      <p>Position as the solution to a specific problem. Content should pre-qualify: "If your site isn't converting, we fix that."</p>
+    </div>
+  </div>
+  <div class="numbered-step">
+    <div class="step-num">3</div>
+    <div class="step-content">
+      <strong>Application</strong>
+      <p>Prospects provide info before getting access. Discovery call booking. Free audit form. The system protects your time.</p>
+    </div>
+  </div>
+  <div class="numbered-step">
+    <div class="step-num">4</div>
+    <div class="step-content">
+      <strong>Onboarding</strong>
+      <p>Systematic intake. Story, payment, logins, hosting. No back-and-forth emails.</p>
+    </div>
+  </div>
+  <div class="numbered-step">
+    <div class="step-num">5</div>
+    <div class="step-content">
+      <strong>Delivery</strong>
+      <p>Discover → Design → Develop → Deliver. The TRAIN system applied. Consistent quality every time.</p>
+    </div>
+  </div>
+  <div class="numbered-step">
+    <div class="step-num">6</div>
+    <div class="step-content">
+      <strong>Testimonials</strong>
+      <p>Get feedback systematically. Every completed project produces a case study, a testimonial, and a before/after post.</p>
+    </div>
+  </div>
+  <div class="numbered-step">
+    <div class="step-num">7</div>
+    <div class="step-content">
+      <strong>Loop</strong>
+      <p>Feed testimonials back into marketing. The case study becomes content. The content attracts new clients. Repeat.</p>
+    </div>
+  </div>
+
+  <div class="framework-box" style="margin-top: 24px;">
+    <h3 class="mt-0">The Proof & Price Loop</h3>
+    <div class="framework-steps">
+      <div class="framework-step">
+        <div class="step-label green">Phase 1</div>
+        <div class="step-title">Get Proof</div>
+        <div class="step-desc">Give it away or charge less. Do free audits. Build portfolio pieces. Document everything.</div>
+      </div>
+      <div class="framework-step">
+        <div class="step-label green">Phase 2</div>
+        <div class="step-title">Get Paid</div>
+        <div class="step-desc">Once you have proof, charge for it. Case studies justify pricing.</div>
+      </div>
+      <div class="framework-step">
+        <div class="step-label green">Phase 3</div>
+        <div class="step-title">Get More Proof</div>
+        <div class="step-desc">Every paid project creates better proof. Better proof = higher prices.</div>
+      </div>
+      <div class="framework-step">
+        <div class="step-label green">Phase 4</div>
+        <div class="step-title">Get Paid More</div>
+        <div class="step-desc">The loop compounds. Your reputation becomes your marketing.</div>
+      </div>
+    </div>
+  </div>
+
+  <h3>The Productization Path</h3>
+  <p>Content documents the journey. Each stage is a different content angle:</p>
+  <div class="do-dont" style="grid-template-columns: 1fr 1fr 1fr 1fr;">
+    <div class="rule-card" style="text-align: center;">
+      <div class="rule-num">Stage 1</div>
+      <div class="rule-title">Skill</div>
+      <div class="rule-desc">"Here's what I'm learning"</div>
+    </div>
+    <div class="rule-card" style="text-align: center;">
+      <div class="rule-num">Stage 2</div>
+      <div class="rule-title">Result</div>
+      <div class="rule-desc">"Here's what I built"</div>
+    </div>
+    <div class="rule-card" style="text-align: center;">
+      <div class="rule-num">Stage 3</div>
+      <div class="rule-title">Specialize</div>
+      <div class="rule-desc">"Here's what I do best"</div>
+    </div>
+    <div class="rule-card" style="text-align: center;">
+      <div class="rule-num">Stage 4</div>
+      <div class="rule-title">Productize</div>
+      <div class="rule-desc">"Here's the system"</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════ -->
+<!-- 15 — QUOTES BANK -->
+<!-- ════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="section-num">Section 15</div>
+  <h2>Quotes Bank</h2>
+  <p class="section-lead">Ready-to-use one-liners for posts, video hooks, and captions. Black background, white text, centered. Done.</p>
+
+  <hr class="divider-dark">
+
+  <h3 class="mt-0">CrftdWeb Originals</h3>
+  <ul class="stacked-list">
+    <li><strong>"Most business websites look fine and do nothing. We fix that."</strong></li>
+    <li><strong>"Your website should be your best salesperson."</strong></li>
+    <li><strong>"Nobody cares what you do. Everyone cares what you can do for them."</strong></li>
+    <li><strong>"Your website doesn't need a redesign. It needs a rebuild."</strong></li>
+    <li><strong>"We hand-code everything. No templates. No compromises."</strong></li>
+    <li><strong>"We'd rather be honest than easy to work with."</strong></li>
+    <li><strong>"53% of visitors leave after 3 seconds. How fast does your site load?"</strong></li>
+    <li><strong>"Stop asking 'does it look good?' Start asking 'does it convert?'"</strong></li>
+    <li><strong>"Your website isn't a brochure. It's a machine. Build it like one."</strong></li>
+    <li><strong>"A pretty website that doesn't convert is just expensive decoration."</strong></li>
+    <li><strong>"Templates are why your site looks like everyone else's."</strong></li>
+    <li><strong>"Your hero section talks about you. It should talk about them."</strong></li>
+  </ul>
+
+  <h3>Borrowed Wisdom (Always Attribute)</h3>
+  <ul class="stacked-list">
+    <li><strong>"Learn to sell, learn to build. If you can do both, you will be unstoppable."</strong><br><span class="text-muted text-sm">— Naval Ravikant</span></li>
+    <li><strong>"Escape competition through authenticity."</strong><br><span class="text-muted text-sm">— Naval Ravikant</span></li>
+    <li><strong>"The world doesn't reward people who are best at solving problems. It rewards people who communicate problems best."</strong><br><span class="text-muted text-sm">— David Perell</span></li>
+    <li><strong>"If you can't describe what you are doing as a process, you don't know what you're doing."</strong><br><span class="text-muted text-sm">— W. Edwards Deming</span></li>
+    <li><strong>"You get paid in direct proportion to the difficulty of problems you solve."</strong><br><span class="text-muted text-sm">— Elon Musk</span></li>
+    <li><strong>"Compound interest is the eighth wonder of the world."</strong><br><span class="text-muted text-sm">— Albert Einstein</span></li>
+    <li><strong>"Consistency creates competence."</strong><br><span class="text-muted text-sm">— Visualize Value</span></li>
+    <li><strong>"Information without application is entertainment."</strong><br><span class="text-muted text-sm">— Visualize Value</span></li>
+  </ul>
+
+  <h4>How to Use These</h4>
+  <div class="do-dont">
+    <div class="do-box">
+      <div class="label">One-Liner Post</div>
+      <code>Black background. White text. Centered.</code>
+      <code>One quote. CW logo bottom-left.</code>
+      <code>Caption: 2-3 lines expanding the thought.</code>
+    </div>
+    <div class="do-box">
+      <div class="label">Video Hook</div>
+      <code>Use as opening text (0-3 seconds).</code>
+      <code>Then expand with PAS in the rest.</code>
+      <code>Quote appears bold, then fades to detail.</code>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════ -->
+<!-- 16 — METRICS & KPIs -->
+<!-- ════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="section-num">Section 16</div>
+  <h2>Metrics & KPIs</h2>
+  <p class="section-lead">How you know the content is working. Track these numbers weekly. Adjust based on data, not feelings.</p>
+
+  <hr class="divider-dark">
+
+  <h3 class="mt-0">Primary Metrics (Track Weekly)</h3>
+  <table>
+    <thead><tr><th>Metric</th><th>What It Measures</th><th>Target</th><th>Where to Check</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>Profile Visits</strong></td>
+        <td>Are people curious enough to check you out?</td>
+        <td>↑ 10% week-over-week</td>
+        <td>Instagram / TikTok analytics</td>
+      </tr>
+      <tr>
+        <td><strong>Reach</strong></td>
+        <td>How many unique people saw your content?</td>
+        <td>↑ Consistent growth, not vanity</td>
+        <td>Platform insights</td>
+      </tr>
+      <tr>
+        <td><strong>Saves + Shares</strong></td>
+        <td>Was this valuable enough to save or send to someone?</td>
+        <td>Save rate &gt; 2% of reach</td>
+        <td>Instagram insights</td>
+      </tr>
+      <tr>
+        <td><strong>DMs Received</strong></td>
+        <td>Is content driving real conversations?</td>
+        <td>3+ per week from content</td>
+        <td>Inbox</td>
+      </tr>
+      <tr>
+        <td><strong>Website Clicks</strong></td>
+        <td>Are people moving from social to your site?</td>
+        <td>10+ per week from bio link</td>
+        <td>Link-in-bio analytics / GA</td>
+      </tr>
+      <tr>
+        <td><strong>Audit Requests</strong></td>
+        <td>Is the CTA converting?</td>
+        <td>2+ per week</td>
+        <td>Inbox / Form submissions</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Secondary Metrics (Track Monthly)</h3>
+  <table>
+    <thead><tr><th>Metric</th><th>What It Tells You</th><th>Target</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>Follower Growth Rate</strong></td>
+        <td>Is the audience actually growing?</td>
+        <td>2–5% monthly growth</td>
+      </tr>
+      <tr>
+        <td><strong>Engagement Rate</strong></td>
+        <td>Are followers actually engaged?</td>
+        <td>3–6% (likes + comments + saves ÷ followers)</td>
+      </tr>
+      <tr>
+        <td><strong>Best Performing Pillar</strong></td>
+        <td>Which content type resonates most?</td>
+        <td>Double down on what works</td>
+      </tr>
+      <tr>
+        <td><strong>Discovery Call Bookings</strong></td>
+        <td>Is content driving real business?</td>
+        <td>4+ per month from social</td>
+      </tr>
+      <tr>
+        <td><strong>Revenue from Social</strong></td>
+        <td>The only metric that actually matters long-term</td>
+        <td>Track client source: "How did you find us?"</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>What "Good" Looks Like</h3>
+  <div class="rule-grid">
+    <div class="rule-card">
+      <div class="rule-num" style="color: #ef4444;">Red Flag</div>
+      <div class="rule-title">High reach, zero DMs</div>
+      <div class="rule-desc">Your content is entertaining but not converting. You're getting views but no action. Fix the CTA. Make the next step obvious.</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-num" style="color: #10b981;">Green Flag</div>
+      <div class="rule-title">Low reach, high saves</div>
+      <div class="rule-desc">Small audience but deeply engaged. This is better than viral with no follow-through. Keep going. The audience will grow.</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-num" style="color: #ef4444;">Red Flag</div>
+      <div class="rule-title">Followers up, enquiries flat</div>
+      <div class="rule-desc">You're attracting the wrong audience or your 80/20 ratio is off. Check: are you actually asking for the sale 20% of the time?</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-num" style="color: #10b981;">Green Flag</div>
+      <div class="rule-title">DMs saying "I need this"</div>
+      <div class="rule-desc">Your PAS is working. They feel the pain, they see the solution, they're reaching out. This is the goal. Close them.</div>
+    </div>
+  </div>
+
+  <h3>Weekly Review (5 minutes every Sunday)</h3>
+  <ul class="checklist">
+    <li>How many posts went out this week? (Target: 5–7)</li>
+    <li>Which post got the most saves/shares? Why?</li>
+    <li>Which post got the least engagement? Why?</li>
+    <li>How many DMs or audit requests came in?</li>
+    <li>What's the plan for next week? (Map to pillars)</li>
+  </ul>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════ -->
+<!-- 17 — PRE-PUBLISH CHECKLIST -->
+<!-- ════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="section-num">Section 17</div>
+  <h2>Pre-Publish Checklist</h2>
+  <p class="section-lead">Run through this before every piece of content goes live.</p>
+
+  <hr class="divider-dark">
+
+  <h3 class="mt-0">Content Quality</h3>
+  <ul class="checklist">
+    <li>Does it follow PAS? (Problem → Agitate → Solve)</li>
+    <li>Is the hook strong enough to stop someone scrolling?</li>
+    <li>One concept only? If you're saying two things, split into two posts.</li>
+    <li>Problem-first framing? (not "we build..." but "you're losing...")</li>
+    <li>Specific, not vague? (numbers, metrics, examples — not adjectives)</li>
+    <li>No banned words? (leverage, synergy, game-changer, world-class, etc.)</li>
+    <li>One CTA only? One clear next step, not three options.</li>
+    <li>Would you stop scrolling for this? Be honest.</li>
+  </ul>
+
+  <h3>Visual Quality</h3>
+  <ul class="checklist">
+    <li>On-brand colors? (#0a0a0a background, white text, red/green accents)</li>
+    <li>Inter font only? (unless logo placement)</li>
+    <li>Max 2–3 colors in the design?</li>
+    <li>CW logo present and properly placed?</li>
+    <li>Safe zones respected? (no content in top 150px or bottom 480px for video)</li>
+    <li>Text is readable at mobile size? (not too small, enough contrast)</li>
+    <li>Negative space applied? (not cramped — let it breathe)</li>
+  </ul>
+
+  <h3>Platform Requirements</h3>
+  <ul class="checklist">
+    <li>Correct dimensions? (1080×1920 video, 1080×1080 feed, 1080×1350 carousel)</li>
+    <li>Caption written with hook-first structure?</li>
+    <li>Hashtags included? (5–10, mixed size and niche)</li>
+    <li>CTA matches the content? (don't just default to "link in bio")</li>
+    <li>Cross-posted to all relevant platforms?</li>
+    <li>No TikTok watermark on Instagram version?</li>
+  </ul>
+
+  <h3>Value & Strategy</h3>
+  <ul class="checklist">
+    <li>Does this deliver value? (monetary, functional, psychological, or social)</li>
+    <li>Is this an 80% post (give value) or a 20% post (ask for value)?</li>
+    <li>Does the CTA match the 80/20 ratio for the week?</li>
+    <li>Could this become a case study, testimonial, or proof piece later?</li>
+  </ul>
+
+  <h3>Final Gut Check</h3>
+  <ul class="checklist">
+    <li>Does this sound like CrftdWeb? (direct, honest, sharp — not corporate)</li>
+    <li>Would a business owner feel this in their gut?</li>
+    <li>Is this something worth saving or sharing?</li>
+    <li>Are you proud of it?</li>
+  </ul>
+
+  <hr class="divider">
+
+  <div class="framework-box" style="text-align: center; padding: 32px;">
+    <p style="color: rgba(255,255,255,0.4); font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 8px;">Remember</p>
+    <p style="font-size: 20px; font-weight: 900; letter-spacing: -0.5px; margin-bottom: 8px; color: #fff;">Consistency beats perfection.</p>
+    <p style="color: rgba(255,255,255,0.5); font-size: 13px; margin-bottom: 0;">Ship it. Learn. Improve. Ship again.</p>
+  </div>
+
+  <div style="text-align: center; margin-top: 32px; padding-top: 24px; border-top: 1px solid #e5e5e5;">
+    <p style="font-size: 11px; color: #888; letter-spacing: 0.1em; text-transform: uppercase;">CrftdWeb Content Playbook — V2 — April 2026</p>
+    <p style="font-size: 11px; color: #bbb;">Internal use only. Not for distribution.</p>
+  </div>
+</div>
+
+</body>
+</html>
