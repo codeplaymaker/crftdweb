@@ -85,6 +85,27 @@ export default function BlogPage() {
             </div>
           </div>
         </section>
+
+        {/* Related Resources */}
+        <section className="pb-32">
+          <div className="container mx-auto px-4 max-w-5xl">
+            <h2 className="text-2xl font-bold mb-8 text-white">Related resources</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <Link href="/answers" className="p-5 border border-white/10 rounded-xl hover:border-white/30 transition-colors">
+                <h3 className="font-semibold mb-2 text-white">Answers</h3>
+                <p className="text-sm text-white/50">Direct answers to web design questions.</p>
+              </Link>
+              <Link href="/concepts" className="p-5 border border-white/10 rounded-xl hover:border-white/30 transition-colors">
+                <h3 className="font-semibold mb-2 text-white">Concepts</h3>
+                <p className="text-sm text-white/50">Deep dives into web design strategy.</p>
+              </Link>
+              <Link href="/glossary" className="p-5 border border-white/10 rounded-xl hover:border-white/30 transition-colors">
+                <h3 className="font-semibold mb-2 text-white">Glossary</h3>
+                <p className="text-sm text-white/50">Definitions of key terms.</p>
+              </Link>
+            </div>
+          </div>
+        </section>
       </main>
     </>
   );

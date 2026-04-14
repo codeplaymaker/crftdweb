@@ -208,6 +208,25 @@ export default async function BlogPostPage({
               }
             })}
           </div>
+
+          {/* Related articles */}
+          <div className="mt-20 pt-12 border-t border-white/10">
+            <h2 className="text-xl font-bold mb-6 text-white">Related articles</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Link href="/answers" className="p-4 border border-white/10 rounded-xl hover:border-white/30 transition-colors">
+                <span className="font-medium text-sm text-white">Web Design Answers →</span>
+              </Link>
+              <Link href="/concepts" className="p-4 border border-white/10 rounded-xl hover:border-white/30 transition-colors">
+                <span className="font-medium text-sm text-white">Web Design Concepts →</span>
+              </Link>
+              <Link href="/glossary" className="p-4 border border-white/10 rounded-xl hover:border-white/30 transition-colors">
+                <span className="font-medium text-sm text-white">Web Design Glossary →</span>
+              </Link>
+              <Link href="/blog" className="p-4 border border-white/10 rounded-xl hover:border-white/30 transition-colors">
+                <span className="font-medium text-sm text-white">More from the Blog →</span>
+              </Link>
+            </div>
+          </div>
         </article>
       </main>
     </>

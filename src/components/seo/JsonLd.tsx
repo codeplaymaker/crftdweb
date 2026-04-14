@@ -36,10 +36,9 @@ export function LocalBusinessJsonLd() {
       'Performance Optimisation',
     ],
     sameAs: [
-      // Add your socials here as you set them up
-      // 'https://www.linkedin.com/company/crftdweb',
-      // 'https://www.instagram.com/crftdweb',
-      // 'https://www.tiktok.com/@crftdweb',
+      'https://www.linkedin.com/company/crftdweb',
+      'https://www.instagram.com/crftdweb',
+      'https://x.com/crftdweb',
     ],
     aggregateRating: {
       '@type': 'AggregateRating',
@@ -116,7 +115,7 @@ export function FaqJsonLd({ faqs }: { faqs: FaqItem[] }) {
   );
 }
 
-// ── WebSite Schema (for sitelinks search box) ──────────────────────────
+// ── WebSite Schema (for sitelinks search box + SearchAction) ──────────
 export function WebSiteJsonLd() {
   const data = {
     '@context': 'https://schema.org',
@@ -132,6 +131,50 @@ export function WebSiteJsonLd() {
         url: 'https://www.crftdweb.com/CW-logo.png',
       },
     },
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: {
+        '@type': 'EntryPoint',
+        urlTemplate: 'https://www.crftdweb.com/answers?q={search_term_string}',
+      },
+      'query-input': 'required name=search_term_string',
+    },
+    speakable: {
+      '@type': 'SpeakableSpecification',
+      cssSelector: ['h1', 'article p:first-of-type', '.hero-description'],
+    },
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+    />
+  );
+}
+
+// ── Person Schema (founder / author authority) ─────────────────────────
+export function PersonJsonLd() {
+  const data = {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: 'CrftdWeb Founder',
+    jobTitle: 'Founder & Lead Developer',
+    worksFor: {
+      '@type': 'Organization',
+      name: 'CrftdWeb',
+      url: 'https://www.crftdweb.com',
+    },
+    url: 'https://www.crftdweb.com/about',
+    knowsAbout: [
+      'Web Design',
+      'Web Development',
+      'Next.js',
+      'Conversion Rate Optimisation',
+      'UI/UX Design',
+      'TypeScript',
+      'React',
+    ],
   };
 
   return (

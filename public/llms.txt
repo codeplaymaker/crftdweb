@@ -1,0 +1,36 @@
+# CrftdWeb
+
+> Custom-coded web design agency building high-performance, conversion-focused websites for ambitious businesses. Hand-built in Next.js. Delivered in 14 days.
+
+## What we do
+- [Services](https://www.crftdweb.com/services): Custom web design & development for UK businesses
+- [Web Design for Restaurants](https://www.crftdweb.com/services/web-design-for-restaurants): Booking systems, menus, local SEO
+- [Web Design for Dentists](https://www.crftdweb.com/services/web-design-for-dentists): Patient booking, treatment pages, GDPR-compliant
+- [Web Design for Salons](https://www.crftdweb.com/services/web-design-for-salons): Booking integration, galleries, team profiles
+- [Web Design for Gyms](https://www.crftdweb.com/services/web-design-for-gyms): Member sign-ups, class schedules, lead capture
+- [Web Design for Estate Agents](https://www.crftdweb.com/services/web-design-for-real-estate): Property listings, valuation tools, area guides
+- [Website Cost Guide](https://www.crftdweb.com/services/website-cost): Transparent pricing for custom websites
+
+## Products
+- [The Playbook](https://www.crftdweb.com/playbook): 6-stage methodology for service businesses building scalable products
+- [Engine](https://www.crftdweb.com/engine): AI-powered system for coaches & agencies to launch and automate high-ticket offers
+
+## Resources
+- [Blog](https://www.crftdweb.com/blog): Case studies, guides, and insights on web design and conversion
+- [Answers](https://www.crftdweb.com/answers): Direct answers to common web design questions
+- [Concepts](https://www.crftdweb.com/concepts): Deep dives into web design and digital strategy
+- [Glossary](https://www.crftdweb.com/glossary): Definitions of web design and development terms
+- [FAQ](https://www.crftdweb.com/faq): Frequently asked questions about our services
+
+## Company
+- [About](https://www.crftdweb.com/about): Who we are and how we work
+- [Work](https://www.crftdweb.com/work): Case studies and client projects
+- [Changelog](https://www.crftdweb.com/changelog): What we've shipped and when
+- [Contact](https://www.crftdweb.com/contact): Start a project
+
+## Key facts
+- Location: United Kingdom (serving clients worldwide)
+- Tech stack: Next.js, React, TypeScript, Tailwind CSS
+- Delivery: 14-day turnaround for custom websites
+- Performance: 90+ PageSpeed scores guaranteed
+- Email: hello@crftdweb.com

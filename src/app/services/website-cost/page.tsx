@@ -292,6 +292,25 @@ export default function WebsiteCostPage() {
                 Request a Quote →
               </a>
             </section>
+
+            {/* Related resources */}
+            <section className="pt-12 border-t border-white/10">
+              <h2 className="text-xl font-bold mb-6">Related resources</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <a href="/answers/how-much-does-a-website-cost" className="p-4 border border-white/10 rounded-xl hover:border-white/30 transition-colors">
+                  <span className="font-medium text-sm text-white">How much does a website cost? →</span>
+                </a>
+                <a href="/answers/how-long-does-it-take-to-build-a-website" className="p-4 border border-white/10 rounded-xl hover:border-white/30 transition-colors">
+                  <span className="font-medium text-sm text-white">How long does it take? →</span>
+                </a>
+                <a href="/blog/wordpress-vs-custom-coded-website" className="p-4 border border-white/10 rounded-xl hover:border-white/30 transition-colors">
+                  <span className="font-medium text-sm text-white">WordPress vs Custom-Coded →</span>
+                </a>
+                <a href="/faq" className="p-4 border border-white/10 rounded-xl hover:border-white/30 transition-colors">
+                  <span className="font-medium text-sm text-white">FAQ →</span>
+                </a>
+              </div>
+            </section>
           </div>
         </article>
       </main>

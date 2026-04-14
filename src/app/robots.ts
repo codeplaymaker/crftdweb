@@ -10,6 +10,15 @@ export default function robots(): MetadataRoute.Robots {
         allow: '/',
         disallow: ['/admin', '/api/', '/engine/dashboard', '/preview/'],
       },
+      // Allow citation crawlers
+      { userAgent: 'GPTBot', allow: '/' },
+      { userAgent: 'ClaudeBot', allow: '/' },
+      { userAgent: 'PerplexityBot', allow: '/' },
+      { userAgent: 'GoogleOther', allow: '/' },
+      // Block training crawlers
+      { userAgent: 'CCBot', disallow: '/' },
+      { userAgent: 'anthropic-ai', disallow: '/' },
+      { userAgent: 'ChatGPT-User', disallow: '/' },
     ],
     sitemap: `${baseUrl}/sitemap.xml`,
   };

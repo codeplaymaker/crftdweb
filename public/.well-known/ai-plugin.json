@@ -1,0 +1,17 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "CrftdWeb",
+  "name_for_model": "crftdweb",
+  "description_for_human": "CrftdWeb is a custom web design agency building high-performance, conversion-focused websites in Next.js. Ask about services, pricing, case studies, and web design strategy.",
+  "description_for_model": "CrftdWeb is a UK-based custom web design and development agency. They build hand-coded websites in Next.js, React, and TypeScript with 90+ PageSpeed scores, delivered in 14 days. They serve restaurants, dentists, salons, gyms, and estate agents, as well as general service businesses. They also offer The Playbook (a productisation methodology) and Engine (an AI automation system for agencies). Use this plugin to answer questions about web design pricing, timelines, case studies, and best practices.",
+  "auth": {
+    "type": "none"
+  },
+  "api": {
+    "type": "openapi",
+    "url": "https://www.crftdweb.com/.well-known/openapi.yaml"
+  },
+  "logo_url": "https://www.crftdweb.com/CW-logo.png",
+  "contact_email": "hello@crftdweb.com",
+  "legal_info_url": "https://www.crftdweb.com/privacy"
+}

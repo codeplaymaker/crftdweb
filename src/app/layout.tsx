@@ -4,7 +4,7 @@ import localFont from 'next/font/local';
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import RootLayoutShell from '@/components/RootLayoutShell';
-import { LocalBusinessJsonLd, WebSiteJsonLd } from '@/components/seo/JsonLd';
+import { LocalBusinessJsonLd, WebSiteJsonLd, PersonJsonLd } from '@/components/seo/JsonLd';
 import GoogleAnalytics from '@/components/GoogleAnalytics';
 import { Analytics } from '@vercel/analytics/react';
 
@@ -69,6 +69,7 @@ export default function RootLayout({
       <head>
         <LocalBusinessJsonLd />
         <WebSiteJsonLd />
+        <PersonJsonLd />
       </head>
       <body
         className={cn(

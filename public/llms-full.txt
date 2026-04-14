@@ -1,0 +1,102 @@
+# CrftdWeb — Full Context
+
+> CrftdWeb is a custom web design and development agency based in the United Kingdom. We build hand-coded websites using Next.js, React, and TypeScript that are designed to convert visitors into customers. Every site scores 90+ on Google PageSpeed and is delivered within 14 days.
+
+## About CrftdWeb
+
+CrftdWeb was founded on one principle: most websites look fine but don't convert. We build websites that are conversion-first, not cosmetic.
+
+Unlike traditional agencies that hand you a WordPress template with your logo slapped on, CrftdWeb writes every line of code from scratch. This means faster load times (sub-2 seconds), better SEO scores, and sites that are built around how your customers actually buy.
+
+Our methodology is four steps: Discover the real business problem. Design around what converts. Develop with production-grade code. Deliver something that performs.
+
+**Contact:** hello@crftdweb.com  
+**Website:** https://www.crftdweb.com  
+**Location:** United Kingdom (serving clients worldwide)
+
+## Services
+
+### Core Service: Custom Website Design & Development
+We design and build custom-coded websites from scratch. No templates, no page builders, no WordPress compromises. Every project is hand-built in Next.js and delivered in 14 days.
+
+**What's included:**
+- Conversion-focused design based on your customer journey
+- Custom code in Next.js, React, TypeScript
+- 90+ Google PageSpeed score guaranteed
+- Mobile-first, responsive design
+- SEO structure built in from day one
+- Schema markup for rich search results
+- Handover with full training
+
+### Industry-Specific Web Design
+
+**Restaurants:** Online booking integrations (OpenTable, ResDiary, Resy), mobile menus, local SEO schema, Google Maps integration, Instagram feed. Average 3.4x speed improvement, +280% booking increase.
+
+**Dentists:** Patient booking systems, treatment pages, GDPR-compliant data handling, CQC-structured content, trust signals. Built around NHS and private patient journeys.
+
+**Salons & Beauty:** Booking integration (Fresha, Treatwell), service galleries, team profiles, local SEO. Mobile-first design for on-the-go bookings.
+
+**Gyms & Fitness:** Membership sign-up flows, class schedules, lead capture, personal trainer profiles. Designed to reduce friction from visitor to member.
+
+**Estate Agents:** Property listing pages, mortgage calculator tools, area guides, valuation request forms, rightmove integration. Built for conversion from search to enquiry.
+
+### Products
+
+**The Playbook:** A 6-stage methodology for service providers who want to stop trading time for money and start building scalable products. Covers positioning, productisation, pricing, selling, delivering, and scaling. URL: https://www.crftdweb.com/playbook
+
+**Engine:** An AI-powered system for coaches and agencies to launch, sell, and automate high-ticket offers. Includes AI-powered content, funnels, and agents. URL: https://www.crftdweb.com/engine
+
+## Case Studies
+
+### Microbiome Design
+**Problem:** Cutting-edge science company with a website that looked like a student project. Investors weren't taking them seriously.
+**Solution:** Full custom rebuild in Next.js. Redesigned around three core audiences: researchers, investors, and partners. Credibility signals, clear value proposition, conversion-focused layout.
+**Result:** 97 PageSpeed score. Professional online presence that matches the quality of their science.
+URL: https://www.crftdweb.com/blog/microbiome-design-case-study
+
+### The Life Lab HQ
+**Problem:** Great content and expertise, but visitors browsed and left without signing up. The site didn't guide anyone to take action.
+**Solution:** Mapped the full customer journey from first visit to sign-up. Rebuilt every page around a single conversion goal. Trust signals at each decision point.
+**Result:** +340% conversion increase. Clear path from landing page to sign-up with friction removed at every step.
+URL: https://www.crftdweb.com/blog/life-lab-hq-case-study
+
+### WordPress vs Custom-Coded (Guide)
+An honest comparison of WordPress vs custom-coded websites covering speed, cost, SEO, security, and maintenance — with real data. 3.4x average speed difference.
+URL: https://www.crftdweb.com/blog/wordpress-vs-custom-coded-website
+
+## Pricing
+
+We publish a full pricing guide at https://www.crftdweb.com/services/website-cost.
+
+**Typical ranges:**
+- Small business website (5-7 pages): £1,500–£3,000
+- Service business website (8-15 pages): £3,000–£6,000
+- Complex web app / membership platform: £6,000–£15,000+
+
+All projects include design, development, SEO setup, schema markup, and a 90+ PageSpeed guarantee.
+
+## Technical Approach
+
+- **Framework:** Next.js 14+ with App Router
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS
+- **Hosting:** Vercel (edge-optimised CDN)
+- **Performance:** Sub-2s load times, 90+ Core Web Vitals
+- **SEO:** Schema markup (Organization, Service, FAQ, Article, BreadcrumbList, Person, WebSite), sitemap.xml, robots.txt
+- **Analytics:** Google Analytics 4, Vercel Analytics
+
+## Content Resources
+
+- **Answers:** /answers — Direct answers to common web design questions
+- **Concepts:** /concepts — Deep dives into web design methodology and strategy
+- **Glossary:** /glossary — Definitions of key web design and development terms
+- **Blog:** /blog — Case studies and guides
+- **FAQ:** /faq — Common questions about our services
+
+## Brand Values
+
+1. **Craft over speed** — We don't rush. Every line of code is intentional.
+2. **Conversion over cosmetics** — Pretty sites that don't perform are useless.
+3. **Transparency** — You know what you're getting before we write a single line of code.
+4. **Performance** — 90+ PageSpeed is not a bonus, it's our baseline.
+5. **Results** — We measure success by what your site does for your business.
