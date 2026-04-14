@@ -9,13 +9,17 @@
     "lint": "next lint",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "remotion:preview": "npx remotion studio remotion/index.ts",
+    "remotion:render": "bash scripts/render-videos.sh"
   },
   "dependencies": {
     "@radix-ui/react-navigation-menu": "^1.2.13",
     "@radix-ui/react-slot": "^1.2.3",
     "@react-three/drei": "^10.6.1",
     "@react-three/fiber": "^9.3.0",
+    "@remotion/cli": "^4.0.448",
+    "@remotion/player": "^4.0.448",
     "@vercel/analytics": "^2.0.1",
     "@vercel/functions": "^3.4.3",
     "class-variance-authority": "^0.7.1",
@@ -33,6 +37,7 @@
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-markdown": "^10.1.0",
+    "remotion": "^4.0.448",
     "resend": "^4.5.2",
     "sonner": "^2.0.7",
     "svix": "^1.90.0",
