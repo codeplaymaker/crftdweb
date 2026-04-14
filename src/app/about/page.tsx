@@ -106,6 +106,27 @@ export default function AboutPage() {
           </motion.div>
         </div>
       </section>
+
+      {/* Related resources */}
+      <section className="py-20 border-t border-black/[0.06]">
+        <div className="container max-w-4xl">
+          <h2 className="text-2xl font-bold mb-8">Related resources</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <Link href="/playbook" className="block p-5 rounded-xl border hover:border-black/30 transition-colors">
+              <p className="text-xs text-purple-600 mb-1 uppercase tracking-wider">Playbook</p>
+              <p className="text-sm text-muted-foreground">Our framework for building a business around great web design</p>
+            </Link>
+            <Link href="/concepts" className="block p-5 rounded-xl border hover:border-black/30 transition-colors">
+              <p className="text-xs text-purple-600 mb-1 uppercase tracking-wider">Concepts</p>
+              <p className="text-sm text-muted-foreground">The principles that guide every project we build</p>
+            </Link>
+            <Link href="/faq" className="block p-5 rounded-xl border hover:border-black/30 transition-colors">
+              <p className="text-xs text-purple-600 mb-1 uppercase tracking-wider">FAQ</p>
+              <p className="text-sm text-muted-foreground">Common questions about working with us</p>
+            </Link>
+          </div>
+        </div>
+      </section>
     </main>
   );
 }

@@ -537,6 +537,30 @@ function FinalCTASection() {
 
 /* ──────────────────────────────────────── COMPOSE ─── */
 
+function RelatedSection() {
+  return (
+    <section className="py-20 border-t border-white/[0.06]">
+      <div className="container mx-auto px-4 max-w-4xl">
+        <h2 className="text-2xl font-bold mb-8 text-white/80">Related resources</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <Link href="/concepts" className="block p-5 rounded-xl border border-white/[0.06] hover:border-white/20 transition-colors">
+            <p className="text-xs text-purple-400 mb-1 uppercase tracking-wider">Concepts</p>
+            <p className="text-sm text-white/70">Core ideas behind modern web performance</p>
+          </Link>
+          <Link href="/blog" className="block p-5 rounded-xl border border-white/[0.06] hover:border-white/20 transition-colors">
+            <p className="text-xs text-purple-400 mb-1 uppercase tracking-wider">Blog</p>
+            <p className="text-sm text-white/70">Case studies and insights from real projects</p>
+          </Link>
+          <Link href="/faq" className="block p-5 rounded-xl border border-white/[0.06] hover:border-white/20 transition-colors">
+            <p className="text-xs text-purple-400 mb-1 uppercase tracking-wider">FAQ</p>
+            <p className="text-sm text-white/70">Common questions about our services and process</p>
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export default function EnginePage() {
   return (
     <>
@@ -547,6 +571,7 @@ export default function EnginePage() {
       <ProcessSection />
       <FAQSection />
       <FinalCTASection />
+      <RelatedSection />
     </>
   );
 }

@@ -36,6 +36,27 @@ export default function WorkPage() {
           </motion.div>
         </div>
       </section>
+
+      {/* Related resources */}
+      <section className="py-20 border-t border-black/[0.06]">
+        <div className="container max-w-4xl">
+          <h2 className="text-2xl font-bold mb-8">Related resources</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <Link href="/blog" className="block p-5 rounded-xl border hover:border-black/30 transition-colors">
+              <p className="text-xs text-purple-600 mb-1 uppercase tracking-wider">Blog</p>
+              <p className="text-sm text-muted-foreground">Case studies and project breakdowns</p>
+            </Link>
+            <Link href="/concepts" className="block p-5 rounded-xl border hover:border-black/30 transition-colors">
+              <p className="text-xs text-purple-600 mb-1 uppercase tracking-wider">Concepts</p>
+              <p className="text-sm text-muted-foreground">Learn the thinking behind great web design</p>
+            </Link>
+            <Link href="/answers" className="block p-5 rounded-xl border hover:border-black/30 transition-colors">
+              <p className="text-xs text-purple-600 mb-1 uppercase tracking-wider">Answers</p>
+              <p className="text-sm text-muted-foreground">Quick answers to common questions</p>
+            </Link>
+          </div>
+        </div>
+      </section>
     </main>
   );
 }

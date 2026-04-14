@@ -488,6 +488,27 @@ export default async function NichePage({
             </a>
           </div>
         </section>
+
+        {/* ── Related resources ───────────────────── */}
+        <section className="py-20 border-t border-white/[0.06]">
+          <div className="container mx-auto px-4 max-w-4xl">
+            <h2 className="text-2xl font-bold mb-8 text-white/80">Related resources</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <a href="/answers" className="block p-5 rounded-xl border border-white/[0.06] hover:border-white/20 transition-colors">
+                <p className="text-xs text-purple-400 mb-1 uppercase tracking-wider">Answers</p>
+                <p className="text-sm text-white/70">Quick answers to common web design questions</p>
+              </a>
+              <a href="/concepts" className="block p-5 rounded-xl border border-white/[0.06] hover:border-white/20 transition-colors">
+                <p className="text-xs text-purple-400 mb-1 uppercase tracking-wider">Concepts</p>
+                <p className="text-sm text-white/70">Deep dives into design and performance concepts</p>
+              </a>
+              <a href="/faq" className="block p-5 rounded-xl border border-white/[0.06] hover:border-white/20 transition-colors">
+                <p className="text-xs text-purple-400 mb-1 uppercase tracking-wider">FAQ</p>
+                <p className="text-sm text-white/70">Everything you need to know before you start</p>
+              </a>
+            </div>
+          </div>
+        </section>
       </main>
     </>
   );
