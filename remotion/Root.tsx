@@ -4,6 +4,9 @@ import { BeforeAfter } from './compositions/BeforeAfter';
 import { HotTake } from './compositions/HotTake';
 import { DmResults } from './compositions/DmResults';
 import { NobodyCares } from './compositions/NobodyCares';
+import { TheMathHurts } from './compositions/TheMathHurts';
+import { FiveSeconds } from './compositions/FiveSeconds';
+import { DeadWords } from './compositions/DeadWords';
 
 // 1080x1920 = 9:16 TikTok/Reels/Shorts
 const WIDTH = 1080;
@@ -48,6 +51,30 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="NobodyCares"
         component={NobodyCares}
+        durationInFrames={10 * FPS}
+        fps={FPS}
+        width={WIDTH}
+        height={HEIGHT}
+      />
+      <Composition
+        id="TheMathHurts"
+        component={TheMathHurts}
+        durationInFrames={10 * FPS}
+        fps={FPS}
+        width={WIDTH}
+        height={HEIGHT}
+      />
+      <Composition
+        id="FiveSeconds"
+        component={FiveSeconds}
+        durationInFrames={12 * FPS}
+        fps={FPS}
+        width={WIDTH}
+        height={HEIGHT}
+      />
+      <Composition
+        id="DeadWords"
+        component={DeadWords}
         durationInFrames={10 * FPS}
         fps={FPS}
         width={WIDTH}
