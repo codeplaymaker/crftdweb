@@ -1,7 +1,7 @@
 import React from 'react';
 import { interpolate, useCurrentFrame, staticFile, Img } from 'remotion';
 
-// ─── BRAND COLORS ──────────────────────────────────
+// ─── BRAND COLORS (dark) ───────────────────────────
 export const colors = {
   bg: '#0a0a0a',
   white: '#ffffff',
@@ -11,6 +11,28 @@ export const colors = {
   muted: 'rgba(255,255,255,0.45)',
   subtle: 'rgba(255,255,255,0.08)',
   border: 'rgba(255,255,255,0.12)',
+};
+
+// ─── BRAND COLORS (light / white) ─────────────────
+export const lightColors = {
+  bg: '#ffffff',
+  text: '#0a0a0a',
+  muted: 'rgba(0,0,0,0.38)',
+  subtle: 'rgba(0,0,0,0.015)',
+  border: 'rgba(0,0,0,0.07)',
+  tagBg: 'rgba(0,0,0,0.04)',
+  tagText: 'rgba(0,0,0,0.4)',
+};
+
+export const baseStyleLight: React.CSSProperties = {
+  backgroundColor: lightColors.bg,
+  width: '100%',
+  height: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+  fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
+  color: lightColors.text,
+  overflow: 'hidden',
 };
 
 // ─── SHARED STYLES ─────────────────────────────────

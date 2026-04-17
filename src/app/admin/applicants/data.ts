@@ -20,4 +20,5 @@ export interface ApplicantWithStatus extends Applicant {
   status: ApplicantStatus;
   emailSentAt: string | null;
   bookedAt: string | null;
+  followUpSentAt?: string | null;
 }

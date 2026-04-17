@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CrftdWeb — Pinned Carousel</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #111;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+      gap: 48px;
+    }
+
+    .label {
+      color: rgba(255,255,255,0.3);
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    /* Each slide is 1080×1080 (1:1 IG square) */
+    .slide {
+      width: 540px;
+      height: 540px;
+      background: #0a0a0a;
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 52px 52px 80px;
+      color: #fff;
+    }
+
+    /* ─── Slide 1 ─── */
+    .slide-1 {
+      background: linear-gradient(160deg, #0a0a0a 0%, #0f0a0a 100%);
+    }
+    .slide-1 .eyebrow {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #ef4444;
+      margin-bottom: 20px;
+    }
+    .slide-1 h1 {
+      font-size: 42px;
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+    .slide-1 h1 span {
+      color: #ef4444;
+    }
+    .slide-1 p {
+      font-size: 15px;
+      color: rgba(255,255,255,0.45);
+      margin-top: 20px;
+      line-height: 1.6;
+      font-weight: 400;
+    }
+    .slide-1 .swipe-hint {
+      position: absolute;
+      bottom: 28px;
+      right: 32px;
+      font-size: 11px;
+      color: rgba(255,255,255,0.2);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .slide-1 .arrow {
+      font-size: 14px;
+    }
+
+    /* ─── Slide 2 ─── */
+    .slide-2 {
+      padding: 0;
+    }
+    .slide-2 .half {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 36px 40px;
+      height: 50%;
+    }
+    .slide-2 .before-half {
+      background: #111;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      position: relative;
+    }
+    .slide-2 .after-half {
+      background: #0a0f0a;
+    }
+    .slide-2 .tag {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 4px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    .slide-2 .tag.before { background: rgba(239,68,68,0.15); color: #ef4444; border: 1px solid rgba(239,68,68,0.2); }
+    .slide-2 .tag.after  { background: rgba(16,185,129,0.15); color: #10b981; border: 1px solid rgba(16,185,129,0.2); }
+    .slide-2 .metric-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .slide-2 .metric {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.5);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .slide-2 .metric.bad { border-color: rgba(239,68,68,0.2); color: #ef4444; }
+    .slide-2 .metric.good { border-color: rgba(16,185,129,0.2); color: #10b981; }
+    .slide-2 .metric .icon { font-size: 13px; }
+    .slide-2 .headline {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+    }
+    .slide-2 .headline.red { color: #ef4444; }
+    .slide-2 .headline.green { color: #10b981; }
+    .slide-2 .divider {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #0a0a0a;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 800;
+      color: rgba(255,255,255,0.5);
+      z-index: 10;
+    }
+
+    /* ─── Slide 3 ─── */
+    .slide-3 {
+      background: linear-gradient(160deg, #0a0a0f 0%, #050510 100%);
+      text-align: center;
+      align-items: center;
+    }
+    .slide-3 .eyebrow {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+      margin-bottom: 20px;
+    }
+    .slide-3 h2 {
+      font-size: 40px;
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin-bottom: 28px;
+    }
+    .slide-3 .pills {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: center;
+      width: 100%;
+      margin-bottom: 32px;
+    }
+    .slide-3 .pill {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 50px;
+      padding: 10px 22px;
+      font-size: 13px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.7);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .slide-3 .pill .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #10b981;
+    }
+    .slide-3 .cta {
+      background: #fff;
+      color: #0a0a0a;
+      border-radius: 50px;
+      padding: 14px 32px;
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+    }
+    .logo-bottom {
+      position: absolute;
+      bottom: 24px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.15);
+    }
+  </style>
+</head>
+<body>
+
+  <div>
+    <p class="label">Slide 1 of 3 — Hook</p>
+    <div class="slide slide-1">
+      <p class="eyebrow">The problem</p>
+      <h1>Your website isn't<br /><span>working for you.</span></h1>
+      <p>
+        Slow load times. No mobile. Buried on Google.<br />
+        You're paying hosting fees for something that's<br />
+        actively turning customers away.
+      </p>
+      <div class="swipe-hint"><span>Swipe</span><span class="arrow">→</span></div>
+      <div class="logo-bottom">crftdweb.com</div>
+    </div>
+  </div>
+
+  <div>
+    <p class="label">Slide 2 of 3 — Before / After</p>
+    <div class="slide slide-2" style="position:relative">
+      <!-- Before -->
+      <div class="half before-half" style="position:relative">
+        <span class="tag before">✗ Before</span>
+        <div class="headline red">Slow. Generic. Invisible.</div>
+        <div class="metric-row">
+          <div class="metric bad"><span class="icon">⚡</span> 34/100 speed</div>
+          <div class="metric bad"><span class="icon">📱</span> Broken mobile</div>
+          <div class="metric bad"><span class="icon">🔍</span> Page 4 on Google</div>
+          <div class="metric bad"><span class="icon">📧</span> 0 enquiries/mo</div>
+        </div>
+      </div>
+      <!-- Divider -->
+      <div class="divider" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:10;">↕</div>
+      <!-- After -->
+      <div class="half after-half">
+        <span class="tag after">✓ After CrftdWeb</span>
+        <div class="headline green">Fast. Custom. Converting.</div>
+        <div class="metric-row">
+          <div class="metric good"><span class="icon">⚡</span> 97/100 speed</div>
+          <div class="metric good"><span class="icon">📱</span> Perfect mobile</div>
+          <div class="metric good"><span class="icon">🔍</span> Page 1 ranked</div>
+          <div class="metric good"><span class="icon">📧</span> 12+ enquiries/mo</div>
+        </div>
+      </div>
+      <div class="logo-bottom">crftdweb.com</div>
+    </div>
+  </div>
+
+  <div>
+    <p class="label">Slide 3 of 3 — CTA</p>
+    <div class="slide slide-3">
+      <p class="eyebrow">CrftdWeb</p>
+      <h2>A website that<br />actually works.</h2>
+      <div class="pills">
+        <div class="pill"><span class="dot"></span> Hand-coded. No templates.</div>
+        <div class="pill"><span class="dot"></span> SEO-ready from day one.</div>
+        <div class="pill"><span class="dot"></span> Delivered in under 2 weeks.</div>
+        <div class="pill"><span class="dot"></span> Starting from £997.</div>
+      </div>
+      <div class="cta">DM us "SITE" to get started →</div>
+      <div class="logo-bottom">crftdweb.com</div>
+    </div>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CrftdWeb — Pinned Post Graphics</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Inter',sans-serif; background:#f0f0f0; padding:40px 24px 80px; }
+
+        h2 {
+            font-size:13px; font-weight:700; letter-spacing:.12em; text-transform:uppercase;
+            color:#888; margin-bottom:12px; margin-top:48px;
+        }
+        h2:first-of-type { margin-top:0; }
+
+        .controls {
+            position:sticky; top:0; z-index:99;
+            background:rgba(240,240,240,.95); backdrop-filter:blur(12px);
+            border-bottom:1px solid rgba(0,0,0,.08);
+            padding:14px 24px; margin:-40px -24px 40px;
+            display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+        }
+        .controls h1 { font-size:14px; font-weight:700; flex:1; }
+        .btn {
+            padding:9px 20px; border-radius:100px; font-size:12px; font-weight:700;
+            border:none; cursor:pointer; transition:all .18s; letter-spacing:.03em;
+        }
+        .btn-black { background:#0a0a0a; color:#fff; }
+        .btn-black:hover { background:#222; }
+        .btn-outline { background:transparent; border:1px solid rgba(0,0,0,.15); color:#555; }
+        .btn-outline:hover { border-color:#0a0a0a; color:#0a0a0a; }
+
+        /* Frame wrapper — scale for preview */
+        .frame-outer {
+            display:block;
+            width:432px;   /* 1080 * 0.4 */
+            height:768px;  /* 1920 * 0.4 */
+            position:relative;
+            overflow:hidden;
+            margin-bottom:32px;
+            border-radius:6px;
+            box-shadow:0 4px 24px rgba(0,0,0,.12);
+        }
+        .frame-wrapper {
+            position:absolute;
+            top:0; left:0;
+            transform:scale(0.4);
+            transform-origin:top left;
+        }
+
+        /* The actual 1080×1920 frame */
+        .frame {
+            width:1080px; height:1920px;
+            position:relative; overflow:hidden;
+            font-family:'Inter',sans-serif;
+        }
+
+        /* TikTok safe zone overlay */
+        .safe-overlay { position:absolute; inset:0; z-index:50; pointer-events:none; display:none; }
+        .safe-overlay.show { display:block; }
+        .sz { position:absolute; }
+        .sz-top    { top:0;    left:0; right:0;  height:150px; background:rgba(220,38,38,.08); border-bottom:2px dashed rgba(220,38,38,.3); }
+        .sz-bottom { bottom:0; left:0; right:0;  height:440px; background:rgba(220,38,38,.08); border-top:2px dashed rgba(220,38,38,.3); }
+        .sz-right  { top:150px; right:0; width:150px; bottom:440px; background:rgba(220,38,38,.05); border-left:2px dashed rgba(220,38,38,.25); }
+        .sz-left   { top:150px; left:0;  width:44px;  bottom:440px; background:rgba(220,38,38,.03); border-right:1px dashed rgba(220,38,38,.15); }
+
+        /* Safe content area */
+        .cs {
+            position:absolute; z-index:2;
+            top:0; left:0; right:0; bottom:0;
+            padding: 195px 170px 460px 64px;
+            display:flex; flex-direction:column;
+        }
+
+        .logo-bar { display:flex; align-items:center; margin-bottom:36px; }
+        .logo-bar img { height:38px; width:auto; object-fit:contain; }
+
+        .tag {
+            display:inline-block; align-self:flex-start;
+            padding:8px 20px; border-radius:100px;
+            font-size:14px; font-weight:700; letter-spacing:.15em; text-transform:uppercase;
+            background:rgba(0,0,0,.04); color:rgba(0,0,0,.4);
+            margin-bottom:28px;
+        }
+        .tag.black { background:#0a0a0a; color:#fff; }
+
+        h1.frame-h1 {
+            font-size:72px; font-weight:900; line-height:.95; letter-spacing:-0.04em;
+            color:#0a0a0a; margin-bottom:28px;
+        }
+        h1.frame-h1 .muted { color:rgba(0,0,0,.25); }
+        h1.frame-h1 .strike { text-decoration:line-through; color:rgba(0,0,0,.2); }
+
+        .sub {
+            font-size:22px; color:rgba(0,0,0,.38); line-height:1.55;
+            font-weight:400; margin-bottom:32px;
+        }
+
+        .card {
+            background:rgba(0,0,0,.015); border:1px solid rgba(0,0,0,.07);
+            border-radius:16px; padding:22px 26px;
+            margin-bottom:14px;
+        }
+
+        .stat-row { display:flex; align-items:center; gap:18px; }
+        .stat-box {
+            width:58px; height:58px; flex-shrink:0; border-radius:14px;
+            background:rgba(0,0,0,.03); border:1px solid rgba(0,0,0,.07);
+            display:flex; align-items:center; justify-content:center;
+        }
+        .stat-box span { font-size:17px; font-weight:900; color:#0a0a0a; }
+        .stat-label { font-size:18px; font-weight:700; color:#0a0a0a; margin-bottom:3px; }
+        .stat-source { font-size:13px; color:rgba(0,0,0,.25); }
+
+        .numbered-row { display:flex; align-items:flex-start; gap:18px; }
+        .num-box {
+            width:44px; height:44px; flex-shrink:0; border-radius:10px;
+            background:#0a0a0a; display:flex; align-items:center; justify-content:center;
+        }
+        .num-box span { font-size:16px; font-weight:800; color:#fff; }
+        .num-title { font-size:20px; font-weight:700; color:#0a0a0a; margin-bottom:3px; }
+        .num-desc  { font-size:14px; color:rgba(0,0,0,.3); line-height:1.35; }
+
+        .ba-col { flex:1; }
+        .ba-tag {
+            display:inline-block; padding:5px 14px; border-radius:6px;
+            font-size:11px; font-weight:700; letter-spacing:.12em; text-transform:uppercase;
+            margin-bottom:14px;
+        }
+        .ba-tag.bad  { background:rgba(0,0,0,.04); color:rgba(0,0,0,.45); }
+        .ba-tag.good { background:#0a0a0a; color:#fff; }
+        .ba-head { font-size:28px; font-weight:900; letter-spacing:-0.02em; color:#0a0a0a; margin-bottom:16px; }
+        .ba-head.dim { color:rgba(0,0,0,.3); }
+
+        .metric-pill {
+            display:inline-flex; align-items:center; gap:7px;
+            background:rgba(0,0,0,.03); border:1px solid rgba(0,0,0,.07);
+            border-radius:8px; padding:8px 14px;
+            font-size:14px; color:rgba(0,0,0,.5); margin:0 6px 8px 0;
+        }
+        .metric-pill.bad  { color:rgba(0,0,0,.4); }
+        .metric-pill.good { background:#0a0a0a; color:#fff; border-color:#0a0a0a; }
+
+        .divider-line {
+            border:none; border-top:1px solid rgba(0,0,0,.07); margin:24px 0;
+        }
+
+        .step-row {
+            display:flex; align-items:flex-start; gap:20px;
+            background:rgba(0,0,0,.015); border:1px solid rgba(0,0,0,.07);
+            border-radius:16px; padding:22px 26px; margin-bottom:12px;
+        }
+        .step-num {
+            width:48px; height:48px; flex-shrink:0; border-radius:12px;
+            background:rgba(0,0,0,.04); border:1px solid rgba(0,0,0,.08);
+            display:flex; align-items:center; justify-content:center;
+            font-size:22px; font-weight:900; color:#0a0a0a;
+        }
+        .step-title { font-size:22px; font-weight:800; color:#0a0a0a; margin-bottom:5px; }
+        .step-desc  { font-size:15px; color:rgba(0,0,0,.38); line-height:1.4; }
+
+        .earn-row {
+            display:flex; align-items:center; justify-content:space-between;
+            background:rgba(0,0,0,.015); border:1px solid rgba(0,0,0,.07);
+            border-radius:12px; padding:18px 24px; margin-bottom:10px;
+        }
+        .earn-row.highlight {
+            background:#0a0a0a; border-color:#0a0a0a;
+        }
+        .earn-label { font-size:18px; font-weight:600; color:#0a0a0a; }
+        .earn-row.highlight .earn-label { color:#fff; }
+        .earn-value { font-size:22px; font-weight:900; color:#0a0a0a; }
+        .earn-row.highlight .earn-value { color:#fff; }
+
+        .cta-pill {
+            display:inline-block; background:#0a0a0a; color:#fff;
+            border-radius:100px; padding:18px 44px;
+            font-size:22px; font-weight:800; letter-spacing:.02em;
+            margin-top:auto; align-self:center; text-align:center;
+        }
+
+        .footer {
+            position:absolute; bottom:30px; left:64px; right:170px;
+            display:flex; align-items:center; justify-content:space-between;
+        }
+        .footer-left  { font-size:14px; color:rgba(0,0,0,.2); letter-spacing:.04em; }
+        .footer-right { font-size:14px; font-weight:600; letter-spacing:.06em; color:rgba(0,0,0,.15); }
+
+        /* ── Gallery ── */
+        .gallery {
+            display:grid;
+            grid-template-columns:repeat(auto-fill, minmax(340px,1fr));
+            gap:20px; padding:32px; max-width:1200px; margin:0 auto;
+        }
+        .gcard {
+            background:#fff; border-radius:14px; overflow:hidden;
+            border:1px solid rgba(0,0,0,.06); box-shadow:0 2px 8px rgba(0,0,0,.05);
+            transition:all .25s;
+        }
+        .gcard:hover { transform:translateY(-3px); box-shadow:0 10px 32px rgba(0,0,0,.1); }
+        .preview-box { overflow:hidden; position:relative; background:#fff; }
+        .preview-box > div { transform-origin:top left; position:absolute; top:0; left:0; pointer-events:none; }
+        .gcard-info { padding:12px 16px; border-top:1px solid rgba(0,0,0,.05); }
+        .gcard-info h3 { font-size:13px; font-weight:700; color:#0a0a0a; margin-bottom:2px; }
+        .gcard-info p  { font-size:11px; color:#999; }
+        .gcard-dl {
+            display:block; width:calc(100% - 32px); margin:0 16px 14px;
+            padding:10px; border-radius:8px; font-size:12px; font-weight:700;
+            border:none; cursor:pointer; background:#0a0a0a; color:#fff;
+            font-family:'Inter',sans-serif; transition:background .15s;
+        }
+        .gcard-dl:hover { background:#333; }
+        #status { font-size:12px; color:#888; text-align:center; padding:4px; min-height:20px; }
+
+        /* ───────────────── POST-CANVAS (for download) ───────────────── */
+        .post-canvas { position:absolute; left:-9999px; top:0; }
+    </style>
+</head>
+<body>
+
+<div class="controls">
+    <h1>Pinned Post Graphics — CrftdWeb</h1>
+    <button class="btn btn-outline" onclick="toggleSafe()">Safe Zones</button>
+    <button class="btn btn-black" onclick="downloadAll()">Download All (PNG)</button>
+</div>
+
+<div id="status"></div>
+<div class="gallery" id="gallery"></div>
+
+<!-- FULL-SIZE FRAMES — off-screen, captured by html2canvas -->
+<div class="post-canvas">
+
+<div id="pin1" class="frame" style="background:#ffffff;">
+    <div style="position:absolute;top:0;left:0;right:0;height:2px;background:rgba(0,0,0,.06);"></div>
+    <div style="position:absolute;top:25%;left:35%;width:700px;height:700px;background:radial-gradient(circle,rgba(0,0,0,.012),transparent 70%);"></div>
+
+    <div class="safe-overlay" id="so1">
+        <div class="sz sz-top"></div><div class="sz sz-bottom"></div>
+        <div class="sz sz-right"></div><div class="sz sz-left"></div>
+    </div>
+
+    <div class="cs">
+        <div class="logo-bar"><img src="../CW-logo.png" crossorigin="anonymous" /></div>
+
+        <div class="tag">What We Build</div>
+
+        <h1 class="frame-h1">
+            Your website<br><span class="muted">should be your</span><br>best salesperson.
+        </h1>
+
+        <p class="sub">
+            Most aren't.<br>Slow. Generic. Invisible on Google.<br>We fix that.
+        </p>
+
+        <div class="card stat-row">
+            <div class="stat-box"><span>88%</span></div>
+            <div>
+                <div class="stat-label">Never return after bad UX</div>
+                <div class="stat-source">— Google / Forrester Research</div>
+            </div>
+        </div>
+        <div class="card stat-row">
+            <div class="stat-box"><span>75%</span></div>
+            <div>
+                <div class="stat-label">Judge credibility by design</div>
+                <div class="stat-source">— Stanford Persuasive Tech Lab</div>
+            </div>
+        </div>
+        <div class="card stat-row">
+            <div class="stat-box"><span>£997</span></div>
+            <div>
+                <div class="stat-label">Starting price. Done in 2 weeks.</div>
+                <div class="stat-source">Hand-coded. No templates. No Wix.</div>
+            </div>
+        </div>
+
+        <div style="margin-top:auto;">
+            <div class="cta-pill" style="margin-top:36px;">DM us "SITE" →</div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <span class="footer-left">Get your site working.</span>
+        <span class="footer-right">crftdweb.com</span>
+    </div>
+</div>
+
+
+<div id="pin2" class="frame" style="background:#ffffff;">
+    <div style="position:absolute;top:0;left:0;right:0;height:2px;background:rgba(0,0,0,.06);"></div>
+
+    <div class="safe-overlay" id="so2">
+        <div class="sz sz-top"></div><div class="sz sz-bottom"></div>
+        <div class="sz sz-right"></div><div class="sz sz-left"></div>
+    </div>
+
+    <div class="cs">
+        <div class="logo-bar"><img src="../CW-logo.png" crossorigin="anonymous" /></div>
+
+        <div class="tag">The Difference</div>
+
+        <h1 class="frame-h1">
+            Before.<br>After.<br><span class="muted">The numbers.</span>
+        </h1>
+
+        <p class="sub">What changes when you stop using a template and build something that actually works.</p>
+
+        <!-- BEFORE -->
+        <div class="card" style="margin-bottom:10px;">
+            <div class="ba-tag bad">✗ Before</div>
+            <div class="ba-head dim" style="font-size:24px;">Slow. Broken. Losing leads.</div>
+            <div style="display:flex;flex-wrap:wrap;">
+                <div class="metric-pill bad">⚡ 34/100 speed</div>
+                <div class="metric-pill bad">📱 Broken on mobile</div>
+                <div class="metric-pill bad">🔍 Page 4 on Google</div>
+                <div class="metric-pill bad">📧 0 enquiries/mo</div>
+            </div>
+        </div>
+
+        <!-- AFTER -->
+        <div class="card" style="background:#0a0a0a;border-color:#0a0a0a;margin-bottom:28px;">
+            <div class="ba-tag good">✓ After CrftdWeb</div>
+            <div style="font-size:24px;font-weight:900;letter-spacing:-0.02em;color:#fff;margin-bottom:16px;">Fast. Custom. Converting.</div>
+            <div style="display:flex;flex-wrap:wrap;">
+                <div class="metric-pill good">⚡ 97/100 speed</div>
+                <div class="metric-pill good">📱 Flawless mobile</div>
+                <div class="metric-pill good">🔍 Page 1 ranked</div>
+                <div class="metric-pill good">📧 12+ enquiries/mo</div>
+            </div>
+        </div>
+
+        <!-- WHAT WE DO -->
+        <div style="display:flex;flex-direction:column;gap:10px;margin-top:auto;">
+            <div class="numbered-row">
+                <div class="num-box"><span>01</span></div>
+                <div>
+                    <div class="num-title">Hand-coded — no templates</div>
+                    <div class="num-desc">Built from scratch for speed, SEO and conversion</div>
+                </div>
+            </div>
+            <div class="numbered-row">
+                <div class="num-box"><span>02</span></div>
+                <div>
+                    <div class="num-title">Delivered in under 2 weeks</div>
+                    <div class="num-desc">Starter from £997 · Launch from £2,497</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <span class="footer-left">Swipe to see more →</span>
+        <span class="footer-right">crftdweb.com</span>
+    </div>
+</div>
+
+
+<div id="pin3" class="frame" style="background:#ffffff;">
+    <div style="position:absolute;top:0;left:0;right:0;height:2px;background:rgba(0,0,0,.06);"></div>
+
+    <div class="safe-overlay" id="so3">
+        <div class="sz sz-top"></div><div class="sz sz-bottom"></div>
+        <div class="sz sz-right"></div><div class="sz sz-left"></div>
+    </div>
+
+    <div class="cs">
+        <div class="logo-bar"><img src="../CW-logo.png" crossorigin="anonymous" /></div>
+
+        <div class="tag black">Now Hiring</div>
+
+        <h1 class="frame-h1">
+            Earn up to<br>35% selling<br><span class="muted">websites.</span>
+        </h1>
+
+        <p class="sub">
+            Commission-only. Work from anywhere.<br>No experience needed. We train you.
+        </p>
+
+        <div class="step-row">
+            <div class="step-num">1</div>
+            <div>
+                <div class="step-title">Find the business</div>
+                <div class="step-desc">Spot UK businesses with a bad website — there are thousands</div>
+            </div>
+        </div>
+        <div class="step-row">
+            <div class="step-num">2</div>
+            <div>
+                <div class="step-title">We close & build it</div>
+                <div class="step-desc">Our team handles the pitch, design and delivery</div>
+            </div>
+        </div>
+        <div class="step-row">
+            <div class="step-num">3</div>
+            <div>
+                <div class="step-title">You get paid</div>
+                <div class="step-desc">Commission within 7 days of client deposit. Every time.</div>
+            </div>
+        </div>
+
+        <hr class="divider-line" />
+
+        <div class="earn-row">
+            <span class="earn-label">Starter site  · £997</span>
+            <span class="earn-value">£199 / deal</span>
+        </div>
+        <div class="earn-row">
+            <span class="earn-label">Launch site   · £2,497</span>
+            <span class="earn-value">£375 / deal</span>
+        </div>
+        <div class="earn-row highlight">
+            <span class="earn-label">Growth site   · £4,997</span>
+            <span class="earn-value">£600 / deal</span>
+        </div>
+        <div class="earn-row">
+            <span class="earn-label">Scale site    · £9,997</span>
+            <span class="earn-value">£1,000 / deal</span>
+        </div>
+
+        <div class="cta-pill" style="margin-top:32px;">Apply → crftdweb.com/apply</div>
+    </div>
+
+    <div class="footer">
+        <span class="footer-left">Full training provided.</span>
+        <span class="footer-right">crftdweb.com</span>
+    </div>
+</div>
+
+</div><!-- end .post-canvas -->
+
+<script>
+    const SCALE = 0.35; // 1080 * 0.35 = 378px preview width
+
+    const ads = [
+        { id:'pin1', title:'Pin 1 — Brand Intro',     desc:'What We Build · 3 stats · DM CTA' },
+        { id:'pin2', title:'Pin 2 — Before / After',  desc:'Metrics comparison · process' },
+        { id:'pin3', title:'Pin 3 — Rep Recruitment', desc:'Earn 35% · 3 steps · commission table' },
+    ];
+
+    let safeVisible = false;
+
+    function buildGallery() {
+        const gallery = document.getElementById('gallery');
+        ads.forEach(ad => {
+            const original = document.getElementById(ad.id);
+
+            // Clone into preview — safe overlays stripped (never shown in gallery)
+            const clone = original.cloneNode(true);
+            clone.querySelectorAll('.safe-overlay').forEach(el => el.remove());
+            clone.style.transform = `scale(${SCALE})`;
+            clone.style.transformOrigin = 'top left';
+            clone.style.pointerEvents = 'none';
+
+            const boxW = Math.round(1080 * SCALE);
+            const boxH = Math.round(1920 * SCALE);
+
+            const previewBox = document.createElement('div');
+            previewBox.className = 'preview-box';
+            previewBox.style.width  = boxW + 'px';
+            previewBox.style.height = boxH + 'px';
+            previewBox.appendChild(clone);
+
+            const info = document.createElement('div');
+            info.className = 'gcard-info';
+            info.innerHTML = `<h3>${ad.title}</h3><p>${ad.desc}</p>`;
+
+            const dlBtn = document.createElement('button');
+            dlBtn.className = 'gcard-dl';
+            dlBtn.textContent = '\u2193 Download PNG';
+            dlBtn.onclick = () => downloadFrame(ad.id, `crftdweb-${ad.id}.png`);
+
+            const card = document.createElement('div');
+            card.className = 'gcard';
+            card.appendChild(previewBox);
+            card.appendChild(info);
+            card.appendChild(dlBtn);
+            gallery.appendChild(card);
+        });
+    }
+
+    function toggleSafe() {
+        safeVisible = !safeVisible;
+        ['so1','so2','so3'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.classList.toggle('show', safeVisible);
+        });
+    }
+
+    function setStatus(msg) {
+        document.getElementById('status').textContent = msg;
+    }
+
+    function downloadFrame(frameId, filename) {
+        const el = document.getElementById(frameId);
+        // Hide safe zone overlays before capture
+        const overlays = el.querySelectorAll('.safe-overlay');
+        overlays.forEach(o => o.style.display = 'none');
+        setStatus(`Generating ${filename}\u2026`);
+        html2canvas(el, {
+            scale: 2,
+            useCORS: true,
+            allowTaint: true,
+            backgroundColor: '#ffffff',
+            width: 1080,
+            height: 1920,
+        }).then(canvas => {
+            overlays.forEach(o => o.style.display = '');
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            setStatus(`\u2713 ${filename} saved`);
+        });
+    }
+
+    function downloadAll() {
+        const frames = [
+            ['pin1', 'crftdweb-pin1-brand-intro.png'],
+            ['pin2', 'crftdweb-pin2-before-after.png'],
+            ['pin3', 'crftdweb-pin3-rep-recruit.png'],
+        ];
+        frames.forEach(([id, name], i) => {
+            setTimeout(() => downloadFrame(id, name), i * 1800);
+        });
+    }
+
+    buildGallery();
+</script>
+</body>
+</html>

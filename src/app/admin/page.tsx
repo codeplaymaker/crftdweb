@@ -1479,6 +1479,32 @@ export default function AdminDashboard() {
                 </div>
               </motion.a>
 
+              {/* Applicants */}
+              <motion.a
+                href="/admin/applicants"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.04 }}
+                whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                className="group bg-white/[0.03] border border-white/[0.06] rounded-2xl p-8 text-left hover:border-teal-500/30 hover:bg-teal-500/[0.03] transition-colors block"
+              >
+                <div className="w-12 h-12 rounded-xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-center mb-5 group-hover:bg-teal-500/15 transition-colors">
+                  <svg className="w-6 h-6 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-semibold text-white mb-2">Applicants</h3>
+                <p className="text-sm text-white/35 leading-relaxed mb-4">
+                  Hiring pipeline — review applicants, send trial tasks, chase follow-ups, and manage the rep funnel.
+                </p>
+                <div className="flex items-center gap-2 text-xs text-teal-400/60 font-medium">
+                  <span>View pipeline</span>
+                  <svg className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </motion.a>
+
               {/* Rep Training Leaderboard */}
               <motion.a
                 href="/admin/training"
@@ -1637,6 +1663,38 @@ export default function AdminDashboard() {
                   <svg className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
+                </div>
+              </motion.a>
+
+              {/* Business Brain */}
+              <motion.a
+                href="/admin/brain"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.05 }}
+                whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                className="group bg-white/[0.03] border border-white/[0.06] rounded-2xl p-8 text-left hover:border-purple-500/40 hover:bg-purple-500/[0.04] transition-colors block relative overflow-hidden"
+              >
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                  <div className="absolute top-0 right-0 w-48 h-48 bg-purple-500/[0.06] rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
+                </div>
+                <div className="relative">
+                  <div className="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/25 flex items-center justify-center mb-5 group-hover:bg-purple-500/20 transition-colors">
+                    <svg className="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-lg font-semibold text-white mb-2">Business Brain</h3>
+                  <p className="text-sm text-white/35 leading-relaxed mb-4">
+                    AI co-pilot that knows your entire business. Ask it what to focus on, what&apos;s blocking you, or anything else.
+                  </p>
+                  <div className="flex items-center gap-2 text-xs text-purple-400/60 font-medium">
+                    <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+                    <span>Live CRM data</span>
+                    <svg className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
                 </div>
               </motion.a>
 

@@ -7,6 +7,8 @@ import { NobodyCares } from './compositions/NobodyCares';
 import { TheMathHurts } from './compositions/TheMathHurts';
 import { FiveSeconds } from './compositions/FiveSeconds';
 import { DeadWords } from './compositions/DeadWords';
+import { BrandIntro } from './compositions/BrandIntro';
+import { RepRecruit } from './compositions/RepRecruit';
 
 // 1080x1920 = 9:16 TikTok/Reels/Shorts
 const WIDTH = 1080;
@@ -76,6 +78,22 @@ export const RemotionRoot: React.FC = () => {
         id="DeadWords"
         component={DeadWords}
         durationInFrames={10 * FPS}
+        fps={FPS}
+        width={WIDTH}
+        height={HEIGHT}
+      />
+      <Composition
+        id="BrandIntro"
+        component={BrandIntro}
+        durationInFrames={13 * FPS}
+        fps={FPS}
+        width={WIDTH}
+        height={HEIGHT}
+      />
+      <Composition
+        id="RepRecruit"
+        component={RepRecruit}
+        durationInFrames={14 * FPS}
         fps={FPS}
         width={WIDTH}
         height={HEIGHT}

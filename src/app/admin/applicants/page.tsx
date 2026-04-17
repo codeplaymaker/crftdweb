@@ -5,6 +5,7 @@ import { Loader2, Mail, ArrowLeft, AlertTriangle, CheckCircle2, Star, MapPin, Ph
 import Link from 'next/link';
 import { sendBookingLink } from '@/app/actions/sendBookingLink';
 import { sendOffer } from '@/app/actions/sendOffer';
+import { sendTrialFollowUp } from '@/app/actions/sendTrialFollowUp';
 import { type Verdict, type ApplicantStatus, type ApplicantWithStatus } from '@/app/admin/applicants/data';
 
 // ─── Activity Log ──────────────────────────────────────────────────────────
@@ -110,6 +111,10 @@ export default function AdminApplicantsPage() {
   const [sending, setSending] = useState<string | null>(null);
   const [sentIds, setSentIds] = useState<Set<string>>(new Set());
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [chasingId, setChasingId] = useState<string | null>(null);
+  const [chasedIds, setChasedIds] = useState<Set<string>>(new Set());
+  const [chaseErrors, setChaseErrors] = useState<Record<string, string>>({});
+  const [batchChasing, setBatchChasing] = useState(false);
   const [submissions, setSubmissions] = useState<TrialSubmission[]>([]);
   const [showAddForm, setShowAddForm] = useState(false);
   const [addingApplicant, setAddingApplicant] = useState(false);
@@ -206,6 +211,36 @@ export default function AdminApplicantsPage() {
     }
 
     setSending(null);
+  }
+
+  async function handleChase(applicant: ApplicantWithActivity) {
+    setChasingId(applicant.id);
+    setChaseErrors((e) => { const n = { ...e }; delete n[applicant.id]; return n; });
+    const result = await sendTrialFollowUp(applicant.id, applicant.name, applicant.email);
+    if (result.success) {
+      setApplicants((prev) =>
+        prev.map((a) =>
+          a.id === applicant.id ? { ...a, followUpSentAt: new Date().toISOString() } : a
+        )
+      );
+      setChasedIds((s) => new Set(s).add(applicant.id));
+    } else {
+      setChaseErrors((e) => ({ ...e, [applicant.id]: result.error ?? 'Failed to send' }));
+    }
+    setChasingId(null);
+  }
+
+  async function handleChaseAll() {
+    const now = Date.now();
+    const stale = applicants.filter((a) => {
+      if (a.status !== 'trial_sent' || a.followUpSentAt) return false;
+      if (!a.emailSentAt) return true;
+      return (now - new Date(a.emailSentAt).getTime()) / (1000 * 60 * 60 * 24) >= 3;
+    });
+    if (!stale.length) return;
+    setBatchChasing(true);
+    await Promise.all(stale.map((a) => handleChase(a)));
+    setBatchChasing(false);
   }
 
   async function handleAddApplicant(formData: {
@@ -393,6 +428,10 @@ export default function AdminApplicantsPage() {
                 error={errors[applicant.id]}
                 onSendBooking={handleSendBooking}
                 onSendOffer={handleSendOffer}
+                onChase={handleChase}
+                chasing={chasingId === applicant.id}
+                chased={chasedIds.has(applicant.id)}
+                chaseError={chaseErrors[applicant.id]}
                 onAddActivity={handleAddActivity}
                 onToggleReviewed={handleToggleReviewed}
                 onDelete={handleDeleteApplicant}
@@ -414,6 +453,11 @@ export default function AdminApplicantsPage() {
             sending={sending}
             onSendBooking={handleSendBooking}
             onSendOffer={handleSendOffer}
+            onChase={handleChase}
+            chasingId={chasingId}
+            chasedIds={chasedIds}
+            onChaseAll={handleChaseAll}
+            batchChasing={batchChasing}
           />
         )}
       </div>
@@ -430,6 +474,10 @@ interface RowProps {
   error?: string;
   onSendBooking: (a: ApplicantWithActivity) => void;
   onSendOffer: (a: ApplicantWithActivity) => void;
+  onChase: (a: ApplicantWithActivity) => void;
+  chasing: boolean;
+  chased: boolean;
+  chaseError?: string;
   onAddActivity: (applicantId: string, text: string) => void;
   onToggleReviewed: (submissionId: string, reviewed: boolean) => void;
   onDelete: (id: string) => void;
@@ -440,14 +488,29 @@ interface RowProps {
   submission: TrialSubmission | null;
 }
 
-function ApplicantRow({ applicant, sending, justSent, error, onSendBooking, onSendOffer, onAddActivity, onToggleReviewed, onDelete, onStatusChange, togglingReview, deleting, changingStatus, submission }: RowProps) {
+function ApplicantRow({ applicant, sending, justSent, error, onSendBooking, onSendOffer, onChase, chasing, chased, chaseError, onAddActivity, onToggleReviewed, onDelete, onStatusChange, togglingReview, deleting, changingStatus, submission }: RowProps) {
   const [expanded, setExpanded] = useState(false);
   const [noteText, setNoteText] = useState('');
   const [addingNote, setAddingNote] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [editFields, setEditFields] = useState({ name: applicant.name, email: applicant.email, phone: applicant.phone, location: applicant.location, notes: applicant.notes ?? '' });
+  const [savingEdit, setSavingEdit] = useState(false);
   const canSendBooking = applicant.verdict === 'booking' && applicant.status === 'pending';
   const canSendOffer = applicant.status === 'screened';
   const alreadySent = applicant.status !== 'pending';
+
+  const handleSaveEdit = async () => {
+    setSavingEdit(true);
+    await fetch('/api/admin/applicants', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: applicant.id, ...editFields }),
+    });
+    Object.assign(applicant, editFields);
+    setSavingEdit(false);
+    setEditing(false);
+  };
 
   const handleAddNote = async () => {
     if (!noteText.trim()) return;
@@ -552,6 +615,27 @@ function ApplicantRow({ applicant, sending, justSent, error, onSendBooking, onSe
               )}
             </>
           )}
+          {/* Chase follow-up — trial_sent applicants */}
+          {applicant.status === 'trial_sent' && (
+            <div className="flex flex-col items-end gap-1">
+              {applicant.followUpSentAt || chased ? (
+                <span className="flex items-center gap-1 text-xs text-zinc-500">
+                  <CheckCircle2 size={12} className="text-teal-500" />
+                  Chased
+                </span>
+              ) : (
+                <button
+                  onClick={() => onChase(applicant)}
+                  disabled={chasing}
+                  className="flex items-center gap-1.5 bg-orange-500/10 text-orange-400 border border-orange-500/20 text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-orange-500/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  {chasing ? <Loader2 size={12} className="animate-spin" /> : <Mail size={12} />}
+                  {chasing ? 'Sending…' : 'Chase'}
+                </button>
+              )}
+              {chaseError && <span className="text-[11px] text-red-400">{chaseError}</span>}
+            </div>
+          )}
           {error && (
             <span className="text-[11px] text-red-400">{error}</span>
           )}
@@ -582,7 +666,7 @@ function ApplicantRow({ applicant, sending, justSent, error, onSendBooking, onSe
       {/* Expanded details */}
       {expanded && (
         <div className="px-5 pb-4 border-t border-zinc-800 pt-3 space-y-2">
-          {/* Status change */}
+          {/* Status + Edit row */}
           <div className="flex items-center gap-3 pb-2 border-b border-zinc-800/60" onClick={(e) => e.stopPropagation()}>
             <span className="text-[10px] text-zinc-500 uppercase tracking-wider font-semibold">Status</span>
             <select
@@ -596,7 +680,52 @@ function ApplicantRow({ applicant, sending, justSent, error, onSendBooking, onSe
               ))}
             </select>
             {changingStatus && <Loader2 size={10} className="animate-spin text-zinc-500" />}
+            <button
+              onClick={() => setEditing((e) => !e)}
+              className={`ml-auto flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-medium transition-colors ${
+                editing ? 'bg-zinc-700 text-white' : 'bg-zinc-800 text-zinc-400 hover:text-white border border-zinc-700'
+              }`}
+            >
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+              {editing ? 'Cancel' : 'Edit'}
+            </button>
           </div>
+
+          {/* Inline edit form */}
+          {editing && (
+            <div className="bg-zinc-800/50 border border-zinc-700/50 rounded-xl p-4 space-y-3" onClick={(e) => e.stopPropagation()}>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-[10px] text-zinc-500 uppercase tracking-wider font-semibold block mb-1">Name</label>
+                  <input value={editFields.name} onChange={(e) => setEditFields(f => ({ ...f, name: e.target.value }))} className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-zinc-500" />
+                </div>
+                <div>
+                  <label className="text-[10px] text-zinc-500 uppercase tracking-wider font-semibold block mb-1">Email</label>
+                  <input value={editFields.email} onChange={(e) => setEditFields(f => ({ ...f, email: e.target.value }))} className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-zinc-500" />
+                </div>
+                <div>
+                  <label className="text-[10px] text-zinc-500 uppercase tracking-wider font-semibold block mb-1">Phone</label>
+                  <input value={editFields.phone} onChange={(e) => setEditFields(f => ({ ...f, phone: e.target.value }))} className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-zinc-500" />
+                </div>
+                <div>
+                  <label className="text-[10px] text-zinc-500 uppercase tracking-wider font-semibold block mb-1">Location</label>
+                  <input value={editFields.location} onChange={(e) => setEditFields(f => ({ ...f, location: e.target.value }))} className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-zinc-500" />
+                </div>
+              </div>
+              <div>
+                <label className="text-[10px] text-zinc-500 uppercase tracking-wider font-semibold block mb-1">Notes / Red Flags</label>
+                <input value={editFields.notes} onChange={(e) => setEditFields(f => ({ ...f, notes: e.target.value }))} className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-zinc-500" />
+              </div>
+              <button
+                onClick={handleSaveEdit}
+                disabled={savingEdit}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white text-zinc-900 text-xs font-semibold hover:bg-zinc-100 disabled:opacity-50 transition-colors"
+              >
+                {savingEdit ? <Loader2 size={11} className="animate-spin" /> : <CheckCircle2 size={11} />}
+                {savingEdit ? 'Saving…' : 'Save changes'}
+              </button>
+            </div>
+          )}
           {applicant.keyStrength && (
             <p className="text-xs text-zinc-300">
               <span className="text-zinc-500 uppercase tracking-wider text-[10px] font-semibold mr-2">Strength</span>
@@ -743,12 +872,22 @@ function PipelineView({
   sending,
   onSendBooking,
   onSendOffer,
+  onChase,
+  chasingId,
+  chasedIds,
+  onChaseAll,
+  batchChasing,
 }: {
   applicants: ApplicantWithActivity[];
   submissions: TrialSubmission[];
   sending: string | null;
   onSendBooking: (a: ApplicantWithActivity) => void;
   onSendOffer: (a: ApplicantWithActivity) => void;
+  onChase: (a: ApplicantWithActivity) => void;
+  chasingId: string | null;
+  chasedIds: Set<string>;
+  onChaseAll: () => void;
+  batchChasing: boolean;
 }) {
   const columns = PIPELINE_STAGES.map((stage) => ({
     ...stage,
@@ -774,6 +913,17 @@ function PipelineView({
               <span className="text-[10px] text-zinc-600 font-medium">
                 {col.items.length}
               </span>
+              {col.key === 'trial_sent' && col.items.some((a) => !a.followUpSentAt) && (
+                <button
+                  onClick={onChaseAll}
+                  disabled={batchChasing}
+                  title="Send follow-up to all unchased"
+                  className="ml-auto flex items-center gap-1 px-2 py-0.5 rounded-md bg-orange-500/10 text-orange-400 border border-orange-500/20 text-[10px] font-semibold hover:bg-orange-500/20 disabled:opacity-50 transition-colors"
+                >
+                  {batchChasing ? <Loader2 size={9} className="animate-spin" /> : <Mail size={9} />}
+                  Chase all
+                </button>
+              )}
             </div>
             <div className="space-y-2">
               {col.items.map((applicant) => (
@@ -783,6 +933,9 @@ function PipelineView({
                   sending={sending === applicant.id}
                   onSendBooking={onSendBooking}
                   onSendOffer={onSendOffer}
+                  onChase={onChase}
+                  chasing={chasingId === applicant.id}
+                  chased={chasedIds.has(applicant.id)}
                   submission={
                     submissions.find(
                       (s) => s.email === applicant.email.toLowerCase()
@@ -837,12 +990,18 @@ function PipelineCard({
   sending,
   onSendBooking,
   onSendOffer,
+  onChase,
+  chasing,
+  chased,
   submission,
 }: {
   applicant: ApplicantWithActivity;
   sending: boolean;
   onSendBooking: (a: ApplicantWithActivity) => void;
   onSendOffer: (a: ApplicantWithActivity) => void;
+  onChase: (a: ApplicantWithActivity) => void;
+  chasing: boolean;
+  chased: boolean;
   submission: TrialSubmission | null;
 }) {
   const canSendBooking =
@@ -920,6 +1079,23 @@ function PipelineCard({
           )}
           Send Offer
         </button>
+      )}
+      {applicant.status === 'trial_sent' && (
+        applicant.followUpSentAt || chased ? (
+          <span className="flex items-center gap-1 text-[10px] text-zinc-500">
+            <CheckCircle2 size={10} className="text-teal-500" />
+            Chased
+          </span>
+        ) : (
+          <button
+            onClick={() => onChase(applicant)}
+            disabled={chasing}
+            className="w-full flex items-center justify-center gap-1.5 bg-orange-500/10 text-orange-400 border border-orange-500/20 text-[11px] font-semibold px-2 py-1.5 rounded-lg hover:bg-orange-500/20 disabled:opacity-50 transition-colors"
+          >
+            {chasing ? <Loader2 size={10} className="animate-spin" /> : <Mail size={10} />}
+            {chasing ? 'Sending…' : 'Chase'}
+          </button>
+        )
       )}
     </div>
   );
