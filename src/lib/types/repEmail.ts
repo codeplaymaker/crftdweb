@@ -35,6 +35,8 @@ export interface RepEmailLog {
   error?: string;
   sentAt: import('firebase/firestore').Timestamp;
   repliedAt?: import('firebase/firestore').Timestamp | null;
+  openedAt?: import('firebase/firestore').Timestamp | null;
+  clickedAt?: import('firebase/firestore').Timestamp | null;
 }
 
 export const EMAIL_TEMPLATES: EmailTemplate[] = [

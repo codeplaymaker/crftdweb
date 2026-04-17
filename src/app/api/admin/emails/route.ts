@@ -9,9 +9,10 @@ function isAdmin(req: NextRequest) {
 export async function GET(req: NextRequest) {
   if (!isAdmin(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const [emailSnap, replySnap] = await Promise.all([
+  const [emailSnap, replySnap, adminEmailSnap] = await Promise.all([
     adminDb.collection('repEmails').orderBy('sentAt', 'desc').limit(100).get(),
     adminDb.collection('repEmailReplies').orderBy('receivedAt', 'desc').limit(50).get(),
+    adminDb.collection('adminEmails').orderBy('sentAt', 'desc').limit(200).get(),
   ]);
 
   const emails = emailSnap.docs.map(d => {
@@ -21,6 +22,8 @@ export async function GET(req: NextRequest) {
       id: d.id,
       sentAt: data.sentAt?.toDate?.()?.toISOString() ?? null,
       repliedAt: data.repliedAt?.toDate?.()?.toISOString() ?? null,
+      openedAt: data.openedAt?.toDate?.()?.toISOString() ?? null,
+      clickedAt: data.clickedAt?.toDate?.()?.toISOString() ?? null,
     };
   });
 
@@ -33,5 +36,18 @@ export async function GET(req: NextRequest) {
     };
   });
 
-  return NextResponse.json({ emails, replies });
+  const adminEmails = adminEmailSnap.docs.map(d => {
+    const data = d.data();
+    return {
+      ...data,
+      id: d.id,
+      sentAt: data.sentAt?.toDate?.()?.toISOString() ?? null,
+      openedAt: data.openedAt?.toDate?.()?.toISOString() ?? null,
+      clickedAt: data.clickedAt?.toDate?.()?.toISOString() ?? null,
+      deliveredAt: data.deliveredAt?.toDate?.()?.toISOString() ?? null,
+      bouncedAt: data.bouncedAt?.toDate?.()?.toISOString() ?? null,
+    };
+  });
+
+  return NextResponse.json({ emails, replies, adminEmails });
 }

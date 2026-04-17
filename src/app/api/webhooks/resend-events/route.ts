@@ -50,8 +50,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true, skipped: 'no email_id' });
   }
 
-  // Only process bounce and complaint events for rep emails
-  if (!['email.bounced', 'email.complained', 'email.delivered'].includes(eventType)) {
+  // Only process known events for rep emails
+  if (!['email.bounced', 'email.complained', 'email.delivered', 'email.opened', 'email.clicked'].includes(eventType)) {
     return NextResponse.json({ ok: true, skipped: 'irrelevant event' });
   }
 
@@ -62,15 +62,42 @@ export async function POST(req: NextRequest) {
     .get();
 
   if (snap.empty) {
-    // Not a rep email — could be a system email, ignore
-    return NextResponse.json({ ok: true, skipped: 'not a rep email' });
+    // Check if it's an admin-sent applicant email
+    const adminSnap = await adminDb.collection('adminEmails')
+      .where('resendId', '==', resendId)
+      .limit(1)
+      .get();
+
+    if (adminSnap.empty) {
+      return NextResponse.json({ ok: true, skipped: 'email not found' });
+    }
+
+    const adminDoc = adminSnap.docs[0];
+    if (eventType === 'email.opened') {
+      await adminDoc.ref.update({ openedAt: FieldValue.serverTimestamp() });
+    } else if (eventType === 'email.clicked') {
+      await adminDoc.ref.update({ clickedAt: FieldValue.serverTimestamp() });
+    } else if (eventType === 'email.delivered') {
+      await adminDoc.ref.update({ deliveredAt: FieldValue.serverTimestamp() });
+    } else if (eventType === 'email.bounced') {
+      await adminDoc.ref.update({ bouncedAt: FieldValue.serverTimestamp() });
+    }
+    return NextResponse.json({ ok: true, processed: `admin:${eventType}` });
   }
 
   const emailDoc = snap.docs[0];
   const emailData = emailDoc.data();
   const repId = emailData.repId;
 
-  if (eventType === 'email.delivered') {
+  if (eventType === 'email.opened') {
+    await emailDoc.ref.update({
+      openedAt: FieldValue.serverTimestamp(),
+    });
+  } else if (eventType === 'email.clicked') {
+    await emailDoc.ref.update({
+      clickedAt: FieldValue.serverTimestamp(),
+    });
+  } else if (eventType === 'email.delivered') {
     await emailDoc.ref.update({
       deliveryStatus: 'delivered',
       deliveredAt: FieldValue.serverTimestamp(),

@@ -115,12 +115,23 @@ export async function sendBookingLink(
 
     const bookingUrl = `${BASE_URL}/book/${token}`;
 
-    await resend.emails.send({
+    const sendResult = await resend.emails.send({
       from: 'CrftdWeb <admin@crftdweb.com>',
       to: [email],
       subject: 'CrftdWeb — Book your screening call',
       html: buildHtml(name, bookingUrl),
       text: plainText(name, bookingUrl),
+    });
+
+    // Track in adminEmails for open/click tracking
+    await adminDb.collection('adminEmails').add({
+      to: email.trim().toLowerCase(),
+      name,
+      subject: 'CrftdWeb — Book your screening call',
+      templateKey: 'booking-link',
+      resendId: sendResult.data?.id ?? null,
+      status: sendResult.error ? 'failed' : 'sent',
+      sentAt: new Date(),
     });
 
     // Upsert applicant — create if new, update status if not yet further along

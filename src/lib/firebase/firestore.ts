@@ -537,6 +537,8 @@ export interface RepEmailLog {
   error?: string;
   sentAt: Timestamp;
   repliedAt?: Timestamp | null;
+  openedAt?: Timestamp | null;
+  clickedAt?: Timestamp | null;
 }
 
 export async function getLeadEmails(leadId: string, repId: string): Promise<RepEmailLog[]> {

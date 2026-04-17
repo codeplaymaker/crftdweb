@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Copy, Check, ChevronDown, ChevronUp, Mail, RefreshCw, UserCheck, Handshake, Users, Send, Eye, Loader2, CheckCircle2, Sparkles, PenLine, UserPlus } from 'lucide-react';
+import { Copy, Check, ChevronDown, ChevronUp, Mail, RefreshCw, UserCheck, Handshake, Users, Send, Eye, Loader2, CheckCircle2, Sparkles, PenLine, UserPlus, MousePointerClick, Reply, Activity } from 'lucide-react';
 import { sendTrialTask } from '@/app/actions/sendTrialTask';
 import { sendBookingLink } from '@/app/actions/sendBookingLink';
 import { sendLoginDetails } from '@/app/actions/sendLoginDetails';
@@ -1335,9 +1335,304 @@ function CategorySection({ category }: { category: Category }) {
   );
 }
 
+// ─── Tracking Panel ────────────────────────────────────────────────────────
+interface AdminEmailRecord {
+  id: string;
+  to: string;
+  name: string;
+  subject: string;
+  templateKey: string;
+  status: string;
+  sentAt: string | null;
+  openedAt?: string | null;
+  clickedAt?: string | null;
+  deliveredAt?: string | null;
+  bouncedAt?: string | null;
+}
+
+const TEMPLATE_LABELS: Record<string, string> = {
+  'trial-task': 'Trial Task',
+  'booking-link': 'Booking Link',
+  'offer': 'Job Offer',
+  'login-details': 'Login Details',
+  'declined': 'Decline',
+};
+
+const TEMPLATE_COLORS: Record<string, string> = {
+  'trial-task': 'text-purple-400 bg-purple-500/10 border-purple-500/20',
+  'booking-link': 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20',
+  'offer': 'text-amber-400 bg-amber-500/10 border-amber-500/20',
+  'login-details': 'text-sky-400 bg-sky-500/10 border-sky-500/20',
+  'declined': 'text-red-400 bg-red-500/10 border-red-500/20',
+};
+
+function fmt(iso: string | null | undefined): string {
+  if (!iso) return '—';
+  return new Date(iso).toLocaleDateString('en-GB', {
+    day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit',
+  });
+}
+
+// ─── Rep Emails Panel ───
+interface RepEmailRecord {
+  id: string;
+  repId: string;
+  repName: string;
+  businessName: string;
+  recipientEmail: string;
+  templateKey: string;
+  subject: string;
+  status: string;
+  sentAt: string | null;
+  repliedAt?: string | null;
+  openedAt?: string | null;
+  clickedAt?: string | null;
+}
+
+function RepEmailsPanel() {
+  const [emails, setEmails] = useState<RepEmailRecord[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [repFilter, setRepFilter] = useState<string>('all');
+
+  useEffect(() => {
+    fetch('/api/admin/emails')
+      .then(r => r.json())
+      .then(data => setEmails((data.emails ?? []) as RepEmailRecord[]))
+      .catch(() => setError('Failed to load'))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const repNames = Array.from(new Set(emails.map(e => e.repName).filter(Boolean)));
+  const filtered = repFilter === 'all' ? emails : emails.filter(e => e.repName === repFilter);
+
+  const stats = {
+    sent: emails.length,
+    opened: emails.filter(e => e.openedAt).length,
+    clicked: emails.filter(e => e.clickedAt).length,
+    replied: emails.filter(e => e.repliedAt).length,
+  };
+  const openRate = stats.sent > 0 ? Math.round((stats.opened / stats.sent) * 100) : 0;
+
+  return (
+    <div className="space-y-6">
+      <div className="grid grid-cols-4 gap-3">
+        {[
+          { label: 'Sent', value: stats.sent, color: 'text-white' },
+          { label: 'Opened', value: `${stats.opened} (${openRate}%)`, color: 'text-amber-400' },
+          { label: 'Clicked', value: stats.clicked, color: 'text-purple-400' },
+          { label: 'Replied', value: stats.replied, color: 'text-emerald-400' },
+        ].map(s => (
+          <div key={s.label} className="bg-white/[0.03] border border-white/8 rounded-xl p-4 text-center">
+            <p className={`text-xl font-bold ${s.color}`}>{s.value}</p>
+            <p className="text-[10px] text-white/30 uppercase tracking-widest mt-1">{s.label}</p>
+          </div>
+        ))}
+      </div>
+
+      {repNames.length > 1 && (
+        <div className="flex gap-2 flex-wrap">
+          <button
+            onClick={() => setRepFilter('all')}
+            className={`text-xs px-3 py-1.5 rounded-full border transition-all ${
+              repFilter === 'all' ? 'bg-white/10 border-white/20 text-white' : 'bg-white/[0.03] border-white/8 text-white/40 hover:text-white/70'
+            }`}
+          >
+            All reps
+          </button>
+          {repNames.map(name => (
+            <button
+              key={name}
+              onClick={() => setRepFilter(name)}
+              className={`text-xs px-3 py-1.5 rounded-full border transition-all ${
+                repFilter === name ? 'bg-white/10 border-white/20 text-white' : 'bg-white/[0.03] border-white/8 text-white/40 hover:text-white/70'
+              }`}
+            >
+              {name}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {loading ? (
+        <div className="flex items-center justify-center py-12">
+          <Loader2 className="w-5 h-5 animate-spin text-white/30" />
+        </div>
+      ) : error ? (
+        <p className="text-sm text-red-400 text-center py-8">{error}</p>
+      ) : filtered.length === 0 ? (
+        <p className="text-sm text-white/25 text-center py-12">No rep emails yet — they&apos;ll appear here as your reps send outreach.</p>
+      ) : (
+        <div className="space-y-2">
+          {filtered.map(email => (
+            <div key={email.id} className="bg-white/[0.02] border border-white/8 rounded-xl p-4">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap mb-1">
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/15 border border-indigo-500/20 text-indigo-400 font-medium">
+                      {email.repName ?? 'Unknown rep'}
+                    </span>
+                    {email.businessName && (
+                      <span className="text-xs text-white/60 font-medium">{email.businessName}</span>
+                    )}
+                    <span className="text-xs text-white/30 truncate">{email.recipientEmail}</span>
+                  </div>
+                  <p className="text-xs text-white/50 italic truncate">{email.subject}</p>
+                </div>
+                <div className="flex items-center gap-1.5 flex-shrink-0 flex-wrap justify-end">
+                  {email.repliedAt && (
+                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 flex items-center gap-1">
+                      <Reply className="w-2.5 h-2.5" />replied
+                    </span>
+                  )}
+                  {email.clickedAt && (
+                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-purple-500/20 text-purple-400 border border-purple-500/20 flex items-center gap-1">
+                      <MousePointerClick className="w-2.5 h-2.5" />clicked
+                    </span>
+                  )}
+                  {email.openedAt && !email.clickedAt && !email.repliedAt && (
+                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/20 flex items-center gap-1">
+                      <Eye className="w-2.5 h-2.5" />opened
+                    </span>
+                  )}
+                  {!email.openedAt && !email.clickedAt && !email.repliedAt && (
+                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-white/5 text-white/25 border border-white/8">sent</span>
+                  )}
+                </div>
+              </div>
+              <p className="text-[10px] text-white/20 mt-2">{fmt(email.sentAt)}</p>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function TrackingPanel() {
+  const [emails, setEmails] = useState<AdminEmailRecord[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [filter, setFilter] = useState<'all' | 'opened' | 'clicked' | 'bounced'>('all');
+
+  useEffect(() => {
+    fetch('/api/admin/emails')
+      .then(r => r.json())
+      .then(data => {
+        setEmails((data.adminEmails ?? []) as AdminEmailRecord[]);
+      })
+      .catch(() => setError('Failed to load'))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const filtered = emails.filter(e => {
+    if (filter === 'opened') return !!e.openedAt;
+    if (filter === 'clicked') return !!e.clickedAt;
+    if (filter === 'bounced') return !!e.bouncedAt;
+    return true;
+  });
+
+  const stats = {
+    sent: emails.length,
+    opened: emails.filter(e => e.openedAt).length,
+    clicked: emails.filter(e => e.clickedAt).length,
+    bounced: emails.filter(e => e.bouncedAt).length,
+  };
+  const openRate = stats.sent > 0 ? Math.round((stats.opened / stats.sent) * 100) : 0;
+
+  return (
+    <div className="space-y-6">
+      {/* Stats row */}
+      <div className="grid grid-cols-4 gap-3">
+        {[
+          { label: 'Sent', value: stats.sent, color: 'text-white' },
+          { label: 'Opened', value: `${stats.opened} (${openRate}%)`, color: 'text-amber-400' },
+          { label: 'Clicked', value: stats.clicked, color: 'text-purple-400' },
+          { label: 'Bounced', value: stats.bounced, color: 'text-red-400' },
+        ].map(s => (
+          <div key={s.label} className="bg-white/[0.03] border border-white/8 rounded-xl p-4 text-center">
+            <p className={`text-xl font-bold ${s.color}`}>{s.value}</p>
+            <p className="text-[10px] text-white/30 uppercase tracking-widest mt-1">{s.label}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Filter pills */}
+      <div className="flex gap-2">
+        {(['all', 'opened', 'clicked', 'bounced'] as const).map(f => (
+          <button
+            key={f}
+            onClick={() => setFilter(f)}
+            className={`text-xs px-3 py-1.5 rounded-full border transition-all capitalize ${
+              filter === f ? 'bg-white/10 border-white/20 text-white' : 'bg-white/[0.03] border-white/8 text-white/40 hover:text-white/70'
+            }`}
+          >
+            {f === 'all' ? `All (${stats.sent})` : f === 'opened' ? `Opened (${stats.opened})` : f === 'clicked' ? `Clicked (${stats.clicked})` : `Bounced (${stats.bounced})`}
+          </button>
+        ))}
+      </div>
+
+      {/* Email list */}
+      {loading ? (
+        <div className="flex items-center justify-center py-12">
+          <Loader2 className="w-5 h-5 animate-spin text-white/30" />
+        </div>
+      ) : error ? (
+        <p className="text-sm text-red-400 text-center py-8">{error}</p>
+      ) : filtered.length === 0 ? (
+        <p className="text-sm text-white/25 text-center py-12">No emails yet — they'll appear here as you send them.</p>
+      ) : (
+        <div className="space-y-2">
+          {filtered.map(email => (
+            <div key={email.id} className="bg-white/[0.02] border border-white/8 rounded-xl p-4">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className={`text-[10px] px-2 py-0.5 rounded-full border font-medium ${
+                      TEMPLATE_COLORS[email.templateKey] ?? 'text-white/40 bg-white/5 border-white/10'
+                    }`}>
+                      {TEMPLATE_LABELS[email.templateKey] ?? email.templateKey}
+                    </span>
+                    <p className="text-sm font-medium text-white truncate">{email.name}</p>
+                    <p className="text-xs text-white/40 truncate">{email.to}</p>
+                  </div>
+                  <p className="text-xs text-white/30 mt-1 italic truncate">{email.subject}</p>
+                </div>
+                <div className="flex items-center gap-1.5 flex-shrink-0 flex-wrap justify-end">
+                  {email.openedAt && (
+                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/20 flex items-center gap-1">
+                      <Eye className="w-2.5 h-2.5" />opened
+                    </span>
+                  )}
+                  {email.clickedAt && (
+                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-purple-500/20 text-purple-400 border border-purple-500/20 flex items-center gap-1">
+                      <MousePointerClick className="w-2.5 h-2.5" />clicked
+                    </span>
+                  )}
+                  {email.bouncedAt && (
+                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-red-500/20 text-red-400 border border-red-500/20">
+                      bounced
+                    </span>
+                  )}
+                  {!email.openedAt && !email.clickedAt && !email.bouncedAt && (
+                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-white/5 text-white/25 border border-white/8">
+                      {email.deliveredAt ? 'delivered' : 'sent'}
+                    </span>
+                  )}
+                </div>
+              </div>
+              <p className="text-[10px] text-white/20 mt-2">Sent {fmt(email.sentAt)}</p>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Page ───
 export default function EmailTemplatesPage() {
-  const [pageTab, setPageTab] = useState<'templates' | 'send' | 'compose'>('send');
+  const [pageTab, setPageTab] = useState<'tracking' | 'templates' | 'send' | 'compose' | 'rep-emails'>('send');
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
   const displayed = activeCategory
@@ -1359,7 +1654,7 @@ export default function EmailTemplatesPage() {
 
         {/* Top tabs */}
         <div className="flex gap-1 p-1 bg-white/[0.03] border border-white/8 rounded-xl w-fit mb-8">
-          {([['send', 'Send Email'], ['compose', 'Compose'], ['templates', 'Copy Templates']] as const).map(([key, label]) => (
+          {([['send', 'Send Email'], ['compose', 'Compose'], ['tracking', 'Tracking'], ['rep-emails', 'Rep Emails'], ['templates', 'Copy Templates']] as const).map(([key, label]) => (
             <button
               key={key}
               onClick={() => setPageTab(key)}
@@ -1371,6 +1666,28 @@ export default function EmailTemplatesPage() {
             </button>
           ))}
         </div>
+
+        {pageTab === 'tracking' && (
+          <div className="bg-white/[0.02] border border-white/8 rounded-2xl p-6">
+            <div className="flex items-center gap-2 mb-6">
+              <Activity size={16} className="text-amber-400" />
+              <p className="text-sm font-semibold text-white/80">Applicant Email Tracking</p>
+              <span className="text-[10px] text-white/30 ml-1">Opens & clicks for trial task, booking, offer, and login emails</span>
+            </div>
+            <TrackingPanel />
+          </div>
+        )}
+
+        {pageTab === 'rep-emails' && (
+          <div className="bg-white/[0.02] border border-white/8 rounded-2xl p-6">
+            <div className="flex items-center gap-2 mb-6">
+              <Users size={16} className="text-indigo-400" />
+              <p className="text-sm font-semibold text-white/80">Rep Email Activity</p>
+              <span className="text-[10px] text-white/30 ml-1">All outreach sent by your reps — opens, clicks &amp; replies</span>
+            </div>
+            <RepEmailsPanel />
+          </div>
+        )}
 
         {pageTab === 'send' && (
           <div className="bg-white/[0.02] border border-white/8 rounded-2xl p-6">

@@ -141,12 +141,23 @@ export async function sendOffer(
     const acceptUrl = `${BASE_URL}/offer/${token}?action=accept`;
     const declineUrl = `${BASE_URL}/offer/${token}?action=decline`;
 
-    await resend.emails.send({
+    const sendResult = await resend.emails.send({
       from: 'CrftdWeb <admin@crftdweb.com>',
       to: [email],
       subject: `CrftdWeb — You've been selected, ${name.split(' ')[0]}`,
       html: buildHtml(name, acceptUrl, declineUrl),
       text: plainText(name, acceptUrl, declineUrl),
+    });
+
+    // Track in adminEmails for open/click tracking
+    await adminDb.collection('adminEmails').add({
+      to: email.trim().toLowerCase(),
+      name,
+      subject: `CrftdWeb — You've been selected, ${name.split(' ')[0]}`,
+      templateKey: 'offer',
+      resendId: sendResult.data?.id ?? null,
+      status: sendResult.error ? 'failed' : 'sent',
+      sentAt: new Date(),
     });
 
     // Update applicant status to 'offered' — look up by email if no ID provided

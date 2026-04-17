@@ -673,6 +673,8 @@ interface AdminEmail {
   error?: string;
   sentAt: string | null;
   repliedAt?: string | null;
+  openedAt?: string | null;
+  clickedAt?: string | null;
 }
 
 interface AdminReply {
@@ -959,6 +961,8 @@ function ManagementTab() {
             const wonLeads = repLeads.filter(l => l.status === 'won');
             const repCommissions = commissions.filter(c => c.repId === rep.uid && c.status !== 'paid');
             const owed = repCommissions.reduce((s, c) => s + c.commissionAmount, 0);
+            const repEmailsSent = emails.filter(e => e.repId === rep.uid);
+            const repEmailsOpened = repEmailsSent.filter(e => e.openedAt).length;
             return (
               <div key={rep.uid} className="bg-white/[0.02] border border-white/8 rounded-xl px-4 py-3">
                 <div className="flex items-center justify-between">
@@ -982,6 +986,18 @@ function ManagementTab() {
                       <p className="text-emerald-400 font-semibold">{wonLeads.length}</p>
                       <p className="text-white/25">won</p>
                     </div>
+                    {repEmailsSent.length > 0 && (
+                      <div>
+                        <p className="text-sky-400 font-semibold">{repEmailsSent.length}</p>
+                        <p className="text-white/25">emails</p>
+                      </div>
+                    )}
+                    {repEmailsOpened > 0 && (
+                      <div>
+                        <p className="text-amber-400 font-semibold">{repEmailsOpened}</p>
+                        <p className="text-white/25">opened</p>
+                      </div>
+                    )}
                     {owed > 0 && (
                       <div>
                         <p className="text-amber-400 font-semibold">£{owed.toLocaleString()}</p>

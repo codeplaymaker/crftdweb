@@ -11,14 +11,19 @@ export async function GET(req: NextRequest) {
 
   const snap = await adminDb
     .collection('trial_submissions')
-    .orderBy('submittedAt', 'desc')
     .get();
 
-  const submissions = snap.docs.map(doc => ({
-    id: doc.id,
-    ...doc.data(),
-    submittedAt: doc.data().submittedAt?.toDate?.()?.toISOString() ?? null,
-  }));
+  const submissions = snap.docs
+    .map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+      submittedAt: doc.data().submittedAt?.toDate?.()?.toISOString() ?? null,
+    }))
+    .sort((a, b) => {
+      if (!a.submittedAt) return 1;
+      if (!b.submittedAt) return -1;
+      return b.submittedAt.localeCompare(a.submittedAt);
+    });
 
   return NextResponse.json(submissions);
 }

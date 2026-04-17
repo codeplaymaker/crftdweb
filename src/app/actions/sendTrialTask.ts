@@ -36,10 +36,10 @@ function buildHtml(name: string, email: string): string {
                 Hi ${name},
               </p>
               <p style="margin:0 0 16px;font-size:15px;color:#444;line-height:1.7;">
-                Thanks for applying — your background looks interesting.
+                Good news — we want to move you forward.
               </p>
               <p style="margin:0 0 24px;font-size:15px;color:#444;line-height:1.7;">
-                Before we book a call, I'd like to see how you think.
+                Before we get on a call, there's one quick thing. It takes about 20 minutes and it'll tell us everything we need to know.
               </p>
 
               <!-- Task box -->
@@ -55,7 +55,7 @@ function buildHtml(name: string, email: string): string {
               </table>
 
               <p style="margin:0 0 12px;font-size:14px;color:#888;line-height:1.7;">
-                Not just <em>"it looks old"</em> — something specific like:
+                Not vague — be specific. Something like:
               </p>
 
               <!-- Examples -->
@@ -77,12 +77,15 @@ function buildHtml(name: string, email: string): string {
                 </tr>`).join('')}
               </table>
 
-              <p style="margin:0 0 16px;font-size:15px;color:#444;line-height:1.7;">
-                When you're ready, click below to submit your list — it takes 2 minutes.
+              <p style="margin:0 0 8px;font-size:15px;color:#444;line-height:1.7;">
+                It's a simple form — takes 2 minutes to fill in.
+              </p>
+              <p style="margin:0 0 24px;font-size:13px;color:#888;line-height:1.7;">
+                Aim to get this done today — we're moving through applications quickly.
               </p>
 
               <!-- CTA button -->
-              <table cellpadding="0" cellspacing="0" style="margin:0 0 32px;">
+              <table cellpadding="0" cellspacing="0" style="margin:0 0 20px;">
                 <tr>
                   <td style="background:#111;border-radius:8px;">
                     <a href="${BASE_URL}/apply/trial" style="display:inline-block;padding:14px 28px;font-size:15px;font-weight:700;color:#ffffff;text-decoration:none;">Submit your 5 businesses &rarr;</a>
@@ -91,7 +94,7 @@ function buildHtml(name: string, email: string): string {
               </table>
 
               <p style="margin:0 0 32px;font-size:13px;color:#999;line-height:1.6;">
-                You&apos;ll need to enter this email address on the form so we can match it to your application: <strong style="color:#555;">${email}</strong>
+                Prefer to reply directly? Just hit reply and send your 5 businesses in this email thread — works just as well.
               </p>
 
               <!-- Divider -->
@@ -131,16 +134,17 @@ function buildHtml(name: string, email: string): string {
 
 const plainText = (name: string) => `Hi ${name},
 
-Thanks for applying — your background looks interesting.
+Good news — we want to move you forward.
 
-Before we book a call, I'd like to see how you think.
+Before we get on a call, there's one quick thing. It takes about 20 minutes.
 
-Your task: Find 5 UK businesses with a bad website and write one specific sentence for each explaining why it needs a redesign — not just "it looks old", but something like "no clear call-to-action" or "hero section is a blurry stock photo with no headline" or "contact form is buried three clicks deep".
+Your task: Find 5 UK businesses with a bad website and write one specific sentence for each explaining why it needs a redesign. Be specific — not "it looks old", but something like "no clear call-to-action", "hero section is a stock photo with no headline", or "contact form is buried three clicks deep".
 
-When you're ready, click below to submit your list — it takes 2 minutes:
-${BASE_URL}/apply/trial
+Submit here (takes 2 minutes): ${BASE_URL}/apply/trial
 
-Use this email address on the form so we can match it to your application.
+Or just reply to this email with your 5 businesses — works just as well.
+
+Aim to get this done today — we're moving through applications quickly.
 
 CrftdWeb
 crftdweb.com`;
@@ -177,12 +181,23 @@ export async function sendTrialTask(name: string, email: string, cvData?: CVData
   }
 
   try {
-    await resend.emails.send({
+    const sendResult = await resend.emails.send({
       from: 'CrftdWeb <admin@crftdweb.com>',
       to: [email],
       subject: 'CrftdWeb — Quick task before we chat',
       html: buildHtml(name, email),
       text: plainText(name),
+    });
+
+    // Track in adminEmails for open/click tracking
+    await adminDb.collection('adminEmails').add({
+      to: normalised,
+      name,
+      subject: 'CrftdWeb — Quick task before we chat',
+      templateKey: 'trial-task',
+      resendId: sendResult.data?.id ?? null,
+      status: sendResult.error ? 'failed' : 'sent',
+      sentAt: new Date(),
     });
 
     // Log to Firestore so future attempts are blocked

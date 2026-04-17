@@ -6,7 +6,7 @@ import { EMAIL_TEMPLATES, EmailTemplateKey } from '@/lib/types/repEmail';
 import { getAuth } from 'firebase/auth';
 import { getScreeningSlots } from '@/app/actions/getScreeningSlots';
 import { sendDiscoveryBookingLink } from '@/app/actions/sendDiscoveryBookingLink';
-import { X, Send, Loader2, Mail, ChevronDown, ChevronUp, Check, AlertCircle, Reply, Inbox, Eye, EyeOff, Calendar } from 'lucide-react';
+import { X, Send, Loader2, Mail, ChevronDown, ChevronUp, Check, AlertCircle, Reply, Inbox, Eye, EyeOff, Calendar, MousePointerClick } from 'lucide-react';
 
 interface EmailComposeModalProps {
   lead: RepLead;
@@ -68,12 +68,13 @@ export default function EmailComposeModal({ lead, repName, repEmail, onClose, on
   // Email history
   const [history, setHistory] = useState<RepEmailLog[]>([]);
   const [loadingHistory, setLoadingHistory] = useState(true);
-  const [showHistory, setShowHistory] = useState(false);
+  const [showHistory, setShowHistory] = useState(true);
   const [markingReplied, setMarkingReplied] = useState<string | null>(null);
 
   // Inbound replies
   const [replies, setReplies] = useState<RepEmailReply[]>([]);
   const [expandedReplyId, setExpandedReplyId] = useState<string | null>(null);
+  const [expandedSentId, setExpandedSentId] = useState<string | null>(null);
 
   // Available slots
   const [availableSlots, setAvailableSlots] = useState<number | null>(null);
@@ -448,47 +449,71 @@ export default function EmailComposeModal({ lead, repName, repEmail, onClose, on
 
                       // Sent email
                       const email = item.data;
+                      const isSentExpanded = expandedSentId === email.id;
                       return (
-                        <div key={email.id} className="bg-white/[0.03] border border-white/6 rounded-lg p-3">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2 min-w-0">
-                              <Send className="w-3 h-3 text-white/20 flex-shrink-0" />
-                              <p className="text-xs font-medium text-white/60 truncate">{email.subject}</p>
-                            </div>
-                            <div className="flex items-center gap-1.5">
-                              {email.repliedAt && (
-                                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-blue-500/20 text-blue-400 flex items-center gap-1">
-                                  <Reply className="w-2.5 h-2.5" />replied
-                                </span>
-                              )}
-                              <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${
-                                email.status === 'sent' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'
-                              }`}>
-                                {email.status}
-                              </span>
-                            </div>
-                          </div>
-                          <div className="flex items-center justify-between mt-1">
-                            <p className="text-[10px] text-white/20">
-                              {email.sentAt?.toDate ? new Date(email.sentAt.toDate()).toLocaleDateString('en-GB', {
-                                day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit',
-                              }) : '—'}
-                            </p>
-                            {email.status === 'sent' && !email.repliedAt && (
-                              <button
-                                onClick={() => handleMarkReplied(email.id)}
-                                disabled={markingReplied === email.id}
-                                className="flex items-center gap-1 text-[10px] text-blue-400/50 hover:text-blue-400 transition-colors disabled:opacity-40"
-                              >
-                                {markingReplied === email.id ? (
-                                  <Loader2 className="w-2.5 h-2.5 animate-spin" />
-                                ) : (
-                                  <Reply className="w-2.5 h-2.5" />
+                        <div key={email.id} className="bg-white/[0.03] border border-white/6 rounded-lg overflow-hidden">
+                          <button
+                            onClick={() => setExpandedSentId(isSentExpanded ? null : email.id)}
+                            className="w-full p-3 text-left"
+                          >
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2 min-w-0">
+                                <Send className="w-3 h-3 text-white/20 flex-shrink-0" />
+                                <p className="text-xs font-medium text-white/60 truncate">{email.subject}</p>
+                              </div>
+                              <div className="flex items-center gap-1.5">
+                                {email.openedAt && (
+                                  <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 flex items-center gap-1">
+                                    <Eye className="w-2.5 h-2.5" />opened
+                                  </span>
                                 )}
-                                Mark as replied
-                              </button>
-                            )}
-                          </div>
+                                {email.clickedAt && (
+                                  <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-purple-500/20 text-purple-400 flex items-center gap-1">
+                                    <MousePointerClick className="w-2.5 h-2.5" />clicked
+                                  </span>
+                                )}
+                                {email.repliedAt && (
+                                  <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-blue-500/20 text-blue-400 flex items-center gap-1">
+                                    <Reply className="w-2.5 h-2.5" />replied
+                                  </span>
+                                )}
+                                <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${
+                                  email.status === 'sent' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'
+                                }`}>
+                                  {email.status}
+                                </span>
+                              </div>
+                            </div>
+                            <div className="flex items-center justify-between mt-1">
+                              <p className="text-[10px] text-white/20">
+                                {email.sentAt?.toDate ? new Date(email.sentAt.toDate()).toLocaleDateString('en-GB', {
+                                  day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit',
+                                }) : '—'}
+                              </p>
+                              <div className="flex items-center gap-2">
+                                {email.status === 'sent' && !email.repliedAt && (
+                                  <button
+                                    onClick={e => { e.stopPropagation(); handleMarkReplied(email.id); }}
+                                    disabled={markingReplied === email.id}
+                                    className="flex items-center gap-1 text-[10px] text-blue-400/50 hover:text-blue-400 transition-colors disabled:opacity-40"
+                                  >
+                                    {markingReplied === email.id ? (
+                                      <Loader2 className="w-2.5 h-2.5 animate-spin" />
+                                    ) : (
+                                      <Reply className="w-2.5 h-2.5" />
+                                    )}
+                                    Mark as replied
+                                  </button>
+                                )}
+                                {isSentExpanded ? <ChevronUp className="w-3 h-3 text-white/20" /> : <ChevronDown className="w-3 h-3 text-white/20" />}
+                              </div>
+                            </div>
+                          </button>
+                          {isSentExpanded && (
+                            <div className="px-3 pb-3 border-t border-white/6 pt-2">
+                              <p className="text-xs text-white/50 leading-relaxed whitespace-pre-wrap">{email.body}</p>
+                            </div>
+                          )}
                         </div>
                       );
                     })}

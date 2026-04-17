@@ -1,6 +1,7 @@
 'use server';
 
 import { Resend } from 'resend';
+import { adminDb } from '@/lib/firebase/admin';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://crftdweb.com';
@@ -81,13 +82,25 @@ export async function sendLoginDetails(
   }
 
   try {
-    await resend.emails.send({
+    const sendResult = await resend.emails.send({
       from: 'CrftdWeb <admin@crftdweb.com>',
       to: [repEmail],
       subject: `Welcome to CrftdWeb, ${name.split(' ')[0]}!`,
       html: buildHtml(name, repEmail, tempPassword),
       text: `Hi ${name.split(' ')[0]},\n\nYou're officially on the team. Welcome to CrftdWeb.\n\nYour rep portal is ready. Log in with these credentials:\n\nEmail: ${repEmail}\nTemp password: ${tempPassword}\n\nLog in at: ${BASE_URL}/rep/signin\n\nReference Documents:\n- Onboarding Pack: ${BASE_URL}/rep-onboarding-pack.html\n- Contractor Agreement: ${BASE_URL}/docs/rep-contractor-agreement.html\n\nChange your password after your first login.\n\nCrftdWeb · crftdweb.com`,
     });
+
+    // Track in adminEmails for open/click tracking
+    await adminDb.collection('adminEmails').add({
+      to: repEmail.trim().toLowerCase(),
+      name,
+      subject: `Welcome to CrftdWeb, ${name.split(' ')[0]}!`,
+      templateKey: 'login-details',
+      resendId: sendResult.data?.id ?? null,
+      status: sendResult.error ? 'failed' : 'sent',
+      sentAt: new Date(),
+    });
+
     return { success: true };
   } catch (err) {
     return { success: false, error: err instanceof Error ? err.message : 'Failed to send' };
