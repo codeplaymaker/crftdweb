@@ -34,6 +34,7 @@ export default function RepDashboard() {
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
   const [announcement, setAnnouncement] = useState<string | null>(null);
+  const [silverBannerDismissed, setSilverBannerDismissed] = useState(true);
 
   const referralLink = profile?.refSlug
     ? `https://www.crftdweb.com?ref=${profile.refSlug}`
@@ -56,6 +57,9 @@ export default function RepDashboard() {
     getAnnouncement().then((a) => {
       if (a?.enabled && a.text) setAnnouncement(a.text);
     });
+    // Check if Silver banner was previously dismissed for this user
+    const key = `silverBanner:${user.uid}`;
+    setSilverBannerDismissed(!!localStorage.getItem(key));
   }, [user]);
 
   const activeLeads = leads.filter(l => l.status !== 'lost');
@@ -115,6 +119,39 @@ export default function RepDashboard() {
           {announcement}
         </div>
       )}
+
+      {/* Silver rank promotion banner (one-time, dismissable) */}
+      {!silverBannerDismissed && profile?.careerRank && profile.careerRank !== 'bronze' && (() => {
+        const rank = profile.careerRank as CareerRank;
+        const rankInfo = CAREER_RANKS[rank];
+        return (
+          <div className="relative bg-gradient-to-r from-slate-700/40 via-slate-600/30 to-slate-700/40 border border-white/15 rounded-2xl px-5 py-4 flex items-start gap-4">
+            <span className="text-3xl mt-0.5 shrink-0">{rankInfo.emoji}</span>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-bold text-white">You've reached {rankInfo.label}!</p>
+              <p className="text-xs text-white/50 mt-0.5 leading-relaxed">
+                Your lead pipeline is now live — time to make calls and earn commissions.
+              </p>
+              <Link
+                href="/rep/leads"
+                className="inline-flex items-center gap-1 mt-2 text-xs font-semibold text-white/80 hover:text-white transition-colors"
+              >
+                View your leads <ArrowRight className="w-3 h-3" />
+              </Link>
+            </div>
+            <button
+              onClick={() => {
+                localStorage.setItem(`silverBanner:${user?.uid}`, '1');
+                setSilverBannerDismissed(true);
+              }}
+              className="shrink-0 text-white/30 hover:text-white/60 transition-colors text-lg leading-none mt-0.5"
+              aria-label="Dismiss"
+            >
+              ×
+            </button>
+          </div>
+        );
+      })()}
 
       {/* Referral Link */}
       <div className="bg-white/[0.03] border border-white/8 rounded-2xl p-4 flex items-center gap-3">

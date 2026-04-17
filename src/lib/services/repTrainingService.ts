@@ -249,9 +249,9 @@ export class RepTrainingService {
     const longestStreak = Math.max(existing?.longestStreak || 0, currentStreak);
     const rank = getRank(averageScore, totalSessions);
 
-    // Check if just unlocked (crossed 60 average)
+    // Check if just unlocked (crossed score + session threshold)
     const wasUnlocked = !!(existing?.unlockedAt);
-    const nowUnlocked = averageScore >= 60;
+    const nowUnlocked = averageScore >= 60 && totalSessions >= 10;
 
     const stats: TrainingStats = {
       userId,
@@ -278,7 +278,7 @@ export class RepTrainingService {
       unlockedAt: stats.unlockedAt ? Timestamp.fromDate(stats.unlockedAt) : null,
     });
 
-    // Auto-promote Bronze → Silver when training unlocks
+    // Auto-promote Bronze → Silver when training unlocks (score ≥ 60 AND sessions ≥ 10)
     if (!wasUnlocked && nowUnlocked) {
       try {
         const repDoc = await getDoc(doc(db, 'reps', userId));
@@ -286,6 +286,12 @@ export class RepTrainingService {
           const data = repDoc.data();
           if (!data.careerRank || data.careerRank === 'bronze') {
             await updateDoc(doc(db, 'reps', userId), { careerRank: 'silver' });
+            // Send Silver promotion email via API route (service runs client-side)
+            fetch('/api/rep/silver-promotion', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ userId }),
+            }).catch(e => console.error('Silver promotion email failed:', e));
           }
         }
       } catch (e) {
