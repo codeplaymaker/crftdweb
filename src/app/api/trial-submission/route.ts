@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { adminDb } from '@/lib/firebase/admin';
 import { FieldValue } from 'firebase-admin/firestore';
+import { sendMessage } from '@/lib/telegram/bot';
 
 interface Entry {
   business: string;
@@ -46,6 +47,13 @@ export async function POST(req: NextRequest) {
     submittedAt: FieldValue.serverTimestamp(),
     reviewed: false,
   });
+
+  // Notify via Telegram
+  const adminChatIds = process.env.TELEGRAM_ALLOWED_USERS?.split(',').map(s => s.trim()).filter(Boolean) || [];
+  if (adminChatIds.length > 0) {
+    const msg = `📋 <b>Trial submitted</b>\n\n<b>Email:</b> ${normalised}\n<b>Entries:</b> ${entries.length}\n\n<a href="https://crftdweb.com/admin/trials">Review in portal →</a>`;
+    await Promise.all(adminChatIds.map(id => sendMessage(id, msg, 'HTML').catch(() => null)));
+  }
 
   return NextResponse.json({ success: true });
 }
