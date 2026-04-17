@@ -81,7 +81,7 @@ function buildHtml(name: string, email: string): string {
                 It's a simple form — takes 2 minutes to fill in.
               </p>
               <p style="margin:0 0 24px;font-size:13px;color:#888;line-height:1.7;">
-                Aim to get this done today — we're moving through applications quickly.
+                The sooner you send it, the sooner we can move you forward.
               </p>
 
               <!-- CTA button -->
@@ -144,7 +144,7 @@ Submit here (takes 2 minutes): ${BASE_URL}/apply/trial
 
 Or just reply to this email with your 5 businesses — works just as well.
 
-Aim to get this done today — we're moving through applications quickly.
+The sooner you send it, the sooner we can move you forward.
 
 CrftdWeb
 crftdweb.com`;
