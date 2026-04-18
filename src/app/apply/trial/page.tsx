@@ -88,6 +88,47 @@ export default function TrialTaskPage() {
               </div>
             ))}
           </div>
+
+          {/* How to find businesses */}
+          <div className="bg-white/[0.03] border border-white/8 rounded-xl px-5 py-4 space-y-3">
+            <p className="text-[10px] text-white/30 uppercase tracking-widest font-semibold">How to find businesses</p>
+            <p className="text-sm text-white/40 leading-relaxed">Search Google for local UK businesses in any industry — trades, salons, gyms, restaurants, tutors, accountants. Look at their website and ask yourself: would a stranger know what to do next?</p>
+            <div className="space-y-2 pt-1">
+              {[
+                { label: 'Google search', tip: '"plumber Bristol" or "electrician Manchester" — click the small business websites, not the directories' },
+                { label: 'Google Maps', tip: 'Search any trade or service, click a business, then visit their website link' },
+                { label: 'What to look for', tip: 'No phone number visible, no booking button, no photos, confusing layout, broken links, text-only pages' },
+              ].map(({ label, tip }) => (
+                <div key={label} className="flex gap-3 text-sm">
+                  <span className="text-white/60 font-semibold shrink-0 w-28">{label}</span>
+                  <span className="text-white/30">{tip}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* What makes a good diagnosis */}
+          <div className="bg-white/[0.03] border border-white/8 rounded-xl px-5 py-4 space-y-2">
+            <p className="text-[10px] text-white/30 uppercase tracking-widest font-semibold mb-1">What makes a good diagnosis</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <p className="text-[10px] text-emerald-400/70 uppercase tracking-wider font-semibold">✓ Do this</p>
+                {[
+                  'Be specific about what\'s missing or broken',
+                  'Explain the impact (lost bookings, confused visitors)',
+                  'One clear sentence per business',
+                ].map(t => <p key={t} className="text-xs text-white/40">{t}</p>)}
+              </div>
+              <div className="space-y-1.5">
+                <p className="text-[10px] text-red-400/70 uppercase tracking-wider font-semibold">✗ Avoid this</p>
+                {[
+                  '"The website looks outdated" — too vague',
+                  '"Needs better SEO" — not observable from the site',
+                  'Copying the examples above word for word',
+                ].map(t => <p key={t} className="text-xs text-white/40">{t}</p>)}
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Form */}

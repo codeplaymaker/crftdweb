@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { Loader2, ArrowLeft, ExternalLink, CheckCircle2, ClipboardCheck, Clock, ChevronDown, ChevronUp } from 'lucide-react';
+import { Loader2, ArrowLeft, ExternalLink, CheckCircle2, ClipboardCheck, Clock, ChevronDown, ChevronUp, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 
 interface TrialEntry {
@@ -18,22 +18,31 @@ interface TrialSubmission {
   reviewed: boolean;
 }
 
-type FilterTab = 'all' | 'pending' | 'reviewed';
+interface TrialNonSubmitter {
+  id: string;
+  email: string;
+  name: string;
+  sentAt: string | null;
+}
+
+type FilterTab = 'all' | 'pending' | 'reviewed' | 'no_reply';
 
 export default function AdminSubmissionsPage() {
   const [submissions, setSubmissions] = useState<TrialSubmission[]>([]);
+  const [nonSubmitters, setNonSubmitters] = useState<TrialNonSubmitter[]>([]);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<FilterTab>('pending');
   const [togglingId, setTogglingId] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch('/api/admin/trial-submissions')
-      .then(r => r.json())
-      .then(data => {
-        setSubmissions(Array.isArray(data) ? data : []);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
+    Promise.all([
+      fetch('/api/admin/trial-submissions').then(r => r.json()),
+      fetch('/api/admin/trial-non-submitters').then(r => r.json()),
+    ]).then(([subs, nonSubs]) => {
+      setSubmissions(Array.isArray(subs) ? subs : []);
+      setNonSubmitters(Array.isArray(nonSubs) ? nonSubs : []);
+      setLoading(false);
+    }).catch(() => setLoading(false));
   }, []);
 
   const filtered = useMemo(() => {
@@ -46,7 +55,8 @@ export default function AdminSubmissionsPage() {
     all: submissions.length,
     pending: submissions.filter(s => !s.reviewed).length,
     reviewed: submissions.filter(s => s.reviewed).length,
-  }), [submissions]);
+    no_reply: nonSubmitters.length,
+  }), [submissions, nonSubmitters]);
 
   async function handleToggleReviewed(id: string, reviewed: boolean) {
     setTogglingId(id);
@@ -70,6 +80,7 @@ export default function AdminSubmissionsPage() {
     { key: 'pending', label: 'Pending' },
     { key: 'reviewed', label: 'Reviewed' },
     { key: 'all', label: 'All' },
+    { key: 'no_reply', label: 'No Reply' },
   ];
 
   return (
@@ -111,6 +122,28 @@ export default function AdminSubmissionsPage() {
             <Loader2 size={18} className="animate-spin" />
             <span className="text-sm">Loading submissions…</span>
           </div>
+        ) : tab === 'no_reply' ? (
+          nonSubmitters.length === 0 ? (
+            <p className="text-zinc-600 text-sm py-10 text-center">Everyone who received the task has submitted. 🎉</p>
+          ) : (
+            <div className="space-y-3">
+              <p className="text-xs text-zinc-500 mb-4">These people were sent the trial task but haven&apos;t submitted yet.</p>
+              {nonSubmitters.map(r => (
+                <div key={r.id} className="flex items-center gap-4 bg-zinc-900 border border-zinc-800 rounded-xl px-5 py-4">
+                  <AlertCircle size={14} className="text-amber-400 shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-white">{r.name || '—'}</p>
+                    <p className="text-xs text-zinc-500">{r.email}</p>
+                  </div>
+                  {r.sentAt && (
+                    <p className="text-xs text-zinc-600 shrink-0">
+                      Sent {new Date(r.sentAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+          )
         ) : filtered.length === 0 ? (
           <p className="text-zinc-600 text-sm py-10 text-center">
             {tab === 'pending' ? 'No pending submissions.' : tab === 'reviewed' ? 'No reviewed submissions yet.' : 'No submissions found.'}
