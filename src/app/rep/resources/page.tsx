@@ -131,6 +131,14 @@ const FAQS = [
     q: 'What counts as a "won" deal?',
     a: "When the client pays their deposit to CrftdWeb. Not when they verbally agree. Update the lead status to 'won' and add the deal value when you get confirmation.",
   },
+  {
+    q: 'How do I book a discovery call for a prospect?',
+    a: "1. Add them as a lead in the Leads section (name, business, email, notes). 2. Open that lead and hit \"Send Booking Link\". 3. Done — the prospect gets an email with a link to pick a time. Once they book, it shows in your portal and we get notified automatically. You don't need to find a calendar or arrange anything yourself.",
+  },
+  {
+    q: 'Should I give prospects our phone number or a calendar link directly?',
+    a: "No. Always use the \"Send Booking Link\" button in the portal — it generates a unique link tied to you. This is how the deal gets tracked back to your account. If you give them a direct number or book them in another way, you risk not getting credit for the commission.",
+  },
 ];
 
 // ─── Lead Sourcing Playbook ────────────────────────────────────────────────
