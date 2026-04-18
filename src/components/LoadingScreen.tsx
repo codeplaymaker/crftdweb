@@ -9,7 +9,7 @@ export default function LoadingScreen() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 5000); // 5 seconds
+    }, 1500); // 1.5 seconds
 
     return () => clearTimeout(timer);
   }, []);
@@ -20,13 +20,13 @@ export default function LoadingScreen() {
     <motion.div
       initial={{ opacity: 1 }}
       animate={{ opacity: 0 }}
-      transition={{ duration: 1, delay: 4 }}
+      transition={{ duration: 0.3, delay: 1.1 }}
       className="fixed inset-0 z-50 flex items-center justify-center bg-background"
     >
       <motion.div
         initial={{ scale: 0.5, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        transition={{ duration: 0.5 }}
+        transition={{ duration: 0.4 }}
         className="relative"
       >
         {/* Logo Container */}
@@ -35,7 +35,7 @@ export default function LoadingScreen() {
             className="font-logo text-5xl text-white"
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
+            transition={{ duration: 0.4, delay: 0.1 }}
           >
             CW
           </motion.span>
