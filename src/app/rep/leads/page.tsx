@@ -11,8 +11,9 @@ import { getAuth } from 'firebase/auth';
 import Link from 'next/link';
 import EmailComposeModal from '@/components/rep/EmailComposeModal';
 import { sendDiscoveryBookingLink } from '@/app/actions/sendDiscoveryBookingLink';
+import { getScreeningSlots } from '@/app/actions/getScreeningSlots';
 import { getCommissionRateForRank, CAREER_RANKS, type CareerRank } from '@/lib/types/repRanks';
-import { Plus, ChevronDown, ChevronUp, Trash2, Edit2, Check, X, PoundSterling, Lock, GraduationCap, Mail, Reply, CalendarCheck } from 'lucide-react';
+import { Plus, ChevronDown, ChevronUp, Trash2, Edit2, Check, X, PoundSterling, Lock, GraduationCap, Mail, Reply, CalendarCheck, Calendar } from 'lucide-react';
 
 const PIPELINE: { key: LeadStatus; label: string; color: string }[] = [
   { key: 'contacted', label: 'Contacted', color: 'border-t-white/20' },
@@ -77,6 +78,14 @@ export default function RepLeadsPage() {
   const [wonError, setWonError] = useState('');
   const [emailLead, setEmailLead] = useState<RepLead | null>(null);
   const [sendingBookingId, setSendingBookingId] = useState<string | null>(null);
+  const [availableSlots, setAvailableSlots] = useState<number | null>(null);
+
+  useEffect(() => {
+    const now = Date.now();
+    getScreeningSlots().then(slots => {
+      setAvailableSlots(slots.filter(s => s.available && s.dateTime > now).length);
+    });
+  }, []);
 
   useEffect(() => {
     if (!user) return;
@@ -325,7 +334,19 @@ export default function RepLeadsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-white">My Leads</h1>
-          <p className="text-sm text-white/30 mt-0.5">{activeLeads.length} active · {wonLeads.length} won</p>
+          <div className="flex items-center gap-3 mt-0.5">
+            <p className="text-sm text-white/30">{activeLeads.length} active · {wonLeads.length} won</p>
+            {availableSlots !== null && (
+              <span className={`inline-flex items-center gap-1.5 text-xs font-medium px-2 py-0.5 rounded-full ${
+                availableSlots > 0
+                  ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                  : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
+              }`}>
+                <Calendar className="w-3 h-3" />
+                {availableSlots > 0 ? `${availableSlots} slot${availableSlots === 1 ? '' : 's'} available` : 'No slots available'}
+              </span>
+            )}
+          </div>
         </div>
         <button
           onClick={() => { setShowForm(!showForm); setEditingId(null); setForm(emptyForm); }}
