@@ -10,7 +10,11 @@ interface Entry {
 }
 
 export async function POST(req: NextRequest) {
-  const { email, entries } = await req.json() as { email?: string; entries?: Entry[] };
+  const { name, email, entries } = await req.json() as { name?: string; email?: string; entries?: Entry[] };
+
+  if (!name?.trim()) {
+    return NextResponse.json({ error: 'Name is required' }, { status: 400 });
+  }
 
   if (!email || !email.includes('@')) {
     return NextResponse.json({ error: 'Valid email required' }, { status: 400 });
@@ -38,6 +42,7 @@ export async function POST(req: NextRequest) {
   }
 
   await adminDb.collection('trial_submissions').add({
+    name: name.trim(),
     email: normalised,
     entries: entries.map(e => ({
       business: e.business.trim(),
@@ -51,7 +56,7 @@ export async function POST(req: NextRequest) {
   // Notify via Telegram
   const adminChatIds = process.env.TELEGRAM_ALLOWED_USERS?.split(',').map(s => s.trim()).filter(Boolean) || [];
   if (adminChatIds.length > 0) {
-    const msg = `📋 <b>Trial submitted</b>\n\n<b>Email:</b> ${normalised}\n<b>Entries:</b> ${entries.length}\n\n<a href="https://crftdweb.com/admin/trials">Review in portal →</a>`;
+    const msg = `📋 <b>Trial submitted</b>\n\n<b>Name:</b> ${name.trim()}\n<b>Email:</b> ${normalised}\n<b>Entries:</b> ${entries.length}\n\n<a href="https://crftdweb.com/admin/trials">Review in portal →</a>`;
     await Promise.all(adminChatIds.map(id => sendMessage(id, msg, 'HTML').catch(() => null)));
   }
 

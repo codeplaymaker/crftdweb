@@ -12,6 +12,7 @@ interface TrialEntry {
 
 interface TrialSubmission {
   id: string;
+  name?: string;
   email: string;
   entries: TrialEntry[];
   submittedAt: string | null;
@@ -185,8 +186,9 @@ function SubmissionCard({
       >
         <div className={`w-2 h-2 rounded-full flex-shrink-0 ${submission.reviewed ? 'bg-emerald-400' : 'bg-violet-400'}`} />
         <div className="flex-1 min-w-0">
-          <div className="flex flex-wrap items-center gap-2 mb-0.5">
-            <span className="text-sm font-semibold text-white">{submission.email}</span>
+            <div className="flex flex-wrap items-center gap-2 mb-0.5">
+            <span className="text-sm font-semibold text-white">{submission.name || submission.email}</span>
+            {submission.name && <span className="text-xs text-zinc-500">{submission.email}</span>}
             <span className={`px-2 py-0.5 rounded-full text-[11px] font-medium ${
               submission.reviewed
                 ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'

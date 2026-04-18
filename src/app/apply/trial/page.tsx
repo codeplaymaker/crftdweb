@@ -6,6 +6,7 @@ import Image from 'next/image';
 const EMPTY_ENTRY = { business: '', url: '', diagnosis: '' };
 
 export default function TrialTaskPage() {
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [entries, setEntries] = useState(Array.from({ length: 5 }, () => ({ ...EMPTY_ENTRY })));
   const [status, setStatus] = useState<'idle' | 'submitting' | 'done' | 'error'>('idle');
@@ -24,7 +25,7 @@ export default function TrialTaskPage() {
       const res = await fetch('/api/trial-submission', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email.trim().toLowerCase(), entries }),
+        body: JSON.stringify({ name: name.trim(), email: email.trim().toLowerCase(), entries }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -134,11 +135,22 @@ export default function TrialTaskPage() {
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-8">
 
+          {/* Name */}
+          <div>
+            <label className="block text-[10px] text-white/30 uppercase tracking-widest mb-2">Your name</label>
+            <input
+              type="text"
+              required
+              value={name}
+              onChange={e => setName(e.target.value)}
+              placeholder="First and last name"
+              className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 transition-colors"
+            />
+          </div>
+
           {/* Email */}
           <div>
-            <label className="block text-[10px] text-white/30 uppercase tracking-widest mb-2">
-              Your email <span className="text-white/20 normal-case tracking-normal">(the one we contacted you on)</span>
-            </label>
+            <label className="block text-[10px] text-white/30 uppercase tracking-widest mb-2">Your email</label>
             <input
               type="email"
               required
