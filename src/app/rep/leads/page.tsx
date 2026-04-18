@@ -81,7 +81,7 @@ export default function RepLeadsPage() {
   const [availableSlots, setAvailableSlots] = useState<number | null>(null);
 
   useEffect(() => {
-    const now = Date.now();
+    const now = new Date().toISOString();
     getScreeningSlots().then(slots => {
       setAvailableSlots(slots.filter(s => s.available && s.dateTime > now).length);
     });
