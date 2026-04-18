@@ -1,5 +1,6 @@
 import Hero from "@/components/Hero";
 import Features from "@/components/Features";
+import HowItWorks from "@/components/HowItWorks";
 import Work from "@/components/Work";
 import Industries from "@/components/Industries";
 import BlogHighlights from "@/components/BlogHighlights";
@@ -16,6 +17,7 @@ export default function Home() {
       <LoadingScreen />
       <Hero />
       <Features />
+      <HowItWorks />
       <Work />
       <Industries />
       <BlogHighlights />
