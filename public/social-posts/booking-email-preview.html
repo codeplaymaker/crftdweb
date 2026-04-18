@@ -32,6 +32,7 @@
 <div class="tabs">
   <div class="tab active" onclick="show('applicant', this)">📩 Applicant confirmation</div>
   <div class="tab" onclick="show('admin', this)">🔔 Your notification</div>
+  <div class="tab" onclick="show('discovery', this)">🗓 Discovery booking link</div>
 </div>
 
 <!-- APPLICANT EMAIL -->
@@ -112,6 +113,58 @@
           <p style="margin:0;font-size:13px;color:#999;">View all bookings at <a href="https://www.crftdweb.com/admin/calendar" style="color:#111;">crftdweb.com/admin/calendar</a></p>
         </td></tr>
         </table>
+      </table>
+    </td></tr>
+  </table>
+</div>
+
+<!-- DISCOVERY BOOKING LINK EMAIL -->
+<div id="discovery" class="preview">
+  <div class="subject-bar"><strong>To:</strong> prospect@business.com &nbsp;|&nbsp; <strong>Subject:</strong> CrftdWeb — here's your booking link</div>
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:40px 20px;">
+    <tr><td align="center">
+      <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+        <tr>
+          <td align="center" style="background:#000000;border-radius:12px 12px 0 0;padding:32px 40px;">
+            <img src="/CW-logo-white.png" alt="CrftdWeb" width="160" style="display:block;border:0;border-radius:8px;" />
+          </td>
+        </tr>
+        <tr>
+          <td style="background:#ffffff;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 12px 12px;padding:40px;">
+            <p style="margin:0 0 20px;font-size:16px;color:#111;line-height:1.6;font-weight:600;">Hi Sarah,</p>
+            <p style="margin:0 0 24px;font-size:15px;color:#444;line-height:1.7;">
+              Great speaking with you. Here's the link to book your discovery call with the team — just pick a time that works:
+            </p>
+            <table cellpadding="0" cellspacing="0" style="margin:0 0 28px;">
+              <tr>
+                <td style="background:#111;border-radius:8px;">
+                  <a href="#" style="display:inline-block;padding:14px 28px;font-size:15px;font-weight:700;color:#ffffff;text-decoration:none;">
+                    Book your call &rarr;
+                  </a>
+                </td>
+              </tr>
+            </table>
+            <p style="margin:0 0 24px;font-size:13px;color:#999;line-height:1.6;">
+              Takes 30 seconds. Looking forward to it.
+            </p>
+            <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
+              <tr><td style="border-top:1px solid #e8e8e8;"></td></tr>
+            </table>
+            <table cellpadding="0" cellspacing="0">
+              <tr>
+                <td>
+                  <img src="/CW-logo.png" alt="CrftdWeb" width="48" style="display:block;border:0;margin-bottom:8px;" />
+                  <p style="margin:0;font-size:13px;color:#999;">crftdweb.com &middot; admin@crftdweb.com</p>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td align="center" style="padding-top:24px;">
+            <p style="margin:0;font-size:11px;color:#aaa;">admin@crftdweb.com &middot; crftdweb.com &middot; Bristol, UK</p>
+          </td>
+        </tr>
       </table>
     </td></tr>
   </table>
