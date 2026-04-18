@@ -347,6 +347,7 @@ export default function RepDashboard() {
 function PaymentDetailsCard({ profile, user, onUpdate }: { profile: RepProfile | null; user: { uid: string } | null; onUpdate: (p: RepProfile) => void }) {
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState('');
   const [accountName, setAccountName] = useState('');
   const [sortCode, setSortCode] = useState('');
   const [accountNumber, setAccountNumber] = useState('');
@@ -363,6 +364,7 @@ function PaymentDetailsCard({ profile, user, onUpdate }: { profile: RepProfile |
   async function handleSave() {
     if (!user || !accountName.trim() || !sortCode.trim() || !accountNumber.trim()) return;
     setSaving(true);
+    setSaveError('');
     try {
       const bankDetails = {
         accountName: accountName.trim(),
@@ -373,7 +375,7 @@ function PaymentDetailsCard({ profile, user, onUpdate }: { profile: RepProfile |
       if (profile) onUpdate({ ...profile, bankDetails });
       setEditing(false);
     } catch {
-      // silent
+      setSaveError('Failed to save. Please try again.');
     } finally {
       setSaving(false);
     }
@@ -423,6 +425,7 @@ function PaymentDetailsCard({ profile, user, onUpdate }: { profile: RepProfile |
               />
             </div>
           </div>
+          {saveError && <p className="text-xs text-red-400">{saveError}</p>}
           <div className="flex gap-2 pt-1">
             <button
               onClick={handleSave}
