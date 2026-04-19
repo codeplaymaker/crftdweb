@@ -15,10 +15,11 @@ export function LocalBusinessJsonLd() {
       'Premium web design & development agency crafting high-performance websites for ambitious businesses. Custom-coded, conversion-optimised, and delivered in 14 days.',
     email: 'hello@crftdweb.com',
     priceRange: '££-£££',
-    areaServed: [
-      { '@type': 'Country', name: 'United Kingdom' },
-      { '@type': 'Place', name: 'Worldwide' },
-    ],
+    address: {
+      '@type': 'PostalAddress',
+      addressCountry: 'GB',
+    },
+    areaServed: { '@type': 'Country', name: 'United Kingdom' },
     serviceType: [
       'Web Design',
       'Web Development',

@@ -26,7 +26,11 @@ export const metadata: Metadata = {
     template: "%s | CrftdWeb",
   },
   description: "Premium web design & development agency. Custom-coded websites built in Next.js, delivered in 14 days. 95+ PageSpeed scores. Trusted by UK businesses.",
-  keywords: ["web design agency", "web development", "custom website", "Next.js developer", "web design UK", "small business website", "conversion optimisation"],
+  keywords: [
+    "web design agency", "web development", "custom website", "Next.js developer",
+    "web design UK", "small business website", "conversion optimisation",
+    "custom website design uk", "next.js web design agency", "14 day website", "fast website design uk",
+  ],
   alternates: {
     canonical: '/',
   },

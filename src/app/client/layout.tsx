@@ -6,19 +6,19 @@ import { useRouter, usePathname } from 'next/navigation';
 import { getClientProfile, ClientProfile } from '@/lib/firebase/firestore';
 import Link from 'next/link';
 import Image from 'next/image';
-import { LayoutDashboard, FolderOpen, MessageSquare, Receipt, LogOut, Menu, X } from 'lucide-react';
+import { LayoutDashboard, FolderOpen, MessageSquare, Receipt, FileText, LogOut, Menu, X } from 'lucide-react';
 
 const NAV = [
   { href: '/client/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/client/deliverables', label: 'Deliverables', icon: FolderOpen },
   { href: '/client/feedback', label: 'Feedback', icon: MessageSquare },
   { href: '/client/invoices', label: 'Invoices', icon: Receipt },
+  { href: '/client/documents', label: 'Documents', icon: FileText },
 ];
 
 function ClientLayoutInner({ children }: { children: React.ReactNode }) {
   const { user, loading, signOut } = useAuth();
   const [clientProfile, setClientProfile] = useState<ClientProfile | null>(null);
-  const [profileLoading, setProfileLoading] = useState(true);
   const [mobileOpen, setMobileOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
@@ -31,17 +31,22 @@ function ClientLayoutInner({ children }: { children: React.ReactNode }) {
       return;
     }
     getClientProfile(user.uid).then(p => {
+      if (!p) { router.replace('/client/signin'); return; }
       setClientProfile(p);
-      setProfileLoading(false);
-      if (!p) router.replace('/client/signin');
+    }).catch(() => {
+      router.replace('/client/signin');
     });
   }, [user, loading, router, pathname]);
 
   if (pathname === '/client/signin') return <>{children}</>;
-  if (loading || profileLoading) return null;
-  if (!user || !clientProfile) return null;
+  // Only block on auth — profile loads in background
+  if (loading || !user) return (
+    <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
+      <div className="w-5 h-5 border-2 border-white/20 border-t-white/60 rounded-full animate-spin" />
+    </div>
+  );
 
-  const firstName = clientProfile.name.split(' ')[0];
+  const firstName = clientProfile?.name.split(' ')[0] ?? '';
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white flex">
@@ -68,8 +73,17 @@ function ClientLayoutInner({ children }: { children: React.ReactNode }) {
           ))}
         </nav>
         <div className="px-4 py-4 border-t border-white/8">
-          <p className="text-xs font-medium text-white/70 truncate">{firstName}</p>
-          <p className="text-[11px] text-white/30 truncate">{clientProfile.businessName}</p>
+          {clientProfile ? (
+            <>
+              <p className="text-xs font-medium text-white/70 truncate">{firstName}</p>
+              <p className="text-[11px] text-white/30 truncate">{clientProfile.businessName}</p>
+            </>
+          ) : (
+            <div className="space-y-1.5">
+              <div className="h-3 w-20 bg-white/10 rounded animate-pulse" />
+              <div className="h-2.5 w-28 bg-white/5 rounded animate-pulse" />
+            </div>
+          )}
           <button
             onClick={() => signOut()}
             className="mt-3 flex items-center gap-2 text-xs text-white/25 hover:text-white/50 transition-colors"

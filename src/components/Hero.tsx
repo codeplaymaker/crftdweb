@@ -38,7 +38,7 @@ export default function Hero() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.1 }}
           >
-            WEBSITES THAT SELL, NOT JUST LOOK GOOD
+            HAND-CODED. CONVERSION-BUILT. LIVE IN 14 DAYS.
           </motion.span>
           <motion.h1 
             className="text-5xl md:text-7xl font-bold mb-8 tracking-tight leading-[1.05]"
@@ -46,9 +46,9 @@ export default function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            Your website should be
+            Your next client just Googled you.
             <br />
-            <span className="text-muted-foreground">your best salesperson.</span>
+            <span className="text-muted-foreground">What did they find?</span>
           </motion.h1>
           <motion.p 
             className="text-lg md:text-xl text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed"
@@ -56,8 +56,8 @@ export default function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
           >
-            Most sites look fine. Most sites don&apos;t convert.
-            Yours should do both.
+            Nothing? Something embarrassing? Either way, you lost them.
+            We build sites that close — custom-coded, live in 14 days.
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 20 }}

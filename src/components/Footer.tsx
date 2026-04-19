@@ -12,7 +12,7 @@ export default function Footer() {
   return (
     <footer className="bg-black text-white py-16">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-12 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-6 gap-12 mb-12">
           {/* Brand */}
           <div className="md:col-span-1">
             <Link href="/" className="font-logo text-2xl tracking-tight block mb-4">
@@ -61,6 +61,7 @@ export default function Footer() {
               <li><Link href="/engine" className="text-white/50 hover:text-white text-sm transition-colors">Engine</Link></li>
             </ul>
           </div>
+
         </div>
 
         <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">

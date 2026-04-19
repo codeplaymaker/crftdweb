@@ -56,6 +56,16 @@ interface AdminInvoice {
   createdAt?: string | null;
 }
 
+interface AdminDocument {
+  id: string;
+  clientId: string;
+  label: string;
+  url: string;
+  type: string;
+  notes?: string;
+  addedAt?: string | null;
+}
+
 interface CreatedCredentials {
   uid: string;
   tempPassword: string;
@@ -238,6 +248,114 @@ function ProjectTab({ client, onUpdated }: { client: AdminClient; onUpdated: (u:
         {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : saved ? <Check className="w-4 h-4" /> : null}
         {saved ? 'Saved' : saving ? 'Saving…' : 'Save changes'}
       </button>
+    </div>
+  );
+}
+
+// ─── Documents Tab ──────────────────────────────────────────────────────────
+
+function DocumentsTab({ clientId }: { clientId: string }) {
+  const [items, setItems] = useState<AdminDocument[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [label, setLabel] = useState('');
+  const [url, setUrl] = useState('');
+  const [type, setType] = useState('other');
+  const [notes, setNotes] = useState('');
+  const [adding, setAdding] = useState(false);
+  const [showForm, setShowForm] = useState(false);
+
+  const load = useCallback(async () => {
+    const res = await fetch(`/api/admin/client-documents?clientId=${clientId}`);
+    setItems(await res.json());
+    setLoading(false);
+  }, [clientId]);
+
+  useEffect(() => { load(); }, [load]);
+
+  async function handleAdd(e: React.FormEvent) {
+    e.preventDefault();
+    setAdding(true);
+    await fetch('/api/admin/client-documents', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ clientId, label, url, type, notes }),
+    });
+    setLabel(''); setUrl(''); setType('other'); setNotes('');
+    setShowForm(false);
+    await load();
+    setAdding(false);
+  }
+
+  async function handleDelete(id: string) {
+    if (!confirm('Delete this document?')) return;
+    await fetch('/api/admin/client-documents', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id }),
+    });
+    setItems(prev => prev.filter(d => d.id !== id));
+  }
+
+  if (loading) return <div className="py-6 flex justify-center"><div className="w-4 h-4 border-2 border-white/20 border-t-white/70 rounded-full animate-spin" /></div>;
+
+  return (
+    <div className="space-y-4">
+      <div className="flex justify-end">
+        <button onClick={() => setShowForm(!showForm)} className="flex items-center gap-2 px-3 py-2 bg-white/10 rounded-xl text-sm text-white hover:bg-white/15">
+          {showForm ? <X className="w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5" />}
+          {showForm ? 'Cancel' : 'Add document'}
+        </button>
+      </div>
+      {showForm && (
+        <form onSubmit={handleAdd} className="border border-white/10 rounded-xl p-4 space-y-3">
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-[10px] text-white/30 uppercase tracking-widest mb-1">Label</label>
+              <input required value={label} onChange={e => setLabel(e.target.value)} placeholder="e.g. Client contract" className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/30" />
+            </div>
+            <div>
+              <label className="block text-[10px] text-white/30 uppercase tracking-widest mb-1">Type</label>
+              <select value={type} onChange={e => setType(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-white/30">
+                <option value="contract">Contract</option>
+                <option value="proposal">Proposal</option>
+                <option value="brief">Brief</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label className="block text-[10px] text-white/30 uppercase tracking-widest mb-1">URL</label>
+            <input required type="url" value={url} onChange={e => setUrl(e.target.value)} placeholder="https://" className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/30" />
+          </div>
+          <div>
+            <label className="block text-[10px] text-white/30 uppercase tracking-widest mb-1">Notes (optional)</label>
+            <input value={notes} onChange={e => setNotes(e.target.value)} placeholder="Any context for the client" className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/30" />
+          </div>
+          <button type="submit" disabled={adding} className="px-4 py-2 bg-white text-black rounded-lg text-sm font-bold hover:bg-white/90 disabled:opacity-50">
+            {adding ? 'Adding…' : 'Add'}
+          </button>
+        </form>
+      )}
+      {items.length === 0
+        ? <p className="text-sm text-white/25 text-center py-6">No documents yet.</p>
+        : items.map(d => (
+          <div key={d.id} className="flex items-center gap-3 border border-white/8 rounded-xl px-4 py-3">
+            <div className="flex-1 min-w-0">
+              <p className="text-sm text-white/80 font-medium">{d.label}</p>
+              <div className="flex items-center gap-2 mt-0.5">
+                <span className="text-[10px] text-white/30 capitalize">{d.type}</span>
+                {d.notes && <span className="text-[10px] text-white/25 truncate">{d.notes}</span>}
+              </div>
+            </div>
+            <a href={d.url} target="_blank" rel="noopener noreferrer" className="text-blue-400/70 hover:text-blue-400 shrink-0">
+              <ExternalLink className="w-3.5 h-3.5" />
+            </a>
+            <button onClick={() => handleDelete(d.id)} className="text-white/20 hover:text-red-400 shrink-0">
+              <Trash2 className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        ))
+      }
     </div>
   );
 }
@@ -556,7 +674,7 @@ function InvoicesTab({ clientId }: { clientId: string }) {
 
 // ─── Client Detail Panel ─────────────────────────────────────────────────────
 
-type DetailTab = 'project' | 'deliverables' | 'feedback' | 'invoices';
+type DetailTab = 'project' | 'deliverables' | 'feedback' | 'invoices' | 'documents';
 
 function ClientDetailPanel({ client, onUpdated, onClose }: {
   client: AdminClient;
@@ -570,6 +688,7 @@ function ClientDetailPanel({ client, onUpdated, onClose }: {
     { id: 'deliverables', label: 'Deliverables' },
     { id: 'feedback', label: 'Feedback' },
     { id: 'invoices', label: 'Invoices' },
+    { id: 'documents', label: 'Documents' },
   ];
 
   return (
@@ -599,6 +718,7 @@ function ClientDetailPanel({ client, onUpdated, onClose }: {
         {tab === 'deliverables' && <DeliverablesTab clientId={client.uid} />}
         {tab === 'feedback' && <FeedbackTab clientId={client.uid} />}
         {tab === 'invoices' && <InvoicesTab clientId={client.uid} />}
+        {tab === 'documents' && <DocumentsTab clientId={client.uid} />}
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 # CrftdWeb — Full Context
 
-> CrftdWeb is a custom web design and development agency based in the United Kingdom. We build hand-coded websites using Next.js, React, and TypeScript that are designed to convert visitors into customers. Every site scores 90+ on Google PageSpeed and is delivered within 14 days.
+> CrftdWeb is a custom web design and development agency based in the United Kingdom, serving businesses across Bristol, London, Manchester, Birmingham, Leeds, Edinburgh, and nationwide. We build hand-coded websites using Next.js, React, and TypeScript that are designed to convert visitors into customers. Every site scores 90+ on Google PageSpeed and is delivered within 14 days.
 
 ## About CrftdWeb
 
@@ -39,6 +39,12 @@ We design and build custom-coded websites from scratch. No templates, no page bu
 **Gyms & Fitness:** Membership sign-up flows, class schedules, lead capture, personal trainer profiles. Designed to reduce friction from visitor to member.
 
 **Estate Agents:** Property listing pages, mortgage calculator tools, area guides, valuation request forms, rightmove integration. Built for conversion from search to enquiry.
+
+**Science & Research:** Research labs, biotech companies, science-led brands. Credibility-first design, clear science communication, investor-ready layouts. 97 PageSpeed. URL: https://www.crftdweb.com/services/web-design-for-science-research
+
+**Lifestyle Brands & Coaches:** Membership platforms, sign-up funnels, email integration, brand-led design. Converts casual visitors into subscribers and buyers. URL: https://www.crftdweb.com/services/web-design-for-lifestyle-brands
+
+**Traders & Trading Businesses:** Custom dashboards, trading journals, broker API integrations, signal service portals, prop firm sites. URL: https://www.crftdweb.com/services/web-design-for-traders
 
 ### Products
 

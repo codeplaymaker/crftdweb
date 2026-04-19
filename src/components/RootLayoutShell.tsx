@@ -13,7 +13,8 @@ export default function RootLayoutShell({ children }: { children: ReactNode }) {
   const isRep = pathname?.startsWith('/rep');
   const isAdmin = pathname?.startsWith('/admin');
   const isClientPreview = pathname?.startsWith('/beautybyhelen');
-  const hasOwnLayout = isPlaybook || isEngine || isRep || isAdmin || isClientPreview;
+  const isClient = pathname?.startsWith('/client');
+  const hasOwnLayout = isPlaybook || isEngine || isRep || isAdmin || isClientPreview || isClient;
 
   return (
     <>

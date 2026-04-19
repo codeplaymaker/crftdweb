@@ -9,6 +9,9 @@
 - [Web Design for Salons](https://www.crftdweb.com/services/web-design-for-salons): Booking integration, galleries, team profiles
 - [Web Design for Gyms](https://www.crftdweb.com/services/web-design-for-gyms): Member sign-ups, class schedules, lead capture
 - [Web Design for Estate Agents](https://www.crftdweb.com/services/web-design-for-real-estate): Property listings, valuation tools, area guides
+- [Web Design for Science & Research](https://www.crftdweb.com/services/web-design-for-science-research): Research labs, biotech, science-led brands
+- [Web Design for Lifestyle Brands](https://www.crftdweb.com/services/web-design-for-lifestyle-brands): Coaches, creators, membership communities
+- [Web Design for Traders](https://www.crftdweb.com/services/web-design-for-traders): Trading platforms, dashboards, signal services
 - [Website Cost Guide](https://www.crftdweb.com/services/website-cost): Transparent pricing for custom websites
 
 ## Products
@@ -29,7 +32,8 @@
 - [Contact](https://www.crftdweb.com/contact): Start a project
 
 ## Key facts
-- Location: United Kingdom (serving clients worldwide)
+- Location: United Kingdom — serving businesses nationwide
+- Cities served: Bristol, London, Manchester, Birmingham, Leeds, Edinburgh (and UK-wide)
 - Tech stack: Next.js, React, TypeScript, Tailwind CSS
 - Delivery: 14-day turnaround for custom websites
 - Performance: 90+ PageSpeed scores guaranteed

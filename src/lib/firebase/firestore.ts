@@ -686,6 +686,26 @@ export async function getClientInvoices(clientId: string): Promise<ClientInvoice
   return snap.docs.map(d => d.data() as ClientInvoice);
 }
 
+export interface ClientDocument {
+  id: string;
+  clientId: string;
+  label: string;
+  url: string;
+  type: 'contract' | 'proposal' | 'brief' | 'other';
+  notes?: string;
+  addedAt: Timestamp;
+}
+
+export async function getClientDocuments(clientId: string): Promise<ClientDocument[]> {
+  const q = query(
+    collection(db, 'clientDocuments'),
+    where('clientId', '==', clientId),
+    orderBy('addedAt', 'desc')
+  );
+  const snap = await getDocs(q);
+  return snap.docs.map(d => d.data() as ClientDocument);
+}
+
 
 export async function addCredits(uid: string, amount: number) {
   const profile = await getUserProfile(uid);

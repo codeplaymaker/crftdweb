@@ -36,6 +36,24 @@ const industries = [
     icon: '🏠',
   },
   {
+    title: 'Science & Research',
+    description: 'Your science is credible. Your website should match.',
+    href: '/services/web-design-for-science-research',
+    icon: '🔬',
+  },
+  {
+    title: 'Lifestyle Brands',
+    description: 'Great content deserves a site that actually converts.',
+    href: '/services/web-design-for-lifestyle-brands',
+    icon: '✨',
+  },
+  {
+    title: 'Traders',
+    description: 'Dashboards, journals, and brand sites built for your edge.',
+    href: '/services/web-design-for-traders',
+    icon: '📈',
+  },
+  {
     title: 'Price Guide',
     description: 'Transparent pricing. No surprises. No sales calls required.',
     href: '/services/website-cost',

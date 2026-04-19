@@ -28,6 +28,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${baseUrl}/services/web-design-for-salons`, lastModified: now, changeFrequency: 'monthly', priority: 0.9 },
     { url: `${baseUrl}/services/web-design-for-gyms`, lastModified: now, changeFrequency: 'monthly', priority: 0.9 },
     { url: `${baseUrl}/services/web-design-for-real-estate`, lastModified: now, changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${baseUrl}/services/web-design-for-science-research`, lastModified: now, changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${baseUrl}/services/web-design-for-lifestyle-brands`, lastModified: now, changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${baseUrl}/services/web-design-for-traders`, lastModified: now, changeFrequency: 'monthly', priority: 0.9 },
   ];
 
   // Content / SEO pages

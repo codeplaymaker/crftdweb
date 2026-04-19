@@ -47,7 +47,7 @@ export default function ClientDashboard() {
       setFeedback(f);
       setInvoices(i);
       setLoading(false);
-    });
+    }).catch(() => setLoading(false));
   }, [user]);
 
   if (loading || !profile) {

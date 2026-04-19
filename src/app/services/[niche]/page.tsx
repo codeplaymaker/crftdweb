@@ -307,6 +307,180 @@ const niches: Record<string, NicheData> = {
     metaDescription:
       'Estate agent website design with property listings, valuation tools, and area guides. Custom-coded, 95+ PageSpeed. Built to generate vendor leads. 14-day delivery.',
   },
+
+  'web-design-for-science-research': {
+    slug: 'web-design-for-science-research',
+    industry: 'Science & Research',
+    headline: 'Web Design for Science & Research',
+    subheadline: 'Your science is credible. Your website should be too.',
+    heroDescription:
+      'Custom-coded websites for research labs, biotech companies, and science-led brands. Built to earn trust with investors, partners, and the public — launched in 14 days.',
+    painPoints: [
+      'Your site looks like it was built in 2012 — investors and partners judge you before they read a word',
+      'Complex science is buried in jargon — visitors leave without understanding what you actually do',
+      'No clear call to action — people don\'t know whether to contact you, invest, or partner',
+      'You\'re invisible on Google when funders or collaborators search your research area',
+    ],
+    solutions: [
+      'Credibility-first design that signals professionalism to investors, press, and academic partners',
+      'Clear science communication — we translate complex research into compelling copy that non-experts understand',
+      'Purpose-built pages: Team, Research, Publications, Partnerships, and Investor Relations',
+      'Sub-1.5s load times with 95+ PageSpeed — no slow WordPress installations',
+      'Schema markup for organisation, research, and publications to improve search visibility',
+      'Secure, GDPR-compliant architecture with accessibility standards met from day one',
+    ],
+    stats: [
+      { label: 'Average PageSpeed score', value: '97' },
+      { label: 'Time to launch', value: '14d' },
+      { label: 'Investor confidence (client reported)', value: '↑' },
+    ],
+    faqs: [
+      {
+        question: 'Can you make our science understandable to non-experts?',
+        answer:
+          'Yes — that\'s one of our core strengths. We work with you to distil complex research into clear, compelling messaging that resonates with investors, partners, and the general public without dumbing it down.',
+      },
+      {
+        question: 'How much does a science or research website cost?',
+        answer:
+          'Our science and research sites start at £2,497 (Launch) for a foundational presence with team, research, and contact pages. The Growth package at £4,997 includes publications integration, partner portals, and 90-day support.',
+      },
+      {
+        question: 'Can you integrate our publications or research database?',
+        answer:
+          'Yes. We can pull in publications from PubMed, ORCID, or a custom CMS, and build filterable research pages so visitors can explore your work by topic, date, or author.',
+      },
+      {
+        question: 'Do you work with early-stage startups or only established institutes?',
+        answer:
+          'Both. Early-stage biotech and research startups often need a strong web presence before their first funding round — we\'ve built sites specifically for pre-seed and seed-stage science companies.',
+      },
+      {
+        question: 'How long does it take?',
+        answer:
+          '14 days from signed brief to launch. We move quickly because every site is hand-coded — no plugin conflicts, no theme bloat.',
+      },
+    ],
+    metaTitle: 'Web Design for Science & Research | Websites That Build Credibility',
+    metaDescription:
+      'Custom web design for research labs, biotech, and science-led brands. Credibility-first design, clear science communication, 95+ PageSpeed. Built in 14 days.',
+  },
+
+  'web-design-for-lifestyle-brands': {
+    slug: 'web-design-for-lifestyle-brands',
+    industry: 'Lifestyle & Brand',
+    headline: 'Web Design for Lifestyle Brands',
+    subheadline: 'Great content deserves a site that converts.',
+    heroDescription:
+      'Custom sites for lifestyle brands, coaches, creators, and membership communities. Built to turn visitors into subscribers, members, and buyers — live in 14 days.',
+    painPoints: [
+      'You have great content and a loyal audience but your site doesn\'t guide anyone to take action',
+      'Sign-up rates are low — the journey from landing to conversion has too much friction',
+      'Your brand looks inconsistent online — the site doesn\'t match your social presence',
+      'You\'re using a generic platform (Squarespace, Wix) that caps what you can do',
+    ],
+    solutions: [
+      'Conversion-focused design — every page built around a single goal, not just aesthetics',
+      'Membership and community features: sign-up flows, gated content, member dashboards',
+      'Brand-led design that translates your visual identity across every page and interaction',
+      'Custom-coded with Next.js — no platform limits, no monthly tool fees eating your margin',
+      'Email integration with ConvertKit, Mailchimp, or Klaviyo — real list growth from day one',
+      'Trust signals baked in: testimonials, results, social proof positioned at every decision point',
+    ],
+    stats: [
+      { label: 'Average sign-up rate increase', value: '+200%' },
+      { label: 'PageSpeed score', value: '96' },
+      { label: 'Time to launch', value: '14d' },
+    ],
+    faqs: [
+      {
+        question: 'Can you build a membership or gated content area?',
+        answer:
+          'Yes. We build custom membership flows with secure login, gated content pages, and member dashboards. We can integrate with tools like Memberstack, or build a fully custom solution backed by Firebase or Supabase.',
+      },
+      {
+        question: 'How much does a lifestyle brand website cost?',
+        answer:
+          'Sites start at £2,497 (Launch) for a clean, conversion-focused presence. The Growth package at £4,997 includes membership features, email integration, and 90-day support.',
+      },
+      {
+        question: 'Do you build e-commerce too?',
+        answer:
+          'Yes — for lifestyle brands selling digital products, courses, or physical merchandise. We build custom storefronts with Stripe, or integrate with Shopify where a full e-commerce platform makes more sense.',
+      },
+      {
+        question: 'Can you migrate me from Squarespace or Wix?',
+        answer:
+          'Yes. We migrate all existing content, set up 301 redirects to protect your SEO, and rebuild everything faster and cleaner on Next.js.',
+      },
+      {
+        question: 'What if I already have a designer?',
+        answer:
+          'We can build from your existing designs (Figma or otherwise) or design and build end-to-end. Either way, the code quality and performance are the same.',
+      },
+    ],
+    metaTitle: 'Web Design for Lifestyle Brands | Websites That Convert',
+    metaDescription:
+      'Custom web design for lifestyle brands, coaches, and membership communities. Conversion-focused, brand-led design. Memberships, email integration, 95+ PageSpeed.',
+  },
+
+  'web-design-for-traders': {
+    slug: 'web-design-for-traders',
+    industry: 'Trading & Finance',
+    headline: 'Web Design for Traders & Trading Businesses',
+    subheadline: 'Your tools should work as hard as your strategy.',
+    heroDescription:
+      'Custom-built trading sites, platforms, and dashboards. From public-facing brands to private trading tools — fast, clean, and built to your exact workflow.',
+    painPoints: [
+      'Off-the-shelf platforms are bloated and generic — they slow you down instead of supporting your edge',
+      'Your trading journal is a spreadsheet — no insights, no patterns, no accountability',
+      'You have a community or signal service but no professional home for it online',
+      'Investors or potential partners can\'t find a credible presence for your fund or strategy',
+    ],
+    solutions: [
+      'Custom trading dashboards with data visualisation — P&L tracking, win rate, drawdown, and journal entries',
+      'Public-facing brand sites for funds, signal services, prop firms, and trading educators',
+      'Private member portals with authentication, role-based access, and secure data handling',
+      'Integration with broker APIs, TradingView webhooks, or custom data feeds',
+      'Clean, minimal UI designed for focus — no clutter, no distraction from the chart',
+      'Sub-1.5s performance even with live data — optimised architecture from the ground up',
+    ],
+    stats: [
+      { label: 'PageSpeed score', value: '98' },
+      { label: 'Dashboard load time', value: '<1s' },
+      { label: 'Time to launch', value: '14d' },
+    ],
+    faqs: [
+      {
+        question: 'Can you build a trading journal with analytics?',
+        answer:
+          'Yes — we\'ve built custom trading journals with trade entry, tagging, P&L charts, win/loss breakdowns, and journal notes. All data is stored securely and private to each user.',
+      },
+      {
+        question: 'How much does a trading platform or site cost?',
+        answer:
+          'A public-facing brand site starts at £2,497. A custom trading tool or dashboard starts at £4,997 and scales based on features, data integrations, and user auth complexity.',
+      },
+      {
+        question: 'Can you integrate with broker APIs or TradingView?',
+        answer:
+          'Yes — we integrate with broker APIs (Interactive Brokers, Alpaca, OANDA, etc.), TradingView webhooks, and custom data sources. Data pipelines are secure and optimised for speed.',
+      },
+      {
+        question: 'Do you work with prop firms or signal services?',
+        answer:
+          'Yes. We\'ve built for individual traders, signal services with subscriber portals, and trading educators. If you have a community or a service to sell, we build the infrastructure around it.',
+      },
+      {
+        question: 'Is the data secure?',
+        answer:
+          'All platforms use role-based auth, encrypted data storage, and OWASP-compliant architecture. Financial data is handled with the same care as any sensitive personal information.',
+      },
+    ],
+    metaTitle: 'Web Design for Traders | Trading Platforms, Dashboards & Brand Sites',
+    metaDescription:
+      'Custom trading websites, dashboards, and platforms. Trading journals, broker integrations, member portals. Built for speed and focus. 14-day delivery.',
+  },
 };
 
 // ── Static Params ──────────────────────────────────────────────────────

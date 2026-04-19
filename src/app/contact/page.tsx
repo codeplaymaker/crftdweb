@@ -21,9 +21,9 @@ export default function ContactPage() {
               <span className="text-xs font-semibold tracking-[0.2em] uppercase text-muted-foreground mb-6 block">
                 START A PROJECT
               </span>
-              <h1 className="text-4xl md:text-6xl font-bold mb-5 tracking-tight leading-tight">Let&apos;s fix your website.</h1>
+              <h1 className="text-4xl md:text-6xl font-bold mb-5 tracking-tight leading-tight">Let&apos;s build something that works.</h1>
               <p className="text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed">
-                Tell us what&apos;s not working and we&apos;ll tell you honestly if we can help.
+                New build or existing site — tell us where you are and we&apos;ll tell you honestly if we can help.
                 No pitch deck, no pressure.
               </p>
               <p className="text-xs text-muted-foreground/50 mt-4">
