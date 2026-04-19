@@ -335,7 +335,7 @@ const steps = [
   {
     number: '01',
     label: 'Discovery',
-    heading: 'Book a call. We\'ll figure out the rest.',
+    heading: 'Start with a conversation.',
     body: '15 minutes. We look at your current site, ask the right questions, and tell you honestly what would make it work harder for your business.',
     mock: DiscoveryCard,
   },
@@ -437,10 +437,10 @@ export default function HowItWorks() {
             href="/contact"
             className="inline-flex items-center gap-2 bg-black text-white px-6 py-3.5 rounded-full text-sm font-medium hover:bg-gray-900 transition-colors"
           >
-            Book your free discovery call
+            Start your project
             <span aria-hidden>→</span>
           </Link>
-          <p className="text-muted-foreground text-xs mt-3">15 minutes. No commitment.</p>
+          <p className="text-muted-foreground text-xs mt-3">Response within 24 hours. No pitch, no pressure.</p>
         </motion.div>
       </div>
     </section>

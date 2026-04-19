@@ -6,9 +6,9 @@ import { ArrowRight } from 'lucide-react';
 
 const paths = [
   {
-    tag: 'FOR SERVICE PROVIDERS',
-    title: 'Learn the Framework',
-    description: 'Time for money is the trap. The Playbook is the exit.',
+    tag: 'FOR SERVICE BUSINESSES',
+    title: 'The Playbook',
+    description: 'A step-by-step system for positioning, pricing, and productising your service. Stop trading time. Start scaling.',
     href: '/playbook',
     cta: 'Explore Playbook',
     gradient: 'from-emerald-500/10 to-teal-500/10',
@@ -16,8 +16,8 @@ const paths = [
   },
   {
     tag: 'FOR COACHES & AGENCIES',
-    title: 'Use the AI System',
-    description: 'AI-powered content, funnels, and agents. Built for high-ticket offers.',
+    title: 'The Engine',
+    description: 'AI-built content, automated outreach, and sales funnels. Done for you — so you can focus on delivering, not chasing.',
     href: '/engine',
     cta: 'Explore Engine',
     gradient: 'from-purple-500/10 to-violet-500/10',
@@ -25,8 +25,8 @@ const paths = [
   },
   {
     tag: 'NEED A WEBSITE?',
-    title: 'Hire Our Studio',
-    description: 'A site that brings in clients. Not just sits on a business card.',
+    title: 'Hire the Studio',
+    description: 'A custom-coded website that closes clients — not just looks good. Hand-built, SEO-ready, live in 14 days.',
     href: '/contact',
     cta: 'Start a Project',
     gradient: 'from-black/5 to-black/5',
@@ -52,7 +52,7 @@ export default function Paths() {
             <span className="text-muted-foreground">One standard.</span>
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed">
-            Learn the framework. Use the system. Hire the studio.
+            Whatever stage you&apos;re at, there&apos;s a way to work with us.
           </p>
         </motion.div>
 
