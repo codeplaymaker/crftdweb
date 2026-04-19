@@ -335,8 +335,8 @@ const steps = [
   {
     number: '01',
     label: 'Discovery',
-    heading: 'Start with a conversation.',
-    body: '15 minutes. We look at your current site, ask the right questions, and tell you honestly what would make it work harder for your business.',
+    heading: 'Tell us what you need. We\'ll take it from there.',
+    body: 'Fill out a short form — your business, your site, what\'s not working. We\'ll review it and come back to you within 24 hours to schedule a discovery call.',
     mock: DiscoveryCard,
   },
   {

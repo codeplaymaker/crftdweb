@@ -58,7 +58,6 @@ export default function Footer() {
               <li><Link href="/glossary" className="text-white/50 hover:text-white text-sm transition-colors">Glossary</Link></li>
               <li><Link href="/concepts" className="text-white/50 hover:text-white text-sm transition-colors">Concepts</Link></li>
               <li><Link href="/playbook" className="text-white/50 hover:text-white text-sm transition-colors">The Playbook</Link></li>
-              <li><Link href="/engine" className="text-white/50 hover:text-white text-sm transition-colors">Engine</Link></li>
             </ul>
           </div>
 
@@ -72,7 +71,6 @@ export default function Footer() {
             <Link href="/privacy" className="text-white/40 hover:text-white/60 text-sm transition-colors">Privacy</Link>
             <Link href="/contact" className="text-white/40 hover:text-white/60 text-sm transition-colors">Contact</Link>
             <Link href="/playbook" className="text-white/40 hover:text-white/60 text-sm transition-colors">Playbook</Link>
-            <Link href="/engine" className="text-white/40 hover:text-white/60 text-sm transition-colors">Engine</Link>
           </div>
         </div>
       </div>

@@ -15,15 +15,6 @@ const paths = [
     hoverBorder: 'hover:border-emerald-500/30',
   },
   {
-    tag: 'FOR COACHES & AGENCIES',
-    title: 'The Engine',
-    description: 'AI-built content, automated outreach, and sales funnels. Done for you — so you can focus on delivering, not chasing.',
-    href: '/engine',
-    cta: 'Explore Engine',
-    gradient: 'from-purple-500/10 to-violet-500/10',
-    hoverBorder: 'hover:border-purple-500/30',
-  },
-  {
     tag: 'NEED A WEBSITE?',
     title: 'Hire the Studio',
     description: 'A custom-coded website that closes clients — not just looks good. Hand-built, SEO-ready, live in 14 days.',
@@ -45,10 +36,10 @@ export default function Paths() {
           className="text-center mb-20"
         >
           <span className="text-xs font-semibold tracking-[0.2em] uppercase text-muted-foreground mb-6 block">
-            THREE WAYS TO WORK WITH US
+            TWO WAYS TO WORK WITH US
           </span>
           <h2 className="text-3xl md:text-5xl font-bold tracking-tight leading-tight mb-5">
-            Three ways in.{' '}
+            Two ways in.{' '}
             <span className="text-muted-foreground">One standard.</span>
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed">
@@ -56,7 +47,7 @@ export default function Paths() {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
           {paths.map((path, index) => (
             <motion.div
               key={path.title}
