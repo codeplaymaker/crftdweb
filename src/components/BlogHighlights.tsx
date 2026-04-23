@@ -30,13 +30,14 @@ const highlights = [
 
 export default function BlogHighlights() {
   return (
-    <section className="py-32 bg-accent">
-      <div className="container">
+    <section className="py-24 px-6 bg-white">
+      <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          transition={{ duration: 0.5 }}
+          className="text-center mb-14"
         >
           <span className="text-xs font-semibold tracking-[0.2em] uppercase text-muted-foreground mb-6 block">
             INSIGHTS & RESULTS

@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { Loader2, ArrowLeft, ExternalLink, CheckCircle2, ClipboardCheck, Clock, ChevronDown, ChevronUp, AlertCircle } from 'lucide-react';
+import { Loader2, ArrowLeft, ExternalLink, CheckCircle2, ClipboardCheck, Clock, ChevronDown, ChevronUp, AlertCircle, Mail, Check } from 'lucide-react';
 import Link from 'next/link';
+import { sendBookingLink } from '@/app/actions/sendBookingLink';
 
 interface TrialEntry {
   business: string;
@@ -176,6 +177,7 @@ function SubmissionCard({
   onToggle: (id: string, reviewed: boolean) => void;
 }) {
   const [expanded, setExpanded] = useState(!submission.reviewed);
+  const [bookingStatus, setBookingStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
 
   return (
     <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden">
@@ -209,7 +211,26 @@ function SubmissionCard({
             </span>
           )}
         </div>
-        <div className="flex items-center gap-3 flex-shrink-0" onClick={e => e.stopPropagation()}>
+        <div className="flex items-center gap-2 flex-shrink-0" onClick={e => e.stopPropagation()}>
+          <button
+            onClick={async () => {
+              setBookingStatus('sending');
+              const firstName = (submission.name || submission.email).split(' ')[0];
+              const result = await sendBookingLink(firstName, submission.email);
+              setBookingStatus(result.success ? 'sent' : 'error');
+            }}
+            disabled={bookingStatus === 'sending' || bookingStatus === 'sent'}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors disabled:opacity-50 ${
+              bookingStatus === 'sent'
+                ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                : bookingStatus === 'error'
+                ? 'bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20'
+                : 'bg-zinc-800 text-zinc-400 border border-zinc-700 hover:bg-zinc-700'
+            }`}
+          >
+            {bookingStatus === 'sending' ? <Loader2 size={11} className="animate-spin" /> : bookingStatus === 'sent' ? <Check size={11} /> : <Mail size={11} />}
+            {bookingStatus === 'sent' ? 'Link sent' : bookingStatus === 'error' ? 'Retry' : 'Send booking'}
+          </button>
           <button
             onClick={() => onToggle(submission.id, !submission.reviewed)}
             disabled={toggling}

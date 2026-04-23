@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { adminDb } from '@/lib/firebase/admin';
 import { Resend } from 'resend';
+import { sendMessage } from '@/lib/telegram/bot';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -151,6 +152,12 @@ export async function POST(req: NextRequest) {
         subject: `📅 ${applicantName} booked a call — ${slotLabel}`,
         html: adminNotifyHtml(applicantName, applicantEmail, slotLabel),
       }),
+      ...(process.env.TELEGRAM_ALLOWED_USERS
+        ? [sendMessage(
+            Number(process.env.TELEGRAM_ALLOWED_USERS.split(',')[0]),
+            `📅 <b>Call booked</b>\n\n<b>Who:</b> ${applicantName}\n<b>Email:</b> ${applicantEmail}\n<b>When:</b> ${slotLabel}\n\n<a href="https://meet.google.com/sht-kzhd-yxg">Join Google Meet →</a>`,
+          )]
+        : []),
     ]);
 
     return NextResponse.json({ success: true, label: slotLabel, dateTime: slotDateTime });
