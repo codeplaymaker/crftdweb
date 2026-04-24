@@ -50,8 +50,8 @@ function buildHtml(name: string, bookingUrl: string): string {
               <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
                 <tr><td style="border-top:1px solid #e8e8e8;"></td></tr>
               </table>
-              <p style="margin:0 0 4px;font-size:15px;color:#111;font-weight:700;">Obi</p>
-              <p style="margin:0;font-size:13px;color:#999;">CrftdWeb &middot; <a href="https://crftdweb.com" style="color:#999;text-decoration:none;">crftdweb.com</a></p>
+              <img src="https://crftdweb.com/CW-logo.png" alt="CrftdWeb" width="48" style="display:block;border:0;margin-bottom:8px;" />
+              <p style="margin:0;font-size:13px;color:#999;">crftdweb.com &middot; admin@crftdweb.com</p>
             </td>
           </tr>
           <tr>
