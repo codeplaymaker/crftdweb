@@ -121,7 +121,7 @@ const SKIP_SIC_CODES = new Set([
 
 interface CHCompany {
   company_number: string;
-  title: string;
+  company_name: string;
   date_of_creation: string;
   registered_office_address?: {
     postal_code?: string;
@@ -204,7 +204,7 @@ async function scanCompaniesHouse(): Promise<Array<{
 
     results.push({
       companyNumber: company.company_number,
-      companyName: company.title,
+      companyName: company.company_name,
       directorName,
       postcode: company.registered_office_address?.postal_code ?? '',
       locality: company.registered_office_address?.locality ?? 'Bristol',
