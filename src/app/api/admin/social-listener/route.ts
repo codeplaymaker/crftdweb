@@ -1,6 +1,7 @@
 /**
- * Social Listener — Reddit Scanner
- * Searches Reddit for intent signals ("need a website", etc.)
+ * Social Listener — Multi-source scanner
+ * Sources: Reddit (global + UK subreddits), Hacker News
+ * Searches for intent signals ("need a website", etc.)
  * Saves new matches to the `socialLeads` Firestore collection.
  * Called by Vercel cron (daily at 7am) or manually from admin dashboard.
  */
@@ -17,7 +18,12 @@ function isAuthorized(req: NextRequest): boolean {
   return !!(token && token === process.env.ADMIN_TOKEN);
 }
 
-const KEYWORDS = [
+const BOT_UA = 'CrftdWebBot/1.0 (web-agency lead finder; contact admin@crftdweb.com)';
+
+// ─── Reddit ──────────────────────────────────────────────────────────────────
+
+// Global keyword searches (all of Reddit)
+const REDDIT_GLOBAL_KEYWORDS = [
   'need a website',
   'looking for a web designer',
   'web developer wanted',
@@ -27,6 +33,17 @@ const KEYWORDS = [
   'need a web designer',
   'get a website built',
   'website for my business',
+];
+
+// UK-specific subreddit targeted searches
+const REDDIT_UK_SEARCHES: Array<{ keyword: string; subreddit: string }> = [
+  { keyword: 'website', subreddit: 'ukbusiness' },
+  { keyword: 'web designer', subreddit: 'ukbusiness' },
+  { keyword: 'website', subreddit: 'AskUK' },
+  { keyword: 'web designer', subreddit: 'entrepreneurs' },
+  { keyword: 'website', subreddit: 'smallbusiness' },
+  { keyword: 'web developer', subreddit: 'forhire' },
+  { keyword: 'website design', subreddit: 'forhire' },
 ];
 
 interface RedditChild {
@@ -41,15 +58,11 @@ interface RedditChild {
   };
 }
 
-async function searchReddit(keyword: string): Promise<RedditChild['data'][]> {
-  const url =
-    `https://www.reddit.com/search.json?q=${encodeURIComponent(`"${keyword}"`)}&sort=new&t=week&limit=25&type=link`;
+async function searchReddit(query: string): Promise<RedditChild['data'][]> {
+  const url = `https://www.reddit.com/search.json?q=${encodeURIComponent(query)}&sort=new&t=week&limit=25&type=link`;
 
   const res = await fetch(url, {
-    headers: {
-      'User-Agent': 'CrftdWebBot/1.0 (web-agency lead finder; contact admin@crftdweb.com)',
-    },
-    // 8 second timeout
+    headers: { 'User-Agent': BOT_UA },
     signal: AbortSignal.timeout(8000),
   });
 
@@ -63,6 +76,61 @@ async function searchReddit(keyword: string): Promise<RedditChild['data'][]> {
   return posts.filter((p) => p.created_utc > cutoff);
 }
 
+// ─── Hacker News ─────────────────────────────────────────────────────────────
+
+const HN_KEYWORDS = [
+  'web designer',
+  'web developer',
+  'need a website',
+  'build a website',
+];
+
+interface HNHit {
+  objectID: string;
+  title?: string;
+  story_text?: string;
+  comment_text?: string;
+  author: string;
+  created_at: string;
+  _tags: string[];
+}
+
+async function searchHackerNews(keyword: string): Promise<HNHit[]> {
+  // Search last 2 days (numericFilters=created_at_i > unix timestamp)
+  const cutoff = Math.floor(Date.now() / 1000) - 48 * 60 * 60;
+  const url = `https://hn.algolia.com/api/v1/search_by_date?query=${encodeURIComponent(keyword)}&tags=(ask_hn,show_hn)&numericFilters=created_at_i>${cutoff}&hitsPerPage=20`;
+
+  const res = await fetch(url, {
+    headers: { 'User-Agent': BOT_UA },
+    signal: AbortSignal.timeout(8000),
+  });
+
+  if (!res.ok) return [];
+
+  const data = await res.json() as { hits?: HNHit[] };
+  return data?.hits ?? [];
+}
+
+// ─── Save lead helper ─────────────────────────────────────────────────────────
+
+async function saveLead(
+  docId: string,
+  data: Record<string, unknown>,
+  seenIds: Set<string>
+): Promise<boolean> {
+  if (seenIds.has(docId)) return false;
+  seenIds.add(docId);
+
+  const docRef = adminDb.collection('socialLeads').doc(docId);
+  const existing = await docRef.get();
+  if (existing.exists) return false;
+
+  await docRef.set({ ...data, foundAt: FieldValue.serverTimestamp(), status: 'new' });
+  return true;
+}
+
+// ─── Handler ─────────────────────────────────────────────────────────────────
+
 export async function GET(req: NextRequest) {
   if (!isAuthorized(req)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -72,43 +140,91 @@ export async function GET(req: NextRequest) {
   const seenIds = new Set<string>();
   const errors: string[] = [];
 
-  for (const keyword of KEYWORDS) {
-    let posts: RedditChild['data'][];
+  // ── Reddit: global keyword searches ──
+  for (const keyword of REDDIT_GLOBAL_KEYWORDS) {
     try {
-      posts = await searchReddit(keyword);
+      const posts = await searchReddit(`"${keyword}"`);
+      for (const post of posts) {
+        const snippet = post.selftext?.trim()
+          ? post.selftext.trim().slice(0, 400)
+          : post.title;
+
+        const saved = await saveLead(`reddit_${post.id}`, {
+          id: `reddit_${post.id}`,
+          source: 'reddit',
+          title: post.title,
+          snippet,
+          url: `https://www.reddit.com${post.permalink}`,
+          username: post.author,
+          subreddit: post.subreddit,
+          postedAt: post.created_utc,
+          matchedKeyword: keyword,
+          scope: 'global',
+        }, seenIds);
+
+        if (saved) newLeads++;
+      }
     } catch (err) {
-      errors.push(`${keyword}: ${err instanceof Error ? err.message : 'fetch failed'}`);
-      continue;
+      errors.push(`reddit global "${keyword}": ${err instanceof Error ? err.message : 'failed'}`);
     }
+  }
 
-    for (const post of posts) {
-      if (seenIds.has(post.id)) continue;
-      seenIds.add(post.id);
+  // ── Reddit: UK subreddit-scoped searches ──
+  for (const { keyword, subreddit } of REDDIT_UK_SEARCHES) {
+    try {
+      const posts = await searchReddit(`${keyword} subreddit:${subreddit}`);
+      for (const post of posts) {
+        const snippet = post.selftext?.trim()
+          ? post.selftext.trim().slice(0, 400)
+          : post.title;
 
-      // Use Reddit post ID as doc ID — guarantees no duplicates
-      const docRef = adminDb.collection('socialLeads').doc(post.id);
-      const existing = await docRef.get();
-      if (existing.exists) continue;
+        const saved = await saveLead(`reddit_${post.id}`, {
+          id: `reddit_${post.id}`,
+          source: 'reddit',
+          title: post.title,
+          snippet,
+          url: `https://www.reddit.com${post.permalink}`,
+          username: post.author,
+          subreddit: post.subreddit,
+          postedAt: post.created_utc,
+          matchedKeyword: keyword,
+          scope: 'uk',
+        }, seenIds);
 
-      const snippet = post.selftext?.trim()
-        ? post.selftext.trim().slice(0, 400)
-        : post.title;
+        if (saved) newLeads++;
+      }
+    } catch (err) {
+      errors.push(`reddit r/${subreddit} "${keyword}": ${err instanceof Error ? err.message : 'failed'}`);
+    }
+  }
 
-      await docRef.set({
-        id: post.id,
-        source: 'reddit',
-        title: post.title,
-        snippet,
-        url: `https://www.reddit.com${post.permalink}`,
-        username: post.author,
-        subreddit: post.subreddit,
-        postedAt: post.created_utc,
-        foundAt: FieldValue.serverTimestamp(),
-        status: 'new',
-        matchedKeyword: keyword,
-      });
+  // ── Hacker News ──
+  for (const keyword of HN_KEYWORDS) {
+    try {
+      const hits = await searchHackerNews(keyword);
+      for (const hit of hits) {
+        const title = hit.title ?? hit.story_text?.slice(0, 100) ?? keyword;
+        const snippet = hit.story_text?.slice(0, 400) ?? hit.comment_text?.slice(0, 400) ?? title;
+        const postedAt = Math.floor(new Date(hit.created_at).getTime() / 1000);
+        const isAsk = hit._tags?.includes('ask_hn');
 
-      newLeads++;
+        const saved = await saveLead(`hn_${hit.objectID}`, {
+          id: `hn_${hit.objectID}`,
+          source: 'hackernews',
+          title,
+          snippet,
+          url: `https://news.ycombinator.com/item?id=${hit.objectID}`,
+          username: hit.author,
+          subreddit: isAsk ? 'Ask HN' : 'Show HN',
+          postedAt,
+          matchedKeyword: keyword,
+          scope: 'global',
+        }, seenIds);
+
+        if (saved) newLeads++;
+      }
+    } catch (err) {
+      errors.push(`hackernews "${keyword}": ${err instanceof Error ? err.message : 'failed'}`);
     }
   }
 

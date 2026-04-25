@@ -6,7 +6,7 @@ import { Loader2, RefreshCw, ExternalLink, Radio } from 'lucide-react';
 
 interface SocialLead {
   id: string;
-  source: 'reddit';
+  source: 'reddit' | 'hackernews';
   title: string;
   snippet: string;
   url: string;
@@ -15,9 +15,11 @@ interface SocialLead {
   postedAt: number;
   status: 'new' | 'dismissed' | 'converted';
   matchedKeyword: string;
+  scope?: 'uk' | 'global';
 }
 
 type FilterTab = 'new' | 'all' | 'dismissed';
+type SourceFilter = 'all' | 'reddit' | 'hackernews';
 
 function timeAgo(unixSeconds: number): string {
   const diff = Date.now() / 1000 - unixSeconds;
@@ -38,6 +40,7 @@ export default function SocialLeadsPage() {
   const [scanResult, setScanResult] = useState<{ newLeads: number } | null>(null);
   const [updating, setUpdating] = useState<string | null>(null);
   const [filter, setFilter] = useState<FilterTab>('new');
+  const [sourceFilter, setSourceFilter] = useState<SourceFilter>('all');
 
   useEffect(() => {
     fetchLeads();
@@ -79,10 +82,12 @@ export default function SocialLeadsPage() {
   }
 
   const filtered = useMemo(() => {
-    if (filter === 'new') return leads.filter((l) => l.status === 'new');
-    if (filter === 'dismissed') return leads.filter((l) => l.status === 'dismissed');
-    return leads;
-  }, [leads, filter]);
+    let list = leads;
+    if (filter === 'new') list = list.filter((l) => l.status === 'new');
+    else if (filter === 'dismissed') list = list.filter((l) => l.status === 'dismissed');
+    if (sourceFilter !== 'all') list = list.filter((l) => l.source === sourceFilter);
+    return list;
+  }, [leads, filter, sourceFilter]);
 
   const counts = useMemo(() => ({
     new: leads.filter((l) => l.status === 'new').length,
@@ -177,9 +182,26 @@ export default function SocialLeadsPage() {
             </button>
           ))}
 
-          <div className="ml-auto flex items-center gap-1.5 text-xs text-white/20">
-            <div className="w-1.5 h-1.5 rounded-full bg-orange-400/60 animate-pulse" />
-            Auto-scans daily at 7am
+          <div className="ml-auto flex items-center gap-2">
+            {/* Source filter */}
+            {(['all', 'reddit', 'hackernews'] as SourceFilter[]).map((s) => (
+              <button
+                key={s}
+                onClick={() => setSourceFilter(s)}
+                className={`px-2.5 py-1 rounded-lg text-xs transition-colors ${
+                  sourceFilter === s
+                    ? 'bg-white/[0.08] text-white/70'
+                    : 'text-white/20 hover:text-white/40'
+                }`}
+              >
+                {s === 'hackernews' ? 'HN' : s === 'reddit' ? 'Reddit' : 'All sources'}
+              </button>
+            ))}
+            <span className="text-white/10 text-xs">·</span>
+            <div className="flex items-center gap-1.5 text-xs text-white/20">
+              <div className="w-1.5 h-1.5 rounded-full bg-orange-400/60 animate-pulse" />
+              Auto-scans daily at 7am
+            </div>
           </div>
         </div>
 
@@ -192,7 +214,7 @@ export default function SocialLeadsPage() {
           <div className="text-center py-20">
             <Radio className="w-8 h-8 text-white/10 mx-auto mb-3" />
             <p className="text-white/30 text-sm">
-              {filter === 'new' ? 'No new leads — run a scan to check Reddit' : 'Nothing here yet'}
+              {filter === 'new' ? 'No new leads — run a scan to check Reddit + HN' : 'Nothing here yet'}
             </p>
           </div>
         ) : (
@@ -209,13 +231,25 @@ export default function SocialLeadsPage() {
                 <div className="flex items-start gap-4">
                   {/* Source badge */}
                   <div className="mt-0.5 flex-shrink-0">
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#FF4500]/10 border border-[#FF4500]/20 text-[#FF4500] text-[10px] font-semibold tracking-wide">
-                      <svg className="w-3 h-3" viewBox="0 0 20 20" fill="currentColor">
-                        <circle cx="10" cy="10" r="10" fill="#FF4500" />
-                        <path d="M16.67 10a1.46 1.46 0 00-2.47-1 7.12 7.12 0 00-3.85-1.23l.65-3.08 2.13.45a1 1 0 101.07-.97 1 1 0 00-.96.68l-2.38-.5a.16.16 0 00-.19.12l-.73 3.44a7.14 7.14 0 00-3.82 1.23 1.46 1.46 0 10-1.61 2.39 2.87 2.87 0 000 .44c0 2.24 2.61 4.06 5.83 4.06s5.83-1.82 5.83-4.06a2.87 2.87 0 000-.44 1.46 1.46 0 00.4-1.03zM7.5 11a1 1 0 111 1 1 1 0 01-1-1zm5.63 2.65a3.5 3.5 0 01-2.13.6 3.5 3.5 0 01-2.13-.6.16.16 0 01.22-.22 3.27 3.27 0 001.91.5 3.27 3.27 0 001.91-.5.16.16 0 01.22.22zm-.13-1.65a1 1 0 111-1 1 1 0 01-1 1z" fill="white" />
-                      </svg>
-                      r/{lead.subreddit}
-                    </span>
+                    {lead.source === 'reddit' ? (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#FF4500]/10 border border-[#FF4500]/20 text-[#FF4500] text-[10px] font-semibold tracking-wide">
+                        <svg className="w-3 h-3" viewBox="0 0 20 20" fill="currentColor">
+                          <circle cx="10" cy="10" r="10" fill="#FF4500" />
+                          <path d="M16.67 10a1.46 1.46 0 00-2.47-1 7.12 7.12 0 00-3.85-1.23l.65-3.08 2.13.45a1 1 0 101.07-.97 1 1 0 00-.96.68l-2.38-.5a.16.16 0 00-.19.12l-.73 3.44a7.14 7.14 0 00-3.82 1.23 1.46 1.46 0 10-1.61 2.39 2.87 2.87 0 000 .44c0 2.24 2.61 4.06 5.83 4.06s5.83-1.82 5.83-4.06a2.87 2.87 0 000-.44 1.46 1.46 0 00.4-1.03zM7.5 11a1 1 0 111 1 1 1 0 01-1-1zm5.63 2.65a3.5 3.5 0 01-2.13.6 3.5 3.5 0 01-2.13-.6.16.16 0 01.22-.22 3.27 3.27 0 001.91.5 3.27 3.27 0 001.91-.5.16.16 0 01.22.22zm-.13-1.65a1 1 0 111-1 1 1 0 01-1 1z" fill="white" />
+                        </svg>
+                        r/{lead.subreddit}
+                        {lead.scope === 'uk' && (
+                          <span className="ml-1 text-[#FF4500]/60">🇬🇧</span>
+                        )}
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#FF6600]/10 border border-[#FF6600]/20 text-[#FF6600] text-[10px] font-semibold tracking-wide">
+                        <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/>
+                        </svg>
+                        {lead.subreddit}
+                      </span>
+                    )}
                   </div>
 
                   {/* Content */}
