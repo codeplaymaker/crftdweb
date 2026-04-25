@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CrftdWeb — Lead Gen Playbook</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+      background: #fff;
+      color: #111;
+      line-height: 1.7;
+      font-size: 15px;
+    }
+
+    /* ── Cover ── */
+    .cover {
+      background: #000;
+      color: #fff;
+      padding: 80px 60px 60px;
+      min-height: 220px;
+    }
+    .cover .logo {
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      margin-bottom: 40px;
+    }
+    .cover h1 {
+      font-size: 38px;
+      font-weight: 900;
+      letter-spacing: -1.5px;
+      line-height: 1.15;
+      margin-bottom: 12px;
+    }
+    .cover p {
+      font-size: 16px;
+      color: rgba(255,255,255,0.5);
+    }
+    .cover .date {
+      margin-top: 32px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.3);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    /* ── Layout ── */
+    .content {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 60px 40px 100px;
+    }
+
+    /* ── Section ── */
+    .section {
+      margin-bottom: 56px;
+      page-break-inside: avoid;
+    }
+    .section-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #999;
+      margin-bottom: 8px;
+    }
+    .section h2 {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 20px;
+      color: #111;
+    }
+    .section p {
+      color: #444;
+      margin-bottom: 14px;
+    }
+
+    /* ── Steps ── */
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      border: 1px solid #e8e8e8;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .step {
+      display: flex;
+      gap: 20px;
+      padding: 20px 24px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .step:last-child { border-bottom: none; }
+    .step-num {
+      font-size: 11px;
+      font-weight: 800;
+      color: #fff;
+      background: #111;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .step-body h3 {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .step-body p {
+      font-size: 14px;
+      color: #666;
+      margin: 0;
+    }
+
+    /* ── Table ── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 14px;
+    }
+    th {
+      background: #f5f5f5;
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #777;
+      border-bottom: 1px solid #e8e8e8;
+    }
+    td {
+      padding: 12px 14px;
+      border-bottom: 1px solid #f0f0f0;
+      color: #444;
+      vertical-align: top;
+    }
+    tr:last-child td { border-bottom: none; }
+
+    /* ── Callout ── */
+    .callout {
+      background: #f9f9f9;
+      border-left: 3px solid #111;
+      border-radius: 0 8px 8px 0;
+      padding: 16px 20px;
+      margin: 20px 0;
+      font-size: 14px;
+      color: #444;
+    }
+    .callout strong { color: #111; }
+
+    /* ── Example email ── */
+    .email-box {
+      background: #fafafa;
+      border: 1px solid #e8e8e8;
+      border-radius: 10px;
+      padding: 20px 24px;
+      font-size: 14px;
+      color: #333;
+      line-height: 1.8;
+      margin: 20px 0;
+    }
+    .email-box .label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #bbb;
+      margin-bottom: 12px;
+    }
+
+    /* ── Tags ── */
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+    }
+    .tag {
+      font-size: 12px;
+      font-weight: 600;
+      background: #f0f0f0;
+      color: #444;
+      padding: 5px 12px;
+      border-radius: 20px;
+    }
+    .tag.green { background: #eafaf1; color: #1a7a45; }
+    .tag.amber { background: #fff8e6; color: #8a6000; }
+
+    /* ── Divider ── */
+    hr {
+      border: none;
+      border-top: 1px solid #efefef;
+      margin: 40px 0;
+    }
+
+    /* ── Revenue box ── */
+    .revenue-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin: 20px 0;
+    }
+    .revenue-card {
+      border: 1px solid #e8e8e8;
+      border-radius: 10px;
+      padding: 18px 16px;
+      text-align: center;
+    }
+    .revenue-card .amount {
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      color: #111;
+    }
+    .revenue-card .label {
+      font-size: 11px;
+      color: #999;
+      margin-top: 4px;
+    }
+
+    /* ── Print ── */
+    @media print {
+      body { font-size: 13px; }
+      .cover { padding: 60px 40px 40px; }
+      .cover h1 { font-size: 30px; }
+      .content { padding: 40px 30px 60px; }
+      .section { margin-bottom: 40px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Cover -->
+  <div class="cover">
+    <div class="logo">CW</div>
+    <h1>Cold Email<br>Lead Gen Playbook</h1>
+    <p>A step-by-step system for generating qualified leads for clients using cold email outreach.</p>
+    <div class="date">CrftdWeb · April 2026</div>
+  </div>
+
+  <div class="content">
+
+    <!-- Overview -->
+    <div class="section">
+      <div class="section-label">Overview</div>
+      <h2>What This Is</h2>
+      <p>Cold email outreach at scale is one of the highest-margin services you can offer on top of web design. You build a targeted list of business owners, send short personalised emails daily, and book qualified calls for your clients.</p>
+      <p>This playbook covers everything: setting up the system, building lists, writing emails, and turning it into a recurring revenue stream.</p>
+
+      <div class="callout">
+        <strong>The model in one sentence:</strong> Find the right people, send them a short message that sounds human, book a call, and charge a retainer to keep doing it every month.
+      </div>
+    </div>
+
+    <hr />
+
+    <!-- Revenue Potential -->
+    <div class="section">
+      <div class="section-label">The Opportunity</div>
+      <h2>Revenue Potential</h2>
+      <p>Your actual tool cost per client is £50–100/mo. Everything else is margin.</p>
+
+      <div class="revenue-grid">
+        <div class="revenue-card">
+          <div class="amount">£2,500</div>
+          <div class="label">5 clients × £500/mo</div>
+        </div>
+        <div class="revenue-card">
+          <div class="amount">£10,000</div>
+          <div class="label">10 clients × £1,000/mo</div>
+        </div>
+        <div class="revenue-card">
+          <div class="amount">£20,000</div>
+          <div class="label">20 clients × £1,000/mo</div>
+        </div>
+      </div>
+
+      <p>Retainers stack. Unlike one-off website builds, monthly retainers compound — 10 retained clients = £10k/mo whether you win new business that month or not.</p>
+
+      <div class="callout">
+        <strong>The bundle pitch:</strong> "We'll redesign your site AND fill your calendar with qualified leads for £1,500/mo." Easier sell than a £3k one-off because it pays for itself.
+      </div>
+    </div>
+
+    <hr />
+
+    <!-- The System -->
+    <div class="section">
+      <div class="section-label">The System</div>
+      <h2>How It Works (5 Steps)</h2>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <h3>Define Your ICP (Ideal Customer Profile)</h3>
+            <p>Pick one niche to start — trades work best (plumbers, electricians, roofers). Same problems, same ads, easy to replicate. Target: owner-run businesses, 1–10 employees, outdated website or no Google reviews, UK cities.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <h3>Build a Targeted List</h3>
+            <p>Use Google Maps scraping (Outscraper ~£20), visit their websites for emails, verify with Millionverifier (~£5/1,000). Target 100–200 contacts to start.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <h3>Set Up Sending Infrastructure</h3>
+            <p>Buy a burner domain (e.g. crftdwebagency.co.uk ~£10/yr). Set up a Google Workspace mailbox (~£5/mo). Warm it up for 2 weeks using Instantly.ai or Mailreach before sending anything.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <h3>Write &amp; Send Emails</h3>
+            <p>Short, plain text, personal. 20–30 emails/day to start. Three follow-ups max (day 1, day 3, day 7). No logos, no HTML, no unsubscribe links in the first email.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">5</div>
+          <div class="step-body">
+            <h3>Optimise Weekly</h3>
+            <p>Track open rate (target &gt;40%), reply rate (target &gt;5%), positive reply rate (target &gt;2%). Every reply and objection is data. Refine subject lines and openers weekly.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr />
+
+    <!-- List Building -->
+    <div class="section">
+      <div class="section-label">List Building</div>
+      <h2>How to Generate Lists</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Method</th>
+            <th>Cost</th>
+            <th>Best For</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Google Maps (manual)</strong></td>
+            <td>Free</td>
+            <td>First 50–100 contacts, highly targeted</td>
+          </tr>
+          <tr>
+            <td><strong>Outscraper</strong></td>
+            <td>~£20 one-off</td>
+            <td>Bulk Google Maps scraping, exports spreadsheet</td>
+          </tr>
+          <tr>
+            <td><strong>Yell.com / Checkatrade</strong></td>
+            <td>Free</td>
+            <td>UK trades directory, pre-filtered by niche</td>
+          </tr>
+          <tr>
+            <td><strong>Apollo.io</strong></td>
+            <td>Free (50/mo) or £40/mo</td>
+            <td>Finding owner email addresses by company name</td>
+          </tr>
+          <tr>
+            <td><strong>Hunter.io</strong></td>
+            <td>Free (25/mo)</td>
+            <td>Find emails from a domain name</td>
+          </tr>
+          <tr>
+            <td><strong>Millionverifier</strong></td>
+            <td>~£5 per 1,000</td>
+            <td>Email verification — always verify before sending</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout">
+        <strong>Practical start:</strong> Google Maps → Outscraper (200 results) → visit each website for email → verify with Millionverifier → import to Instantly. Total cost: under £30.
+      </div>
+    </div>
+
+    <hr />
+
+    <!-- Email Writing -->
+    <div class="section">
+      <div class="section-label">Email Writing</div>
+      <h2>What to Send</h2>
+
+      <p>Cold emails should look like they came from a real person — not a company. The moment it looks "branded" (logo, footer, colours) the brain reads it as marketing and ignores it.</p>
+
+      <div class="tags" style="margin-bottom:20px;">
+        <span class="tag green">✓ Plain text</span>
+        <span class="tag green">✓ Short (under 80 words)</span>
+        <span class="tag green">✓ One question at the end</span>
+        <span class="tag green">✓ Personal sender name</span>
+        <span class="tag amber">✗ No logo</span>
+        <span class="tag amber">✗ No HTML template</span>
+        <span class="tag amber">✗ No "we are a company that..."</span>
+      </div>
+
+      <div class="email-box">
+        <div class="label">Example — Initial Email</div>
+        Hi John,<br><br>
+        Came across Riverside Plumbing — looks like the site hasn't been updated in a few years.<br><br>
+        We helped a plumber in Manchester pick up 11 extra calls/mo after a rebuild.<br><br>
+        Worth a quick chat?<br><br>
+        James
+      </div>
+
+      <div class="email-box">
+        <div class="label">Example — Follow-up (Day 3)</div>
+        Hey John — just bumping this up in case it got buried.<br><br>
+        Happy to show you what we did for the Manchester client if useful.<br><br>
+        James
+      </div>
+
+      <div class="email-box">
+        <div class="label">Example — Final Follow-up (Day 7)</div>
+        Last one from me — if now's not a good time no worries at all.<br><br>
+        If you ever want more calls coming through the site, you know where I am.<br><br>
+        James
+      </div>
+    </div>
+
+    <hr />
+
+    <!-- Tools -->
+    <div class="section">
+      <div class="section-label">Tools</div>
+      <h2>Recommended Stack</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Tool</th>
+            <th>Purpose</th>
+            <th>Cost</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Instantly.ai</strong></td>
+            <td>Cold email sending, follow-ups, analytics</td>
+            <td>~£37/mo</td>
+          </tr>
+          <tr>
+            <td><strong>Apollo.io</strong></td>
+            <td>List building + email finding</td>
+            <td>Free–£40/mo</td>
+          </tr>
+          <tr>
+            <td><strong>Outscraper</strong></td>
+            <td>Google Maps scraping</td>
+            <td>~£20 one-off</td>
+          </tr>
+          <tr>
+            <td><strong>Millionverifier</strong></td>
+            <td>Email list verification</td>
+            <td>~£5 per 1,000</td>
+          </tr>
+          <tr>
+            <td><strong>Google Workspace</strong></td>
+            <td>Burner sending mailbox</td>
+            <td>~£5/mo</td>
+          </tr>
+          <tr>
+            <td><strong>Mailreach / Instantly warmup</strong></td>
+            <td>Inbox warmup before sending</td>
+            <td>Included in Instantly</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p style="font-size:13px;color:#999;margin-top:8px;">Total tool cost: ~£60–90/mo per sender inbox. That's your cost basis per client campaign.</p>
+    </div>
+
+    <hr />
+
+    <!-- Timeline -->
+    <div class="section">
+      <div class="section-label">Timeline</div>
+      <h2>Getting Started</h2>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">W1</div>
+          <div class="step-body">
+            <h3>Week 1–2: Setup</h3>
+            <p>Buy burner domain, set up Google Workspace mailbox, start inbox warmup, build first list of 200 contacts (one niche, one city).</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">W3</div>
+          <div class="step-body">
+            <h3>Week 3: Launch</h3>
+            <p>Start sending 20–30 emails/day. Write 3 variants of subject line and opener. Deploy follow-up sequences (day 3, day 7).</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">W4</div>
+          <div class="step-body">
+            <h3>Week 4: First Replies</h3>
+            <p>Expect first replies and booked calls. Offer first client a discounted rate (~£200/mo) in exchange for a case study and testimonial.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">M2</div>
+          <div class="step-body">
+            <h3>Month 2–3: Results &amp; Proof</h3>
+            <p>Get results for your first client (even 5–10 leads = a win for a tradesperson). Screenshot everything. Use as proof to close next 2 clients at full price.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">M6</div>
+          <div class="step-body">
+            <h3>Month 6: Scale</h3>
+            <p>6–8 clients retained at £500–1,000/mo = £3–8k/mo recurring. Productise one niche, then copy to another. Hire a VA to manage lists once you hit 10+ clients.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr />
+
+    <!-- Pricing -->
+    <div class="section">
+      <div class="section-label">Pricing</div>
+      <h2>How to Charge</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Model</th>
+            <th>Price</th>
+            <th>When to Use</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Flat retainer</strong></td>
+            <td>£500–1,000/mo</td>
+            <td>Covers all outreach, reporting, optimisation</td>
+          </tr>
+          <tr>
+            <td><strong>Pay per lead</strong></td>
+            <td>£50–150 per booked call</td>
+            <td>Lower risk for client, higher upside for you</td>
+          </tr>
+          <tr>
+            <td><strong>Website + lead gen bundle</strong></td>
+            <td>£1,500/mo</td>
+            <td>Best sell — tangible on day 1, pays for itself</td>
+          </tr>
+          <tr>
+            <td><strong>Intro/case study rate</strong></td>
+            <td>£200/mo</td>
+            <td>First client only — you're buying proof, not revenue</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout">
+        <strong>Don't guarantee a number of leads.</strong> Instead say: "We guarantee the work is done daily and you'll see results within 60 days — if not, we'll adjust the strategy or pause the retainer." That's accountable without being a legal liability.
+      </div>
+    </div>
+
+    <hr />
+
+    <!-- Setting Up for a Client -->
+    <div class="section">
+      <div class="section-label">Client Setup</div>
+      <h2>Setting Up a Campaign for a Client</h2>
+      <p>Once you have your own system proven, you can run the same playbook for paying clients. Here's exactly how to onboard and set up a client campaign from scratch.</p>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <h3>Client Intake — What You Need Before You Start</h3>
+            <p>Before building anything, get clarity on who they are and who they want to reach. Ask:</p>
+            <ul style="margin-top:8px;padding-left:18px;font-size:14px;color:#666;line-height:2;">
+              <li>What do you do and what's your best-selling service?</li>
+              <li>What kind of customer do you want more of? (area, size, budget)</li>
+              <li>What result do you get for your best customers? (e.g. "saved them £4k on their boiler")</li>
+              <li>Do you have any case studies, testimonials, or before/after results?</li>
+              <li>Who handles enquiries — you or someone else?</li>
+              <li>How fast do you respond to new leads? (critical for conversion)</li>
+              <li>What's your target area? (city / radius)</li>
+              <li>Any types of customer you don't want?</li>
+            </ul>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <h3>Build Their ICP</h3>
+            <p>Use their answers to define exactly who you're targeting. Document it clearly:</p>
+            <ul style="margin-top:8px;padding-left:18px;font-size:14px;color:#666;line-height:2;">
+              <li><strong>Niche:</strong> e.g. residential plumbers, 1–5 staff</li>
+              <li><strong>Location:</strong> e.g. Bristol, Bath, Swindon (30-mile radius)</li>
+              <li><strong>Signals:</strong> outdated website, few Google reviews, no live chat</li>
+              <li><strong>Exclusions:</strong> commercial only, national chains, already using a competitor</li>
+            </ul>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <h3>Set Up Their Sending Infrastructure</h3>
+            <p>Never send from the client's main domain — it risks their reputation. Set up dedicated infrastructure for them:</p>
+            <ul style="margin-top:8px;padding-left:18px;font-size:14px;color:#666;line-height:2;">
+              <li>Register a variation domain (e.g. <em>getjohnplumbing.co.uk</em> or <em>johnplumbingbristol.co.uk</em>)</li>
+              <li>Set up one Google Workspace mailbox (~£5/mo) — use a real first name</li>
+              <li>Configure SPF, DKIM, DMARC records (Instantly guides you through this)</li>
+              <li>Start inbox warmup — do not send cold emails for at least 14 days</li>
+            </ul>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <h3>Build Their List</h3>
+            <p>Use their ICP to pull a targeted list of prospects <em>for</em> their business. These are people who could become their customers — not outreach targets for your agency.</p>
+            <ul style="margin-top:8px;padding-left:18px;font-size:14px;color:#666;line-height:2;">
+              <li>Use Outscraper to pull businesses in their target area and vertical</li>
+              <li>Example: a solicitor client wants more SME clients → scrape "limited companies registered in Bristol last 12 months" via Companies House</li>
+              <li>Clean, verify, and load into Instantly under their campaign</li>
+            </ul>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">5</div>
+          <div class="step-body">
+            <h3>Write Copy Using Their Voice &amp; Results</h3>
+            <p>The email should sound like it came from them (or their team), not from a generic agency. Use their actual results as proof.</p>
+            <div class="email-box" style="margin-top:12px;">
+              <div class="label">Example — written for a plumber client</div>
+              Hi [Name],<br><br>
+              Noticed [Business] comes up for emergency plumbing in [City] — wanted to reach out directly.<br><br>
+              We recently helped a homeowner in [area] cut their heating bill by 30% after a full system check. Happy to do a free 15-min call if you're ever looking for a reliable local plumber.<br><br>
+              [Client first name]
+            </div>
+            <p style="margin-top:8px;font-size:13px;color:#888;">Note: adjust the angle depending on whether you're emailing residential customers, estate agents, letting agents, etc.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">6</div>
+          <div class="step-body">
+            <h3>Managed vs Handoff</h3>
+            <p>Decide upfront which model you're running:</p>
+            <table style="margin-top:10px;">
+              <thead>
+                <tr>
+                  <th>Model</th>
+                  <th>You Do</th>
+                  <th>Client Does</th>
+                  <th>Charge</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Fully managed</strong></td>
+                  <td>Everything — list, copy, sending, replies, reporting</td>
+                  <td>Show up to calls</td>
+                  <td>£750–1,500/mo</td>
+                </tr>
+                <tr>
+                  <td><strong>Done-with-you</strong></td>
+                  <td>Setup + training</td>
+                  <td>Manage replies themselves</td>
+                  <td>£300–500/mo</td>
+                </tr>
+                <tr>
+                  <td><strong>Setup only</strong></td>
+                  <td>Build the system once</td>
+                  <td>Run it themselves</td>
+                  <td>£500–1,000 one-off</td>
+                </tr>
+              </tbody>
+            </table>
+            <p style="margin-top:10px;font-size:14px;color:#666;">Fully managed is the highest value and best for retention. Start here.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">7</div>
+          <div class="step-body">
+            <h3>Monthly Reporting</h3>
+            <p>Send a simple report every month. Clients don't care about technical metrics — they care about booked calls. Keep it short:</p>
+            <ul style="margin-top:8px;padding-left:18px;font-size:14px;color:#666;line-height:2;">
+              <li><strong>Emails sent</strong> this month</li>
+              <li><strong>Open rate</strong> (target &gt;40%)</li>
+              <li><strong>Replies received</strong> (total + positive)</li>
+              <li><strong>Calls booked</strong> this month</li>
+              <li><strong>What we're testing next month</strong> (subject line, new angle, new area)</li>
+            </ul>
+            <div class="callout" style="margin-top:14px;">
+              <strong>Keep it to one page.</strong> A client seeing "312 emails sent, 6 booked calls" is all they need. Over-reporting creates doubt.
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">8</div>
+          <div class="step-body">
+            <h3>Handling Replies</h3>
+            <p>In the fully managed model, you manage replies on their behalf. Set expectations upfront:</p>
+            <ul style="margin-top:8px;padding-left:18px;font-size:14px;color:#666;line-height:2;">
+              <li>Positive replies → you book the call directly into their calendar</li>
+              <li>Not now → tag for follow-up in 30–60 days</li>
+              <li>Unsubscribe requests → remove immediately, do not follow up</li>
+              <li>Negative replies → note the objection, use to refine targeting</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr />
+
+    <!-- Client Checklist -->
+    <div class="section">
+      <div class="section-label">Quick Reference</div>
+      <h2>New Client Launch Checklist</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Task</th>
+            <th>Done By</th>
+            <th>Timeline</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Complete client intake form</td>
+            <td>Client + you</td>
+            <td>Day 1</td>
+          </tr>
+          <tr>
+            <td>Define ICP and exclusions</td>
+            <td>You</td>
+            <td>Day 1</td>
+          </tr>
+          <tr>
+            <td>Register burner domain</td>
+            <td>You</td>
+            <td>Day 1</td>
+          </tr>
+          <tr>
+            <td>Set up Google Workspace mailbox</td>
+            <td>You</td>
+            <td>Day 1–2</td>
+          </tr>
+          <tr>
+            <td>Configure SPF / DKIM / DMARC</td>
+            <td>You</td>
+            <td>Day 2</td>
+          </tr>
+          <tr>
+            <td>Start inbox warmup (14 days minimum)</td>
+            <td>Instantly</td>
+            <td>Day 2</td>
+          </tr>
+          <tr>
+            <td>Build and verify prospect list (200+)</td>
+            <td>You</td>
+            <td>Day 3–7</td>
+          </tr>
+          <tr>
+            <td>Write 3 email variants + 2 follow-ups</td>
+            <td>You</td>
+            <td>Day 5–7</td>
+          </tr>
+          <tr>
+            <td>Client approves copy</td>
+            <td>Client</td>
+            <td>Day 7–8</td>
+          </tr>
+          <tr>
+            <td>Load sequence into Instantly</td>
+            <td>You</td>
+            <td>Day 8</td>
+          </tr>
+          <tr>
+            <td>Go live — 20–30 emails/day</td>
+            <td>Instantly</td>
+            <td>Day 14–16</td>
+          </tr>
+          <tr>
+            <td>First weekly check-in with client</td>
+            <td>You + client</td>
+            <td>Day 21</td>
+          </tr>
+          <tr>
+            <td>Send month 1 report</td>
+            <td>You</td>
+            <td>Day 30</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <hr />
+
+    <!-- Footer -->
+    <div style="text-align:center;padding-top:20px;">
+      <p style="font-size:20px;font-weight:900;letter-spacing:-0.5px;color:#111;margin-bottom:6px;">CW</p>
+      <p style="font-size:12px;color:#bbb;">crftdweb.com · admin@crftdweb.com</p>
+      <p style="font-size:11px;color:#ddd;margin-top:8px;">Internal use only · April 2026</p>
+    </div>
+
+  </div>
+</body>
+</html>

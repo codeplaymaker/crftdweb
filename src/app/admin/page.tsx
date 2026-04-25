@@ -1634,6 +1634,32 @@ export default function AdminDashboard() {
                   </svg>
                 </div>
               </motion.a>
+
+              {/* Social Listener */}
+              <motion.a
+                href="/admin/social-leads"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.13 }}
+                whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                className="group bg-white/[0.03] border border-white/[0.06] rounded-2xl p-8 text-left hover:border-orange-500/30 hover:bg-orange-500/[0.03] transition-colors block"
+              >
+                <div className="w-12 h-12 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center mb-5 group-hover:bg-orange-500/15 transition-colors">
+                  <svg className="w-6 h-6 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8.288 15.038a5.25 5.25 0 017.424 0M5.106 11.856c3.807-3.808 9.98-3.808 13.788 0M1.924 8.674c5.565-5.565 14.587-5.565 20.152 0M12.53 18.22l-.53.53-.53-.53a.75.75 0 011.06 0z" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-semibold text-white mb-2">Social Listener</h3>
+                <p className="text-sm text-white/35 leading-relaxed mb-4">
+                  Reddit scanner finding people asking for web design help. Auto-scans daily, review and action warm leads.
+                </p>
+                <div className="flex items-center gap-2 text-xs text-orange-400/60 font-medium">
+                  <span>View leads</span>
+                  <svg className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </motion.a>
             </div>
 
             {/* Operations */}
