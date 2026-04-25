@@ -6,7 +6,7 @@ import { Loader2, RefreshCw, ExternalLink, Radio } from 'lucide-react';
 
 interface SocialLead {
   id: string;
-  source: 'reddit' | 'hackernews';
+  source: 'reddit' | 'hackernews' | 'companies_house';
   title: string;
   snippet: string;
   url: string;
@@ -19,7 +19,7 @@ interface SocialLead {
 }
 
 type FilterTab = 'new' | 'all' | 'dismissed';
-type SourceFilter = 'all' | 'reddit' | 'hackernews';
+type SourceFilter = 'all' | 'reddit' | 'hackernews' | 'companies_house';
 
 function timeAgo(unixSeconds: number): string {
   const diff = Date.now() / 1000 - unixSeconds;
@@ -184,7 +184,7 @@ export default function SocialLeadsPage() {
 
           <div className="ml-auto flex items-center gap-2">
             {/* Source filter */}
-            {(['all', 'reddit', 'hackernews'] as SourceFilter[]).map((s) => (
+            {(['all', 'reddit', 'hackernews', 'companies_house'] as SourceFilter[]).map((s) => (
               <button
                 key={s}
                 onClick={() => setSourceFilter(s)}
@@ -194,7 +194,7 @@ export default function SocialLeadsPage() {
                     : 'text-white/20 hover:text-white/40'
                 }`}
               >
-                {s === 'hackernews' ? 'HN' : s === 'reddit' ? 'Reddit' : 'All sources'}
+                {s === 'hackernews' ? 'HN' : s === 'reddit' ? 'Reddit' : s === 'companies_house' ? 'Co. House' : 'All sources'}
               </button>
             ))}
             <span className="text-white/10 text-xs">·</span>
@@ -214,7 +214,7 @@ export default function SocialLeadsPage() {
           <div className="text-center py-20">
             <Radio className="w-8 h-8 text-white/10 mx-auto mb-3" />
             <p className="text-white/30 text-sm">
-              {filter === 'new' ? 'No new leads — run a scan to check Reddit + HN' : 'Nothing here yet'}
+              {filter === 'new' ? 'No new leads — run a scan to check Reddit, HN + Companies House' : 'Nothing here yet'}
             </p>
           </div>
         ) : (
@@ -242,6 +242,13 @@ export default function SocialLeadsPage() {
                           <span className="ml-1 text-[#FF4500]/60">🇬🇧</span>
                         )}
                       </span>
+                    ) : lead.source === 'companies_house' ? (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] font-semibold tracking-wide">
+                        <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-2 10v-5a1 1 0 00-1-1h-2a1 1 0 00-1 1v5m4 0H9" />
+                        </svg>
+                        {lead.subreddit} 🇬🇧
+                      </span>
                     ) : (
                       <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#FF6600]/10 border border-[#FF6600]/20 text-[#FF6600] text-[10px] font-semibold tracking-wide">
                         <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor">
@@ -268,7 +275,7 @@ export default function SocialLeadsPage() {
                     )}
 
                     <div className="flex items-center gap-3 mt-3">
-                      <span className="text-xs text-white/20">u/{lead.username}</span>
+                      <span className="text-xs text-white/20">{lead.source === 'companies_house' ? lead.username : `u/${lead.username}`}</span>
                       <span className="text-white/10">·</span>
                       <span className="text-[10px] text-white/15 font-mono">matched: &quot;{lead.matchedKeyword}&quot;</span>
 
