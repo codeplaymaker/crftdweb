@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useAuth } from '@/lib/firebase/AuthContext';
+import { useAuth, AuthProvider } from '@/lib/firebase/AuthContext';
 import { useRouter, usePathname } from 'next/navigation';
 import { getClientProfile, ClientProfile } from '@/lib/firebase/firestore';
 import Link from 'next/link';
@@ -133,5 +133,9 @@ function ClientLayoutInner({ children }: { children: React.ReactNode }) {
 }
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
-  return <ClientLayoutInner>{children}</ClientLayoutInner>;
+  return (
+    <AuthProvider>
+      <ClientLayoutInner>{children}</ClientLayoutInner>
+    </AuthProvider>
+  );
 }

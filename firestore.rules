@@ -181,6 +181,12 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // Client documents — clients read their own; writes via Admin SDK only
+    match /clientDocuments/{docId} {
+      allow read: if request.auth != null && resource.data.clientId == request.auth.uid;
+      allow write: if false;
+    }
+
     // ── Settings ──────────────────────────
 
     // Announcement bar + other settings — any authenticated user can read; writes via Admin SDK
