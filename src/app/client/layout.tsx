@@ -5,7 +5,6 @@ import { useAuth, AuthProvider } from '@/lib/firebase/AuthContext';
 import { useRouter, usePathname } from 'next/navigation';
 import { getClientProfile, ClientProfile } from '@/lib/firebase/firestore';
 import Link from 'next/link';
-import Image from 'next/image';
 import { LayoutDashboard, FolderOpen, MessageSquare, Receipt, FileText, LogOut, Menu, X } from 'lucide-react';
 
 const NAV = [
@@ -53,7 +52,7 @@ function ClientLayoutInner({ children }: { children: React.ReactNode }) {
       {/* Desktop sidebar */}
       <aside className="hidden md:flex flex-col w-56 shrink-0 border-r border-white/8 bg-[#0d0d0d] fixed inset-y-0 left-0">
         <div className="px-5 py-5 border-b border-white/8">
-          <Image src="/CW-logo-white.png" alt="CrftdWeb" width={80} height={22} className="rounded" />
+          <p className="text-xl font-logo tracking-tight text-white">CW</p>
           <p className="text-[10px] text-white/25 mt-1.5 uppercase tracking-widest">Client Portal</p>
         </div>
         <nav className="flex-1 px-3 py-4 space-y-0.5">
@@ -95,7 +94,7 @@ function ClientLayoutInner({ children }: { children: React.ReactNode }) {
 
       {/* Mobile header */}
       <div className="md:hidden fixed top-0 inset-x-0 z-50 bg-[#0d0d0d] border-b border-white/8 px-4 py-3 flex items-center justify-between">
-        <Image src="/CW-logo-white.png" alt="CrftdWeb" width={70} height={20} className="rounded" />
+        <p className="text-xl font-logo tracking-tight text-white">CW</p>
         <button onClick={() => setMobileOpen(!mobileOpen)} className="text-white/50">
           {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
