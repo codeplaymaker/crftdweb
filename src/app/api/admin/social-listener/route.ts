@@ -76,41 +76,6 @@ async function searchReddit(query: string): Promise<RedditChild['data'][]> {
   return posts.filter((p) => p.created_utc > cutoff);
 }
 
-// ─── Hacker News ─────────────────────────────────────────────────────────────
-
-const HN_KEYWORDS = [
-  'web designer',
-  'web developer',
-  'need a website',
-  'build a website',
-];
-
-interface HNHit {
-  objectID: string;
-  title?: string;
-  story_text?: string;
-  comment_text?: string;
-  author: string;
-  created_at: string;
-  _tags: string[];
-}
-
-async function searchHackerNews(keyword: string): Promise<HNHit[]> {
-  // Search last 2 days (numericFilters=created_at_i > unix timestamp)
-  const cutoff = Math.floor(Date.now() / 1000) - 48 * 60 * 60;
-  const url = `https://hn.algolia.com/api/v1/search_by_date?query=${encodeURIComponent(keyword)}&tags=(ask_hn,show_hn)&numericFilters=created_at_i>${cutoff}&hitsPerPage=20`;
-
-  const res = await fetch(url, {
-    headers: { 'User-Agent': BOT_UA },
-    signal: AbortSignal.timeout(8000),
-  });
-
-  if (!res.ok) return [];
-
-  const data = await res.json() as { hits?: HNHit[] };
-  return data?.hits ?? [];
-}
-
 // ─── Companies House ──────────────────────────────────────────────────────────
 
 // SIC codes to skip: financial holding, property SPVs, dormant
@@ -300,36 +265,6 @@ export async function GET(req: NextRequest) {
       }
     } catch (err) {
       errors.push(`reddit r/${subreddit} "${keyword}": ${err instanceof Error ? err.message : 'failed'}`);
-    }
-  }
-
-  // ── Hacker News ──
-  for (const keyword of HN_KEYWORDS) {
-    try {
-      const hits = await searchHackerNews(keyword);
-      for (const hit of hits) {
-        const title = hit.title ?? hit.story_text?.slice(0, 100) ?? keyword;
-        const snippet = hit.story_text?.slice(0, 400) ?? hit.comment_text?.slice(0, 400) ?? title;
-        const postedAt = Math.floor(new Date(hit.created_at).getTime() / 1000);
-        const isAsk = hit._tags?.includes('ask_hn');
-
-        const saved = await saveLead(`hn_${hit.objectID}`, {
-          id: `hn_${hit.objectID}`,
-          source: 'hackernews',
-          title,
-          snippet,
-          url: `https://news.ycombinator.com/item?id=${hit.objectID}`,
-          username: hit.author,
-          subreddit: isAsk ? 'Ask HN' : 'Show HN',
-          postedAt,
-          matchedKeyword: keyword,
-          scope: 'global',
-        }, seenIds);
-
-        if (saved) newLeads++;
-      }
-    } catch (err) {
-      errors.push(`hackernews "${keyword}": ${err instanceof Error ? err.message : 'failed'}`);
     }
   }
 
