@@ -113,13 +113,10 @@ async function searchHackerNews(keyword: string): Promise<HNHit[]> {
 
 // ─── Companies House ──────────────────────────────────────────────────────────
 
-// BS postcode area covers Bristol; add more if needed
-const CH_POSTCODES = ['BS1', 'BS2', 'BS3', 'BS4', 'BS5', 'BS6', 'BS7', 'BS8', 'BS9', 'BS10', 'BS11', 'BS13', 'BS14', 'BS15', 'BS16', 'BS20', 'BS21', 'BS22', 'BS23', 'BS24', 'BS25', 'BS26', 'BS27', 'BS28', 'BS29', 'BS30', 'BS31', 'BS32', 'BS34', 'BS35', 'BS36', 'BS37', 'BS39', 'BS40', 'BS41', 'BS48', 'BS49'];
-
 // SIC codes to skip: financial holding, property SPVs, dormant
 const SKIP_SIC_CODES = new Set([
   '64202', '64205', '64209', '64301', '64302', '64303', '64304', '64305', '64306',
-  '64999', '68100', '68201', '68202', '68209', '68320', '99999',
+  '64999', '68100', '68201', '68202', '68209', '68320', '98000', '99999',
 ]);
 
 interface CHCompany {
@@ -157,77 +154,63 @@ async function scanCompaniesHouse(): Promise<Array<{
   const apiKey = process.env.COMPANIES_HOUSE_API_KEY;
   if (!apiKey) return [];
 
-  const results: Awaited<ReturnType<typeof scanCompaniesHouse>> = [];
-
-  // Search for companies incorporated in last 2 days in Bristol postcodes
+  const auth = `Basic ${Buffer.from(`${apiKey}:`).toString('base64')}`;
   const fromDate = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
   const toDate = new Date().toISOString().split('T')[0];
 
-  for (const postcode of CH_POSTCODES.slice(0, 10)) { // limit to first 10 to stay within rate limits
+  // Single query for all Bristol companies — much more efficient than per-postcode loop
+  const searchUrl = `https://api.company-information.service.gov.uk/advanced-search/companies?incorporated_from=${fromDate}&incorporated_to=${toDate}&location=Bristol&size=100`;
+
+  const res = await fetch(searchUrl, {
+    headers: { Authorization: auth },
+    signal: AbortSignal.timeout(10000),
+  });
+
+  if (!res.ok) return [];
+
+  const data = await res.json() as CHSearchResponse;
+  const companies = data?.items ?? [];
+
+  const results: Awaited<ReturnType<typeof scanCompaniesHouse>> = [];
+
+  for (const company of companies) {
+    // Skip if all SIC codes are in the skip list
+    const sics = company.sic_codes ?? [];
+    if (sics.length > 0 && sics.every((s) => SKIP_SIC_CODES.has(s))) continue;
+
+    // Fetch director name
+    let directorName: string | null = null;
     try {
-      const searchUrl = `https://api.company-information.service.gov.uk/advanced-search/companies?incorporated_from=${fromDate}&incorporated_to=${toDate}&location=${encodeURIComponent(postcode)}&size=20`;
-
-      const res = await fetch(searchUrl, {
-        headers: {
-          Authorization: `Basic ${Buffer.from(`${apiKey}:`).toString('base64')}`,
-        },
-        signal: AbortSignal.timeout(8000),
-      });
-
-      if (!res.ok) continue;
-
-      const data = await res.json() as CHSearchResponse;
-      const companies = data?.items ?? [];
-
-      for (const company of companies) {
-        // Skip if SIC codes are all in the skip list
-        const sics = company.sic_codes ?? [];
-        if (sics.length > 0 && sics.every((s) => SKIP_SIC_CODES.has(s))) continue;
-
-        // Try to fetch the director name
-        let directorName: string | null = null;
-        try {
-          const officersRes = await fetch(
-            `https://api.company-information.service.gov.uk/company/${company.company_number}/officers`,
-            {
-              headers: {
-                Authorization: `Basic ${Buffer.from(`${apiKey}:`).toString('base64')}`,
-              },
-              signal: AbortSignal.timeout(5000),
-            }
-          );
-          if (officersRes.ok) {
-            const officersData = await officersRes.json() as CHOfficersResponse;
-            const director = officersData?.items?.find(
-              (o) => o.officer_role === 'director' && !o.resigned_on
-            );
-            if (director) {
-              // CH returns names as "SURNAME, Firstname" — normalise
-              const parts = director.name.split(',');
-              if (parts.length >= 2) {
-                directorName = `${parts[1].trim()} ${parts[0].trim()}`;
-              } else {
-                directorName = director.name;
-              }
-            }
-          }
-        } catch {
-          // officer lookup failed — still save the company without director
+      const officersRes = await fetch(
+        `https://api.company-information.service.gov.uk/company/${company.company_number}/officers`,
+        { headers: { Authorization: auth }, signal: AbortSignal.timeout(5000) }
+      );
+      if (officersRes.ok) {
+        const officersData = await officersRes.json() as CHOfficersResponse;
+        const director = officersData?.items?.find(
+          (o) => o.officer_role === 'director' && !o.resigned_on
+        );
+        if (director) {
+          // CH returns names as "SURNAME, Firstname" — normalise
+          const parts = director.name.split(',');
+          directorName = parts.length >= 2
+            ? `${parts[1].trim()} ${parts[0].trim()}`
+            : director.name;
         }
-
-        results.push({
-          companyNumber: company.company_number,
-          companyName: company.title,
-          directorName,
-          postcode: company.registered_office_address?.postal_code ?? postcode,
-          locality: company.registered_office_address?.locality ?? 'Bristol',
-          incorporatedOn: company.date_of_creation,
-          sicCodes: sics,
-        });
       }
     } catch {
-      // skip this postcode on error
+      // officer lookup failed — still save the company without director
     }
+
+    results.push({
+      companyNumber: company.company_number,
+      companyName: company.title,
+      directorName,
+      postcode: company.registered_office_address?.postal_code ?? '',
+      locality: company.registered_office_address?.locality ?? 'Bristol',
+      incorporatedOn: company.date_of_creation,
+      sicCodes: sics,
+    });
   }
 
   return results;
