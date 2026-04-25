@@ -25,6 +25,14 @@
       ]
     },
     {
+      "collectionGroup": "clientDocuments",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "clientId", "order": "ASCENDING" },
+        { "fieldPath": "addedAt", "order": "DESCENDING" }
+      ]
+    },
+    {
       "collectionGroup": "truthReports",
       "queryScope": "COLLECTION",
       "fields": [

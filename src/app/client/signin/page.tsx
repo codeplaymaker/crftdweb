@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/firebase/AuthContext';
-import { signIn } from '@/lib/firebase/auth';
+import { signIn, resetPassword } from '@/lib/firebase/auth';
 import { getClientProfile } from '@/lib/firebase/firestore';
 
 export default function ClientSignIn() {
@@ -13,6 +13,22 @@ export default function ClientSignIn() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [resetSent, setResetSent] = useState(false);
+  const [resetting, setResetting] = useState(false);
+
+  async function handleReset() {
+    if (!email) { setError('Enter your email address first.'); return; }
+    setResetting(true);
+    setError('');
+    try {
+      await resetPassword(email);
+      setResetSent(true);
+    } catch {
+      setError('Could not send reset email. Check the address and try again.');
+    } finally {
+      setResetting(false);
+    }
+  }
 
   useEffect(() => {
     if (loading || !user) return;
@@ -89,9 +105,22 @@ export default function ClientSignIn() {
           </button>
         </form>
 
-        <p className="text-center text-xs text-white/20 mt-8">
-          Need help? <a href="mailto:hello@crftdweb.com" className="text-white/40 hover:text-white/60 underline">Contact us</a>
-        </p>
+        {resetSent ? (
+          <p className="text-center text-xs text-emerald-400 mt-8">Reset link sent — check your inbox.</p>
+        ) : (
+          <p className="text-center text-xs text-white/20 mt-8">
+            <button
+              type="button"
+              onClick={handleReset}
+              disabled={resetting}
+              className="text-white/40 hover:text-white/60 underline disabled:opacity-40"
+            >
+              {resetting ? 'Sending…' : 'Forgot password?'}
+            </button>
+            <span className="mx-2">·</span>
+            <a href="mailto:admin@crftdweb.com" className="text-white/40 hover:text-white/60 underline">Contact us</a>
+          </p>
+        )}
       </div>
     </div>
   );

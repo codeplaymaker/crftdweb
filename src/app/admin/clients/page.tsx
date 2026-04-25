@@ -121,8 +121,8 @@ function buildClientLoginPreviewHtml(name: string, email: string, tempPassword: 
         <table cellpadding="0" cellspacing="0" style="margin:0 0 28px;"><tr><td style="background:#111;border-radius:8px;">
           <a href="${loginUrl}" style="display:inline-block;padding:14px 28px;font-size:15px;font-weight:700;color:#ffffff;text-decoration:none;">Access your portal &rarr;</a>
         </td></tr></table>
-        <p style="margin:0;font-size:15px;color:#111;font-weight:700;">CrftdWeb</p>
-        <p style="margin:3px 0 0;font-size:13px;color:#999;">crftdweb.com &middot; admin@crftdweb.com</p>
+        <img src="https://crftdweb.com/CW-logo.png" alt="CrftdWeb" width="48" style="display:block;border:0;margin-bottom:8px;" />
+        <p style="margin:0;font-size:13px;color:#999;">crftdweb.com &middot; admin@crftdweb.com</p>
       </td></tr>
     </table>
   </td></tr></table>
