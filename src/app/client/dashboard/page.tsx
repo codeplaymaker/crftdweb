@@ -36,18 +36,15 @@ export default function ClientDashboard() {
 
   useEffect(() => {
     if (!user) return;
-    Promise.all([
-      getClientProfile(user.uid),
-      getClientDeliverables(user.uid),
-      getClientFeedback(user.uid),
-      getClientInvoices(user.uid),
-    ]).then(([p, d, f, i]) => {
+    // Load profile first — it's required to render the page
+    getClientProfile(user.uid).then(p => {
       setProfile(p);
-      setDeliverables(d);
-      setFeedback(f);
-      setInvoices(i);
       setLoading(false);
     }).catch(() => setLoading(false));
+    // Optional collections — load in background, don't block render if any fail
+    getClientDeliverables(user.uid).then(setDeliverables).catch(() => {});
+    getClientFeedback(user.uid).then(setFeedback).catch(() => {});
+    getClientInvoices(user.uid).then(setInvoices).catch(() => {});
   }, [user]);
 
   if (loading || !profile) {
