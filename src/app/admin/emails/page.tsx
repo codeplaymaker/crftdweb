@@ -24,7 +24,7 @@ function buildTrialTaskHtml(name: string): string {
       <tr><td style="background:#ffffff;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 12px 12px;padding:40px;">
         <p style="margin:0 0 20px;font-size:16px;color:#111;font-weight:600;">Hi ${name},</p>
         <p style="margin:0 0 16px;font-size:15px;color:#444;line-height:1.7;">Thanks for applying — your background looks interesting.</p>
-        <p style="margin:0 0 24px;font-size:15px;color:#444;line-height:1.7;">Before we book a call, I’d like to see how you think.</p>
+        <p style="margin:0 0 24px;font-size:15px;color:#444;line-height:1.7;">Before we book a call, we’d like to see how you think.</p>
         <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px;">
           <tr><td style="background:#0a0a0a;border-radius:10px;padding:20px 24px;">
             <p style="margin:0 0 10px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);">Your Task</p>
