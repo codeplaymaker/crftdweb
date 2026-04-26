@@ -56,7 +56,7 @@ function buildBookingLinkHtml(name: string): string {
       <tr><td style="background:#ffffff;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 12px 12px;padding:40px;">
         <p style="margin:0 0 20px;font-size:16px;color:#111;font-weight:600;">Hi ${name},</p>
 
-        <p style="margin:0 0 24px;font-size:15px;color:#444;line-height:1.7;">You’ve given me enough to know it’s worth a proper conversation.</p>
+        <p style="margin:0 0 24px;font-size:15px;color:#444;line-height:1.7;">We’ve reviewed your application and we’d love to find out more about you.</p>
         <p style="margin:0 0 28px;font-size:15px;color:#444;line-height:1.7;">15 minutes, no prep needed. Pick a time below and we’ll go from there:</p>
         <table cellpadding="0" cellspacing="0" style="margin:0 0 28px;">
           <tr><td style="background:#111;border-radius:8px;">
