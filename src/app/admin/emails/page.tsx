@@ -46,7 +46,7 @@ function buildBookingLinkHtml(name: string): string {
   const fakeUrl = 'https://crftdweb.com/book/preview-link';
   return `<!DOCTYPE html>
 <html lang="en">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>CrftdWeb — Book your screening call</title></head>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>CrftdWeb — Let's find a time to talk</title></head>
 <body style="margin:0;padding:0;background:#f4f4f4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;">
   <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:40px 20px;"><tr><td align="center">
     <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
@@ -56,13 +56,14 @@ function buildBookingLinkHtml(name: string): string {
       <tr><td style="background:#ffffff;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 12px 12px;padding:40px;">
         <p style="margin:0 0 20px;font-size:16px;color:#111;font-weight:600;">Hi ${name},</p>
 
-        <p style="margin:0 0 24px;font-size:15px;color:#444;line-height:1.7;">I’d like to book a quick <strong style="color:#111;">15-minute call</strong> to have a chat. Use the link below to pick a time that works for you:</p>
+        <p style="margin:0 0 24px;font-size:15px;color:#444;line-height:1.7;">You’ve given me enough to know it’s worth a proper conversation.</p>
+        <p style="margin:0 0 28px;font-size:15px;color:#444;line-height:1.7;">15 minutes, no prep needed. Pick a time below and we’ll go from there:</p>
         <table cellpadding="0" cellspacing="0" style="margin:0 0 28px;">
           <tr><td style="background:#111;border-radius:8px;">
-            <a href="${fakeUrl}" style="display:inline-block;padding:14px 28px;font-size:15px;font-weight:700;color:#ffffff;text-decoration:none;">Pick a time &rarr;</a>
+            <a href="${fakeUrl}" style="display:inline-block;padding:14px 28px;font-size:15px;font-weight:700;color:#ffffff;text-decoration:none;">Book a time &rarr;</a>
           </td></tr>
         </table>
-        <p style="margin:0 0 24px;font-size:13px;color:#999;line-height:1.6;">The link shows my available slots — takes a few seconds to book. If none of the times work, just reply and we’ll sort something.</p>
+        <p style="margin:0 0 24px;font-size:13px;color:#999;line-height:1.6;">Takes 30 seconds to book. If none of the slots work, just reply and I’ll find something that does.</p>
         <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;"><tr><td style="border-top:1px solid #e8e8e8;"></td></tr></table>
         <img src="https://crftdweb.com/CW-logo.png" alt="CrftdWeb" width="48" style="display:block;border:0;margin-bottom:8px;" />
         <p style="margin:0;font-size:13px;color:#999;">crftdweb.com &middot; admin@crftdweb.com</p>
@@ -289,7 +290,7 @@ const EMAIL_SEND_TEMPLATES = [
   {
     id: 'booking-link',
     label: 'Booking Link',
-    subject: 'CrftdWeb — Book your screening call',
+    subject: "Let's find a time to talk",
     description: 'Sent after a good trial task response — includes a unique booking link.',
     color: 'border-emerald-500/30 bg-emerald-500/5',
     activeColor: 'border-emerald-500 bg-emerald-500/15',
