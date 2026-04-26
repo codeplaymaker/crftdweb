@@ -250,6 +250,39 @@ function buildOfferHtml(name: string): string {
 </body></html>`;
 }
 
+function buildNoActivityHtml(name: string): string {
+  const firstName = name.split(' ')[0];
+  return `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
+<body style="margin:0;padding:0;background:#f4f4f4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:40px 20px;">
+    <tr><td align="center">
+      <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+        <tr><td align="center" style="background:#000000;border-radius:12px 12px 0 0;padding:32px 40px;">
+          <img src="https://crftdweb.com/CW-logo-white.png" alt="CrftdWeb" width="160" style="display:block;border:0;" />
+        </td></tr>
+        <tr><td style="background:#ffffff;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 12px 12px;padding:40px;">
+          <p style="margin:0 0 20px;font-size:16px;color:#111;font-weight:600;">Hi ${firstName},</p>
+          <p style="margin:0 0 16px;font-size:15px;color:#444;line-height:1.7;">Just checking in &mdash; I noticed you&rsquo;ve completed your training but haven&rsquo;t logged any leads in the portal yet.</p>
+          <p style="margin:0 0 16px;font-size:15px;color:#444;line-height:1.7;">That&rsquo;s completely fine &mdash; getting started is often the hardest part. Whether you&rsquo;re unsure where to begin, have questions about the process, or just need a bit of guidance, I&rsquo;m here to help.</p>
+          <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px;"><tr><td style="background:#f9f9f9;border:1px solid #e8e8e8;border-radius:10px;padding:20px 24px;">
+            <p style="margin:0 0 12px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#999;">Quick reminders</p>
+            <p style="margin:0 0 8px;font-size:14px;color:#444;line-height:1.6;">&#x2022; Log into your portal at <a href="https://crftdweb.com/rep/signin" style="color:#111;font-weight:600;">crftdweb.com/rep/signin</a></p>
+            <p style="margin:0 0 8px;font-size:14px;color:#444;line-height:1.6;">&#x2022; Use the <strong>Live Call</strong> tool when you&rsquo;re on a call with a prospect</p>
+            <p style="margin:0;font-size:14px;color:#444;line-height:1.6;">&#x2022; Add leads under <strong>My Leads</strong> after each conversation</p>
+          </td></tr></table>
+          <p style="margin:0 0 28px;font-size:15px;color:#444;line-height:1.7;">Just reply to this email if you have any questions or want to jump on a quick call &mdash; happy to help you get your first lead over the line.</p>
+          <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;"><tr><td style="border-top:1px solid #e8e8e8;"></td></tr></table>
+          <img src="https://crftdweb.com/CW-logo.png" alt="CrftdWeb" width="48" style="display:block;border:0;margin-bottom:8px;" />
+          <p style="margin:0;font-size:13px;color:#999;">crftdweb.com &middot; admin@crftdweb.com</p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body></html>`;
+}
+
 function buildTerminationHtml(name: string): string {
   const firstName = name.split(' ')[0];
   const today = new Date();
@@ -380,6 +413,15 @@ const EMAIL_SEND_TEMPLATES = [
     color: 'border-zinc-500/30 bg-zinc-500/5',
     activeColor: 'border-zinc-500 bg-zinc-500/15',
     labelColor: 'text-zinc-400',
+  },
+  {
+    id: 'no-activity',
+    label: 'No Activity',
+    subject: 'Checking in — any questions?',
+    description: 'For reps who finished training but have logged no leads. Friendly nudge with portal reminders.',
+    color: 'border-indigo-500/30 bg-indigo-500/5',
+    activeColor: 'border-indigo-500 bg-indigo-500/15',
+    labelColor: 'text-indigo-400',
   },
   {
     id: 'termination',
@@ -679,6 +721,8 @@ function SendPanel() {
     ? buildOfferReminderHtml(firstName || 'Hi')
     : templateId === 'trial-reminder'
     ? buildTrialReminderHtml(firstName || 'Hi')
+    : templateId === 'no-activity'
+    ? buildNoActivityHtml(firstName || 'Hi')
     : templateId === 'termination'
     ? buildTerminationHtml(firstName || 'Hi')
     : buildOverqualifiedHtml(firstName || 'Hi');
@@ -706,6 +750,8 @@ function SendPanel() {
         result = await sendCustomEmail(name.trim(), email.trim(), 'Re: CrftdWeb offer — just checking in', buildOfferReminderHtml(firstName));
       } else if (templateId === 'trial-reminder') {
         result = await sendCustomEmail(name.trim(), email.trim(), 'Re: CrftdWeb trial task', buildTrialReminderHtml(firstName));
+      } else if (templateId === 'no-activity') {
+        result = await sendCustomEmail(name.trim(), email.trim(), 'Checking in — any questions?', buildNoActivityHtml(name.trim()));
       } else if (templateId === 'termination') {
         result = await sendCustomEmail(name.trim(), email.trim(), 'Notice of Agreement Termination', buildTerminationHtml(name.trim()));
       } else {
