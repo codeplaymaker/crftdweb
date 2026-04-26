@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Microbiome Design — Growth Plan</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+      background: #fff;
+      color: #111;
+      line-height: 1.7;
+      font-size: 15px;
+    }
+
+    /* ── Cover ── */
+    .cover {
+      background: #0a0f1e;
+      color: #fff;
+      padding: 80px 60px 60px;
+      min-height: 240px;
+    }
+    .cover .logo {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+      margin-bottom: 48px;
+    }
+    .cover h1 {
+      font-size: 40px;
+      font-weight: 900;
+      letter-spacing: -1.5px;
+      line-height: 1.1;
+      margin-bottom: 14px;
+    }
+    .cover h1 span {
+      color: #4f8ef7;
+    }
+    .cover p {
+      font-size: 16px;
+      color: rgba(255,255,255,0.45);
+      max-width: 520px;
+    }
+    .cover .meta {
+      margin-top: 40px;
+      display: flex;
+      gap: 40px;
+    }
+    .cover .meta-item {
+      font-size: 11px;
+      color: rgba(255,255,255,0.25);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+    .cover .meta-item strong {
+      display: block;
+      font-size: 14px;
+      color: rgba(255,255,255,0.7);
+      text-transform: none;
+      letter-spacing: 0;
+      margin-top: 2px;
+    }
+
+    /* ── Layout ── */
+    .content {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 60px 40px 100px;
+    }
+
+    /* ── Section ── */
+    .section {
+      margin-bottom: 56px;
+      page-break-inside: avoid;
+    }
+    .section-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #999;
+      margin-bottom: 8px;
+    }
+    .section h2 {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 20px;
+      color: #111;
+    }
+    .section p {
+      color: #444;
+      margin-bottom: 14px;
+    }
+
+    hr {
+      border: none;
+      border-top: 1px solid #eee;
+      margin: 40px 0;
+    }
+
+    /* ── Callout ── */
+    .callout {
+      background: #f8f9ff;
+      border-left: 3px solid #4f8ef7;
+      padding: 14px 18px;
+      border-radius: 0 8px 8px 0;
+      margin: 20px 0;
+      font-size: 14px;
+      color: #333;
+    }
+    .callout strong { color: #111; }
+
+    .callout.green {
+      background: #f0faf4;
+      border-left-color: #22c55e;
+    }
+    .callout.amber {
+      background: #fffbf0;
+      border-left-color: #f59e0b;
+    }
+
+    /* ── Phase cards ── */
+    .phases {
+      display: grid;
+      gap: 16px;
+      margin: 24px 0;
+    }
+    .phase {
+      border: 1px solid #e8e8e8;
+      border-radius: 12px;
+      padding: 20px 24px;
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+    .phase-num {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: #0a0f1e;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .phase-body h3 {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: #111;
+    }
+    .phase-body p {
+      font-size: 13px;
+      color: #555;
+      margin: 0;
+      line-height: 1.6;
+    }
+    .phase-body .timeline {
+      display: inline-block;
+      margin-top: 8px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #4f8ef7;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* ── Posts list ── */
+    .posts {
+      list-style: none;
+      margin: 16px 0;
+    }
+    .posts li {
+      display: flex;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 13px;
+      color: #444;
+    }
+    .posts li:last-child { border-bottom: none; }
+    .post-num {
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      background: #f0f4ff;
+      color: #4f8ef7;
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .post-body strong { color: #111; display: block; font-size: 13px; }
+    .post-body span { font-size: 12px; color: #888; }
+
+    /* ── Table ── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin: 20px 0;
+    }
+    th {
+      text-align: left;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #999;
+      padding: 8px 12px;
+      border-bottom: 2px solid #eee;
+    }
+    td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #f4f4f4;
+      color: #444;
+      vertical-align: top;
+    }
+    td strong { color: #111; }
+    tr:last-child td { border-bottom: none; }
+
+    /* ── What we need ── */
+    .asks {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 20px 0;
+    }
+    .ask-card {
+      border: 1px solid #e8e8e8;
+      border-radius: 10px;
+      padding: 16px 18px;
+    }
+    .ask-card .ask-icon {
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+    .ask-card h4 {
+      font-size: 13px;
+      font-weight: 700;
+      color: #111;
+      margin-bottom: 4px;
+    }
+    .ask-card p {
+      font-size: 12px;
+      color: #666;
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    /* ── Revenue grid ── */
+    .revenue-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+      margin: 20px 0;
+    }
+    .revenue-card {
+      background: #f8f9ff;
+      border: 1px solid #e0e8ff;
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+    }
+    .revenue-card .amount {
+      font-size: 22px;
+      font-weight: 900;
+      color: #0a0f1e;
+      letter-spacing: -0.5px;
+    }
+    .revenue-card .label {
+      font-size: 11px;
+      color: #888;
+      margin-top: 4px;
+    }
+
+    /* ── Agreement box ── */
+    .agreement {
+      background: #0a0f1e;
+      color: #fff;
+      border-radius: 12px;
+      padding: 28px 32px;
+      margin: 24px 0;
+    }
+    .agreement h3 {
+      font-size: 16px;
+      font-weight: 800;
+      margin-bottom: 16px;
+      color: #fff;
+    }
+    .agreement ul {
+      list-style: none;
+      display: grid;
+      gap: 10px;
+    }
+    .agreement ul li {
+      font-size: 13px;
+      color: rgba(255,255,255,0.65);
+      display: flex;
+      gap: 10px;
+    }
+    .agreement ul li::before {
+      content: '✓';
+      color: #4f8ef7;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    /* ── Tags ── */
+    .tags { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
+    .tag {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+      border: 1px solid;
+    }
+    .tag.blue { color: #4f8ef7; border-color: #c0d8ff; background: #f0f4ff; }
+    .tag.green { color: #16a34a; border-color: #bbf7d0; background: #f0faf4; }
+    .tag.amber { color: #d97706; border-color: #fde68a; background: #fffbeb; }
+
+    /* ── Footer ── */
+    .footer {
+      text-align: center;
+      padding: 40px 0 20px;
+      border-top: 1px solid #eee;
+    }
+    .footer .logo-text {
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      color: #111;
+      margin-bottom: 6px;
+    }
+    .footer p { font-size: 12px; color: #bbb; }
+
+    @media print {
+      body { font-size: 13px; }
+      .cover { padding: 60px 40px 40px; }
+      .section { page-break-inside: avoid; }
+      .phases, .asks, .revenue-grid { page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Cover -->
+  <div class="cover">
+    <div class="logo">CrftdWeb · Prepared for Microbiome Design</div>
+    <h1>A System to Fill<br>Your <span>Project Pipeline</span></h1>
+    <p>A practical, low-effort plan to generate qualified leads for Microbiome Design using content, SEO, and targeted outreach — built around your expertise.</p>
+    <div class="meta">
+      <div class="meta-item">
+        Prepared for
+        <strong>Dr Matthew Tarnowski</strong>
+      </div>
+      <div class="meta-item">
+        Date
+        <strong>April 2026</strong>
+      </div>
+      <div class="meta-item">
+        Model
+        <strong>Revenue share — no upfront cost</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- The Opportunity -->
+    <div class="section">
+      <div class="section-label">The Opportunity</div>
+      <h2>Why This Works for Your Business</h2>
+      <p>Microbiome consultancy is a high-value, low-competition niche. Your buyers — biotech founders, research PIs, environmental consultancies — have a real, expensive problem: sequencing data they can't interpret. Most have no idea where to find someone like you.</p>
+      <p>The gap isn't your credibility or your service. It's visibility. The system below closes that gap systematically, without you spending time on marketing.</p>
+
+      <div class="callout">
+        <strong>The core insight:</strong> Most biotech consultants get work through referrals and conferences. That's slow and unpredictable. A content + outreach system means leads come to you consistently, not only when someone happens to know someone.
+      </div>
+
+      <div class="revenue-grid">
+        <div class="revenue-card">
+          <div class="amount">£5–20k</div>
+          <div class="label">Typical project value</div>
+        </div>
+        <div class="revenue-card">
+          <div class="amount">2–3</div>
+          <div class="label">New clients to double revenue</div>
+        </div>
+        <div class="revenue-card">
+          <div class="amount">3–6mo</div>
+          <div class="label">To see consistent inbound</div>
+        </div>
+      </div>
+    </div>
+
+    <hr />
+
+    <!-- The Plan -->
+    <div class="section">
+      <div class="section-label">The Plan</div>
+      <h2>Four Phases — Built Around Your Time</h2>
+      <p>Each phase is designed so your time investment is minimal. The goal is 10–15 minutes per week from you — reviewing content and taking scoping calls.</p>
+
+      <div class="phases">
+        <div class="phase">
+          <div class="phase-num">1</div>
+          <div class="phase-body">
+            <h3>Content Foundation — Blog + Case Studies</h3>
+            <p>Set up a blog on your site. AI drafts 5 technical articles targeting the exact searches your buyers make. You do a 10-minute accuracy review on each. Case studies page added with 3 anonymised project stories to convert browsers into enquiries.</p>
+            <span class="timeline">Weeks 1–2</span>
+          </div>
+        </div>
+        <div class="phase">
+          <div class="phase-num">2</div>
+          <div class="phase-body">
+            <h3>Lead Capture — Email List + Better Contact Flow</h3>
+            <p>Add a free "Microbiome Study Design Checklist" download to capture emails from researchers visiting the site. Upgrade the contact form with project type and budget selectors so every enquiry arrives with context.</p>
+            <span class="timeline">Weeks 2–3</span>
+          </div>
+        </div>
+        <div class="phase">
+          <div class="phase-num">3</div>
+          <div class="phase-body">
+            <h3>Outbound — Cold Email + Twitter/X</h3>
+            <p>Cold email to university lab PIs whose published research signals they need analysis support, plus UK biotech companies with active microbiome programmes. Monitor job boards weekly for "bioinformatician" and "microbiome scientist" postings — those companies are the highest-intent leads. Twitter/X posting runs in parallel to build visibility in the academic community.</p>
+            <span class="timeline">Weeks 3–4</span>
+          </div>
+        </div>
+        <div class="phase">
+          <div class="phase-num">4</div>
+          <div class="phase-body">
+            <h3>Ongoing — 2 Posts/Month + Monthly Outreach</h3>
+            <p>2 new blog posts per month (AI writes, you review). Monthly LinkedIn outreach batch. As the blog builds domain authority and case studies accumulate, inbound grows without additional effort.</p>
+            <span class="timeline">Monthly from Month 2</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr />
+
+    <!-- Blog Posts -->
+    <div class="section">
+      <div class="section-label">Content Strategy</div>
+      <h2>First 5 Blog Posts — Already Planned</h2>
+      <p>These target the exact searches your buyers make when they have a problem and don't know who to call. Each post ends with a CTA to book a free scoping call.</p>
+
+      <ul class="posts">
+        <li>
+          <div class="post-num">1</div>
+          <div class="post-body">
+            <strong>Common mistakes in 16S rRNA study design — and how to avoid them</strong>
+            <span>Targets: research groups planning sequencing studies · High search volume in niche</span>
+          </div>
+        </li>
+        <li>
+          <div class="post-num">2</div>
+          <div class="post-body">
+            <strong>When to hire a bioinformatics consultant vs build in-house</strong>
+            <span>Targets: biotech CTOs/founders weighing options · Decision-stage intent</span>
+          </div>
+        </li>
+        <li>
+          <div class="post-num">3</div>
+          <div class="post-body">
+            <strong>Metagenomics vs metatranscriptomics: which does your project need?</strong>
+            <span>Targets: teams early in project planning · Comparison-stage search</span>
+          </div>
+        </li>
+        <li>
+          <div class="post-num">4</div>
+          <div class="post-body">
+            <strong>How to interpret microbiome diversity metrics (and what they actually mean)</strong>
+            <span>Targets: researchers with data they can't make sense of · Educational, high trust-building value</span>
+          </div>
+        </li>
+        <li>
+          <div class="post-num">5</div>
+          <div class="post-body">
+            <strong>Why reproducibility matters in microbiome analysis — and how we build it in</strong>
+            <span>Targets: teams burned by previous analysis work · Positions your approach as premium</span>
+          </div>
+        </li>
+      </ul>
+
+      <div class="callout green">
+        <strong>How it works:</strong> AI drafts each post using your service page as source material. You review for scientific accuracy — typically 10 minutes per post. Your name, credentials, and Scholar profile are attributed on every article.
+      </div>
+    </div>
+
+    <hr />
+
+    <!-- Outbound -->
+    <div class="section">
+      <div class="section-label">Outbound Strategy</div>
+      <h2>Three Outbound Channels</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Channel</th>
+            <th>Target</th>
+            <th>Volume</th>
+            <th>Expected outcome</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Cold email</strong></td>
+            <td>University microbiome PIs, UK biotech companies, job board targets</td>
+            <td>200-contact list, 20/day</td>
+            <td>1–3 replies/week</td>
+          </tr>
+          <tr>
+            <td><strong>Job board monitoring</strong></td>
+            <td>Companies posting bioinformatician/microbiome scientist roles</td>
+            <td>Weekly manual check</td>
+            <td>High-intent warm leads</td>
+          </tr>
+          <tr>
+            <td><strong>Twitter/X</strong></td>
+            <td>Academic microbiome community — researchers, PIs, biotech</td>
+            <td>3–5 posts/week, reply to threads</td>
+            <td>Visibility + inbound over time</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout amber">
+        <strong>Job board angle:</strong> A company posting for a "microbiome scientist" is signalling they have the problem but can't fill it internally — long recruitment timelines, high salary. A well-timed message ("we can bridge the gap while you hire") converts at a higher rate than cold outreach.
+      </div>
+
+      <div class="callout">
+        <strong>Twitter/X:</strong> A large portion of the microbiome research community is active on academic Twitter. Posting the blog articles, engaging with sequencing threads, and replying to researchers asking study design questions builds visibility without cold outreach. Matthew reviews posts before they go out — we write them. Slower burn than cold email but compounds over time and reinforces every other channel.
+      </div>
+    </div>
+
+    <hr />
+
+    <!-- Cold Email Deep Dive -->
+    <div class="section">
+      <div class="section-label">Cold Email — Full Process</div>
+      <h2>How the Cold Email Campaign Works</h2>
+      <p>Cold email is the fastest route to a conversation. Done well, it's not spam — it's a targeted introduction to someone with a problem you can solve. Here's the full process.</p>
+
+      <div class="phases">
+        <div class="phase">
+          <div class="phase-num">1</div>
+          <div class="phase-body">
+            <h3>Build the list</h3>
+            <p>We identify three contact types: (A) University microbiome/environmental microbiology PIs in the UK whose recent publications show active sequencing work. (B) Biotech and agri-food companies in the UK with a known microbiome programme — sourced from Companies House new incorporations + LinkedIn. (C) Companies that have recently posted bioinformatician, microbiome scientist, or data analyst roles — sourced from LinkedIn Jobs, Indeed, and Otta weekly. Emails sourced via Hunter.io, Apollo, and lab "contact us" pages. Target: 200 contacts in the first batch, replenished monthly.</p>
+            <span class="timeline">Week 3 — setup</span>
+          </div>
+        </div>
+        <div class="phase">
+          <div class="phase-num">2</div>
+          <div class="phase-body">
+            <h3>The sequence — 3 emails, 10 days</h3>
+            <p>Each contact gets a 3-touch sequence. No more. If there's no reply after 3 emails, they're removed. We never follow up beyond that.</p>
+            <span class="timeline">Runs automatically via Instantly or Lemlist</span>
+          </div>
+        </div>
+        <div class="phase">
+          <div class="phase-num">3</div>
+          <div class="phase-body">
+            <h3>Replies → you</h3>
+            <p>Any positive reply gets forwarded to you immediately with context. You respond directly. We brief you on who they are and what they likely need before you reply. Goal: convert reply into a 20-minute scoping call.</p>
+            <span class="timeline">Ongoing</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-label" style="margin-top:32px; margin-bottom:12px;">The 3-Email Sequence</div>
+
+      <div style="display:grid; gap:16px; margin-bottom:24px;">
+
+        <div style="border:1px solid #e8e8e8; border-radius:12px; padding:20px 24px;">
+          <div style="font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#4f8ef7; margin-bottom:10px;">Email 1 — Day 1 · The hook</div>
+          <p style="font-size:13px; color:#333; margin-bottom:6px;"><strong>Subject:</strong> microbiome analysis — [University/Company name]</p>
+          <p style="font-size:13px; color:#555; line-height:1.7; margin:0;">Hi [First name],<br><br>
+          I came across your recent work on [specific paper topic or project] — interesting approach to [specific detail].<br><br>
+          I'm a microbiome researcher at Swansea (published in Nature Comms and R Soc Open Sci) who consults on study design, sequencing strategy, and data interpretation for academic and commercial clients.<br><br>
+          If you're at the point of needing analytical support — or just thinking about what the next study needs — I'm happy to have a quick call. No pitch, just a conversation.<br><br>
+          Worth 20 minutes?<br><br>
+          Matthew</p>
+        </div>
+
+        <div style="border:1px solid #e8e8e8; border-radius:12px; padding:20px 24px;">
+          <div style="font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#4f8ef7; margin-bottom:10px;">Email 2 — Day 5 · The value add</div>
+          <p style="font-size:13px; color:#333; margin-bottom:6px;"><strong>Subject:</strong> Re: microbiome analysis — [University/Company name]</p>
+          <p style="font-size:13px; color:#555; line-height:1.7; margin:0;">Hi [First name],<br><br>
+          Following up briefly — I wrote something that might be useful regardless of whether we work together:<br><br>
+          [Link to most relevant blog post — e.g. "Your Soil Test Is Lying to You" or study design mistakes post]<br><br>
+          It covers [one-line description of what the post addresses]. Thought it might be relevant given your work on [topic].<br><br>
+          Matthew</p>
+        </div>
+
+        <div style="border:1px solid #e8e8e8; border-radius:12px; padding:20px 24px;">
+          <div style="font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#4f8ef7; margin-bottom:10px;">Email 3 — Day 10 · The close</div>
+          <p style="font-size:13px; color:#333; margin-bottom:6px;"><strong>Subject:</strong> Re: microbiome analysis — [University/Company name]</p>
+          <p style="font-size:13px; color:#555; line-height:1.7; margin:0;">Hi [First name],<br><br>
+          Last one from me — I know inboxes are noisy.<br><br>
+          If you ever need support on microbiome study design, sequencing strategy, or analysis interpretation, I'm at [email]. I work with academic labs and commercial teams across the UK.<br><br>
+          Best of luck with the research.<br><br>
+          Matthew</p>
+        </div>
+      </div>
+
+      <div class="callout">
+        <strong>Why this works:</strong> Email 1 is personal — it references their actual work. Email 2 gives value before asking for anything. Email 3 is a clean exit that leaves the door open. The sequence respects their time. The personalisation signals you're not a bot. The credentials (Nature Comms, Swansea) establish trust in one line.
+      </div>
+
+      <div class="callout amber" style="margin-top:12px;">
+        <strong>For job board leads specifically:</strong> The message changes. Subject: <em>"microbiome support while you hire"</em>. Body: acknowledge the role they're hiring for, position consultancy as a bridge — faster than hiring, lower cost, no headcount risk. These contacts are the highest-intent leads in the pipeline.
+      </div>
+    </div>
+
+    <hr />
+
+    <!-- What we need from you -->
+    <div class="section">
+      <div class="section-label">What We Need From You</div>
+      <h2>Your Time Investment — Minimal by Design</h2>
+      <p>The system is built to run with as little of your time as possible. Here's what we need to get started:</p>
+
+      <div class="asks">
+        <div class="ask-card">
+          <div class="ask-icon">📋</div>
+          <h4>2–3 project stories</h4>
+          <p>Bullet points only. Problem → what you did → outcome. We write them up into case studies. Anonymised if needed.</p>
+        </div>
+        <div class="ask-card">
+          <div class="ask-icon">✏️</div>
+          <h4>Blog post reviews</h4>
+          <p>10 minutes per post to check scientific accuracy before publishing. You catch errors, we handle everything else.</p>
+        </div>
+        <div class="ask-card">
+          <div class="ask-icon">📞</div>
+          <h4>Take the scoping calls</h4>
+          <p>We generate the leads. You run the free scoping calls with prospects. Your close rate is your own.</p>
+        </div>
+        <div class="ask-card">
+          <div class="ask-icon">�</div>
+          <h4>Twitter/X review (optional)</h4>
+          <p>We draft posts and thread replies in your voice. You approve before anything goes out — or we post directly if you prefer.</p>
+        </div>
+      </div>
+    </div>
+
+    <hr />
+
+    <!-- The Agreement -->
+    <div class="section">
+      <div class="section-label">The Agreement</div>
+      <h2>How This Works — No Upfront Cost</h2>
+      <p>There's no fee to get started. We build and run the system for free. In return, we take a percentage of the first project value from any client we introduce.</p>
+
+      <div class="agreement">
+        <h3>Terms (simple version)</h3>
+        <ul>
+          <li>We build the blog, case studies page, lead magnet, and run outbound outreach — at no charge</li>
+          <li>15% of the first project value for any client that comes through the system</li>
+          <li>Applies only to clients we directly introduce — your existing clients and referrals are unaffected</li>
+          <li>You tell us when a lead closes and what the project value is — trust-based</li>
+          <li>Either party can end the arrangement with 30 days notice</li>
+        </ul>
+      </div>
+
+      <div class="callout green">
+        <strong>What this means in practice:</strong> If the system generates one £10k project, we receive £1,500. One £20k project = £3,000. You take on zero financial risk — we only earn if we deliver.
+      </div>
+
+      <div class="tags">
+        <span class="tag blue">No upfront cost</span>
+        <span class="tag blue">No monthly retainer</span>
+        <span class="tag green">Pay only on results</span>
+        <span class="tag green">Existing clients unaffected</span>
+        <span class="tag amber">Either party can exit with 30 days notice</span>
+      </div>
+    </div>
+
+    <hr />
+
+    <!-- Timeline -->
+    <div class="section">
+      <div class="section-label">Realistic Timeline</div>
+      <h2>What to Expect and When</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Timeframe</th>
+            <th>What Happens</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Week 1–2</strong></td>
+            <td>Blog live, 5 posts published, case studies page added, lead magnet created</td>
+          </tr>
+          <tr>
+            <td><strong>Week 3–4</strong></td>
+            <td>LinkedIn outreach begins, cold email campaign launched, first scoping calls expected</td>
+          </tr>
+          <tr>
+            <td><strong>Month 2–3</strong></td>
+            <td>First 1–2 new clients from outbound, blog posts starting to rank for long-tail searches</td>
+          </tr>
+          <tr>
+            <td><strong>Month 6–12</strong></td>
+            <td>Inbound from blog generating leads without additional outreach, referrals compounding</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout">
+        <strong>Honest expectation:</strong> Outbound generates conversations quickly (weeks). SEO takes longer (months). The combination means you get near-term leads from LinkedIn/email and long-term compounding from content. Neither requires ongoing time from you beyond reviewing content.
+      </div>
+    </div>
+
+    <hr />
+
+    <!-- Next Steps -->
+    <div class="section">
+      <div class="section-label">Next Steps</div>
+      <h2>Ready to Start</h2>
+      <p>If this looks right, here's what happens next:</p>
+
+      <div class="phases">
+        <div class="phase">
+          <div class="phase-num">1</div>
+          <div class="phase-body">
+            <h3>You send us 2–3 project stories</h3>
+            <p>Bullet points only. Client type, problem, what you did, outcome. We turn them into case studies.</p>
+          </div>
+        </div>
+        <div class="phase">
+          <div class="phase-num">2</div>
+          <div class="phase-body">
+            <h3>We build Phase 1 in week one</h3>
+            <p>Blog setup, first 3 posts drafted and sent to you for review, case studies page live.</p>
+          </div>
+        </div>
+        <div class="phase">
+          <div class="phase-num">3</div>
+          <div class="phase-body">
+            <h3>Outreach starts in week 3</h3>
+            <p>We build the LinkedIn and cold email target lists and begin outreach. You start seeing conversations.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr />
+
+    <div class="footer">
+      <div class="logo-text">CW</div>
+      <p>crftdweb.com · admin@crftdweb.com</p>
+      <p style="margin-top:6px;">Prepared for Microbiome Design · April 2026 · Confidential</p>
+    </div>
+
+  </div>
+</body>
+</html>

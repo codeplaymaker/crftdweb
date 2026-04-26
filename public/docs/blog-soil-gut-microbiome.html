@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Soil Test Is Lying to You | Microbiome Design</title>
+  <meta name="description" content="Standard soil tests measure chemistry. They tell you nothing about what makes soil alive. Here's what DNA sequencing reveals instead." />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Georgia, serif;
+      background: #fff;
+      color: #111;
+      line-height: 1.75;
+      font-size: 17px;
+    }
+
+    /* ── Top bar ── */
+    .topbar {
+      background: #0a0f1e;
+      padding: 18px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .topbar .brand {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.5);
+    }
+    .topbar a { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 13px; }
+
+    /* ── Hero ── */
+    .hero {
+      background: #0a0f1e;
+      color: #fff;
+      padding: 60px 40px 56px;
+      max-width: 760px;
+      margin: 0 auto 0;
+    }
+    .hero .category {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #4f8ef7;
+      margin-bottom: 20px;
+    }
+    .hero h1 {
+      font-size: 38px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      line-height: 1.15;
+      margin-bottom: 20px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    }
+    .hero .standfirst {
+      font-size: 19px;
+      color: rgba(255,255,255,0.7);
+      line-height: 1.6;
+      font-style: italic;
+      margin-bottom: 28px;
+    }
+    .hero .meta {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+      font-size: 13px;
+      color: rgba(255,255,255,0.4);
+    }
+    .hero .meta strong { color: rgba(255,255,255,0.65); }
+
+    /* ── Body ── */
+    .body-wrap {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 52px 40px 80px;
+    }
+
+    h2 {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+      margin: 48px 0 16px;
+      color: #0a0f1e;
+    }
+    h3 {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+      font-size: 17px;
+      font-weight: 700;
+      margin: 32px 0 10px;
+      color: #111;
+    }
+    p { margin-bottom: 22px; color: #222; }
+    p:last-child { margin-bottom: 0; }
+
+    a { color: #2563eb; text-decoration: underline; text-underline-offset: 3px; }
+
+    /* ── Pullquote ── */
+    blockquote {
+      border-left: 3px solid #4f8ef7;
+      margin: 36px 0;
+      padding: 4px 24px;
+      background: #f0f5ff;
+      border-radius: 0 8px 8px 0;
+    }
+    blockquote p {
+      font-size: 20px;
+      font-style: italic;
+      line-height: 1.55;
+      color: #1a1a2e;
+      margin: 0;
+    }
+
+    /* ── Callout box ── */
+    .callout {
+      background: #0a0f1e;
+      color: #fff;
+      border-radius: 10px;
+      padding: 32px 36px;
+      margin: 40px 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    }
+    .callout h3 {
+      color: #4f8ef7;
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin: 0 0 12px;
+      font-weight: 700;
+    }
+    .callout p { color: rgba(255,255,255,0.8); margin-bottom: 12px; font-size: 15px; }
+    .callout p:last-child { margin-bottom: 0; }
+
+    /* ── Citation ── */
+    .citation {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+      font-size: 13px;
+      color: #666;
+      background: #f8f8f8;
+      border-radius: 6px;
+      padding: 14px 18px;
+      margin: 28px 0;
+      border: 1px solid #eee;
+    }
+    .citation strong { color: #333; }
+    .citation a { color: #2563eb; }
+
+    /* ── Author bio ── */
+    .author-bio {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid #eee;
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    }
+    .author-bio .avatar {
+      width: 52px;
+      height: 52px;
+      background: #0a0f1e;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 800;
+      font-size: 18px;
+    }
+    .author-bio .bio-text { font-size: 14px; color: #444; line-height: 1.6; }
+    .author-bio .bio-text strong { color: #111; display: block; margin-bottom: 4px; font-size: 15px; }
+
+    /* ── CTA ── */
+    .cta-box {
+      background: #f0f5ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 10px;
+      padding: 32px 36px;
+      margin: 48px 0 0;
+      text-align: center;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    }
+    .cta-box h3 { color: #0a0f1e; font-size: 18px; margin: 0 0 10px; font-weight: 800; }
+    .cta-box p { color: #555; font-size: 14px; margin: 0 0 20px; }
+    .cta-box a.btn {
+      display: inline-block;
+      background: #0a0f1e;
+      color: #fff;
+      text-decoration: none;
+      padding: 12px 28px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+
+    /* ── Tags ── */
+    .tags {
+      margin-top: 40px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    }
+    .tag {
+      background: #f3f4f6;
+      color: #555;
+      font-size: 12px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-weight: 500;
+    }
+
+    @media (max-width: 600px) {
+      .hero { padding: 40px 24px 40px; }
+      .hero h1 { font-size: 28px; }
+      .body-wrap { padding: 40px 24px 60px; }
+      .topbar { padding: 16px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top bar -->
+  <div class="topbar">
+    <span class="brand">Microbiome Design</span>
+    <a href="https://microbiomedesign.org">microbiomedesign.org</a>
+  </div>
+
+  <!-- Hero -->
+  <div style="background:#0a0f1e;">
+    <div class="hero">
+      <div class="category">Soil Microbiome &nbsp;·&nbsp; Sequencing &nbsp;·&nbsp; One Health</div>
+      <h1>Your Soil Test Is Lying to You</h1>
+      <p class="standfirst">Standard tests measure chemistry. They tell you nothing about what makes soil alive — or what that has to do with your health.</p>
+      <div class="meta">By <strong>Dr Matthew Tarnowski</strong> &nbsp;·&nbsp; Research Officer, University of Swansea &nbsp;·&nbsp; April 2026 &nbsp;·&nbsp; 8 min read</div>
+    </div>
+  </div>
+
+  <!-- Body -->
+  <div class="body-wrap">
+
+    <p>A teaspoon of healthy soil contains more microbial organisms than there are people on Earth.</p>
+
+    <p>Your soil test measures none of them.</p>
+
+    <p>N-P-K. pH. Chemical snapshots of a living system. Useful. Incomplete. Like counting trees and calling it a forest survey.</p>
+
+    <p>Chemistry tells you what's there. Sequencing tells you if it's working.</p>
+
+    <h2>What you're actually measuring</h2>
+
+    <p>Standard soil analysis is destructive. You extract chemistry and read a number. Everything about which organisms are present, what they're doing, and whether they're functioning gets discarded.</p>
+
+    <p>DNA sequencing changes the question entirely.</p>
+
+    <p>Instead of "how much nitrogen is here?" you can ask: "what organisms are metabolising nitrogen — and are they thriving or stressed?"</p>
+
+    <p>Nanopore-based sequencing can be done in the field. No specialist lab. No six-week turnaround. Results that reflect what your soil is actually doing, not what it contains on paper.</p>
+
+    <p>In research published in <em>Royal Society Open Science</em>, nanopore sequencing was used to characterise soil microbiomes across six urban sites. The goal wasn't just to catalogue what was there. It was to understand what that information means, who it belongs to, and what should be done with it.</p>
+
+    <div class="citation">
+      <strong>Tarnowski MJ, Varliero G, Scown J, Phelps E, Gorochowski TE.</strong> Soil as a transdisciplinary research catalyst: from bioprospecting to biorespecting. <em>R Soc Open Sci.</em> 2023;10(11):230963. <a href="https://doi.org/10.1098/rsos.230963" target="_blank">doi:10.1098/rsos.230963</a>
+    </div>
+
+    <blockquote>
+      <p>A field can test well on NPK and be microbially dead. Sequencing is the only way to know the difference.</p>
+    </blockquote>
+
+    <h2>Soil health is human health</h2>
+
+    <p>One Health is the scientific consensus that human, animal, and environmental health are inseparable. Most clinicians accept it in theory. Almost none apply it in practice.</p>
+
+    <p>The chain is direct:</p>
+
+    <p>Soil microbiome → plant chemistry → food composition → gut microbiome → immune and metabolic function.</p>
+
+    <p>Reduced gut microbial diversity is linked to inflammatory disease, metabolic syndrome, autoimmune conditions, and mental health disorders. The research on how that diversity gets established points back to diet. Diet points back to how food is grown.</p>
+
+    <p>Industrial agriculture has spent seventy years simplifying the soil microbiome. Monoculture. Synthetic inputs. Fungicides. Tillage.</p>
+
+    <p>We're only beginning to measure what that cost.</p>
+
+    <h2>Four things sequencing sees that chemistry misses</h2>
+
+    <h3>Functional guilds</h3>
+    <p>Which organisms are fixing nitrogen, suppressing pathogens, or partnering with plant roots. A soil can contain nitrogen-fixing bacteria and still be functionally depleted — if they're outcompeted or stressed. Chemistry shows presence. Sequencing shows function.</p>
+
+    <h3>Diversity indices</h3>
+    <p>Diverse communities are resilient. Depleted communities are brittle. Alpha diversity (richness within a sample) and beta diversity (variation across sites) give you a picture of resilience that a pH reading never will.</p>
+
+    <h3>Indicator taxa</h3>
+    <p>High <em>Bacillus</em> abundance signals disturbed, aerobic soil. Rich mycorrhizal networks signal undisturbed structure. <em>Pseudomonas</em> diversity is associated with disease suppression. These signals are invisible to chemistry.</p>
+
+    <h3>Change over time</h3>
+    <p>Sequencing gives you a baseline. You can track whether a cover crop, compost application, or tillage reduction is actually changing the biology — and in which direction. You can't manage what you can't measure.</p>
+
+    <div class="callout">
+      <h3>For food and agriculture brands</h3>
+      <p>Consumers and regulators are asking for evidence behind "regenerative" and "soil health" claims. A chemistry report says your soil is healthy. Sequencing data shows it.</p>
+      <p>That's the difference between a claim and a proof.</p>
+    </div>
+
+    <h2>Who owns what's in your soil</h2>
+
+    <p>There's a question that rarely gets discussed in commercial contexts. It should.</p>
+
+    <p>Soil genetic data has real economic value. It can identify novel compounds, predict yields, and inform land decisions worth significant sums. The extractive model — sequence, commercialise, share nothing back — is one approach.</p>
+
+    <p>It's also increasingly illegal.</p>
+
+    <p>International frameworks like the Nagoya Protocol are tightening. Digital sequence information from environmental samples is in scope. The genetic information in soil arises from entire ecosystems — including the farmers, communities, and land managers who shaped them.</p>
+
+    <p>Our research developed the concept of shifting from <em>bioprospecting</em> (treating soil like a mine) to <em>biorespecting</em>: an approach that acknowledges where genetic data comes from, and builds benefit-sharing in from the start.</p>
+
+    <p>For businesses building on microbiome data — this isn't ethics versus profit. It's risk management. Getting ahead of the regulatory shift now is easier than retrofitting compliance after the fact.</p>
+
+    <h2>What a sequencing assessment actually looks like</h2>
+
+    <p>Five steps. Most people only think about step two.</p>
+
+    <p><strong>Sample design.</strong> Which sites. How many. How often. This is where most assessments go wrong — before any sequencing happens.</p>
+
+    <p><strong>Sequencing.</strong> 16S rRNA for bacteria and archaea. ITS for fungi. Shotgun metagenomics if you need higher resolution. The choice depends on your question, not your budget.</p>
+
+    <p><strong>Analysis.</strong> Denoising, taxonomic classification, diversity metrics, functional annotation. Turning gigabytes of reads into something interpretable.</p>
+
+    <p><strong>Interpretation.</strong> Raw data doesn't make decisions. This does. Matched against your management goals, baseline, and regulatory context.</p>
+
+    <p><strong>Communication.</strong> Legible to a non-specialist. Verifiable by a regulator. Most reports fail this test.</p>
+
+    <h2>The gap isn't the science</h2>
+
+    <p>Most agricultural and food businesses are years behind the research. The tools exist. The evidence is substantial. The regulatory pressure is building.</p>
+
+    <p>The gap is translation.</p>
+
+    <p>Most soil consultants are agronomists trained in chemistry. Most molecular biologists don't speak to food brands or farmers. Most sustainability teams can't critically evaluate a sequencing report.</p>
+
+    <blockquote>
+      <p>The science is ready. The translation layer is what's missing.</p>
+    </blockquote>
+
+    <p>If you're growing food, managing land, building a product on biological claims, or designing a study — the sequencing era has arrived.</p>
+
+    <p>The question is whether you have someone who understands both the biology and what you're trying to build.</p>
+
+    <!-- CTA -->
+    <div class="cta-box">
+      <h3>The biology is the easy part.</h3>
+      <p>Getting it into a form that moves a business forward — that's the work. If that's what you need, let's talk.</p>
+      <a href="mailto:hello@microbiomedesign.org" class="btn">Get in touch</a>
+    </div>
+
+    <!-- Tags -->
+    <div class="tags">
+      <span class="tag">Soil microbiome</span>
+      <span class="tag">Nanopore sequencing</span>
+      <span class="tag">One Health</span>
+      <span class="tag">Regenerative agriculture</span>
+      <span class="tag">DNA sequencing</span>
+      <span class="tag">Gut health</span>
+      <span class="tag">Responsible innovation</span>
+      <span class="tag">Food systems</span>
+    </div>
+
+    <!-- Author bio -->
+    <div class="author-bio">
+      <div class="avatar">MT</div>
+      <div class="bio-text">
+        <strong>Dr Matthew Tarnowski</strong>
+        Research Officer at the University of Swansea. Published researcher in microbiology, DNA sequencing, agroecology, and responsible innovation. His work has appeared in <em>Nature Communications</em>, <em>Royal Society Open Science</em>, and <em>Physics of Life Reviews</em>.
+        <br><br>
+        <a href="https://scholar.google.co.uk/citations?user=EOGgZ3MAAAAJ&hl=en" target="_blank">View publications on Google Scholar →</a>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>
