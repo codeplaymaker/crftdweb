@@ -29,12 +29,8 @@ function buildHtml(name: string, bookingUrl: string): string {
           <tr>
             <td style="background:#ffffff;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 12px 12px;padding:40px;">
               <p style="margin:0 0 20px;font-size:16px;color:#111;line-height:1.6;font-weight:600;">Hi ${firstName},</p>
-              <p style="margin:0 0 16px;font-size:15px;color:#444;line-height:1.7;">
-                Your background caught my attention — I&apos;d love to get 15 minutes with you to explain what we&apos;re building at CrftdWeb and see if it could be a good fit.
-              </p>
-              <p style="margin:0 0 28px;font-size:15px;color:#444;line-height:1.7;">
-                No prep needed. Pick a time below and we&apos;ll go from there:
-              </p>
+              <p style="margin:0 0 12px;font-size:15px;color:#444;line-height:1.7;">We&apos;ve reviewed your application and we&apos;d love to find out more about you.</p>
+              <p style="margin:0 0 28px;font-size:15px;color:#444;line-height:1.7;">15 minutes, no prep needed. Pick a time below and we&apos;ll go from there:</p>
               <table cellpadding="0" cellspacing="0" style="margin:0 0 28px;">
                 <tr>
                   <td style="background:#111;border-radius:8px;">
@@ -71,9 +67,9 @@ const plainText = (name: string, bookingUrl: string) => {
   const firstName = name.split(' ')[0];
   return `Hi ${firstName},
 
-Your background caught my attention — I'd love to get 15 minutes with you to explain what we're building at CrftdWeb and see if it could be a good fit.
+We've reviewed your application and we'd love to find out more about you.
 
-No prep needed. Pick a time here:
+15 minutes, no prep needed. Pick a time here:
 ${bookingUrl}
 
 Takes 30 seconds to book. If none of the slots work, just reply and I'll find something that does.
@@ -120,7 +116,7 @@ export async function sendBookingLink(
     const sendResult = await resend.emails.send({
       from: 'CrftdWeb <admin@crftdweb.com>',
       to: [email],
-      subject: 'Let\'s find a time to talk',
+      subject: `Next step, ${name.split(' ')[0]}`,
       html: buildHtml(name, bookingUrl),
       text: plainText(name, bookingUrl),
     });
@@ -129,7 +125,7 @@ export async function sendBookingLink(
     await adminDb.collection('adminEmails').add({
       to: email.trim().toLowerCase(),
       name,
-      subject: 'Let\'s find a time to talk',
+      subject: `Next step, ${name.split(' ')[0]}`,
       templateKey: 'booking-link',
       resendId: sendResult.data?.id ?? null,
       status: sendResult.error ? 'failed' : 'sent',

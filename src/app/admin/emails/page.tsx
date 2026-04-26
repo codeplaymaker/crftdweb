@@ -46,7 +46,7 @@ function buildBookingLinkHtml(name: string): string {
   const fakeUrl = 'https://crftdweb.com/book/preview-link';
   return `<!DOCTYPE html>
 <html lang="en">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>CrftdWeb — Let's find a time to talk</title></head>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Next step</title></head>
 <body style="margin:0;padding:0;background:#f4f4f4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;">
   <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:40px 20px;"><tr><td align="center">
     <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
@@ -56,7 +56,7 @@ function buildBookingLinkHtml(name: string): string {
       <tr><td style="background:#ffffff;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 12px 12px;padding:40px;">
         <p style="margin:0 0 20px;font-size:16px;color:#111;font-weight:600;">Hi ${name},</p>
 
-        <p style="margin:0 0 24px;font-size:15px;color:#444;line-height:1.7;">We’ve reviewed your application and we’d love to find out more about you.</p>
+        <p style="margin:0 0 12px;font-size:15px;color:#444;line-height:1.7;">We’ve reviewed your application and we’d love to find out more about you.</p>
         <p style="margin:0 0 28px;font-size:15px;color:#444;line-height:1.7;">15 minutes, no prep needed. Pick a time below and we’ll go from there:</p>
         <table cellpadding="0" cellspacing="0" style="margin:0 0 28px;">
           <tr><td style="background:#111;border-radius:8px;">
@@ -290,7 +290,7 @@ const EMAIL_SEND_TEMPLATES = [
   {
     id: 'booking-link',
     label: 'Booking Link',
-    subject: "Let's find a time to talk",
+    subject: 'Next step, [Name]',
     description: 'Sent after a good trial task response — includes a unique booking link.',
     color: 'border-emerald-500/30 bg-emerald-500/5',
     activeColor: 'border-emerald-500 bg-emerald-500/15',
