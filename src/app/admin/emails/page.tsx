@@ -250,6 +250,37 @@ function buildOfferHtml(name: string): string {
 </body></html>`;
 }
 
+function buildTerminationHtml(name: string): string {
+  const firstName = name.split(' ')[0];
+  const today = new Date();
+  const terminationDate = new Date(today);
+  terminationDate.setDate(today.getDate() + 7);
+  const fmt = (d: Date) => d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+  return `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
+<body style="margin:0;padding:0;background:#f4f4f4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:40px 20px;">
+    <tr><td align="center">
+      <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+        <tr><td align="center" style="background:#000000;border-radius:12px 12px 0 0;padding:32px 40px;">
+          <img src="https://crftdweb.com/CW-logo-white.png" alt="CrftdWeb" width="160" style="display:block;border:0;" />
+        </td></tr>
+        <tr><td style="background:#ffffff;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 12px 12px;padding:40px;">
+          <p style="margin:0 0 20px;font-size:16px;color:#111;font-weight:600;">Hi ${firstName},</p>
+          <p style="margin:0 0 16px;font-size:15px;color:#444;line-height:1.7;">I'm writing to give formal notice that I'm terminating our sales representative agreement, effective <strong>7 days from the date of this email — ${fmt(terminationDate)}</strong>.</p>
+          <p style="margin:0 0 16px;font-size:15px;color:#444;line-height:1.7;">Any commission owed on leads you introduced before this date will be paid in full, provided the client's deposit is received within 90 days of termination.</p>
+          <p style="margin:0 0 28px;font-size:15px;color:#444;line-height:1.7;">Your portal access will be disabled on <strong>${fmt(terminationDate)}</strong>. Please don't hesitate to reach out if you have any questions.</p>
+          <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;"><tr><td style="border-top:1px solid #e8e8e8;"></td></tr></table>
+          <img src="https://crftdweb.com/CW-logo.png" alt="CrftdWeb" width="48" style="display:block;border:0;margin-bottom:8px;" />
+          <p style="margin:0;font-size:13px;color:#999;">crftdweb.com &middot; admin@crftdweb.com</p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body></html>`;
+}
+
 function buildOverqualifiedHtml(name: string): string {
   const firstName = name.split(' ')[0];
   return `<!DOCTYPE html>
@@ -349,6 +380,15 @@ const EMAIL_SEND_TEMPLATES = [
     color: 'border-zinc-500/30 bg-zinc-500/5',
     activeColor: 'border-zinc-500 bg-zinc-500/15',
     labelColor: 'text-zinc-400',
+  },
+  {
+    id: 'termination',
+    label: 'Termination',
+    subject: 'Notice of Agreement Termination',
+    description: 'Formal 7-day termination notice for an active rep. Portal access removed on effective date.',
+    color: 'border-rose-500/30 bg-rose-500/5',
+    activeColor: 'border-rose-500 bg-rose-500/15',
+    labelColor: 'text-rose-400',
   },
 ] as const;
 
@@ -639,6 +679,8 @@ function SendPanel() {
     ? buildOfferReminderHtml(firstName || 'Hi')
     : templateId === 'trial-reminder'
     ? buildTrialReminderHtml(firstName || 'Hi')
+    : templateId === 'termination'
+    ? buildTerminationHtml(firstName || 'Hi')
     : buildOverqualifiedHtml(firstName || 'Hi');
 
   const selectedTemplate = EMAIL_SEND_TEMPLATES.find((t) => t.id === templateId)!;
@@ -664,6 +706,8 @@ function SendPanel() {
         result = await sendCustomEmail(name.trim(), email.trim(), 'Re: CrftdWeb offer — just checking in', buildOfferReminderHtml(firstName));
       } else if (templateId === 'trial-reminder') {
         result = await sendCustomEmail(name.trim(), email.trim(), 'Re: CrftdWeb trial task', buildTrialReminderHtml(firstName));
+      } else if (templateId === 'termination') {
+        result = await sendCustomEmail(name.trim(), email.trim(), 'Notice of Agreement Termination', buildTerminationHtml(name.trim()));
       } else {
         result = await sendOverqualified(name.trim(), email.trim());
       }
