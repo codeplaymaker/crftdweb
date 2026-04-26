@@ -48,11 +48,11 @@ function RepLayoutInner({ children }: { children: React.ReactNode }) {
         setRepProfile(profile);
       } else {
         setRepVerified(false);
-        router.replace('/');
+        signOut().finally(() => router.replace('/rep/signin'));
       }
     }).catch(() => {
       setRepVerified(false);
-      router.replace('/');
+      signOut().finally(() => router.replace('/rep/signin'));
     });
   }, [user, loading, router, pathname]);
 
