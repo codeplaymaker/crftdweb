@@ -1505,6 +1505,32 @@ export default function AdminDashboard() {
                 </div>
               </motion.a>
 
+              {/* AI Hunter */}
+              <motion.a
+                href="/admin/hunter"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.05 }}
+                whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                className="group bg-white/[0.03] border border-white/[0.06] rounded-2xl p-8 text-left hover:border-orange-500/30 hover:bg-orange-500/[0.03] transition-colors block"
+              >
+                <div className="w-12 h-12 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center mb-5 group-hover:bg-orange-500/15 transition-colors">
+                  <svg className="w-6 h-6 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zm-7.518-.267A8.25 8.25 0 1120.25 10.5M8.288 14.212A5.25 5.25 0 1117.25 10.5" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-semibold text-white mb-2">AI Hunter</h3>
+                <p className="text-sm text-white/35 leading-relaxed mb-4">
+                  Scrape local businesses, audit their sites, build AI previews, and send personalised cold outreach automatically.
+                </p>
+                <div className="flex items-center gap-2 text-xs text-orange-400/60 font-medium">
+                  <span>Launch hunt</span>
+                  <svg className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </motion.a>
+
               {/* Rep Training Leaderboard */}
               <motion.a
                 href="/admin/training"
