@@ -115,18 +115,15 @@ function HuntCard({ hunt, onSelect, onDelete }: {
       </div>
 
       <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2 mb-0.5">
-          <span className="text-sm font-semibold text-white truncate">{hunt.niche}</span>
-          <span className="text-zinc-500 text-xs">in</span>
-          <span className="text-sm text-zinc-300 truncate">{hunt.city}</span>
-        </div>
-        <div className="flex items-center gap-3 text-xs text-zinc-500">
-          <span>{hunt.businessCount} businesses</span>
-          <span>·</span>
-          <span className="text-emerald-400">{hunt.gradeCounts?.C ?? 0}C</span>
-          <span className="text-red-400">{hunt.gradeCounts?.D ?? 0}D</span>
-          <span>·</span>
-          <span>{date}</span>
+        <p className="text-sm font-semibold text-white leading-tight">
+          {hunt.niche} <span className="text-zinc-500 font-normal">in</span> {hunt.city}
+        </p>
+        <div className="flex items-center gap-2 mt-1 text-xs text-zinc-500 flex-wrap">
+          <span>{hunt.businessCount} biz</span>
+          {(hunt.gradeCounts?.C ?? 0) > 0 && <span className="text-amber-400">{hunt.gradeCounts.C}C</span>}
+          {(hunt.gradeCounts?.D ?? 0) > 0 && <span className="text-red-400">{hunt.gradeCounts.D}D</span>}
+          {(hunt.gradeCounts?.B ?? 0) > 0 && <span className="text-sky-400">{hunt.gradeCounts.B}B</span>}
+          <span>· {date}</span>
         </div>
       </div>
 
