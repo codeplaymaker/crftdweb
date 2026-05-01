@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import {
   getRecentHunts,
-  getBusinessesByHunt,
-  getAuditsByHunt,
-  getPreviewsByHunt,
+  getPipelineStats,
   deleteHunt,
 } from '@/lib/hunter/store';
 
@@ -12,17 +10,18 @@ function isAdmin(req: NextRequest) {
   return token && token === process.env.ADMIN_TOKEN;
 }
 
-/** GET /api/admin/hunter — returns recent hunts (no detail) */
+/** GET /api/admin/hunter — returns recent hunts + pipeline stats */
 export async function GET(req: NextRequest) {
   if (!isAdmin(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const hunts = await getRecentHunts(20);
+  const [hunts, stats] = await Promise.all([getRecentHunts(20), getPipelineStats()]);
+
   const serialized = hunts.map((h) => ({
     ...h,
     createdAt: (h.createdAt as { toDate?: () => Date })?.toDate?.()?.toISOString() ?? null,
   }));
 
-  return NextResponse.json(serialized);
+  return NextResponse.json({ hunts: serialized, stats });
 }
 
 /** DELETE /api/admin/hunter?huntId=xxx */

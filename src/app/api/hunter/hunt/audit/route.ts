@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
     // Audit this single business
     if (biz.website) {
       try {
-        const auditData = await auditWebsite(biz.website);
+        const auditData = await auditWebsite(biz.website, { skipScreenshot: true });
         const { grade, reason } = gradeWebsite(auditData);
         await saveAudit({
           businessId: biz.id,

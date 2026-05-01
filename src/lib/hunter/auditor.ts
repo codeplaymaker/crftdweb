@@ -42,14 +42,14 @@ export interface AuditData {
  * Uses the free public API (no key needed, but rate-limited).
  * If GOOGLE_PAGESPEED_API_KEY is set, we use it for higher quota.
  */
-export async function auditWebsite(url: string): Promise<AuditData> {
+export async function auditWebsite(url: string, options: { skipScreenshot?: boolean } = {}): Promise<AuditData> {
   const apiKey = process.env.GOOGLE_PAGESPEED_API_KEY || process.env.GOOGLE_PLACES_API_KEY;
   const normalizedUrl = url.startsWith('http') ? url : `https://${url}`;
 
-  // Run PageSpeed + Screenshot in parallel
+  // Run PageSpeed + Screenshot in parallel (skip screenshot if not needed)
   const [pageSpeed, screenshotUrl] = await Promise.all([
     runPageSpeed(normalizedUrl, apiKey),
-    captureScreenshot(normalizedUrl),
+    options.skipScreenshot ? Promise.resolve(null) : captureScreenshot(normalizedUrl),
   ]);
 
   return { ...pageSpeed, screenshotUrl };
@@ -66,7 +66,7 @@ async function runPageSpeed(url: string, apiKey?: string): Promise<Omit<AuditDat
   try {
     const res = await fetch(
       `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?${params}`,
-      { signal: AbortSignal.timeout(9000) },  // 9s — tight but gives PageSpeed a fair shot
+      { signal: AbortSignal.timeout(3000) },  // 3s — fail fast to lightweight fallback
     );
     const data: LighthouseAudit = await res.json();
 
@@ -105,7 +105,7 @@ async function lightweightAudit(url: string): Promise<Omit<AuditData, 'screensho
   try {
     const start = Date.now();
     const res = await fetch(url, {
-      signal: AbortSignal.timeout(5000),
+      signal: AbortSignal.timeout(3000),
       headers: { 'User-Agent': 'Mozilla/5.0 (compatible; CrftdBot/1.0)' },
       redirect: 'follow',
     });

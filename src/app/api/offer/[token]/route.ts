@@ -3,6 +3,7 @@ import { adminAuth, adminDb } from '@/lib/firebase/admin';
 import { FieldValue } from 'firebase-admin/firestore';
 import { Resend } from 'resend';
 import { randomBytes } from 'crypto';
+import { sendMessage } from '@/lib/telegram/bot';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://crftdweb.com';
@@ -223,14 +224,20 @@ export async function POST(
     }
 
     // Notify admin
+    const emoji = response === 'accepted' ? '✅' : '❌';
     if (process.env.RESEND_API_KEY) {
-      const emoji = response === 'accepted' ? '✅' : '❌';
       await resend.emails.send({
         from: 'CrftdWeb <admin@crftdweb.com>',
         to: ['admin@crftdweb.com'],
         subject: `${emoji} ${data.applicantName} ${response} the offer`,
         html: `<p><strong>${data.applicantName}</strong> (${data.applicantEmail}) has <strong>${response}</strong> the rep offer.</p>`,
       }).catch(() => {});
+    }
+    if (process.env.TELEGRAM_BOT_TOKEN && process.env.TELEGRAM_CHANNEL_ID) {
+      await sendMessage(
+        process.env.TELEGRAM_CHANNEL_ID,
+        `${emoji} <b>${data.applicantName}</b> ${response} the rep offer.\n${data.applicantEmail}`,
+      ).catch(() => {});
     }
 
     return NextResponse.json({ success: true, response });
