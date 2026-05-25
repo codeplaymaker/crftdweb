@@ -43,7 +43,7 @@ export default function Paths() {
             <span className="text-muted-foreground">One standard.</span>
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed">
-            Whatever stage you&apos;re at, there&apos;s a way to work with us.
+            Not ready to build yet? Read the playbook. Ready to start? Let&apos;s talk.
           </p>
         </motion.div>
 

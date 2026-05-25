@@ -43,11 +43,11 @@ export default function BlogHighlights() {
             INSIGHTS & RESULTS
           </span>
           <h2 className="text-3xl md:text-5xl font-bold tracking-tight leading-tight mb-5">
-            Real results.{' '}
-            <span className="text-muted-foreground">Real businesses.</span>
+            The work.{' '}
+            <span className="text-muted-foreground">The results that prove it.</span>
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed">
-            Case studies and guides from our work with businesses like yours.
+            Case studies, comparisons, and proof. Read what changed, why it worked, and what you can take from it.
           </p>
         </motion.div>
 

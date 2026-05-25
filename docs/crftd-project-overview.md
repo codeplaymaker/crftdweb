@@ -2,7 +2,9 @@
 
 ## What We Do
 
-CrftdWeb builds premium, hand-coded websites and web applications for businesses that understand the value of exceptional design. We are not a template agency. We compete on quality, not price.
+CrftdWeb hand-codes websites for UK service businesses that want to look like the obvious choice in their niche and convert visitors into enquiries. No templates. No page builders. Every line written from scratch.
+
+We are not a template agency. We compete on quality, not price.
 
 ## Current Platform
 

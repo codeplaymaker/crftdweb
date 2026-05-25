@@ -1802,6 +1802,87 @@ export default function AdminDashboard() {
                 </div>
               </motion.a>
 
+              {/* Job Applications */}
+              <motion.a
+                href="/admin/jobs"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                className="group bg-white/[0.03] border border-white/[0.06] rounded-2xl p-8 text-left hover:border-indigo-500/30 hover:bg-indigo-500/[0.03] transition-colors block"
+              >
+                <div className="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mb-5 group-hover:bg-indigo-500/15 transition-colors">
+                  <svg className="w-6 h-6 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 00.75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 00-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0112 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 01-.673-.38m0 0A2.18 2.18 0 013 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 013.413-.387m7.5 0V5.25A2.25 2.25 0 0013.5 3h-3a2.25 2.25 0 00-2.25 2.25v.894m7.5 0a48.667 48.667 0 00-7.5 0M12 12.75h.008v.008H12v-.008z" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-semibold text-white mb-2">Job Applications</h3>
+                <p className="text-sm text-white/35 leading-relaxed mb-4">
+                  Track job applications, interview stages, and follow-ups as you search for work.
+                </p>
+                <div className="flex items-center gap-2 text-xs text-indigo-400/60 font-medium">
+                  <span>View applications</span>
+                  <svg className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </motion.a>
+
+              {/* Agency Outreach */}
+              <motion.a
+                href="/admin/agencies"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.25 }}
+                whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                className="group bg-white/[0.03] border border-white/[0.06] rounded-2xl p-8 text-left hover:border-violet-500/30 hover:bg-violet-500/[0.03] transition-colors block"
+              >
+                <div className="w-12 h-12 rounded-xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center mb-5 group-hover:bg-violet-500/15 transition-colors">
+                  <svg className="w-6 h-6 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-semibold text-white mb-2">Agency Outreach</h3>
+                <p className="text-sm text-white/35 leading-relaxed mb-4">
+                  Send your CV to web design agencies. AI drafts personalised cold emails, track responses.
+                </p>
+                <div className="flex items-center gap-2 text-xs text-violet-400/60 font-medium">
+                  <span>View agencies</span>
+                  <svg className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </motion.a>
+
+              {/* Interview Prep Coach */}
+              <motion.a
+                href="/admin/interview-prep"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                className="group bg-white/[0.03] border border-white/[0.06] rounded-2xl p-8 text-left hover:border-emerald-500/30 hover:bg-emerald-500/[0.03] transition-colors block relative overflow-hidden"
+              >
+                <div className="absolute top-4 right-4 text-[10px] font-mono text-emerald-400/50 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full">
+                  26 May deadline
+                </div>
+                <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-5 group-hover:bg-emerald-500/15 transition-colors">
+                  <svg className="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-semibold text-white mb-2">Interview Prep Coach</h3>
+                <p className="text-sm text-white/35 leading-relaxed mb-4">
+                  Practice React interview questions for Best.Energy. Timed answers, sample answers, mock mode, readiness score.
+                </p>
+                <div className="flex items-center gap-2 text-xs text-emerald-400/60 font-medium">
+                  <span>Start preparing</span>
+                  <svg className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </motion.a>
+
             </div>
           </div>
         </div>

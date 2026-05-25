@@ -6,7 +6,7 @@ CrftdWeb is a boutique web design and development studio. We hand-code premium w
 
 We are positioned at the premium end of the market. We do not compete on price.
 
-**One-line pitch:** "Most business websites look fine and do nothing. We fix that."
+**One-line pitch:** "We hand-code websites for UK service businesses that make you look like the obvious choice — and turn visitors into enquiries."
 
 ## What We Build
 
@@ -19,13 +19,28 @@ We are positioned at the premium end of the market. We do not compete on price.
 
 ## Who We Sell To
 
-Small to medium businesses that:
-- Have no website, or an outdated one that isn't converting
-- Are serious about growth and understand investment
-- Make decisions quickly — typically business owners, not procurement departments
-- Value quality over cheapness
+**UK service business owners** — the decision maker, not a manager or procurement team.
 
-**Who to avoid:** Anyone who leads with "how cheap can you do it" or wants a site for under £500.
+**Verticals (best results):** Trades (plumbers, electricians, roofers, builders), local service businesses (cleaners, landscapers, removal firms), consultants, small agencies.
+
+**Size:** 1–10 employees, owner-run.
+
+**Key signals — look for any of these:**
+- Google Business Profile exists but **no website attached**
+- Website looks outdated, template-built, or hasn't been touched in years
+- Few or no Google reviews (under 10)
+- Competitors in their area have clearly better sites
+- They're ranking poorly or invisible in local search
+
+**Mindset:** They understand a website is an investment, not an expense. They make decisions quickly — no lengthy procurement process.
+
+**Budget sweet spot:** £997–£2,497 (Starter or Launch package).
+
+**Who to avoid:**
+- Anyone who leads with "how cheap can you do it"
+- Anyone wanting a site for under £500
+- National chains or large companies with procurement teams
+- Businesses already working with a web agency they're happy with
 
 ## Tech Stack
 

@@ -79,6 +79,7 @@ export default function RepLeadsPage() {
   const [emailLead, setEmailLead] = useState<RepLead | null>(null);
   const [sendingBookingId, setSendingBookingId] = useState<string | null>(null);
   const [availableSlots, setAvailableSlots] = useState<number | null>(null);
+  const [quickAdd, setQuickAdd] = useState(true);
 
   useEffect(() => {
     const now = new Date().toISOString();
@@ -279,6 +280,32 @@ export default function RepLeadsPage() {
 
   return (
     <div className="max-w-4xl space-y-6">
+      {/* ICP card */}
+      <div className="bg-white/[0.02] border border-white/8 rounded-2xl p-5">
+        <p className="text-[10px] font-bold uppercase tracking-widest text-white/30 mb-3">Who to target</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <p className="text-xs font-semibold text-white/60 mb-2">Best leads</p>
+            <ul className="space-y-1.5 text-xs text-white/40">
+              <li className="flex items-start gap-2"><span className="text-emerald-400 mt-0.5">✓</span>Google Business Profile with no website attached</li>
+              <li className="flex items-start gap-2"><span className="text-emerald-400 mt-0.5">✓</span>Outdated or template-looking website</li>
+              <li className="flex items-start gap-2"><span className="text-emerald-400 mt-0.5">✓</span>Fewer than 10 Google reviews</li>
+              <li className="flex items-start gap-2"><span className="text-emerald-400 mt-0.5">✓</span>Trades, local services, consultants — 1–10 staff</li>
+              <li className="flex items-start gap-2"><span className="text-emerald-400 mt-0.5">✓</span>Owner is the decision maker — UK based</li>
+            </ul>
+          </div>
+          <div>
+            <p className="text-xs font-semibold text-white/60 mb-2">Avoid</p>
+            <ul className="space-y-1.5 text-xs text-white/40">
+              <li className="flex items-start gap-2"><span className="text-red-400/60 mt-0.5">✗</span>"How cheap can you do it?"</li>
+              <li className="flex items-start gap-2"><span className="text-red-400/60 mt-0.5">✗</span>Budget under £500</li>
+              <li className="flex items-start gap-2"><span className="text-red-400/60 mt-0.5">✗</span>National chains or franchises</li>
+              <li className="flex items-start gap-2"><span className="text-red-400/60 mt-0.5">✗</span>Already happy with their current agency</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
       {/* Won — deal value modal */}
       {wonLead && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
@@ -349,7 +376,7 @@ export default function RepLeadsPage() {
           </div>
         </div>
         <button
-          onClick={() => { setShowForm(!showForm); setEditingId(null); setForm(emptyForm); }}
+          onClick={() => { setShowForm(!showForm); setEditingId(null); setForm(emptyForm); setQuickAdd(true); }}
           className="flex items-center gap-2 px-4 py-2 bg-white text-black rounded-xl text-sm font-semibold hover:bg-white/90 transition-colors"
         >
           <Plus className="w-4 h-4" />
@@ -361,74 +388,104 @@ export default function RepLeadsPage() {
       {showForm && (
         <form onSubmit={handleSubmit} className="bg-white/[0.03] border border-white/10 rounded-2xl p-6 space-y-4">
           <p className="text-sm font-semibold text-white mb-2">{editingId ? 'Edit Lead' : 'New Lead'}</p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {[
-              { key: 'businessName', label: 'Business Name', required: true },
-              { key: 'contactName', label: 'Contact Name', required: true },
-              { key: 'contactEmail', label: 'Contact Email', required: false },
-              { key: 'contactPhone', label: 'Phone Number', required: false },
-            ].map(({ key, label, required }) => (
-              <div key={key}>
-                <label className="block text-[10px] text-white/30 mb-1.5 uppercase tracking-widest">{label}</label>
+
+          {/* Quick-add: Business Name + Phone only */}
+          {!editingId && quickAdd ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-[10px] text-white/30 mb-1.5 uppercase tracking-widest">Business Name</label>
                 <input
                   type="text"
-                  value={form[key as keyof typeof form]}
-                  onChange={e => setForm(prev => ({ ...prev, [key]: e.target.value }))}
-                  required={required}
+                  value={form.businessName}
+                  onChange={e => setForm(prev => ({ ...prev, businessName: e.target.value }))}
+                  required
+                  autoFocus
+                  placeholder="e.g. Riverside Plumbing"
                   className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/30"
                 />
               </div>
-            ))}
-            <div>
-              <label className="block text-[10px] text-white/30 mb-1.5 uppercase tracking-widest">Source</label>
-              <select
-                value={form.source}
-                onChange={e => setForm(prev => ({ ...prev, source: e.target.value as LeadSource }))}
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-white/30"
-              >
-                {SOURCES.map(s => (
-                  <option key={s} value={s} className="bg-[#1a1a1a]">{s.replace('_', ' ')}</option>
-                ))}
-              </select>
+              <div>
+                <label className="block text-[10px] text-white/30 mb-1.5 uppercase tracking-widest">Phone Number</label>
+                <input
+                  type="text"
+                  value={form.contactPhone}
+                  onChange={e => setForm(prev => ({ ...prev, contactPhone: e.target.value }))}
+                  placeholder="e.g. 07700 900123"
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/30"
+                />
+              </div>
+              <div className="md:col-span-2">
+                <button
+                  type="button"
+                  onClick={() => setQuickAdd(false)}
+                  className="text-xs text-white/30 hover:text-white/50 underline underline-offset-2"
+                >
+                  + Add more details
+                </button>
+              </div>
             </div>
-            <div>
-              <label className="block text-[10px] text-white/30 mb-1.5 uppercase tracking-widest">Status</label>
-              <select
-                value={form.status}
-                onChange={e => setForm(prev => ({ ...prev, status: e.target.value as LeadStatus }))}
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-white/30"
-              >
-                {PIPELINE.map(p => (
-                  <option key={p.key} value={p.key} className="bg-[#1a1a1a]">{p.label}</option>
-                ))}
-              </select>
+          ) : (
+            /* Full form (editing or expanded) */
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {[
+                { key: 'businessName', label: 'Business Name', required: true },
+                { key: 'contactName', label: 'Contact Name', required: false },
+                { key: 'contactEmail', label: 'Contact Email', required: false },
+                { key: 'contactPhone', label: 'Phone Number', required: false },
+              ].map(({ key, label, required }) => (
+                <div key={key}>
+                  <label className="block text-[10px] text-white/30 mb-1.5 uppercase tracking-widest">{label}</label>
+                  <input
+                    type="text"
+                    value={form[key as keyof typeof form]}
+                    onChange={e => setForm(prev => ({ ...prev, [key]: e.target.value }))}
+                    required={required}
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/30"
+                  />
+                </div>
+              ))}
+              <div>
+                <label className="block text-[10px] text-white/30 mb-1.5 uppercase tracking-widest">Source</label>
+                <select
+                  value={form.source}
+                  onChange={e => setForm(prev => ({ ...prev, source: e.target.value as LeadSource }))}
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-white/30"
+                >
+                  {SOURCES.map(s => (
+                    <option key={s} value={s} className="bg-[#1a1a1a]">{s.replace('_', ' ')}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-[10px] text-white/30 mb-1.5 uppercase tracking-widest">Status</label>
+                <select
+                  value={form.status}
+                  onChange={e => setForm(prev => ({ ...prev, status: e.target.value as LeadStatus }))}
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-white/30"
+                >
+                  {PIPELINE.map(p => (
+                    <option key={p.key} value={p.key} className="bg-[#1a1a1a]">{p.label}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="md:col-span-2">
+                <label className="block text-[10px] text-white/30 mb-1.5 uppercase tracking-widest">Notes</label>
+                <textarea
+                  value={form.notes}
+                  onChange={e => setForm(prev => ({ ...prev, notes: e.target.value }))}
+                  rows={2}
+                  placeholder="What did they say? Pain points? Next step?"
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 resize-none"
+                />
+              </div>
             </div>
-            <div>
-              <label className="block text-[10px] text-white/30 mb-1.5 uppercase tracking-widest">Deal Value (£)</label>
-              <input
-                type="number"
-                value={form.dealValue}
-                onChange={e => setForm(prev => ({ ...prev, dealValue: e.target.value }))}
-                placeholder="e.g. 3200"
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/30"
-              />
-            </div>
-            <div className="md:col-span-2">
-              <label className="block text-[10px] text-white/30 mb-1.5 uppercase tracking-widest">Notes</label>
-              <textarea
-                value={form.notes}
-                onChange={e => setForm(prev => ({ ...prev, notes: e.target.value }))}
-                rows={2}
-                placeholder="What did they say? Pain points? Next step?"
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 resize-none"
-              />
-            </div>
-          </div>
+          )}
+
           <div className="flex gap-3 pt-1">
             <button type="submit" disabled={saving} className="px-5 py-2.5 bg-white text-black rounded-xl text-sm font-semibold hover:bg-white/90 disabled:opacity-40">
               {saving ? 'Saving...' : editingId ? 'Update Lead' : 'Save Lead'}
             </button>
-            <button type="button" onClick={() => { setShowForm(false); setEditingId(null); }} className="px-5 py-2.5 bg-white/5 text-white/60 rounded-xl text-sm hover:bg-white/10">
+            <button type="button" onClick={() => { setShowForm(false); setEditingId(null); setQuickAdd(true); }} className="px-5 py-2.5 bg-white/5 text-white/60 rounded-xl text-sm hover:bg-white/10">
               Cancel
             </button>
           </div>

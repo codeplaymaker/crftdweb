@@ -6,23 +6,23 @@ import { Code2, Target, TrendingUp, Shield } from "lucide-react";
 const features = [
   {
     icon: <Target className="w-8 h-8" />,
-    title: "Conversion-First Design",
-    description: "Every section answers one question in the buyer's mind. Pretty doesn't convert. Intent does."
+    title: "Looks Credible at First Glance",
+    description: "If your site looks behind, buyers assume your business is too. First impressions are made in under a second."
   },
   {
     icon: <Code2 className="w-8 h-8" />,
     title: "Hand-Coded. No Templates.",
-    description: "Custom-built with Next.js and modern tech. No WordPress themes, no page builders, no compromises."
+    description: "Custom-built with Next.js. No WordPress themes, no page builders. Faster, cleaner, more distinctive — and impossible to copy with a theme."
   },
   {
     icon: <TrendingUp className="w-8 h-8" />,
-    title: "Built to Perform",
-    description: "90+ PageSpeed scores, sub-2s load times. Because every second of delay costs you customers."
+    title: "Loads Fast on Real Phones",
+    description: "90+ PageSpeed, sub-2s load times. Slow sites lose attention before your offer even gets a chance."
   },
   {
     icon: <Shield className="w-8 h-8" />,
-    title: "Trust at Every Touchpoint",
-    description: "Credibility is engineered, not assumed. Social proof, clear process, risk reversal. Built in from day one."
+    title: "Trust Built Into Every Page",
+    description: "Social proof, clear process, risk reversal. Credibility isn't assumed — it's engineered at every decision point."
   }
 ];
 

@@ -18,11 +18,7 @@ export default function Hero() {
         <Hero3D />
       </div>
       
-      {/* Background Elements */}
-      <div className="absolute inset-0 w-full h-full">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-secondary rounded-full blur-3xl opacity-40" />
-        <div className="absolute bottom-20 right-10 w-72 h-72 bg-accent rounded-full blur-3xl opacity-40" />
-      </div>
+
 
       {/* Content */}
       <div className="container relative z-10">
@@ -38,7 +34,7 @@ export default function Hero() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.1 }}
           >
-            HAND-CODED. CONVERSION-BUILT. LIVE IN 14 DAYS.
+            FOR UK SERVICE BUSINESSES
           </motion.span>
           <motion.h1 
             className="text-5xl md:text-7xl font-bold mb-8 tracking-tight leading-[1.05]"
@@ -56,8 +52,7 @@ export default function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
           >
-            Nothing? Something embarrassing? Either way, you lost them.
-            We build sites that close — custom-coded, live in 14 days.
+            We hand-code websites for UK service businesses that make you look like the obvious choice — and turn visitors into enquiries. No templates. No page builders. Live in 14 days.
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -73,21 +68,17 @@ export default function Hero() {
             </Link>
           </motion.div>
 
-          {/* Process mini-flow */}
+          {/* Proof strip */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.9 }}
-            className="mt-16 flex items-center justify-center gap-3 text-muted-foreground"
+            className="mt-14 flex items-center justify-center gap-6 flex-wrap"
           >
-            {['Discover', 'Design', 'Develop', 'Deliver'].map((step, i) => (
-              <span key={step} className="flex items-center gap-3">
-                <span className="text-xs font-medium tracking-wide">{step}</span>
-                {i < 3 && (
-                  <svg width="16" height="8" viewBox="0 0 16 8" fill="none" className="text-black/15">
-                    <path d="M0 4h14M11 1l3 3-3 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                )}
+            {['90+ PageSpeed', 'Live in 14 days', 'No templates', 'Built to convert'].map((item) => (
+              <span key={item} className="flex items-center gap-2 text-xs font-medium text-black/35">
+                <span className="w-1 h-1 rounded-full bg-black/20 inline-block" />
+                {item}
               </span>
             ))}
           </motion.div>

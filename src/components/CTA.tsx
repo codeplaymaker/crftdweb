@@ -22,7 +22,7 @@ export default function CTA() {
             Still sending people to a site you&apos;re embarrassed to share?
           </h2>
           <p className="text-sm sm:text-base md:text-lg lg:text-xl text-black/60 mb-6 sm:mb-8 px-3 sm:px-0">
-            Tell us what&apos;s broken. We&apos;ll tell you honestly if we can fix it. And what it&apos;ll cost.
+            If your website is costing you trust, enquiries, or sales — tell us what&apos;s wrong. We&apos;ll be honest about whether we can fix it, and what it will cost.
           </p>
           <motion.div
             whileHover={{ scale: 1.05 }}

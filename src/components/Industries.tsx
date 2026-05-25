@@ -75,11 +75,11 @@ export default function Industries() {
             INDUSTRIES WE SERVE
           </span>
           <h2 className="text-3xl md:text-5xl font-bold tracking-tight leading-tight mb-5">
-            Your industry.{' '}
-            <span className="text-muted-foreground">Your customers. Your site.</span>
+            Built for businesses{' '}
+            <span className="text-muted-foreground">where trust decides the sale.</span>
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed">
-            Generic templates convert generically. Industry-specific sites convert specifically.
+            How your customers make buying decisions depends on your niche. Your site should be built around that.
           </p>
         </motion.div>
 

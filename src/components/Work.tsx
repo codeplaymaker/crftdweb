@@ -10,7 +10,7 @@ const projects = [
     title: "Microbiome Design",
     problem: "A cutting-edge company with real science but a website that looked like a student project. Investors weren't taking them seriously.",
     process: "Full discovery into their audience (researchers, investors, partners). Rebuilt around credibility signals, clear value proposition, and a conversion-focused layout.",
-    result: "A site that matches the quality of their science. Professional presence that gives investors confidence from the first click.",
+    result: "Investors no longer land on a site that undermines the science. A credible presence that matches the quality of the work — and gives partners confidence from the first click.",
     image: "/Microbiome Design - SHOWCASE.png",
     category: "Science & Research",
     href: "https://www.microbiomedesign.org/",
@@ -20,7 +20,7 @@ const projects = [
     title: "The Life Lab HQ",
     problem: "A brand with great content and real expertise but visitors browsed and left without signing up. The site didn't guide anyone to take action.",
     process: "Mapped the customer journey from first visit to sign-up. Rebuilt every page around a single conversion goal. Added trust signals at each decision point.",
-    result: "A platform that turns casual visitors into engaged members. Clear path from landing to sign-up with friction removed at every step.",
+    result: "Casual visitors became engaged members. The conversion path now exists — before it simply didn't. Friction removed at every decision point.",
     image: "/life-lab.jpg",
     category: "Lifestyle & Brand",
     href: "https://thelifelabhq.com",
@@ -30,7 +30,7 @@ const projects = [
     title: "MPM Trading Platform",
     problem: "Traders needed a tool for journaling, insights, and custom plans but existing platforms were clunky and overwhelming. The founder needed a clean, usable product.",
     process: "Designed a minimal, data-focused interface. Built trading journal, insights dashboard, and personalized plan features. Prioritized speed and clarity over feature bloat.",
-    result: "A trading platform that users actually use daily. Clean interface that makes complex data approachable and actionable.",
+    result: "A trading platform users open every single day. Clean interface, no bloat, built for the way traders actually think — not the way developers do.",
     image: "/MPM - SHOWCASE.png",
     category: "Web App",
     href: "https://www.marketplaymaker.com",
@@ -73,11 +73,11 @@ export default function Work() {
             CASE STUDIES
           </span>
           <h2 className="text-3xl md:text-5xl font-bold mb-5 tracking-tight leading-tight">
-            Real projects.<br className="hidden md:block" />
-            <span className="text-muted-foreground">Real problems solved.</span>
+            Before people buy,<br className="hidden md:block" />
+            <span className="text-muted-foreground">they judge.</span>
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed">
-            Problem first. Build second. Results third.
+            These are the sites we rebuilt when the current one was costing the business trust.
           </p>
         </motion.div>
 
