@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eden Aesthetics: Ad Mock-ups (CrftdWeb)</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Cormorant+Garamond:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --green:#3F5A45; --sage:#A9B8A0; --cream:#F4F1EA; --ink:#1c2a21; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Inter',sans-serif; background:#eceae4; color:var(--ink); padding:48px 24px 96px; }
+  .wrap { max-width:1280px; margin:0 auto; }
+  h1 { font-size:32px; font-weight:800; letter-spacing:-.03em; }
+  .sub { color:rgba(0,0,0,.5); margin:8px 0 40px; max-width:640px; line-height:1.6; font-size:15px; }
+  h2 { font-size:12px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:rgba(0,0,0,.45); margin:56px 0 20px; padding-bottom:10px; border-bottom:1px solid rgba(0,0,0,.1); }
+  .note { font-size:12px; color:rgba(0,0,0,.45); margin-top:6px; }
+
+  /* ───── Instagram feed ad ───── */
+  .feeds { display:grid; grid-template-columns:repeat(auto-fill,minmax(360px,1fr)); gap:28px; align-items:start; }
+  .ig { background:#fff; border-radius:12px; border:1px solid rgba(0,0,0,.08); overflow:hidden; box-shadow:0 8px 30px rgba(0,0,0,.06); max-width:420px; }
+  .ig-head { display:flex; align-items:center; gap:10px; padding:12px 14px; }
+  .avatar { width:36px; height:36px; border-radius:50%; background:var(--cream); border:2px solid var(--green); display:flex; align-items:center; justify-content:center; color:var(--green); font-weight:800; font-size:13px; flex:none; }
+  .ig-name { font-size:13px; font-weight:700; line-height:1.2; }
+  .ig-spons { font-size:11px; color:rgba(0,0,0,.5); }
+  .ig-dots { margin-left:auto; color:rgba(0,0,0,.5); letter-spacing:2px; font-weight:700; }
+  .ig-text { padding:0 14px 12px; font-size:13px; line-height:1.5; white-space:pre-line; }
+  .creative { position:relative; aspect-ratio:4/5; background:var(--green); color:#fff; display:flex; flex-direction:column; justify-content:space-between; padding:30px 28px; overflow:hidden; }
+  .creative.light { background:var(--cream); color:var(--green); }
+  .creative .brandbar { display:flex; align-items:center; gap:8px; font-weight:700; font-size:14px; letter-spacing:-.01em; }
+  .creative .leaf { width:20px; height:20px; }
+  .creative h3 { font-family:'Cormorant Garamond',serif; font-weight:700; font-size:40px; line-height:1.02; letter-spacing:-.01em; }
+  .creative p.sm { font-size:13px; opacity:.8; margin-top:12px; line-height:1.5; max-width:85%; }
+  .pill { display:inline-block; font-size:10px; font-weight:700; letter-spacing:.16em; text-transform:uppercase; padding:6px 12px; border-radius:100px; background:rgba(255,255,255,.14); }
+  .light .pill { background:rgba(63,90,69,.1); }
+  .people { display:flex; gap:10px; margin-top:16px; }
+  .ph { width:64px; height:64px; border-radius:50%; background:rgba(255,255,255,.15); border:1.5px dashed rgba(255,255,255,.5); display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:600; text-align:center; line-height:1.2; }
+  .light .ph { background:rgba(63,90,69,.08); border-color:rgba(63,90,69,.4); }
+  .qlist { list-style:none; margin-top:14px; display:grid; gap:10px; }
+  .qlist li { display:flex; gap:12px; align-items:center; font-size:15px; font-weight:600; background:#fff; border-radius:12px; padding:12px 14px; color:var(--green); }
+  .qlist .n { width:28px; height:28px; border-radius:50%; background:var(--green); color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; flex:none; }
+  .ig-cta { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 14px; background:#f3f4f6; }
+  .ig-cta .h { font-size:13px; font-weight:700; line-height:1.25; }
+  .ig-cta .d { font-size:11px; color:rgba(0,0,0,.5); }
+  .ig-btn { background:#e4e6eb; border:none; border-radius:8px; padding:8px 14px; font-size:13px; font-weight:700; color:#111; white-space:nowrap; }
+  .ig-actions { padding:10px 14px 14px; font-size:12px; color:rgba(0,0,0,.5); }
+  .label { font-size:12px; font-weight:700; margin-bottom:10px; color:rgba(0,0,0,.55); }
+
+  /* ───── Video frames ───── */
+  .scripts { display:grid; gap:44px; }
+  .script-title { font-size:16px; font-weight:800; letter-spacing:-.02em; margin-bottom:4px; }
+  .script-meta { font-size:12px; color:rgba(0,0,0,.45); margin-bottom:16px; }
+  .frames { display:flex; gap:16px; overflow-x:auto; padding-bottom:12px; }
+  .frame { position:relative; flex:none; width:216px; aspect-ratio:9/16; border-radius:18px; overflow:hidden; background:#2e3b32; box-shadow:0 8px 24px rgba(0,0,0,.15); color:#fff; display:flex; flex-direction:column; }
+  .frame .bg { position:absolute; inset:0; background:linear-gradient(170deg,#56705c 0%,#2e3b32 100%); }
+  .frame .who { position:absolute; left:50%; top:30%; transform:translateX(-50%); width:110px; height:110px; border-radius:50%; background:rgba(255,255,255,.14); border:1.5px dashed rgba(255,255,255,.5); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:600; text-align:center; line-height:1.3; padding:10px; }
+  .frame .who.two { width:150px; border-radius:60px; }
+  .frame .time { position:absolute; top:12px; left:12px; font-size:10px; font-weight:700; background:rgba(0,0,0,.4); padding:3px 8px; border-radius:100px; z-index:2; }
+  .frame .top { position:absolute; top:34px; left:14px; right:14px; z-index:2; }
+  .frame .headline { font-size:17px; font-weight:900; letter-spacing:-.03em; line-height:1.05; background:var(--cream); color:var(--green); padding:8px 10px; border-radius:10px; display:inline-block; }
+  .frame .sub-line { position:absolute; left:12px; right:12px; bottom:96px; text-align:center; z-index:2; }
+  .frame .sub-line span { display:inline; background:rgba(0,0,0,.65); font-size:13px; font-weight:700; line-height:1.55; padding:2px 6px; border-radius:4px; box-decoration-break:clone; -webkit-box-decoration-break:clone; }
+  .frame .ui-zone { position:absolute; left:0; right:0; bottom:0; height:22%; background:repeating-linear-gradient(135deg, rgba(255,255,255,.04) 0 6px, transparent 6px 12px); border-top:1px dashed rgba(255,255,255,.2); z-index:1; }
+  .frame .ui-zone::after { content:'IG UI zone'; position:absolute; bottom:6px; left:50%; transform:translateX(-50%); font-size:9px; letter-spacing:.1em; opacity:.45; font-weight:600; }
+  .frame.cta .bg { background:var(--green); }
+  .frame .cta-card { position:absolute; left:14px; right:14px; top:38%; background:var(--cream); color:var(--green); border-radius:16px; padding:18px 14px; text-align:center; z-index:2; }
+  .frame .cta-card b { display:block; font-size:17px; font-weight:900; letter-spacing:-.03em; line-height:1.1; margin-bottom:8px; }
+  .frame .cta-card span { display:inline-block; background:var(--green); color:#fff; font-size:11px; font-weight:700; padding:8px 14px; border-radius:100px; }
+  .frame .cta-card small { display:block; margin-top:8px; font-size:10px; opacity:.7; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Eden Aesthetics: ad mock-ups</h1>
+  <p class="sub">Feed ads (4:5) and the first frames of each video script (9:16). Dashed circles are placeholders for Louise and Andrea's real footage. Layouts use the clinic's own green and cream. Prepared by CrftdWeb.</p>
+
+  <h2>Feed ads (Instagram / Facebook)</h2>
+  <div class="feeds" id="feeds"></div>
+
+  <h2>Video ads: key frames per script (Reels / Stories, 9:16)</h2>
+  <div class="scripts" id="scripts"></div>
+  <p class="note">Keep captions and text clear of the bottom 22% (Instagram buttons and caption area) and the top 14%.</p>
+</div>
+
+<script>
+const LEAF = '<svg class="leaf" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.5 19 2c1 2 2 4.2 2 8 0 5.5-4.8 10-10 10Z"/><path d="M2 21c0-3 1.9-5.6 5-7"/></svg>';
+
+const feedAds = [
+  {
+    label: 'Ad 1: The consultation (main offer)',
+    text: "Thinking about your next step with weight loss support?\n\nStart with a free, no-obligation consultation with Louise or Andrea, our nurse prescribers in Abersychan.\n\nTalk through your goals, get honest advice and clear pricing. Treatment is only recommended if it's right for you.\n\nBook your free consultation below.",
+    creative: `<div class="creative">
+      <div class="brandbar">${LEAF} Eden Aesthetics</div>
+      <div>
+        <span class="pill">Free consultation</span>
+        <h3 style="margin-top:14px">Your first step starts with a conversation.</h3>
+        <p class="sm">Speak to a nurse prescriber. Honest advice, clear pricing, no pressure.</p>
+        <div class="people"><div class="ph">Louise</div><div class="ph">Andrea</div></div>
+      </div>
+      <div class="pill">Abersychan &middot; Pontypool</div>
+    </div>`,
+    headline: 'Free consultation with a nurse prescriber', desc: 'Abersychan, Pontypool', btn: 'Book now'
+  },
+  {
+    label: 'Ad 2: Trust and local',
+    text: "Choosing a clinic is a big decision. Here are 3 questions to ask before you book anywhere.\n\nAt Eden Aesthetics, you'll always speak to a qualified nurse prescriber, and you'll never be pressured into anything.\n\nFree consultation. Local to Pontypool, Cwmbran and Blaenavon.",
+    creative: `<div class="creative light">
+      <div class="brandbar">${LEAF} Eden Aesthetics</div>
+      <div>
+        <span class="pill">Before you book any clinic</span>
+        <h3 style="margin-top:14px">Ask these 3 questions.</h3>
+        <ul class="qlist">
+          <li><span class="n">1</span>Who will treat me?</li>
+          <li><span class="n">2</span>Is there a proper consultation?</li>
+          <li><span class="n">3</span>Is pricing clear upfront?</li>
+        </ul>
+      </div>
+      <div class="pill">Nurse-led care &middot; Abersychan</div>
+    </div>`,
+    headline: 'Ask these 3 questions before you book', desc: 'Nurse-led care in Abersychan', btn: 'Learn more'
+  },
+  {
+    label: 'Ad 3: Skin and aesthetics',
+    text: "Curious about your skin options but not sure where to start?\n\nBook a free consultation with Louise or Andrea. They'll talk you through what's available, what suits you, and what doesn't, with natural-looking results always the priority.\n\nNo pressure. Just honest advice.",
+    creative: `<div class="creative">
+      <div class="brandbar">${LEAF} Eden Aesthetics</div>
+      <div>
+        <span class="pill">Skin &amp; aesthetics</span>
+        <h3 style="margin-top:14px">Skin advice, without the pressure.</h3>
+        <p class="sm">Natural-looking results are always the priority. Start with a free consultation.</p>
+      </div>
+      <div class="pill">Free consultation &middot; Pontypool</div>
+    </div>`,
+    headline: 'Skin consultation, no pressure', desc: 'Eden Aesthetics, Pontypool', btn: 'Book now'
+  },
+  {
+    label: 'Retargeting ad',
+    text: "Still thinking it over? That's completely fine.\n\nA free consultation is just a conversation with a nurse prescriber. No obligation, no pressure. You decide what happens next.\n\nSlots this week are limited.",
+    creative: `<div class="creative light">
+      <div class="brandbar">${LEAF} Eden Aesthetics</div>
+      <div>
+        <span class="pill">No obligation</span>
+        <h3 style="margin-top:14px">Still thinking it over? That's fine.</h3>
+        <p class="sm">A free consultation is just a conversation. You decide what happens next.</p>
+      </div>
+      <div class="pill">Book a free consultation</div>
+    </div>`,
+    headline: 'Your free consultation is waiting', desc: 'Eden Aesthetics, Abersychan', btn: 'Book now'
+  }
+];
+
+document.getElementById('feeds').innerHTML = feedAds.map(a => `
+  <div>
+    <div class="label">${a.label}</div>
+    <div class="ig">
+      <div class="ig-head">
+        <div class="avatar">E</div>
+        <div><div class="ig-name">Eden Aesthetics &amp; Holistic Health</div><div class="ig-spons">Sponsored &middot; Abersychan</div></div>
+        <div class="ig-dots">&middot;&middot;&middot;</div>
+      </div>
+      <div class="ig-text">${a.text}</div>
+      ${a.creative}
+      <div class="ig-cta">
+        <div><div class="h">${a.headline}</div><div class="d">${a.desc}</div></div>
+        <button class="ig-btn">${a.btn}</button>
+      </div>
+      <div class="ig-actions">♡ &nbsp; 💬 &nbsp; ➤</div>
+    </div>
+  </div>`).join('');
+
+const scripts = [
+  { title: 'Script 1: "What happens at a consultation" (Louise, ~25s)', meta: 'Hook, 3 steps, CTA', frames: [
+    { t:'0-3s', who:'Louise', head:'What happens at a consultation?', sub:'Thinking about weight loss support but not sure what happens first?' },
+    { t:'3-10s', who:'Louise', head:'Step 1: A proper chat', sub:'We sit down and talk through your goals, your health and any questions.' },
+    { t:'10-17s', who:'Clinic room', head:'Step 2: Honest advice', sub:'If treatment is right for you, we explain your options and costs clearly.' },
+    { t:'17-23s', who:'Louise', head:'Step 3: Your decision', sub:'There\'s no pressure to start anything. You decide.' },
+    { cta:true, t:'23-27s', big:'Free consultation', small:'Eden Aesthetics, Abersychan', btn:'Book now' }
+  ]},
+  { title: 'Script 2: "3 questions to ask any clinic" (Andrea, ~28s)', meta: 'Educational list, builds trust', frames: [
+    { t:'0-3s', who:'Andrea', head:'3 questions to ask any clinic', sub:'Before you book any clinic, ask these three things.' },
+    { t:'3-9s', who:'Andrea', head:'1. Who treats me?', sub:'What are their qualifications?' },
+    { t:'9-15s', who:'Andrea', head:'2. Is there a consultation?', sub:'Or will I be rushed into something?' },
+    { t:'15-21s', who:'Andrea', head:'3. Is pricing clear?', sub:'Before I commit to anything?' },
+    { cta:true, t:'21-28s', big:'Eden Aesthetics', small:'Nurse prescribers. Free consultation.', btn:'Book now' }
+  ]},
+  { title: 'Script 3: "Meet Louise and Andrea" (both, ~25s)', meta: 'Personal intro, skin and weight loss support', frames: [
+    { t:'0-4s', who:'Louise + Andrea', two:true, head:'Meet your nurse prescribers', sub:'Hi, we\'re Louise and Andrea...' },
+    { t:'4-10s', who:'Louise', head:'Nurse prescribers, Abersychan', sub:'We run Eden Aesthetics and Holistic Health here in Abersychan.' },
+    { t:'10-17s', who:'Andrea', head:'Skin · Weight loss support · Whole-person care', sub:'We look at you as a whole person, not just one treatment.' },
+    { t:'17-22s', who:'Louise + Andrea', two:true, head:'No pressure', sub:'You\'ll always know who you\'re talking to.' },
+    { cta:true, t:'22-25s', big:'Book your free consultation', small:'Link below', btn:'Book now' }
+  ]}
+];
+
+document.getElementById('scripts').innerHTML = scripts.map(s => `
+  <div>
+    <div class="script-title">${s.title}</div>
+    <div class="script-meta">${s.meta}</div>
+    <div class="frames">${s.frames.map(f => f.cta ? `
+      <div class="frame cta">
+        <div class="bg"></div><div class="time">${f.t}</div>
+        <div class="cta-card"><b>${f.big}</b><small>${f.small}</small><span style="margin-top:12px">${f.btn}</span></div>
+        <div class="ui-zone"></div>
+      </div>` : `
+      <div class="frame">
+        <div class="bg"></div><div class="time">${f.t}</div>
+        <div class="top"><span class="headline">${f.head}</span></div>
+        <div class="who${f.two ? ' two' : ''}">${f.who}<br>(footage)</div>
+        <div class="sub-line"><span>${f.sub}</span></div>
+        <div class="ui-zone"></div>
+      </div>`).join('')}</div>
+  </div>`).join('');
+</script>
+</body>
+</html>
